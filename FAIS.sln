@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.28010.2041
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FAIS", "FAIS\FAIS.csproj", "{19287794-A073-4242-A604-753719E80DCB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FAIS.Tests", "FAIS.Tests\FAIS.Tests.csproj", "{3D47569F-7678-48AE-BA51-370708C95678}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{19287794-A073-4242-A604-753719E80DCB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{19287794-A073-4242-A604-753719E80DCB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{19287794-A073-4242-A604-753719E80DCB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{19287794-A073-4242-A604-753719E80DCB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3D47569F-7678-48AE-BA51-370708C95678}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3D47569F-7678-48AE-BA51-370708C95678}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3D47569F-7678-48AE-BA51-370708C95678}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3D47569F-7678-48AE-BA51-370708C95678}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {BA6A93C9-4149-4820-B97F-5CB50F132D03}
+	EndGlobalSection
+EndGlobal
