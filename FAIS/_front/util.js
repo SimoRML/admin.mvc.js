@@ -70,3 +70,11 @@ jQuery.fn.apiload = function (url, params, callback) {
 
     return this;
 };
+
+
+function updateDom() {
+    $.material.init();
+    if ($(".selectpicker").length != 0) {
+        $(".selectpicker").selectpicker();
+    }
+}
