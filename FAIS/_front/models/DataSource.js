@@ -5,7 +5,6 @@ function DataSource(id, config){
     this.config.loginPath = "/home/login";
     this.logout = function () {
         localStorage.removeItem("_tkn_");
-        console.log("logout");
         window.location = this.config.loginPath + "?returnUrl=";
     };
     this.getToken = function () {

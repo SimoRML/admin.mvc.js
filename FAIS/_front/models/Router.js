@@ -30,9 +30,9 @@ Router.prototype.Load = function(page){
     me.$element.load(url, function (response, status, xhr) {
 		me.Trigger("hide", "PagePreloader");
 		if(status == "success"){
+            updateDom();
 			$("#menu a.selected").removeClass("selected");
             $("#menu a[href='" + page + "']").addClass("selected");
-            updateDom();
 		}
 	});
 }

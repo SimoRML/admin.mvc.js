@@ -49,6 +49,7 @@
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.Security" />
     <Reference Include="System.Web.Entity" />
     <Reference Include="System.Web.ApplicationServices" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
@@ -235,7 +236,9 @@
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\BonController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Controllers\MetaBoController.cs" />
     <Compile Include="Controllers\ProfileManagerController.cs" />
+    <Compile Include="Controllers\RouterController.cs" />
     <Compile Include="Controllers\ValuesController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
@@ -244,6 +247,27 @@
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\Authorize\ViewAuthorize.cs" />
     <Compile Include="Models\IdentityModels.cs" />
+    <Compile Include="Models\META_BO.cs">
+      <DependentUpon>Model.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\META_FIELD.cs">
+      <DependentUpon>Model.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Model.Context.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Model.Context.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Model.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Model.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Model.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Model.edmx</DependentUpon>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Providers\ApplicationOAuthProvider.cs" />
     <Compile Include="Results\ChallengeResult.cs" />
@@ -409,6 +433,16 @@
     <Content Include="favicon.ico" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />
+    <Content Include="Models\Model.Context.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <DependentUpon>Model.edmx</DependentUpon>
+      <LastGenOutput>Model.Context.cs</LastGenOutput>
+    </Content>
+    <Content Include="Models\Model.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <DependentUpon>Model.edmx</DependentUpon>
+      <LastGenOutput>Model.cs</LastGenOutput>
+    </Content>
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
     <Content Include="Areas\HelpPage\Views\Web.config" />
@@ -495,6 +529,13 @@
     <Content Include="_front\models\Router.js" />
     <Content Include="_front\models\Preloader.js" />
     <Content Include="_front\util.js" />
+    <EntityDeploy Include="Models\Model.edmx">
+      <Generator>EntityModelCodeGenerator</Generator>
+      <LastGenOutput>Model.Designer.cs</LastGenOutput>
+    </EntityDeploy>
+    <Content Include="Models\Model.edmx.diagram">
+      <DependentUpon>Model.edmx</DependentUpon>
+    </Content>
     <None Include="Scripts\jquery-3.3.1.intellisense.js" />
     <Content Include="Scripts\jquery-3.3.1.js" />
     <Content Include="Scripts\jquery-3.3.1.min.js" />
@@ -526,6 +567,7 @@
     <Content Include="Views\Home\old.cshtml" />
     <Content Include="Views\Home\Login.cshtml" />
     <Content Include="Views\Bon\Home.cshtml" />
+    <Content Include="Views\Router\_meta_bo.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -546,6 +588,9 @@
     <None Include="packages.config" />
     <Content Include="Scripts\jquery-3.3.1.slim.min.map" />
     <Content Include="Scripts\jquery-3.3.1.min.map" />
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
