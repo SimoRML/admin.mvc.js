@@ -234,6 +234,7 @@
     <Compile Include="Areas\HelpPage\SampleGeneration\TextSample.cs" />
     <Compile Include="Areas\HelpPage\XmlDocumentationProvider.cs" />
     <Compile Include="Controllers\AccountController.cs" />
+    <Compile Include="Controllers\ApiBonController.cs" />
     <Compile Include="Controllers\BonController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\MetaBoController.cs" />
@@ -246,27 +247,27 @@
     <Compile Include="Models\AccountBindingModels.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\Authorize\ViewAuthorize.cs" />
+    <Compile Include="Models\FAIS_MODEL.Context.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>FAIS_MODEL.Context.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\FAIS_MODEL.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>FAIS_MODEL.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\FAIS_MODEL.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>FAIS_MODEL.edmx</DependentUpon>
+    </Compile>
     <Compile Include="Models\IdentityModels.cs" />
     <Compile Include="Models\META_BO.cs">
-      <DependentUpon>Model.tt</DependentUpon>
+      <DependentUpon>FAIS_MODEL.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\META_FIELD.cs">
-      <DependentUpon>Model.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\Model.Context.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Model.Context.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\Model.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Model.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\Model.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Model.edmx</DependentUpon>
+      <DependentUpon>FAIS_MODEL.tt</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Providers\ApplicationOAuthProvider.cs" />
@@ -433,15 +434,15 @@
     <Content Include="favicon.ico" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />
-    <Content Include="Models\Model.Context.tt">
+    <Content Include="Models\FAIS_MODEL.Context.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
-      <DependentUpon>Model.edmx</DependentUpon>
-      <LastGenOutput>Model.Context.cs</LastGenOutput>
+      <DependentUpon>FAIS_MODEL.edmx</DependentUpon>
+      <LastGenOutput>FAIS_MODEL.Context.cs</LastGenOutput>
     </Content>
-    <Content Include="Models\Model.tt">
+    <Content Include="Models\FAIS_MODEL.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
-      <DependentUpon>Model.edmx</DependentUpon>
-      <LastGenOutput>Model.cs</LastGenOutput>
+      <DependentUpon>FAIS_MODEL.edmx</DependentUpon>
+      <LastGenOutput>FAIS_MODEL.cs</LastGenOutput>
     </Content>
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
@@ -529,12 +530,12 @@
     <Content Include="_front\models\Router.js" />
     <Content Include="_front\models\Preloader.js" />
     <Content Include="_front\util.js" />
-    <EntityDeploy Include="Models\Model.edmx">
+    <EntityDeploy Include="Models\FAIS_MODEL.edmx">
       <Generator>EntityModelCodeGenerator</Generator>
-      <LastGenOutput>Model.Designer.cs</LastGenOutput>
+      <LastGenOutput>FAIS_MODEL.Designer.cs</LastGenOutput>
     </EntityDeploy>
-    <Content Include="Models\Model.edmx.diagram">
-      <DependentUpon>Model.edmx</DependentUpon>
+    <Content Include="Models\FAIS_MODEL.edmx.diagram">
+      <DependentUpon>FAIS_MODEL.edmx</DependentUpon>
     </Content>
     <None Include="Scripts\jquery-3.3.1.intellisense.js" />
     <Content Include="Scripts\jquery-3.3.1.js" />
