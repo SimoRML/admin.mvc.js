@@ -31,7 +31,8 @@ Router.prototype.Load = function(page){
 		me.Trigger("hide", "PagePreloader");
 		if(status == "success"){
 			$("#menu a.selected").removeClass("selected");
-			$("#menu a[href='"+page+"']").addClass("selected");
+            $("#menu a[href='" + page + "']").addClass("selected");
+            updateDom();
 		}
 	});
 }
