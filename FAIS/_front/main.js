@@ -18,10 +18,11 @@ $(function(){
                         el: "#logout",
                         event:"click",
                     },
+                    method: "POST",
                     template: function (key, value) { return '<li><a href="#page.' + value.href + '">' + value.text + '</a></li>'; },
                     loadComplete: function (obj) {
-                        obj.TriggerFor("Preloader", "hide");
-                        obj.TriggerFor("Router", "LoadHomePage");
+                        localStorage.clear();
+                        location.reload();
                     }
                 }
 			]

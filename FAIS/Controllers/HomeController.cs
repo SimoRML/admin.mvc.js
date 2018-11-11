@@ -25,6 +25,7 @@ namespace FAIS.Controllers
             return View();
         }
 
+        [AllowAnonymous]
         public ActionResult Logout()
         {
             return RedirectToAction("Login");

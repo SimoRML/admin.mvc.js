@@ -7,9 +7,12 @@ function BaseObject(id, type){
 	this.EV;
 }
 /// Functions
-BaseObject.prototype.Init = function(){
-	// if(this.$element == null) this.$element = $(document);
-}
+BaseObject.prototype.Init = function () {
+    // if(this.$element == null) this.$element = $(document);
+};
+BaseObject.prototype.getComponent = function (componentName) {
+    return this.Childs[componentName];
+};
 BaseObject.prototype.CreateObject = function(o){
 	o.Parent = this;	
 	//o.Id = this.Id + '.' + o.Id; 

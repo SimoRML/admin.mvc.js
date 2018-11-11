@@ -5,7 +5,6 @@ function DataSource(id, config){
     this.config.loginPath = "/home/login";
     this.logout = function () {
         localStorage.removeItem("_tkn_");
-        console.log("logout");
         window.location = this.config.loginPath + "?returnUrl=";
     };
     this.getToken = function () {
@@ -28,17 +27,18 @@ DataSource.prototype.Init = function () {
             $(source.on.el).on(source.on.event, function () {
                 if (typeof source.on.before === "function") {
                     if (source.on.before(source))
-                        me.ExecuteSource(me, source);
+                        me.ExecuteSource(source);
                 } else {
-                    me.ExecuteSource(me, source);
+                    me.ExecuteSource(source);
                 }
             });
-        } else this.ExecuteSource(me, source);
+        } else this.ExecuteSource(source);
         /* END EVENT */
     }
 };
 
-DataSource.prototype.ExecuteSource = function (me, source) {
+DataSource.prototype.ExecuteSource = function (source) {
+    var me = this;
     var settings = {
         "async": true,
         "crossDomain": false,
@@ -57,10 +57,8 @@ DataSource.prototype.ExecuteSource = function (me, source) {
     // console.log("ExecuteSource", settings);
     $.ajax(settings)
         .done(function (response) {
-            // console.log("done", response);
-            if (typeof response !== "object")
-                response = JSON.parse(response);
-
+            try { response = JSON.parse(response); } catch{ }
+                
             var html = "";
 
             // REPEAT

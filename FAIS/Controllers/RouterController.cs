@@ -6,13 +6,11 @@ using System.Web.Mvc;
 
 namespace FAIS.Controllers
 {
-    [Authorize]
-    public class BonController : Controller
+    public class RouterController : Controller
     {
-        
-        public ActionResult Home()
+        public PartialViewResult MetaBo()
         {
-            return View();
+            return PartialView("_meta_bo");
         }
     }
 }

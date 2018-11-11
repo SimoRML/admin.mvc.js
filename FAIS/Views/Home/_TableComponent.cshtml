@@ -1,0 +1,95 @@
+﻿<script id="TableComponentTemplate" type="text/template">
+    <table class="table table-striped table-no-bordered table-hover" cellspacing="0" width="100%" style="width:100%">
+        <thead>
+            <tr>
+                <th v-if="detailRowDefined"></th>
+                <template v-for="h in getHeaders">
+                    <th v-if="show(h)">
+                        {{ getLabel(h) }}
+                    </th>
+                </template>
+            </tr>
+        </thead>
+        <tbody>
+            <template v-for="(item, index) in list">
+                <tr>
+                    <td v-if="detailRowDefined"
+                        v-on:click="toggleDetailRow(index)">
+                        <i class="material-icons i-btn-round" v-show="showDetailRow[index] != null && showDetailRow[index]">expand_less</i>
+                        <i class="material-icons i-btn-round" v-show="showDetailRow[index] == null || !showDetailRow[index]">expand_more</i>
+                    </td>
+                    <template v-for="h in getHeaders">
+                        <td v-if="show(h)">
+                            {{ item[h] }} 
+                        </td>
+                    </template>
+                </tr>
+                <tr v-if="detailRowDefined" v-show="showDetailRow[index] != null && showDetailRow[index]">
+                    <td v-bind:colspan="columnCount">
+                        <component v-bind:is="detailRow" v-bind={row:item}></component>
+                    </td>
+                </tr>
+            </template>
+        </tbody>
+    </table>
+</script>
+<script type="text/javascript">
+    Vue.component('v-table', {
+        template: $("#TableComponentTemplate").html(),
+        props: {
+            datasource: String,
+            columnIgnore: Array,
+            columnLabels: Object,
+            detailRow: String,
+        },
+        data: function () {
+            return {
+                list: [],
+                showDetailRow: [],
+            }
+        },
+        computed: {
+            getHeaders: function () {
+                if (this.list.length > 0) {
+                    var headers = [];
+                    for (var h in this.list[0]) {
+                        headers.push(h);
+                    }
+                    return headers;
+                }
+                else
+                    return [];
+            },
+            columnCount: function () {
+                return this.getHeaders.length;
+            },
+            detailRowDefined: function() {
+                return this.detailRow != null;
+            }
+        },
+        methods: {
+            show: function (colName) {
+                return !this.columnIgnore.includes(colName);
+            },
+            getLabel: function (colName) {
+                if (typeof this.columnLabels[colName] === "undefined")
+                    return colName;
+                else
+                    return this.columnLabels[colName];
+            },
+            toggleDetailRow: function (index) {
+                this.$set(this.showDetailRow, index, this.showDetailRow[index] == null ? true : !this.showDetailRow[index]);
+            }
+        },
+        created: function () {
+            var me = this;
+            var data = EV.getComponent("data");
+            data.ExecuteSource({
+                url: me.datasource,
+                loadComplete: function (obj, response) {
+                    me.list = response;
+                }
+            });
+        }
+    });
+</script>
