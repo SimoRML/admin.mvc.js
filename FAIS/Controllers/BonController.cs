@@ -12,7 +12,6 @@ namespace FAIS.Controllers
         
         public ActionResult Home()
         {
-            
             return View();
         }
     }

@@ -67,7 +67,7 @@ namespace FAIS.Controllers
         }
 
         // POST api/Account/Logout
-        [Route("Logout", Name = "Logout")]
+        [Route("Logout")]
         public IHttpActionResult Logout()
         {
             Authentication.SignOut(CookieAuthenticationDefaults.AuthenticationType);

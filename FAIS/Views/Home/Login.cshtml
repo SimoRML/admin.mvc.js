@@ -87,29 +87,31 @@
                                     <p class="category text-center">
                                         Or Be Classical
                                     </p>
-                                    <div class="card-content">
-                                        <div class="input-group">
-                                            <span class="input-group-addon">
-                                                <i class="material-icons">email</i>
-                                            </span>
-                                            <div class="form-group label-floating">
-                                                <label class="control-label">Email address</label>
-                                                <input id="email" type="email" class="form-control">
+                                    <form id="my-form" onsubmit="return false;">
+                                        <div class="card-content">
+                                            <div class="input-group">
+                                                <span class="input-group-addon">
+                                                    <i class="material-icons">email</i>
+                                                </span>
+                                                <div class="form-group label-floating">
+                                                    <label class="control-label">Email address</label>
+                                                    <input id="email" type="email" required class="form-control">
+                                                </div>
+                                            </div>
+                                            <div class="input-group">
+                                                <span class="input-group-addon">
+                                                    <i class="material-icons">lock_outline</i>
+                                                </span>
+                                                <div class="form-group label-floating">
+                                                    <label class="control-label">Password</label>
+                                                    <input id="password" type="password" required class="form-control">
+                                                </div>
                                             </div>
                                         </div>
-                                        <div class="input-group">
-                                            <span class="input-group-addon">
-                                                <i class="material-icons">lock_outline</i>
-                                            </span>
-                                            <div class="form-group label-floating">
-                                                <label class="control-label">Password</label>
-                                                <input id="password" type="password" class="form-control">
-                                            </div>
+                                        <div class="footer text-center">
+                                            <button id="submit" type="submit" class="btn btn-rose btn-simple btn-wd btn-lg">Let's go</button>
                                         </div>
-                                    </div>
-                                    <div class="footer text-center">
-                                        <button id="submit" type="submit" class="btn btn-rose btn-simple btn-wd btn-lg">Let's go</button>
-                                    </div>
+                                    </form>
                                 </div>
                         </div>
                     </div>
@@ -228,7 +230,7 @@
                                 "password": $("#password").val(),
                                 "grant_type": "password"
                             };
-                            return true;
+                            return document.getElementById("my-form").checkValidity();
                         }
                     },
                     url: "token",
@@ -244,7 +246,7 @@
                             alert("400: NOT AUTHORIZED");
                         }
                     }
-                },
+                }
             ]
         });
         EV.CreateObject(data);

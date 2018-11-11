@@ -71,8 +71,11 @@ jQuery.fn.apiload = function (url, params, callback) {
     return this;
 };
 
-
+var vueApp;
 function updateDom() {
+    if ($(".vue-app").length>0)
+        vueApp = new Vue({el: '.vue-app'});
+
     $.material.init();
     if ($(".selectpicker").length != 0) {
         $(".selectpicker").selectpicker();

@@ -294,7 +294,7 @@
                                 </ul>
                             </li>
                             <li>
-                                <a href="/home/logout">
+                                <a id="logout" href="javascript:;">
                                     <i class="material-icons">exit_to_app</i>
                                     <p class="hidden-lg hidden-md">Logout</p>
                                 </a>
@@ -399,6 +399,7 @@
 @Scripts.Render("~/bundles/_front-after")
 
 @Html.Partial("~/Views/Home/_FormTemplates.cshtml")
+@Html.Partial("~/Views/Home/_TableComponent.cshtml")
 
 
 @RenderSection("scripts", required: false)
