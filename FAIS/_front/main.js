@@ -1,40 +1,48 @@
-$(function(){	
-	EV = new Environement("Accueil");		
-	var data = new DataSource("data", {
-			baseUrl : "/api/",
-			sources : [
-				{
-                    url: "Profile/Menu",
-					target: "#menu",
-                    template: function(key, value){return '<li><a href="#page.'+value.href+'">'+value.text+'</a></li>';},
-					loadComplete : function(obj){
-						obj.TriggerFor("Preloader","hide");
-                        obj.TriggerFor("Router","LoadHomePage");
-					}
-                },
-                {
-                    url: "Account/Logout",
-                    on: {
-                        el: "#logout",
-                        event:"click",
-                    },
-                    method: "POST",
-                    template: function (key, value) { return '<li><a href="#page.' + value.href + '">' + value.text + '</a></li>'; },
-                    loadComplete: function (obj) {
-                        localStorage.clear();
-                        location.reload();
-                    }
+$(function () {
+    // LOAD VUE COMPONENTS
+    $("#v-components").load("router/vcomponents", function (response, status, xhr) {
+        if (status === "success") LOAD();
+    });
+});
+
+function LOAD() {
+    EV = new Environement("Accueil");
+    var data = new DataSource("data", {
+        baseUrl: "/api/",
+        sources: [
+            {
+                url: "Profile/Menu",
+                target: "#menu",
+                template: function (key, value) { return '<li><a href="#page.' + value.href + '">' + value.text + '</a></li>'; },
+                loadComplete: function (obj) {
+                    obj.TriggerFor("Preloader", "hide");
+                    obj.TriggerFor("Router", "LoadHomePage");
                 }
-			]
-		});
-	EV.CreateObject(data);
+            },
+            {
+                url: "Account/Logout",
+                on: {
+                    el: "#logout",
+                    event: "click",
+                },
+                method: "POST",
+                template: function (key, value) { return '<li><a href="#page.' + value.href + '">' + value.text + '</a></li>'; },
+                loadComplete: function (obj) {
+                    localStorage.clear();
+                    location.reload();
+                }
+            }
+        ]
+    });
+    EV.CreateObject(data);
 
     EV.CreateObject(new Preloader());
     EV.CreateObject(new Preloader("PagePreloader"));
 
     EV.CreateObject(new Router("Router", "#viewcontainer",
-		{
-			home : "#bon.home",
-		}
-	));
-});
+        {
+            home: "#bon.home",
+        }
+    ));
+
+}

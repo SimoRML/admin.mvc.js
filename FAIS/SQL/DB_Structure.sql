@@ -85,6 +85,7 @@ CREATE TABLE META_FIELD (
 [FORM_TYPE] varchar(100) NOT NULL,
 [FORM_SOURCE] varchar(1000) NULL,
 [FORM_SHOW] int NULL Default(1),
+[FORM_OPTIONAL] int NULL Default(0),
 
 [CREATED_BY] varchar(100) NOT NULL,
 [CREATED_DATE] datetime DEFAULT getdate() ,

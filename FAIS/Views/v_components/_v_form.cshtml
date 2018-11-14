@@ -1,0 +1,86 @@
+﻿<script id="v-form-template" type="text/template">
+    <div>
+        <form id="v-form-id" onsubmit="return false;">
+            <template v-for="field in meta">
+                <component 
+                           :is="field.FORM_TYPE" 
+                           v-if="field.FORM_SHOW==1" 
+                           @*v-model="body[field.DB_NAME]"*@ 
+                           v-bind="{model:body[field.DB_NAME],label:field.FORM_NAME,optional:field.FORM_OPTIONAL,datasource:field.FORM_SOURCE}"></component>
+            </template>
+            <button type="submit" class="btn btn-fill btn-primary" v-on:click="submit">Envoyer<div class="ripple-container"></div></button>
+            <button type="button" class="btn btn-fill btn-secondary" v-on:click="clear">Annuler<div class="ripple-container"></div></button>
+        </form>
+    </div>
+</script>
+<script type="text/javascript">
+    Vue.component('v-form', {
+        template: $("#v-form-template").html(),
+        props: {
+            metaDatasource: String,
+            metaDefinition: Object,
+            api: String
+        },
+        data: function () {
+            return {
+                meta: {},
+                body: {},
+            }
+        },
+        computed: {
+            
+        },
+        methods: {
+            formatBody: function () {
+                for (var i in this.meta) {
+                    this.body[this.meta[i].DB_NAME] = 9;
+                }
+            },
+            submit: function () {
+                var me = this;
+                var body = clone(me.body);
+                delete body.__ob__;
+                
+                var data = EV.getComponent("data");
+
+                data.Post({
+                    url: me.api,
+                    data: JSON.stringify(body),
+                    loadComplete: function (obj, response) {
+                        me.$emit("submit-success");
+                    },
+                    fail: function (response) {
+                        me.$emit("submit-fail");
+                    }
+                });
+            },
+            clear: function () {
+                for (var i in this.body) {
+                    this.$set(this.body, i, null);
+                }
+            }
+        },
+        created: function () {
+            var me = this;
+
+            // SET FORM META
+            if (typeof me.metaDatasource === "undefined") {
+                me.meta = me.metaDefinition;
+                me.formatBody();
+            } else {
+                var data = EV.getComponent("data");
+
+                data.ExecuteSource({
+                    url: me.metaDatasource,
+                    loadComplete: function (obj, response) {
+                        me.meta = response;
+                        me.formatBody();
+                        setTimeout(function () {
+                            updateDom();
+                        }, 500);
+                    }
+                });
+            }
+        }
+    });
+</script>

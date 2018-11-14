@@ -6,6 +6,9 @@ String.prototype.replaceAll = function (searchStr, replaceStr) {
 
     return str.replace(new RegExp(searchStr, 'gi'), replaceStr);
 };
+function clone(src) {
+    return Object.assign({}, src);
+}
 
 jQuery.fn.apiload = function (url, params, callback) {
     var selector, type, response,
@@ -71,15 +74,11 @@ jQuery.fn.apiload = function (url, params, callback) {
     return this;
 };
 
-var vueApp;
 function updateDom() {
-    if ($(".vue-app").length>0)
-        vueApp = new Vue({el: '.vue-app'});
-
     $.material.init();
     if ($(".selectpicker").length != 0) {
         $(".selectpicker").selectpicker();
-    };
+    }
     $('.datepicker').datetimepicker({
         format: 'MM/DD/YYYY',
         icons: {
@@ -96,4 +95,37 @@ function updateDom() {
         }
     });
 
+}
+var NOTIF = {
+    show: function (text, type, icone, from, align) {
+        // type = ['rose', 'primary'];
+        if (typeof type === "undefined") type = "";
+        if (typeof icone === "undefined") icone = "notifications";
+        if (typeof from === "undefined") from = "top";
+        if (typeof align === "undefined") align = "center";
+        $.notify({
+            icon: icone,
+            message: text
+
+            }, {
+                type: type,
+                timer: 3000,
+                placement: {
+                    from: from,
+                    align: align
+                }
+        });
+    },
+    success: function success(text) {
+        this.show(text, 'success');
+    },
+    info: function success(text) {
+        this.show(text, 'info');
+    },
+    warning: function success(text) {
+        this.show(text, 'warning');
+    },
+    error: function success(text) {
+        this.show(text, 'danger');
+    }
 }
