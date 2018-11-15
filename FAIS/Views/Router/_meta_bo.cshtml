@@ -24,7 +24,7 @@
             </div>
             <div class="card-content">
                 <div class="tab-content">
-                    <div id="list" class="tab-pane active material-datatables">
+                    <div id="list" class="tab-pane active material-datatables">                        
                         <v-table ref="theTable" ref="editTable"
                                  datasource="metabo/"
                                  :column-ignore="['UPDATED_BY']"
@@ -51,7 +51,6 @@
         {{ row.VERSION }}
     </div>
 </script>
-    var vapp
 <script type="text/javascript">
     //my-detail-row
     Vue.component('my-detail-row', {
@@ -60,9 +59,10 @@
             row: Object
         },
     });
-    vapp = new Vue(
+    var vapp = new Vue(
         {
             el: '#my-vue-app',
+            store,
             methods: {
                 success: function () {
                     NOTIF.success('Objet enregistré avec succès.');
@@ -74,4 +74,5 @@
             }
         }
     );
+    console.log("vapp", vapp);
 </script>

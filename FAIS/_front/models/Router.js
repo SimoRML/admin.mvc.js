@@ -32,8 +32,13 @@ Router.prototype.Load = function (page) {
     me.$element.load(url, function (response, status, xhr) {
         me.Trigger("hide", "PagePreloader");
         if (status === "success") {
-            if ($(".vue-app").length > 0 && me.vueApp === null)
-                me.vueApp = new Vue({ el: '.vue-app' });
+            if ($(".vue-app").length > 0 && me.vueApp === null) {
+                me.vueApp = new Vue(
+                    {
+                        el: '.vue-app',
+                        store
+                    });
+            }
 
             updateDom();
             $("#menu a.selected").removeClass("selected");

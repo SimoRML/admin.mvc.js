@@ -2,11 +2,10 @@
     <div>
         <form id="v-form-id" onsubmit="return false;">
             <template v-for="field in meta">
-                <component 
-                           :is="field.FORM_TYPE" 
-                           v-if="field.FORM_SHOW==1" 
-                           @*v-model="body[field.DB_NAME]"*@ 
-                           v-bind="{model:body[field.DB_NAME],label:field.FORM_NAME,optional:field.FORM_OPTIONAL,datasource:field.FORM_SOURCE}"></component>
+                <component :is="field.FORM_TYPE"
+                           v-if="field.FORM_SHOW==1"
+                           v-bind="{formId:formId,bodykey:field.DB_NAME,label:field.FORM_NAME,optional:field.FORM_OPTIONAL,datasource:field.FORM_SOURCE}"
+                           v-on:changed="bindBack"></component>
             </template>
             <button type="submit" class="btn btn-fill btn-primary" v-on:click="submit">Envoyer<div class="ripple-container"></div></button>
             <button type="button" class="btn btn-fill btn-secondary" v-on:click="clear">Annuler<div class="ripple-container"></div></button>
@@ -28,19 +27,24 @@
             }
         },
         computed: {
-            
+            formId: function () {
+                return "FORM_" + Math.random().toString(36).substr(2, 9);
+            }
         },
         methods: {
             formatBody: function () {
                 for (var i in this.meta) {
-                    this.body[this.meta[i].DB_NAME] = 9;
+                    this.body[this.meta[i].DB_NAME] = 1;
                 }
+                this.$store.commit("fromBody", { formId:this.formId, body: clone(this.body) });
+                // this.$store.commit("fromBody", { formId:"FORM2", body: this.body });
+                // this.$store.commit("fromValue", { formId:"FORM2", key: "BO_NAME", value: "MY BO NAME !!!!" });
             },
             submit: function () {
                 var me = this;
                 var body = clone(me.body);
                 delete body.__ob__;
-                
+
                 var data = EV.getComponent("data");
 
                 data.Post({
@@ -56,13 +60,17 @@
             },
             clear: function () {
                 for (var i in this.body) {
-                    this.$set(this.body, i, null);
+                    this.body[i] = null;
                 }
+                this.$store.commit("fromBody", { formId: this.formId, body: clone(this.body) });
+            },
+            bindBack: function (key, value) {
+                this.body[key] = value;
             }
         },
         created: function () {
             var me = this;
-
+            // console.log("v-form:created", this.$store.getters.form("a"));
             // SET FORM META
             if (typeof me.metaDatasource === "undefined") {
                 me.meta = me.metaDefinition;

@@ -1,23 +1,26 @@
 ﻿<script type="text/javascript">
     var FormMixin = {
-        props: ['label', 'optional', 'datasource', 'value']
-        /*{
+        props: //['label', 'optional', 'datasource', 'value', '']
+        {
             label: String,
             optional: Number,
             datasource: String,
-            value: any
-        }*/,
+            // value: any
+            // body: Object,
+            bodykey: String,
+            formId: String
+        },
         data: function () {
             return {
                 data: null,
-                model: null
+                // model: this.body[this.bodykey]
             }
         },
         created: function () {
             var me = this;
             // console.log("created", me.$refs);
             // BIND MODEL
-            me.model = me.modelRef;
+            // me.model = me.modelRef;
 
             // GET AND POPULATE DATA SOURCE
             if (me.datasource !== null) {
@@ -41,10 +44,12 @@
         },
         methods: {
             bindBack: function (e) {
-                if(e.target.type ==="checkbox")
-                    this.$emit('input', e.target.checked ? 1 : 0);
+                if (e.target.type === "checkbox")
+                    this.$store.commit("fromValue", { formId: this.formId, key: this.bodykey, value: e.target.checked ? 1 : 0 });
+                    //this.$emit('input', e.target.checked ? 1 : 0);
                 else
-                    this.$emit('input', e.target.value);
+                    this.$store.commit("fromValue", { formId: this.formId, key: this.bodykey, value: e.target.value });
+                    // this.$emit('changed', this.bodykey, e.target.value);
             }
         }
     }
@@ -74,9 +79,10 @@
     <div class="form-group label-floating">
         <label class="control-label">{{ label }}<i v-show="isOptional"> - optionel</i></label>
         <input type="text" class="form-control"
-               :value="value"
+               :value="$store.state.form[formId][bodykey]"
                v-on:input="bindBack($event)"
                :required="!isOptional">
+        {{ $store.state.form[formId][bodykey] }}
     </div>
 </script>
 <script type="text/javascript">
@@ -105,7 +111,7 @@
         mixins: [FormMixin],
         data: function () {
             return {
-                selected: this.value
+                selected: this.$store.state.form[this.formId][this.bodykey]
             }
         },
         methods: {
@@ -160,7 +166,7 @@
         mixins: [FormMixin],
         computed: {
             isChecked: function () {
-                return this.value == 1;
+                return this.$store.state.form[this.formId][this.bodykey] == 1;
             }
         }
     });

@@ -524,6 +524,7 @@
     <Content Include="Content\sass\material-dashboard\_typography.scss" />
     <Content Include="Content\sass\material-dashboard\_variables.scss" />
     <Content Include="Scripts\vue.js" />
+    <Content Include="Scripts\vuex.js" />
     <Content Include="_front\main.js" />
     <Content Include="_front\models\BaseObject.js" />
     <Content Include="_front\models\DataSource.js" />
@@ -531,6 +532,7 @@
     <Content Include="_front\models\Environement.js" />
     <Content Include="_front\models\Router.js" />
     <Content Include="_front\models\Preloader.js" />
+    <Content Include="_front\store.js" />
     <Content Include="_front\util.js" />
     <EntityDeploy Include="Models\FAIS_MODEL.edmx">
       <Generator>EntityModelCodeGenerator</Generator>
