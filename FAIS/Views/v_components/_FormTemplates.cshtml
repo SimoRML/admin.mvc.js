@@ -1,0 +1,173 @@
+﻿<script type="text/javascript">
+    var FormMixin = {
+        props: //['label', 'optional', 'datasource', 'value', '']
+        {
+            label: String,
+            optional: Number,
+            datasource: String,
+            // value: any
+            // body: Object,
+            bodykey: String,
+            formId: String
+        },
+        data: function () {
+            return {
+                data: null,
+                // model: this.body[this.bodykey]
+            }
+        },
+        created: function () {
+            var me = this;
+            // console.log("created", me.$refs);
+            // BIND MODEL
+            // me.model = me.modelRef;
+
+            // GET AND POPULATE DATA SOURCE
+            if (me.datasource !== null) {
+                var data = EV.getComponent("data");
+                data.ExecuteSource({
+                    url: "metafield/SelectSource",
+                    method: "POST",
+                    data: me.datasource,
+                    loadComplete: function (obj, response) {
+                        me.data = response;
+                        if (me.$refs.selectpicker != null)
+                            me.setValue();
+                    }
+                });
+            }
+        },
+        computed: {
+            isOptional: function () {
+                return this.optional === 1;
+            }
+        },
+        methods: {
+            bindBack: function (e) {
+                if (e.target.type === "checkbox")
+                    this.$store.commit("fromValue", { formId: this.formId, key: this.bodykey, value: e.target.checked ? 1 : 0 });
+                    //this.$emit('input', e.target.checked ? 1 : 0);
+                else
+                    this.$store.commit("fromValue", { formId: this.formId, key: this.bodykey, value: e.target.value });
+                    // this.$emit('changed', this.bodykey, e.target.value);
+            }
+        }
+    }
+</script>
+
+
+@*-----------------------------------------------------------------------------------------------------EMAIL-----------------------*@
+<script id="v-email-template" type="text/template">
+    <div class="form-group label-floating">
+        <label class="control-label">{{ label }}<i v-show="isOptional"> - optionel</i></label>
+        <input type="email" class="form-control"
+               :value="value"
+               v-on:input="bindBack($event)"
+               :required="!isOptional">
+    </div>
+</script>
+<script type="text/javascript">
+    Vue.component('v-email', {
+        template: $("#v-email-template").html(),
+        mixins: [FormMixin]
+    });
+</script>
+
+
+@*-----------------------------------------------------------------------------------------------------TEXT-----------------------*@
+<script id="v-text-template" type="text/template">
+    <div class="form-group label-floating">
+        <label class="control-label">{{ label }}<i v-show="isOptional"> - optionel</i></label>
+        <input type="text" class="form-control"
+               :value="$store.state.form[formId][bodykey]"
+               v-on:input="bindBack($event)"
+               :required="!isOptional">
+        {{ $store.state.form[formId][bodykey] }}
+    </div>
+</script>
+<script type="text/javascript">
+    Vue.component('v-text', {
+        template: $("#v-text-template").html(),
+        mixins: [FormMixin]
+    });
+</script>
+
+@*-----------------------------------------------------------------------------------------------------SELECT-----------------------*@
+<script id="v-select-template" type="text/template">
+    <div class="form-group label-floating">
+        <label class="control-label">{{ label }}<i v-show="isOptional"> - optionel</i></label>
+        <select ref="selectpicker" class="selectpicker" data-style="select-with-transition" title="Choisir"
+                v-model="selected"
+                v-on:change="bindBack($event)"
+                :required="!isOptional">
+            <option disabled> Choisir </option>
+            <option v-for="item in data" :value="item.Value"> {{ item.Display }} </option>
+        </select>
+    </div>
+</script>
+<script type="text/javascript">
+    Vue.component('v-select', {
+        template: $("#v-select-template").html(),
+        mixins: [FormMixin],
+        data: function () {
+            return {
+                selected: this.$store.state.form[this.formId][this.bodykey]
+            }
+        },
+        methods: {
+            setValue: function () {
+                var me = this;
+                setTimeout(function () {
+                    me.$refs.selectpicker.value = me.selected;
+                    $(me.$refs.selectpicker).selectpicker('refresh');
+                }, 500);                
+            }
+        }
+    });
+
+</script>
+
+
+@*-----------------------------------------------------------------------------------------------------DatePicker-----------------------*@
+<script id="FormDatePickerTemplate" type="text/template">
+    <div class="form-group">
+        <label class="label-control">
+            {{ label }}<i v-show="isOptional"> - optionel</i>
+        </label>
+        <input type="text" class="form-control datepicker"
+               :value="value"
+               v-on:input="bindBack($event)"
+               :required="!isOptional" />
+    </div>
+</script>
+<script type="text/javascript">
+    Vue.component('form-datepicker-component', {
+        template: $("#FormDatePickerTemplate").html(),
+        mixins: [FormMixin]
+    });
+</script>
+
+@*-----------------------------------------------------------------------------------------------------checkbox-----------------------*@
+<script id="v-checkbox-template" type="text/template">
+    <div class="form-group">
+        <div class="checkbox">
+            <label>
+                <input type="checkbox" name="optionsCheckboxes"
+                       v-model="isChecked"
+                       v-on:change="bindBack($event)"
+                       :required="!isOptional">{{ label }}<i v-show="isOptional"> - optionel</i>
+            </label>
+        </div>
+    </div>
+</script>
+<script type="text/javascript">
+    Vue.component('v-checkbox', {
+        template: $("#v-checkbox-template").html(),
+        mixins: [FormMixin],
+        computed: {
+            isChecked: function () {
+                return this.$store.state.form[this.formId][this.bodykey] == 1;
+            }
+        }
+    });
+</script>

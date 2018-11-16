@@ -1,7 +1,8 @@
 function Router(id, target, options){
 	BaseObject.call(this,id,"Router");
 	this.target = target;
-	this.options = options || {};
+    this.options = options || {};
+    this.vueApp = null;
 }
 Router.prototype = Object.create(BaseObject.prototype);
 Router.prototype.Init = function () {
@@ -25,11 +26,20 @@ Router.prototype.Load = function (page) {
         else return;
     }
     var me = this;
+    me.vueApp = null;
     var url = page.replaceAll("#", "").replaceAll(".", "/"); // + "?v="+ (new Date().getTime());
     me.Trigger("show", "PagePreloader");
     me.$element.load(url, function (response, status, xhr) {
         me.Trigger("hide", "PagePreloader");
         if (status === "success") {
+            if ($(".vue-app").length > 0 && me.vueApp === null) {
+                me.vueApp = new Vue(
+                    {
+                        el: '.vue-app',
+                        store
+                    });
+            }
+
             updateDom();
             $("#menu a.selected").removeClass("selected");
             $("#menu a[href='" + page + "']").addClass("selected");

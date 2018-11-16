@@ -74,12 +74,28 @@ DataSource.prototype.ExecuteSource = function (source) {
                 source.loadComplete(me, response);
         })
         .fail(function (response) {
-            // console.log("fail", response);
             if (response.status === 401) {
                 me.logout();
             }
-            // LOAD COMPLETE
+            // CALL FAIL
             if (typeof source.fail === "function")
                 source.fail(response);
         });
 }
+
+DataSource.prototype.Get = function (source) {
+    source.method = "GET";
+    this.ExecuteSource(source);
+};
+DataSource.prototype.Post = function (source) {
+    source.method = "POST";
+    this.ExecuteSource(source);
+};
+DataSource.prototype.Put = function (source) {
+    source.method = "PUT";
+    this.ExecuteSource(source);
+};
+DataSource.prototype.Delete = function (source) {
+    source.method = "DELETE";
+    this.ExecuteSource(source);
+};

@@ -31,7 +31,7 @@
 
 
     <div class="wrapper">
-        <div id="sidebar" class="sidebar" data-active-color="rose" data-background-color="black" data-image="/Content/img/sidebar-4.jpg">
+        <div class="sidebar" data-active-color="green" data-background-color="black" data-image="/Content/img/sidebar-4.jpg">
             <!--
                 Tip 1: You can change the color of active element of the sidebar using: data-active-color="purple | blue | green | orange | red | rose"
                 Tip 2: you can also add an image using data-image tag
@@ -72,8 +72,16 @@
                         </div>
                     </div>
                 </div>
-
-                <v-menu :list="list"></v-menu>
+                <ul class="nav" id="testmenu">
+                    <template v-for="(item,cle) in list">
+                        <v-menu-item :cle="cle"
+                                     :href="item.href"
+                                     :parent="item.parent"
+                                     :text="item.text"
+                                     :icon="item.icon"
+                                     :childs="item.childs"></v-menu-item>
+                    </template>
+                </ul>
             </div>
         </div>
         <div class="main-panel">
@@ -150,7 +158,10 @@
                     </div>
                 </div>
             </nav>
-            <div class="content">
+            <div id="v-components" hidden>
+
+            </div>
+            <div id="v-content" class="content">
                 @RenderBody()
             </div>
             <footer class="footer">
@@ -226,17 +237,18 @@
 <!-- TagsInput Plugin -->
 <script src="~/Content/js/jquery.tagsinput.js"></script>
 <!-- Material Dashboard javascript methods -->
-<script src="~/Content/js/material-dashboard.js?V=1"></script>
+<script src="~/Content/js/material-dashboard.js"></script>
 <!-- Material Dashboard DEMO methods, don't include it in your project! -->
 
 <script src="~/Scripts/vue.js"></script>
+<script src="~/Scripts/vuex.js"></script>
+<script src="~/_front/store.js"></script>
+
 @Scripts.Render("~/bundles/_front-before")
 @Scripts.Render("~/bundles/_front")
 @Scripts.Render("~/bundles/_front-after")
 
-@Html.Partial("~/Views/Home/_FormTemplates.cshtml")
-@Html.Partial("~/Views/Home/_TableComponent.cshtml")
-@Html.Partial("~/Views/Home/_MenuComponent.cshtml")
+
 
 
 @RenderSection("scripts", required: false)
