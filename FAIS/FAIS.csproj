@@ -574,6 +574,8 @@
     <Content Include="Views\Bon\Home.cshtml" />
     <Content Include="Views\Router\_meta_bo.cshtml" />
     <Content Include="Views\v_components\_FormTemplates.cshtml" />
+    <Content Include="Views\v_components\_v_menu_item.cshtml" />
+    <Content Include="Views\Router\testmenu.cshtml" />
     <None Include="Views\v_components\_v_table.cshtml" />
     <None Include="Views\v_components\_v_form.cshtml" />
     <Content Include="Views\Router\_v_vomponents.cshtml" />

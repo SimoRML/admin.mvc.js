@@ -1,0 +1,50 @@
+﻿<script id="v-menu-item-template" type="text/template">
+    <li v-if="parent">
+        <a class="v-collapse-a" v-on:click="isOpen = !isOpen">
+            <i class="material-icons">{{ icon }}</i>
+            <p>
+                {{ text }}
+                <b class="caret"></b>
+            </p>
+        </a>
+        <div :class="'v-collapse ' + getOpenClass()">
+            <ul class="nav">
+                <li v-for="item in childs">
+                    <a :href="'#' + item.href">{{ item.text }}</a>
+                </li>
+            </ul>
+        </div>
+    </li>
+    <li v-else>
+        <a :href="href">
+            <i class="material-icons">{{ icon }}</i>
+            <p>{{ text }}</p>
+        </a>
+    </li>
+</script>
+<script type="text/javascript">
+    Vue.component('v-menu-item', {
+        template: $("#v-menu-item-template").html(),
+        props: {
+            parent: {
+                type: Boolean,
+                default: false
+            },
+            href: String,
+            icon: String,
+            text: String,
+            cle: undefined,
+            childs: Object
+        },
+        data: function () {
+            return {
+                isOpen: false
+            };
+        },
+        methods: {
+            getOpenClass: function () {
+                return this.isOpen ? "open" : "";
+            }
+        }
+    });
+</script>

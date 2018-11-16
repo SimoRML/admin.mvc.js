@@ -13,6 +13,10 @@ namespace FAIS.Controllers
         {
             return PartialView("_meta_bo");
         }
+        public PartialViewResult TestMenu()
+        {
+            return PartialView("testmenu");
+        }
 
         public PartialViewResult VComponents()
         {

@@ -44,3 +44,17 @@
 .i-btn-round:hover {
     background-color:#ddd;
 }
+
+.v-collapse-a{
+    cursor:pointer;
+}
+.v-collapse {
+    overflow: hidden;
+    height: 0px;
+    transition: height 0.5s;
+}
+.v-collapse.open {
+    overflow: hidden;
+    height: calc(100% - 10px);
+    transition: height 0.5s;
+}
