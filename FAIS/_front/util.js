@@ -73,10 +73,15 @@ jQuery.fn.apiload = function (url, params, callback) {
 
 var vueApp;
 function updateDom() {
-    if ($(".vue-app").length>0)
-        vueApp = new Vue({el: '.vue-app'});
+    if ($(".vue-app").length > 0)
+        vueApp = new Vue({ el: '.vue-app' });
 
     $.material.init();
+    md.initSidebarsCheck();
+    md.checkSidebarImage();
+    md.initMinimizeSidebar();
+    md.initSidebarsCheck();
+
     if ($(".selectpicker").length != 0) {
         $(".selectpicker").selectpicker();
     };
@@ -95,5 +100,8 @@ function updateDom() {
             inline: true
         }
     });
+
+
+
 
 }
