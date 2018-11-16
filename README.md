@@ -1,2 +1,2 @@
-# fais.vue
-fais vue js app
+# admin.mvc.js
+admin vue js app
