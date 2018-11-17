@@ -31,7 +31,7 @@
 
 
     <div class="wrapper">
-        <div class="sidebar" data-active-color="green" data-background-color="black" data-image="/Content/img/sidebar-4.jpg">
+        <div class="sidebar" id="sidebar" data-active-color="green" data-background-color="black" data-image="/Content/img/sidebar-4.jpg">
             <!--
                 Tip 1: You can change the color of active element of the sidebar using: data-active-color="purple | blue | green | orange | red | rose"
                 Tip 2: you can also add an image using data-image tag
@@ -72,7 +72,7 @@
                         </div>
                     </div>
                 </div>
-                <ul class="nav" id="testmenu">
+                <ul class="nav" id="MyMenu">
                     <template v-for="(item,cle) in list">
                         <v-menu-item :cle="cle"
                                      :href="item.href"

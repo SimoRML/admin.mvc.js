@@ -1,4 +1,11 @@
 $(function () {
+    // LOAD VUE COMPONENTS
+    $("#v-components").load("router/vcomponents", function (response, status, xhr) {
+        if (status === "success") LOAD();
+    });
+});
+
+function LOAD() {
     EV = new Environement("Accueil");
     var data = new DataSource("data", {
         baseUrl: "/api/",
@@ -15,7 +22,7 @@ $(function () {
                             list: response
                         }
                     });
-                  
+
                 }
 
             },
@@ -46,4 +53,4 @@ $(function () {
     ));
 
 
-});
+}
