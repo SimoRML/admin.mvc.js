@@ -13,7 +13,6 @@ function LOAD() {
             {
                 url: "Profile/Menu",
                 target: "#menu",
-                template: function (key, value) { return '<li><a href="#page.' + value.href + '">' + value.text + '</a></li>'; },
                 loadComplete: function (obj) {
                     obj.TriggerFor("Preloader", "hide");
                     obj.TriggerFor("Router", "LoadHomePage");
@@ -26,7 +25,6 @@ function LOAD() {
                     event: "click",
                 },
                 method: "POST",
-                template: function (key, value) { return '<li><a href="#page.' + value.href + '">' + value.text + '</a></li>'; },
                 loadComplete: function (obj) {
                     localStorage.clear();
                     location.reload();
