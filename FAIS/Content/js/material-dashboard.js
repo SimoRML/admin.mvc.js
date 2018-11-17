@@ -63,7 +63,9 @@ var seq2 = 0, delays2 = 80, durations2 = 500;
 
 
 $(document).ready(function () {
-
+    jqueryLoad();
+});
+function jqueryLoad() {
     $sidebar = $('.sidebar');
 
     $.material.init();
@@ -139,10 +141,7 @@ $(document).ready(function () {
             });
         });
     }
-
-
-});
-
+}
 // activate collapse right menu when the windows is resized
 $(window).resize(function () {
     md.initSidebarsCheck();

@@ -129,3 +129,10 @@ var NOTIF = {
         this.show(text, 'danger');
     }
 }
+
+function sideBarFix() {
+    if (isWindows) {
+        $('.sidebar .sidebar-wrapper, .main-panel').perfectScrollbar('destroy');
+        $('.sidebar .sidebar-wrapper, .main-panel').perfectScrollbar();
+    }
+}

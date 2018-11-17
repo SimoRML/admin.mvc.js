@@ -12,7 +12,6 @@ function LOAD() {
         sources: [
             {
                 url: "Profile/Menu",
-                //template: function(key, value){return '<li><a href="#page.'+value.href+'">'+value.text+'</a></li>';},
                 loadComplete: function (obj, response) {
                     obj.TriggerFor("Preloader", "hide");
                     obj.TriggerFor("Router", "LoadHomePage");
@@ -22,7 +21,7 @@ function LOAD() {
                             list: response
                         }
                     });
-
+                    sideBarFix();
                 }
 
             },
