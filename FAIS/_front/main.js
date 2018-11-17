@@ -12,11 +12,19 @@ function LOAD() {
         sources: [
             {
                 url: "Profile/Menu",
-                target: "#menu",
-                loadComplete: function (obj) {
+                //template: function(key, value){return '<li><a href="#page.'+value.href+'">'+value.text+'</a></li>';},
+                loadComplete: function (obj, response) {
                     obj.TriggerFor("Preloader", "hide");
                     obj.TriggerFor("Router", "LoadHomePage");
+                    var vmenu = new Vue({
+                        el: '#sidebar',
+                        data: {
+                            list: response
+                        }
+                    });
+
                 }
+
             },
             {
                 url: "Account/Logout",
@@ -42,4 +50,6 @@ function LOAD() {
             home: "#bon.home",
         }
     ));
+
+
 }

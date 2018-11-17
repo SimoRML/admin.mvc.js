@@ -32,10 +32,10 @@
  *
  * ========================================================= */
 
- (function(){
-     isWindows = navigator.platform.indexOf('Win') > -1 ? true : false;
+(function () {
+    isWindows = navigator.platform.indexOf('Win') > -1 ? true : false;
 
-     if (isWindows && !$('body').hasClass('sidebar-mini')){
+    if (isWindows && !$('body').hasClass('sidebar-mini')) {
         // if we are on windows OS we activate the perfectScrollbar function
         $('.sidebar .sidebar-wrapper, .main-panel').perfectScrollbar();
 
@@ -43,7 +43,7 @@
     } else {
         $('html').addClass('perfect-scrollbar-off');
     }
- })();
+})();
 
 var breakCards = true;
 
@@ -62,7 +62,7 @@ var seq = 0, delays = 80, durations = 500;
 var seq2 = 0, delays2 = 80, durations2 = 500;
 
 
-$(document).ready(function(){
+$(document).ready(function () {
 
     $sidebar = $('.sidebar');
 
@@ -73,7 +73,7 @@ $(document).ready(function(){
 
     md.initSidebarsCheck();
 
-    if($('body').hasClass('sidebar-mini')){
+    if ($('body').hasClass('sidebar-mini')) {
         md.misc.sidebar_mini_active = true;
     }
 
@@ -85,7 +85,7 @@ $(document).ready(function(){
     md.initMinimizeSidebar();
 
     //    Activate bootstrap-select
-    if($(".selectpicker").length != 0){
+    if ($(".selectpicker").length != 0) {
         $(".selectpicker").selectpicker();
     }
 
@@ -96,44 +96,44 @@ $(document).ready(function(){
     var tagClass = $('.tagsinput').data('color');
 
     $('.tagsinput').tagsinput({
-        tagClass: ' tag-'+ tagClass +' '
+        tagClass: ' tag-' + tagClass + ' '
     });
 
     //    Activate bootstrap-select
     $(".select").dropdown({ "dropdownClass": "dropdown-menu", "optionClass": "" });
 
-    $('.form-control').on("focus", function(){
+    $('.form-control').on("focus", function () {
         $(this).parent('.input-group').addClass("input-group-focus");
-    }).on("blur", function(){
+    }).on("blur", function () {
         $(this).parent(".input-group").removeClass("input-group-focus");
     });
 
 
-    if(breakCards == true){
+    if (breakCards == true) {
         // We break the cards headers if there is too much stress on them :-)
-        $('[data-header-animation="true"]').each(function(){
+        $('[data-header-animation="true"]').each(function () {
             var $fix_button = $(this)
             var $card = $(this).parent('.card');
 
-            $card.find('.fix-broken-card').click(function(){
+            $card.find('.fix-broken-card').click(function () {
                 console.log(this);
                 var $header = $(this).parent().parent().siblings('.card-header, .card-image');
 
                 $header.removeClass('hinge').addClass('fadeInDown');
 
-                $card.attr('data-count',0);
+                $card.attr('data-count', 0);
 
-                setTimeout(function(){
+                setTimeout(function () {
                     $header.removeClass('fadeInDown animate');
-                },480);
+                }, 480);
             });
 
-            $card.mouseenter(function(){
+            $card.mouseenter(function () {
                 var $this = $(this);
                 hover_count = parseInt($this.attr('data-count'), 10) + 1 || 0;
                 $this.attr("data-count", hover_count);
 
-                if (hover_count >= 20){
+                if (hover_count >= 20) {
                     $(this).children('.card-header, .card-image').addClass('hinge animated');
                 }
             });
@@ -144,7 +144,7 @@ $(document).ready(function(){
 });
 
 // activate collapse right menu when the windows is resized
-$(window).resize(function(){
+$(window).resize(function () {
     md.initSidebarsCheck();
 
     // reset the seq for charts drawing animations
@@ -153,23 +153,25 @@ $(window).resize(function(){
 });
 
 md = {
-    misc:{
+    misc: {
         navbar_menu_visible: 0,
         active_collapse: true,
         disabled_collapse_init: 0,
     },
 
-    checkSidebarImage: function(){
+    checkSidebarImage: function () {
+        console.log(0);
         $sidebar = $('.sidebar');
         image_src = $sidebar.data('image');
 
-        if(image_src !== undefined){
+        if (image_src !== undefined) {
             sidebar_container = '<div class="sidebar-background" style="background-image: url(' + image_src + ') "/>';
             $sidebar.append(sidebar_container);
         }
     },
 
-    initSliders: function(){
+    initSliders: function () {
+        console.log(1);
         // Sliders for demo purpose
         $('#sliderRegular').noUiSlider({
             start: 40,
@@ -181,7 +183,7 @@ md = {
         });
 
         $('#sliderDouble').noUiSlider({
-            start: [20, 60] ,
+            start: [20, 60],
             connect: true,
             range: {
                 min: 0,
@@ -190,9 +192,10 @@ md = {
         });
     },
 
-    initSidebarsCheck: function(){
-        if($(window).width() <= 991){
-            if($sidebar.length != 0){
+    initSidebarsCheck: function () {
+        console.log(2);
+        if ($(window).width() <= 991) {
+            if ($sidebar.length != 0) {
                 md.initRightMenu();
 
             } else {
@@ -202,83 +205,86 @@ md = {
 
     },
 
-    initMinimizeSidebar:function(){
+    initMinimizeSidebar: function () {
+        console.log(3);
 
         // when we are on a Desktop Screen and the collapse is triggered we check if the sidebar mini is active or not. If it is active then we don't let the collapse to show the elements because the elements from the collapse are showing on the hover state over the icons in sidebar mini, not on the click.
-        $('.sidebar .collapse').on('show.bs.collapse',function(){
-            if($(window).width() > 991 && md.misc.sidebar_mini_active == true){
+        $('.sidebar .collapse').on('show.bs.collapse', function () {
+            if ($(window).width() > 991 && md.misc.sidebar_mini_active == true) {
                 return false;
-            } else{
+            } else {
                 return true;
             }
         });
 
-        $('#minimizeSidebar').click(function(){
+        $('#minimizeSidebar').click(function () {
             var $btn = $(this);
 
-            if(md.misc.sidebar_mini_active == true){
+            if (md.misc.sidebar_mini_active == true) {
                 $('body').removeClass('sidebar-mini');
                 md.misc.sidebar_mini_active = false;
 
-                if(isWindows){
+                if (isWindows) {
                     $('.sidebar .sidebar-wrapper, .main-panel').perfectScrollbar();
                 }
 
-            }else{
+            } else {
 
-                $('.sidebar .collapse').collapse('hide').on('hidden.bs.collapse',function(){
-                    $(this).css('height','auto');
+                $('.sidebar .collapse').collapse('hide').on('hidden.bs.collapse', function () {
+                    $(this).css('height', 'auto');
                 });
 
-                if(isWindows){
+                if (isWindows) {
                     $('.sidebar .sidebar-wrapper, .main-panel').perfectScrollbar('destroy');
                 }
 
-                setTimeout(function(){
+                setTimeout(function () {
                     $('body').addClass('sidebar-mini');
 
-                    $('.sidebar .collapse').css('height','auto');
+                    $('.sidebar .collapse').css('height', 'auto');
                     md.misc.sidebar_mini_active = true;
-                },300);
+                }, 300);
             }
 
             // we simulate the window Resize so the charts will get updated in realtime.
-            var simulateWindowResize = setInterval(function(){
+            var simulateWindowResize = setInterval(function () {
                 window.dispatchEvent(new Event('resize'));
-            },180);
+            }, 180);
 
             // we stop the simulation of Window Resize after the animations are completed
-            setTimeout(function(){
+            setTimeout(function () {
                 clearInterval(simulateWindowResize);
-            },1000);
+            }, 1000);
         });
     },
 
-    checkScrollForTransparentNavbar: debounce(function() {
-            if($(document).scrollTop() > 260 ) {
-                if(transparent) {
-                    transparent = false;
-                    $('.navbar-color-on-scroll').removeClass('navbar-transparent');
-                }
-            } else {
-                if( !transparent ) {
-                    transparent = true;
-                    $('.navbar-color-on-scroll').addClass('navbar-transparent');
-                }
+    checkScrollForTransparentNavbar: debounce(function () {
+        console.log(4);
+        if ($(document).scrollTop() > 260) {
+            if (transparent) {
+                transparent = false;
+                $('.navbar-color-on-scroll').removeClass('navbar-transparent');
             }
+        } else {
+            if (!transparent) {
+                transparent = true;
+                $('.navbar-color-on-scroll').addClass('navbar-transparent');
+            }
+        }
     }, 17),
 
 
-    initRightMenu: debounce(function(){
+    initRightMenu: debounce(function () {
+        console.log(5);
         $sidebar_wrapper = $('.sidebar-wrapper');
 
-        if(!mobile_menu_initialized){
+        if (!mobile_menu_initialized) {
             $navbar = $('nav').find('.navbar-collapse').first().clone(true);
 
             nav_content = '';
             mobile_menu_content = '';
 
-            $navbar.children('ul').each(function(){
+            $navbar.children('ul').each(function () {
 
                 content_buff = $(this).html();
                 nav_content = nav_content + content_buff;
@@ -295,7 +301,7 @@ md = {
             $nav_content.insertBefore($sidebar_nav);
             $navbar_form.insertBefore($nav_content);
 
-            $(".sidebar-wrapper .dropdown .dropdown-menu > li > a").click(function(event) {
+            $(".sidebar-wrapper .dropdown .dropdown-menu > li > a").click(function (event) {
                 event.stopPropagation();
 
             });
@@ -305,7 +311,7 @@ md = {
 
             mobile_menu_initialized = true;
         } else {
-            if($(window).width() > 991){
+            if ($(window).width() > 991) {
                 // reset all the additions that we made for the sidebar wrapper only if the screen is bigger than 991px
                 $sidebar_wrapper.find('.navbar-form').remove();
                 $sidebar_wrapper.find('.nav-mobile-menu').remove();
@@ -314,46 +320,46 @@ md = {
             }
         }
 
-        if(!toggle_initialized){
+        if (!toggle_initialized) {
             $toggle = $('.navbar-toggle');
 
-            $toggle.click(function (){
+            $toggle.click(function () {
 
-                if(mobile_menu_visible == 1) {
+                if (mobile_menu_visible == 1) {
                     $('html').removeClass('nav-open');
 
                     $('.close-layer').remove();
-                    setTimeout(function(){
+                    setTimeout(function () {
                         $toggle.removeClass('toggled');
                     }, 400);
 
                     mobile_menu_visible = 0;
                 } else {
-                    setTimeout(function(){
+                    setTimeout(function () {
                         $toggle.addClass('toggled');
                     }, 430);
 
 
                     main_panel_height = $('.main-panel')[0].scrollHeight;
                     $layer = $('<div class="close-layer"></div>');
-                    $layer.css('height',main_panel_height + 'px');
+                    $layer.css('height', main_panel_height + 'px');
                     $layer.appendTo(".main-panel");
 
-                    setTimeout(function(){
+                    setTimeout(function () {
                         $layer.addClass('visible');
                     }, 100);
 
-                    $layer.click(function() {
+                    $layer.click(function () {
                         $('html').removeClass('nav-open');
                         mobile_menu_visible = 0;
 
                         $layer.removeClass('visible');
 
-                         setTimeout(function(){
+                        setTimeout(function () {
                             $layer.remove();
                             $toggle.removeClass('toggled');
 
-                         }, 400);
+                        }, 400);
                     });
 
                     $('html').addClass('nav-open');
@@ -367,16 +373,16 @@ md = {
     }, 200),
 
 
-    initBootstrapNavbarMenu: debounce(function(){
-
-        if(!bootstrap_nav_initialized){
+    initBootstrapNavbarMenu: debounce(function () {
+        console.log(6);
+        if (!bootstrap_nav_initialized) {
             $navbar = $('nav').find('.navbar-collapse').first().clone(true);
 
             nav_content = '';
             mobile_menu_content = '';
 
             //add the content from the regular header to the mobile menu
-            $navbar.children('ul').each(function(){
+            $navbar.children('ul').each(function () {
                 content_buff = $(this).html();
                 nav_content = nav_content + content_buff;
             });
@@ -395,40 +401,40 @@ md = {
             $navbar.find('button').removeClass('btn-round btn-fill btn-info btn-primary btn-success btn-danger btn-warning btn-neutral');
             $navbar.find('button').addClass('btn-simple btn-block');
 
-            $toggle.click(function (){
-                if(mobile_menu_visible == 1) {
+            $toggle.click(function () {
+                if (mobile_menu_visible == 1) {
                     $('html').removeClass('nav-open');
 
                     $('.close-layer').remove();
-                    setTimeout(function(){
+                    setTimeout(function () {
                         $toggle.removeClass('toggled');
                     }, 400);
 
                     mobile_menu_visible = 0;
                 } else {
-                    setTimeout(function(){
+                    setTimeout(function () {
                         $toggle.addClass('toggled');
                     }, 430);
 
                     $layer = $('<div class="close-layer"></div>');
                     $layer.appendTo(".wrapper-full-page");
 
-                    setTimeout(function(){
+                    setTimeout(function () {
                         $layer.addClass('visible');
                     }, 100);
 
 
-                    $layer.click(function() {
+                    $layer.click(function () {
                         $('html').removeClass('nav-open');
                         mobile_menu_visible = 0;
 
                         $layer.removeClass('visible');
 
-                         setTimeout(function(){
+                        setTimeout(function () {
                             $layer.remove();
                             $toggle.removeClass('toggled');
 
-                         }, 400);
+                        }, 400);
                     });
 
                     $('html').addClass('nav-open');
@@ -441,50 +447,50 @@ md = {
         }
     }, 500),
 
-    startAnimationForLineChart: function(chart){
-
-        chart.on('draw', function(data) {
-          if(data.type === 'line' || data.type === 'area') {
-            data.element.animate({
-              d: {
-                begin: 600,
-                dur: 700,
-                from: data.path.clone().scale(1, 0).translate(0, data.chartRect.height()).stringify(),
-                to: data.path.clone().stringify(),
-                easing: Chartist.Svg.Easing.easeOutQuint
-              }
-            });
-          } else if(data.type === 'point') {
+    startAnimationForLineChart: function (chart) {
+        console.log(7);
+        chart.on('draw', function (data) {
+            if (data.type === 'line' || data.type === 'area') {
+                data.element.animate({
+                    d: {
+                        begin: 600,
+                        dur: 700,
+                        from: data.path.clone().scale(1, 0).translate(0, data.chartRect.height()).stringify(),
+                        to: data.path.clone().stringify(),
+                        easing: Chartist.Svg.Easing.easeOutQuint
+                    }
+                });
+            } else if (data.type === 'point') {
                 seq++;
                 data.element.animate({
-                  opacity: {
-                    begin: seq * delays,
-                    dur: durations,
-                    from: 0,
-                    to: 1,
-                    easing: 'ease'
-                  }
+                    opacity: {
+                        begin: seq * delays,
+                        dur: durations,
+                        from: 0,
+                        to: 1,
+                        easing: 'ease'
+                    }
                 });
             }
         });
 
         seq = 0;
     },
-    startAnimationForBarChart: function(chart){
-
-        chart.on('draw', function(data) {
-          if(data.type === 'bar'){
-              seq2++;
-              data.element.animate({
-                opacity: {
-                  begin: seq2 * delays2,
-                  dur: durations2,
-                  from: 0,
-                  to: 1,
-                  easing: 'ease'
-                }
-              });
-          }
+    startAnimationForBarChart: function (chart) {
+        console.log(8);
+        chart.on('draw', function (data) {
+            if (data.type === 'bar') {
+                seq2++;
+                data.element.animate({
+                    opacity: {
+                        begin: seq2 * delays2,
+                        dur: durations2,
+                        from: 0,
+                        to: 1,
+                        easing: 'ease'
+                    }
+                });
+            }
         });
 
         seq2 = 0;
@@ -498,14 +504,15 @@ md = {
 // leading edge, instead of the trailing.
 
 function debounce(func, wait, immediate) {
-	var timeout;
-	return function() {
-		var context = this, args = arguments;
-		clearTimeout(timeout);
-		timeout = setTimeout(function() {
-			timeout = null;
-			if (!immediate) func.apply(context, args);
-		}, wait);
-		if (immediate && !timeout) func.apply(context, args);
-	};
+    console.log(10);
+    var timeout;
+    return function () {
+        var context = this, args = arguments;
+        clearTimeout(timeout);
+        timeout = setTimeout(function () {
+            timeout = null;
+            if (!immediate) func.apply(context, args);
+        }, wait);
+        if (immediate && !timeout) func.apply(context, args);
+    };
 };

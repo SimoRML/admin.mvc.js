@@ -14,6 +14,12 @@ namespace FAIS.Models
     
     public partial class META_BO
     {
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
+        public META_BO()
+        {
+            this.META_FIELD = new HashSet<META_FIELD>();
+        }
+    
         public long META_BO_ID { get; set; }
         public string BO_NAME { get; set; }
         public Nullable<int> VERSION { get; set; }
@@ -22,5 +28,8 @@ namespace FAIS.Models
         public string UPDATED_BY { get; set; }
         public Nullable<System.DateTime> UPDATED_DATE { get; set; }
         public string STATUS { get; set; }
+    
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<META_FIELD> META_FIELD { get; set; }
     }
 }

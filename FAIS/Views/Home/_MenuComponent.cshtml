@@ -1,0 +1,90 @@
+﻿<script id="v-menu-template" type="text/template">
+    <ul class="nav">
+        <li class="active">
+            <a data-toggle="collapse" href="#pagesExamples" aria-expanded="true">
+                <i class="material-icons">image</i>
+                <p>
+                    Pages
+                    <b class="caret"></b>
+                </p>
+            </a>
+            <div class="collapse in" id="pagesExamples">
+                <ul class="nav">
+                    <li>
+                        <a href="../pages/pricing.html">Pricing</a>
+                    </li>
+                    <li>
+                        <a href="../pages/timeline.html">Timeline</a>
+                    </li>
+                    <li>
+                        <a href="../pages/login.html">Login Page</a>
+                    </li>
+                    <li>
+                        <a href="../pages/register.html">Register Page</a>
+                    </li>
+                    <li>
+                        <a href="../pages/lock.html">Lock Screen Page</a>
+                    </li>
+                    <li class="active">
+                        <a href="../pages/user.html">User Profile</a>
+                    </li>
+                </ul>
+            </div>
+        </li>
+
+        <li v-for="li in list">
+            <a v-if="li.parent==false" :href="li.href">
+                <i class="material-icons">{{li.icon}}</i>
+                <p>
+                    {{li.text}}
+                </p>
+            </a>
+            <a v-else data-toggle="collapse" :href="'#'+ li.text+'Childs'" aria-expanded="true">
+                <i class="material-icons">{{li.icon}}</i>
+                <p>
+                    {{li.text}}
+                    <b v-if="li.parent==true" class="caret"></b>
+                </p>
+            </a>
+
+            <div v-if="li.parent==true" class="collapse in" :id="'#'+ li.text+'Childs'">
+                <ul class="nav">
+                    <li>
+                        <a href="../components/buttons.html">Buttons</a>
+                    </li>
+                    <li>
+                        <a href="../components/grid.html">Grid System</a>
+                    </li>
+                    <li>
+                        <a href="../components/panels.html">Panels</a>
+                    </li>
+                    <li>
+                        <a href="../components/sweet-alert.html">Sweet Alert</a>
+                    </li>
+                    <li>
+                        <a href="../components/notifications.html">Notifications</a>
+                    </li>
+                    <li>
+                        <a href="../components/icons.html">Icons</a>
+                    </li>
+                    <li>
+                        <a href="../components/typography.html">Typography</a>
+                    </li>
+                </ul>
+            </div>
+        </li>
+    </ul>
+
+</script>
+<script type="text/javascript">
+
+    Vue.component('v-menu', {
+        template: $("#v-menu-template").html(),
+        props: {
+            list: Object,
+        },
+        created: function () {
+
+        }
+    });
+</script>
