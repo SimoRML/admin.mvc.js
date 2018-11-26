@@ -1,0 +1,37 @@
+﻿<div class="col-md-6">
+    <div :class="FormMode.fieldsCssClass + ' card'">
+        <div class="card-header">
+            <h4 class="card-title">
+                Champs
+                <small>BO : </small>
+            </h4>
+        </div>
+        <div class="card-content">
+            <ul class="nav nav-pills nav-pills-warning">
+                <li class="active">
+                    <a id="fields-tab-list" href="#fields_table" data-toggle="tab">Liste</a>
+                </li>
+                <li>
+                    <a id="tab-fields-form" href="#fields_form" data-toggle="tab">Ajouter</a>
+                </li>
+            </ul>
+            <div class="tab-content">
+                <div class="tab-pane active" id="fields_table">
+                    <v-table ref="fieldsTable"
+                             :column-show="['FORM_NAME','FORM_TYPE']"
+                             :column-labels='{"FORM_NAME":"Nom","FORM_TYPE":"Type"}'
+                             action-component="fields-action"></v-table>
+                </div>
+                <div class="tab-pane" id="fields_form">
+                    <v-form ref="fieldsForm"
+                            :meta-definition="fieldsFormMetaDefinition"
+                            api="metafield/"
+                            v-on:submit-success="fieldsFormSuccess"
+                            v-on:submit-fail="fieldsFormError"
+                            v-on:before-submit="fieldsFormbeforeSubmit"
+                            v-on:update-mode="fieldsSwitchToUpdate"></v-form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -17,6 +17,19 @@ namespace FAIS.Controllers
 
             var menu = new
             {
+                Admin = new
+                {
+                    icon = "add_shopping_cart",
+                    text = "Administration",
+                    href = "home",
+                    User = User.Identity.Name,
+                    parent = true,
+                    childs = new
+                    {
+                        da = new { icon = "dashboard", text = "Meta Bo", href = "#router.metabo" },
+                    }
+                }
+                /*
                 Dashboard = new { icon = "dashboard", text = "Tableau de bord", href = "home", User = User.Identity.Name, parent = false },
 
                 Achat = new
@@ -152,7 +165,7 @@ namespace FAIS.Controllers
                         edition_da = new { icon = "dashboard", text = "Consommations valorisées / Article", href = "home" },
                         edition_bc = new { icon = "dashboard", text = "Consommations valorisées / Catégorie", href = "home" }
                     }
-                },
+                },*/
             };
             return this.Request.CreateResponse(
                 HttpStatusCode.OK,

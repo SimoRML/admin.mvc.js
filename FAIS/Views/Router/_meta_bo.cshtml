@@ -1,78 +1,360 @@
 ﻿<div class="row" id="my-vue-app">
-    <div class="col-lg-12 col-md-12">
-        <div class="card">
-            <div class="card-header card-header-tabs" data-background-color="blue">
-                <div class="nav-tabs-navigation">
-                    <div class="nav-tabs-wrapper">
-                        <span class="nav-tabs-title">Business objects</span>
-                        <ul class="nav nav-tabs" data-tabs="tabs">
-                            <li class="active">
-                                <a id="tab-list" href="#list" data-toggle="tab">
-                                    <i class="material-icons">line_weight</i> List
-                                    <div class="ripple-container"></div>
-                                </a>
-                            </li>
-                            <li class="">
-                                <a id="tab-form" href="#form" data-toggle="tab">
-                                    <i class="material-icons">create</i> Ajouter
-                                    <div class="ripple-container"></div>
-                                </a>
-                            </li>
-                        </ul>
+
+    <div class="col-md-12">
+        <div class="nav">
+            <ul class="nav nav-pills nav-pills-primary nav-pills-icons" role="tablist">
+                <!--
+                    color-classes: "nav-pills-primary", "nav-pills-info", "nav-pills-success", "nav-pills-warning","nav-pills-danger"
+                -->
+                <li class="active">
+                    <a id="tab-list" href="#list" role="tab" data-toggle="tab">
+                        <i class="material-icons">line_weight</i> Liste
+                    </a>
+                </li>
+                <li>
+                    <a id="tab-form" href="#form" role="tab" data-toggle="tab">
+                        <i class="material-icons">{{ FormMode.icon }}</i> {{ FormMode.tab }}
+                    </a>
+                </li>
+            </ul>
+        </div>
+        <div class="tab-content">
+            <div class="tab-pane active" id="list">
+                <div class="card">
+                    <div class="card-header">
+                        <h4 class="card-title">Liste des business objects</h4>
+                        <p class="category">
+                            Manage business objects
+                        </p>
+                    </div>
+                    <div class="card-content">
+                        <v-table ref="theTable"
+                                 datasource="metabo/"
+                                 :column-ignore="['UPDATED_BY','META_FIELD','STATUS','UPDATED_DATE','VERSION']"
+                                 :column-labels='{"META_BO_ID":"#","BO_NAME":"Nom","CREATED_BY":"Crée par","CREATED_DATE":"Le"}'
+                                 detail-row="meta-bo-detail-row"></v-table>
                     </div>
                 </div>
             </div>
-            <div class="card-content">
-                <div class="tab-content">
-                    <div id="list" class="tab-pane active material-datatables">                        
-                        <v-table ref="theTable" ref="editTable"
-                                 datasource="metabo/"
-                                 :column-ignore="['UPDATED_BY']"
-                                 :column-labels='{"META_BO_ID":"#"}'
-                                 detail-row="my-detail-row"></v-table>
-                    </div>
-                    <div id="form" class="tab-pane">
-                        <div class="col-lg-6 col-md-6" style="margin:0 auto">
-                            <v-form ref="theForm" meta-datasource="metafield/?bo_name=META_BO"
+            <div class="tab-pane" id="form">
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-header">
+                            <h4 class="card-title">{{ FormMode.title }}</h4>
+                            <p class="category">
+                                {{ FormMode.subtitle }}
+                            </p>
+                        </div>
+                        <div class="card-content">
+                            <v-form ref="theForm"
+                                    meta-datasource="metabo/GetDefinition/META_BO"
                                     api="metabo/"
-                                    v-on:submit-success="success()"
-                                    v-on:submit-fail="error()"></v-form>
+                                    v-on:submit-success="success"
+                                    v-on:submit-fail="error"
+                                    v-on:update-mode="switchToUpdate"
+                                    v-on:insert-mode="switchToInsert"></v-form>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <h4 class="card-title">Versions</h4>
+                            <p class="category">
+                                Gérer les versions du BO
+                            </p>
+                        </div>
+                        <div class="card-content">
+                            <v-table ref="versionsTable"
+                                     :column-show="['VERSIONS_ID','NUM','STATUS']"
+                                     :column-labels='{"VERSIONS_ID":"#","NUM":"N°"}'></v-table>
                         </div>
                     </div>
                 </div>
+
+                @Html.Partial("~/Views/Admin/MetaField.cshtml")
+                <v-form-source ref="test"></v-form-source>
             </div>
         </div>
     </div>
+
+
+
 </div>
 <style>
 </style>
-<script id="MyDetailRow" type="text/template">
+<script id="MetaBoDetailRow" type="text/template">
     <div>
-        {{ row.VERSION }}
+        <div class="col-md-4">
+            <dl class="dl-horizontal">
+                <dt>ID : </dt>
+                <dd>{{ row.META_BO_ID }}</dd>
+                <dt>Nom :</dt>
+                <dd>{{ row.BO_NAME }}</dd>
+                <dt>Statut :</dt>
+                <dd>{{ row.STATUS }}</dd>
+                <dt>Version :</dt>
+                <dd>{{ row.VERSION }}</dd>
+            </dl>
+        </div>
+        <div class="col-md-6">
+            <p>
+                <b>Crée le</b> {{ row.CREATED_DATE }} <b>par</b> {{ row.CREATED_BY }}
+                <br />
+                <b>Modifié le</b> {{ row.UPDATED_DATE }} <b>par</b> {{ row.UPDATED_BY }}
+            </p>
+        </div>
+        <div class="col-md-12">
+            <div class="pull-right">
+                <button type="button" class="btn btn-fill btn-primary btn-sm" v-on:click="edit(row.META_BO_ID)">Modifier</button>
+                <button type="button" class="btn btn-fill btn-success btn-sm">Valider</button>
+            </div>
+        </div>
+    </div>
+</script>
+<script id="fields-action-template" type="vue/template">
+    <div class="pull-right">
+        <button class="btn btn-primary btn-round btn-fab btn-fab-mini btn-fab-x-mini"
+                v-on:click="edit(row.META_FIELD_ID)">
+            <i class="material-icons">create</i>
+        </button>
+    </div>
+</script>
+
+<script id="form-source-template" type="text/template">
+    <div class="row" v-if="visible">
+        <div class="col-md-12">
+            <v-text label="Source do données" css-class="col-md-12" v-model="FORM_SOURCE.source" v-on:input="hendleInput"></v-text>
+            <v-text label="Champ valeur" css-class="col-md-6" v-model="FORM_SOURCE.value" v-on:input="hendleInput"></v-text>
+            <v-text label="Champ display" css-class="col-md-6" v-model="FORM_SOURCE.display" v-on:input="hendleInput"></v-text>
+            <v-text label="Filtre" optional="1" css-class="col-md-12" v-model="FORM_SOURCE.filter" v-on:input="hendleInput"></v-text>
+        </div>
     </div>
 </script>
 <script type="text/javascript">
-    //my-detail-row
-    Vue.component('my-detail-row', {
-        template: $("#MyDetailRow").html(),
+
+    //v-form-source
+    Vue.component('v-form-source', {
+        template: $("#form-source-template").html(),
+        props: {
+            visible: Boolean,
+            data: String
+        },
+        data: function () {
+            return {
+                //{source:"META_BO",value:"META_BO_ID",display:"BO_NAME",filter:"STATUS=1"}
+                FORM_SOURCE: {
+                    source: "",
+                    value: "",
+                    display: "",
+                    filter: "",
+                }
+            };
+        },
+        mixins: [MixinBase],
+        methods: {
+            hendleInput: function () {
+                //if (typeof bus.FORM_SOURCE === "undefined")
+                bus.FORM_SOURCE = this.FORM_SOURCE;
+            }
+        },
+        mounted: function () {
+            try { this.FORM_SOURCE = JSON.parse(this.data); } catch{ }
+            // console.log("MOUNTED v-form-source : ", this.data);
+            
+        }
+    });
+    Vue.component('fields-action', {
+        template: $("#fields-action-template").html(),
         props: {
             row: Object
         },
+        methods: {
+            edit: (id) => {
+                vapp.$refs.fieldsForm.Get(id);
+                $("#tab-fields-form").trigger("click");
+            }
+        }
     });
+
     var vapp = new Vue(
         {
             el: '#my-vue-app',
             store,
+            data: {
+                FormMode: {
+                    icon: "note_add",
+                    tab: "Ajouter",
+                    title: "Business object",
+                    subtitle: "Créer un nouveau business object",
+                    fieldsCssClass: "disable",
+                }
+            },
             methods: {
-                success: function () {
+                // --------------------------------------- BO SECTION
+                success: function (response) {
                     NOTIF.success('Objet enregistré avec succès.');
-                    $("#tab-list").trigger("click");
+                    if (this.$refs.theForm.mode() === "insert") {
+                        editFormMetaBo(response.META_BO_ID);
+                    } else $("#tab-list").trigger("click");
+
+                    this.$refs.theTable.load();
                 },
                 error: function () {
                     NOTIF.error('Impossible d\'enregistré l\'objet !');
+                },
+                switchToUpdate: function (entity) {
+                    this.FormMode = {
+                        icon: "create",
+                        tab: "Modifier",
+                        title: "BO : " + entity.BO_NAME,
+                        subtitle: "Modifier / configurer le BO",
+                        fieldsCssClass: "",
+                    };
+                },
+                switchToInsert: function () {
+                    this.FormMode = {
+                        icon: "note_add",
+                        tab: "Ajouter",
+                        title: "Business object",
+                        subtitle: "Créer un nouveau business object",
+                        fieldsCssClass: "disable",
+                    };
+                },
+
+                //----------------------------------------- FIELDS SECTION
+                getFieldsUrl: function () {
+                    if (typeof this.$refs.theForm === "undefined")
+                        return "metafield/-1";
+                    else {
+                        console.log("getFieldsUrl", this.$refs.theForm.pk);
+
+                        return "metafield/" + this.$refs.theForm.pk.value;
+                    }
+                },
+                fieldsFormbeforeSubmit: function (body) {
+                    body.META_BO_ID = this.$refs.theForm.pk.value;
+                    body.DB_NAME = cleanDBName(body.GRID_NAME);
+                    body.DB_TYPE = FormTypeToDbType(body.FORM_TYPE);
+                    body.DB_NULL = body.FORM_OPTIONAL;
+                    body.GRID_SHOW = 1;
+                    body.FORM_NAME = body.GRID_NAME;
+                    if (body.FORM_TYPE === "v-select") body.FORM_SOURCE = JSON.stringify(cleanObject(bus.FORM_SOURCE));
+                    console.log("fieldsFormbeforeSubmit", body);
+                },
+                fieldsFormSuccess: function (response) {
+                    NOTIF.success('Champ enregistré avec succès.');
+                    vapp.$refs.fieldsTable.load("metafield/metabo/" + this.$refs.theForm.pk.value);
+                    $("#fields-tab-list").trigger("click");
+                },
+                fieldsFormError: function () {
+
+                },
+                fieldsSwitchToUpdate: function (entity) {
+                    
+                },
+            },
+            computed: {
+                fieldsFormMetaDefinition: function () {
+                    return [
+                        {
+                            DB_NAME: 'GRID_NAME',
+                            STATUS: 'ACTIVE',
+                            FORM_NAME: "Nom",
+                            FORM_TYPE: "v-text",
+                            FORM_SOURCE: null,
+                            FORM_SHOW: 1,
+                            FORM_OPTIONAL: 0,
+                        },
+                        {
+                            DB_NAME: 'META_BO_ID',
+                            STATUS: 'ACTIVE',
+                            FORM_TYPE: "v-hidden",
+                            FORM_SHOW: 1,
+                        },
+                        {
+                            DB_NAME: 'FORM_TYPE',
+                            STATUS: 'ACTIVE',
+                            FORM_NAME: "Type",
+                            FORM_TYPE: "v-select",
+                            FORM_SOURCE: [
+                                { Value: 'v-checkbox', Display: "Case à cocher" },
+                                { Value: 'v-datepicker', Display: "Date" },
+                                { Value: 'v-email', Display: "Email" },
+                                { Value: 'v-select', Display: "Liste de choix" },
+                                { Value: 'v-text', Display: "Text" },
+                            ],
+                            FORM_SHOW: 1,
+                            FORM_OPTIONAL: 0,
+                            after_component: {
+                                ref: "formSource",
+                                name: 'v-form-source',
+                                visible: false,
+                                model: "FORM_SOURCE"
+                            }
+                        },
+                        {
+                            DB_NAME: 'FORM_OPTIONAL',
+                            FORM_NAME: "Optionel",
+                            STATUS: 'ACTIVE',
+                            FORM_TYPE: "v-checkbox",
+                            FORM_SHOW: 1,
+                            DEFAULT: 1,
+                        },
+                        {
+                            DB_NAME: 'FORM_SOURCE',
+                            STATUS: 'ACTIVE',
+                            FORM_TYPE: "v-hidden",
+                            FORM_SHOW: 1,
+                        }
+                    ];
                 }
+            },
+            created: function () {
+                console.log("VueApp created");
+            },
+            mounted: function () {
+                var me = this;
+                bus.$on("FORM_TYPE-changed", (el) => {
+                    if (el.value == "v-select") {
+                        me.$refs.fieldsForm.execute(
+                            function (component) {
+                                // console.log("fieldsForm.execute", component);
+                                component.meta[2].after_component.visible = true;
+                            }
+                        );
+                    } else {
+                        me.$refs.fieldsForm.execute(
+                            function (component) {
+                                component.meta[2].after_component.visible = false;
+                            }
+                        );
+                    }
+                });
             }
         }
     );
-    console.log("vapp", vapp);
+    //my-detail-row
+    Vue.component('meta-bo-detail-row', {
+        template: $("#MetaBoDetailRow").html(),
+        props: {
+            row: Object,
+            columnLabels: Object
+        },
+        methods: {
+            edit: (id) => editFormMetaBo(id)
+        }
+    });
+
+
+    function editFormMetaBo(id) {
+        // THE FORM
+        vapp.$refs.theForm.Get(id);
+        // FIELDS TABLE
+        vapp.$refs.fieldsTable.load("metafield/metabo/" + id);
+        // versionsTable
+        vapp.$refs.versionsTable.load("versions/" + id);
+
+        $("#tab-form").trigger("click");
+        $("#container").scrollTop(0);
+    }
 </script>

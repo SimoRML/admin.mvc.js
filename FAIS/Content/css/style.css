@@ -58,3 +58,27 @@
     height: calc(100% - 10px);
     transition: height 0.5s;
 }
+.detailRow {
+    /*background: url(../img/canvas_bg.png);*/
+}
+
+
+.disable:before {
+    content: '';
+    background: #eee;
+    position: absolute;
+    left: 0;
+    right: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+    opacity: 0.8;
+}
+.btn-fab-x-mini {
+    height: 25px !important;
+    width: 25px !important;
+    min-width: 25px !important;
+}
+.btn-fab-x-mini .material-icons {
+    font-size: 12px !important;
+}

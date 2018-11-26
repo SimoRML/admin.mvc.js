@@ -118,7 +118,7 @@ function jqueryLoad() {
             var $card = $(this).parent('.card');
 
             $card.find('.fix-broken-card').click(function () {
-                console.log(this);
+                // console.log(this);
                 var $header = $(this).parent().parent().siblings('.card-header, .card-image');
 
                 $header.removeClass('hinge').addClass('fadeInDown');
@@ -159,7 +159,7 @@ md = {
     },
 
     checkSidebarImage: function () {
-        console.log(0);
+        // console.log(0);
         $sidebar = $('.sidebar');
         image_src = $sidebar.data('image');
 
@@ -170,7 +170,7 @@ md = {
     },
 
     initSliders: function () {
-        console.log(1);
+        // console.log(1);
         // Sliders for demo purpose
         $('#sliderRegular').noUiSlider({
             start: 40,
@@ -192,7 +192,7 @@ md = {
     },
 
     initSidebarsCheck: function () {
-        console.log(2);
+        // console.log(2);
         if ($(window).width() <= 991) {
             if ($sidebar.length != 0) {
                 md.initRightMenu();
@@ -205,7 +205,7 @@ md = {
     },
 
     initMinimizeSidebar: function () {
-        console.log(3);
+        // console.log(3);
 
         // when we are on a Desktop Screen and the collapse is triggered we check if the sidebar mini is active or not. If it is active then we don't let the collapse to show the elements because the elements from the collapse are showing on the hover state over the icons in sidebar mini, not on the click.
         $('.sidebar .collapse').on('show.bs.collapse', function () {
@@ -258,7 +258,7 @@ md = {
     },
 
     checkScrollForTransparentNavbar: debounce(function () {
-        console.log(4);
+        // console.log(4);
         if ($(document).scrollTop() > 260) {
             if (transparent) {
                 transparent = false;
@@ -274,7 +274,7 @@ md = {
 
 
     initRightMenu: debounce(function () {
-        console.log(5);
+        // console.log(5);
         $sidebar_wrapper = $('.sidebar-wrapper');
 
         if (!mobile_menu_initialized) {
@@ -373,7 +373,7 @@ md = {
 
 
     initBootstrapNavbarMenu: debounce(function () {
-        console.log(6);
+        // console.log(6);
         if (!bootstrap_nav_initialized) {
             $navbar = $('nav').find('.navbar-collapse').first().clone(true);
 
@@ -447,7 +447,7 @@ md = {
     }, 500),
 
     startAnimationForLineChart: function (chart) {
-        console.log(7);
+        // console.log(7);
         chart.on('draw', function (data) {
             if (data.type === 'line' || data.type === 'area') {
                 data.element.animate({
@@ -476,7 +476,7 @@ md = {
         seq = 0;
     },
     startAnimationForBarChart: function (chart) {
-        console.log(8);
+        // console.log(8);
         chart.on('draw', function (data) {
             if (data.type === 'bar') {
                 seq2++;
@@ -503,7 +503,7 @@ md = {
 // leading edge, instead of the trailing.
 
 function debounce(func, wait, immediate) {
-    console.log(10);
+    // console.log(10);
     var timeout;
     return function () {
         var context = this, args = arguments;

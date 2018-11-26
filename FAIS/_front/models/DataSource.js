@@ -54,9 +54,10 @@ DataSource.prototype.ExecuteSource = function (source) {
         settings["data"] = source["data"];
     }
 
-    // console.log("ExecuteSource", settings);
+    console.log("ExecuteSource", settings);
     $.ajax(settings)
         .done(function (response) {
+            console.log("ExecuteSource done", response);
             try { response = JSON.parse(response); } catch{ }
                 
             var html = "";

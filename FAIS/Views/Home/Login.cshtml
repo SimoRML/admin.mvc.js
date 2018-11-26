@@ -238,10 +238,12 @@
                     "content-type": "application/x-www-form-urlencoded",
                     "data": {},
                     loadComplete: function (obj, response) {
+                        console.log('loadComplete ', response);
                         localStorage.setItem("_tkn_", response.access_token);
                         window.location = "/";
                     },
                     fail: function (response) {
+                        console.log(response.status + ": ", response);
                         if (response.status === 400) {
                             alert("400: NOT AUTHORIZED");
                         }
