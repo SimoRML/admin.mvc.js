@@ -8,6 +8,7 @@
                         {{ getLabel(h) }}
                     </th>
                 </template>
+                <th v-if="actionComponentDefined"></th>
             </tr>
         </thead>
         <tbody>
@@ -23,10 +24,13 @@
                             {{ item[h] }} 
                         </td>
                     </template>
+                    <td v-if="actionComponentDefined">
+                        <component v-bind:is="actionComponent" v-bind="{row:item}"></component>
+                    </td>
                 </tr>
-                <tr v-if="detailRowDefined" v-show="showDetailRow[index] != null && showDetailRow[index]">
+                <tr  class="detailRow" v-if="detailRowDefined" v-show="showDetailRow[index] != null && showDetailRow[index]">
                     <td v-bind:colspan="columnCount">
-                        <component v-bind:is="detailRow" v-bind={row:item}></component>
+                        <component v-bind:is="detailRow" v-bind="{row:item, columnLabels: columnLabels}"></component>
                     </td>
                 </tr>
             </template>
@@ -39,8 +43,10 @@
         props: {
             datasource: String,
             columnIgnore: Array,
+            columnShow: Array,
             columnLabels: Object,
             detailRow: String,
+            actionComponent: String,
         },
         data: function () {
             return {
@@ -65,14 +71,37 @@
             },
             detailRowDefined: function() {
                 return this.detailRow != null;
+            },
+            actionComponentDefined: function () {
+                return this.actionComponent != null;
             }
         },
         methods: {
+            load: function (url) {
+                var me = this;
+                if (typeof me.datasource === "undefined" && typeof url === "undefined") return;
+                if (typeof url === "undefined") url = me.datasource;
+
+                var data = EV.getComponent("data");
+                data.ExecuteSource({
+                    url: url,
+                    loadComplete: function (obj, response) {
+                        me.list = response;
+                    }
+                });
+            },
             show: function (colName) {
-                return !this.columnIgnore.includes(colName);
+                if (typeof this.columnShow !== "undefined") {
+                    return this.columnShow.includes(colName);
+                } else {
+                    if (typeof this.columnIgnore === "undefined")
+                        return true;
+                    else
+                        return !this.columnIgnore.includes(colName);
+                }
             },
             getLabel: function (colName) {
-                if (typeof this.columnLabels[colName] === "undefined")
+                if (typeof this.columnLabels === "undefined" || typeof this.columnLabels[colName] === "undefined")
                     return colName;
                 else
                     return this.columnLabels[colName];
@@ -82,14 +111,7 @@
             }
         },
         created: function () {
-            var me = this;
-            var data = EV.getComponent("data");
-            data.ExecuteSource({
-                url: me.datasource,
-                loadComplete: function (obj, response) {
-                    me.list = response;
-                }
-            });
+            this.load();
         }
     });
 </script>

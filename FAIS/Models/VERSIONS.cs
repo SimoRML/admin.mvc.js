@@ -12,14 +12,18 @@ namespace FAIS.Models
     using System;
     using System.Collections.Generic;
     
-    public partial class BO
+    public partial class VERSIONS
     {
-        public long BO_ID { get; set; }
+        public long VERSIONS_ID { get; set; }
+        public Nullable<long> META_BO_ID { get; set; }
+        public int NUM { get; set; }
+        public string SQLQUERY { get; set; }
         public string CREATED_BY { get; set; }
         public Nullable<System.DateTime> CREATED_DATE { get; set; }
         public string UPDATED_BY { get; set; }
         public Nullable<System.DateTime> UPDATED_DATE { get; set; }
         public string STATUS { get; set; }
-        public string BO_TYPE { get; set; }
+    
+        public virtual META_BO META_BO { get; set; }
     }
 }

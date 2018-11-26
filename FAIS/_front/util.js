@@ -9,6 +9,11 @@ String.prototype.replaceAll = function (searchStr, replaceStr) {
 function clone(src) {
     return Object.assign({}, src);
 }
+function cleanObject(obj) {
+    var tmp = clone(obj);
+    if (typeof tmp.__ob__ !== "undefined") delete tmp.__ob__;
+    return tmp;
+}
 
 jQuery.fn.apiload = function (url, params, callback) {
     var selector, type, response,
@@ -94,7 +99,7 @@ function updateDom() {
             inline: true
         }
     });
-
+    $("input").trigger("change");
 }
 var NOTIF = {
     show: function (text, type, icone, from, align) {
@@ -134,5 +139,44 @@ function sideBarFix() {
     if (isWindows) {
         $('.sidebar .sidebar-wrapper, .main-panel').perfectScrollbar('destroy');
         $('.sidebar .sidebar-wrapper, .main-panel').perfectScrollbar();
+    }
+}
+
+var URL = {
+    addParam: function (url, param) {
+        return url + (url.indexOf("?") < 0 ? "?" : "&") + param;
+    },
+    addPart: function (url, part) {
+        console.log("addPart : " + url, part);
+        return url + (url.slice(-1) === "/" ? "" : "/") + part;
+    }
+};
+
+function GetId() {
+    return '_' + Math.random().toString(36).substr(2, 9);
+};
+
+function cleanDBName(str) {
+    return str.replace(/[^a-zA-Z0-9 ]/g, "")
+        .replaceAll("  ", " ").replaceAll("  ", " ").replaceAll("  ", " ").replaceAll("  ", " ")
+        .replaceAll(" ", "_");
+}
+
+function FormTypeToDbType(formType) {
+    switch (formType) {
+        case 'v-text':
+            return "varchar(100)";
+        case 'v-text-area':
+            return "varchar(MAX)";
+        case 'v-select':
+            return "varchar(100)";
+        case 'v-checkbox':
+            return "int";
+        case 'v-datepicker':
+            return "DateTime";
+        case 'v-email':
+            return "varchar(100)";
+        default:
+            return "varchar(MAX)";
     }
 }
