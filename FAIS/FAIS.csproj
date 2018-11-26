@@ -236,10 +236,10 @@
     <Compile Include="Areas\HelpPage\XmlDocumentationProvider.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\ApiBonController.cs" />
+    <Compile Include="Controllers\BoController.cs" />
     <Compile Include="Controllers\BonController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\MetaBoController.cs" />
-    <Compile Include="Controllers\MetaFieldController.cs" />
     <Compile Include="Controllers\ProfileManagerController.cs" />
     <Compile Include="Controllers\RouterController.cs" />
     <Compile Include="Controllers\ValuesController.cs" />
@@ -252,6 +252,7 @@
     <Compile Include="Models\BO.cs">
       <DependentUpon>FAIS_MODEL.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\BORepository.cs" />
     <Compile Include="Models\BO_CHILDS.cs">
       <DependentUpon>FAIS_MODEL.tt</DependentUpon>
     </Compile>
@@ -277,6 +278,7 @@
     <Compile Include="Models\META_FIELD.cs">
       <DependentUpon>FAIS_MODEL.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\SGBD.cs" />
     <Compile Include="Models\VForm\VFormModels.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Providers\ApplicationOAuthProvider.cs" />
@@ -583,6 +585,7 @@
     <Content Include="Views\v_components\_FormTemplates.cshtml" />
     <Content Include="Views\v_components\_v_menu_item.cshtml" />
     <Content Include="Views\Router\testmenu.cshtml" />
+    <Content Include="Views\Bo\Index.cshtml" />
     <None Include="Views\v_components\_v_table.cshtml" />
     <None Include="Views\v_components\_v_form.cshtml" />
     <Content Include="Views\Router\_v_vomponents.cshtml" />

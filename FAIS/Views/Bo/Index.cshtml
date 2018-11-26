@@ -1,0 +1,56 @@
+﻿
+<div class="col-md-12">
+
+    <div class="nav-left">
+        <ul class="nav nav-pills nav-pills-icons nav-pills-icons" role="tablist">
+            <!--
+                color-classes: "nav-pills-primary", "nav-pills-info", "nav-pills-success", "nav-pills-warning","nav-pills-danger"
+            -->
+            <li class="active">
+                <a href="#description-1" role="tab" data-toggle="tab">
+                    <i class="material-icons">list</i> List
+                </a>
+            </li>
+            <li>
+                <a href="#schedule-1" role="tab" data-toggle="tab">
+                    <i class="material-icons">add</i> Ajouter
+                </a>
+            </li>
+
+        </ul>
+    </div>
+    <div class="tab-content">
+        <div class="tab-pane active" id="description-1">
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="card-title">Description about product</h4>
+                   
+                </div>
+                <div class="card-content">
+                    @ViewBag.name
+                    <v-table ref="theTable" ref="editTable"
+                             datasource="metabo/"
+                             :column-ignore="['UPDATED_BY']"
+                             :column-labels='{"META_BO_ID":"#"}'
+                             detail-row="my-detail-row"></v-table>
+                </div>
+            </div>
+        </div>
+        <div class="tab-pane " id="schedule-1">
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="card-title">Location of the product</h4>
+                    <p class="category">
+                        More information here
+                    </p>
+                </div>
+                <div class="card-content">
+                    Efficiently unleash cross-media information without cross-media value. Quickly maximize timely deliverables for real-time schemas.
+                    <br />
+                    <br /> Dramatically maintain clicks-and-mortar solutions without functional solutions.
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>

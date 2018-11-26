@@ -1,18 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data;
+﻿using FAIS.Models;
+using FAIS.Models.VForm;
+using System;
 using System.Data.Entity;
 using System.Data.Entity.Infrastructure;
 using System.Linq;
 using System.Net;
-using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web.Http;
 using System.Web.Http.Description;
-using FAIS.Models;
 
 namespace FAIS.Controllers
 {
+    [Authorize]
+    [RoutePrefix("api/metabo")]
     public class MetaBoController : ApiController
     {
         private FAISEntities db = new FAISEntities();
@@ -115,5 +115,67 @@ namespace FAIS.Controllers
         {
             return db.META_BO.Count(e => e.META_BO_ID == id) > 0;
         }
+
+        [HttpPost]
+        [Route("Filter")]
+        public async Task<IHttpActionResult> Filter(FilterModel model)
+        {
+            var meta = await db.META_BO.FindAsync(model.MetaBoID);
+            // var BoRepository = new BORepository(meta);
+
+            return Ok();
+        }
+
+        [HttpPost]
+        [Route("Crud")]
+        public async Task<IHttpActionResult> Insert(CrudModel model)
+        {
+            var meta = await db.META_BO.FindAsync(model.MetaBoID);
+
+            BO bo_model = new BO()
+            {
+
+                CREATED_BY = User.Identity.Name,
+                CREATED_DATE = DateTime.Now,
+                UPDATED_BY = User.Identity.Name,
+                UPDATED_DATE = DateTime.Now,
+                STATUS = "1",
+                BO_TYPE = model.MetaBoID.ToString()
+            };
+
+            db.BO.Add(bo_model);
+            await db.SaveChangesAsync();
+            int id = (int)bo_model.BO_ID;
+
+            model.MetaBO = meta;
+            model.Items.Add("BO_ID", id);
+            bool insert = model.Insert();
+            if (insert != false)
+            {
+                return Ok(model);
+            }
+            else
+            {
+                return Ok(model);
+
+            }
+        }
+        [HttpPut]
+        [Route("Crud/{id}")]
+        public async Task<IHttpActionResult> Update(long id, CrudModel model)
+        {
+            var meta = await db.META_BO.FindAsync(model.MetaBoID);
+
+            var BO_ToUpdate = db.BO.SingleOrDefault(bo => bo.BO_ID == id);
+
+            BO_ToUpdate.UPDATED_BY = User.Identity.Name;
+            BO_ToUpdate.UPDATED_DATE = DateTime.Now;
+            model.MetaBO = meta;
+            await db.SaveChangesAsync();
+            bool update = model.Update();
+            return Ok(model);
+        }
+
+       
     }
 }

@@ -28,7 +28,7 @@ namespace FAIS.Controllers
                     parent = true,
                     childs = new
                     {
-                        da = new { icon = "dashboard", text = "Demande d'achat", href = "home" },
+                        da = new { icon = "dashboard", text = "Demande d'achat", href = "bo.index.da" },
                         bc = new { icon = "dashboard", text = "Bon de commande", href = "home" },
                         br = new { icon = "dashboard", text = "Bon de reception", href = "home" },
                         ff = new { icon = "dashboard", text = "Facture fournisseur", href = "home" }

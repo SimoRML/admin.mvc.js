@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Net.Http;
+﻿using FAIS.Models;
 using System.Threading.Tasks;
 using System.Web.Http;
-using FAIS.Models;
 
 namespace FAIS.Controllers
 {
@@ -27,8 +22,8 @@ namespace FAIS.Controllers
                     "COLUMN_DEFAULT as [Default] ,case when COLUMNPROPERTY(object_id(TABLE_NAME), COLUMN_NAME, " + "'IsIdentity') = 1 then 'auto_increment' else '' end as [Extra] " +
                 " FROM INFORMATION_SCHEMA.Columns c                WHERE table_name = '" + id + "'";
 
-            // var Data = await db.Database.SqlQuery<DescribeTable>(req).ToListAsync();
-            // return Ok(Data);
+            //var Data = await db.Database.SqlQuery<DescribeTable>(req).ToListAsync();
+            //return Ok(Data);
             return Ok();
 
         }

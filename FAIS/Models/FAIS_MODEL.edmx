@@ -146,7 +146,6 @@
           <Property Name="UPDATED_BY" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
           <Property Name="UPDATED_DATE" Type="DateTime" Precision="3" />
           <Property Name="STATUS" Type="String" MaxLength="10" FixedLength="true" Unicode="false" />
-          <NavigationProperty Name="META_BO" Relationship="Self.FK__META_FIEL__META___59063A47" FromRole="META_FIELD" ToRole="META_BO" />
         </EntityType>
         <Association Name="FK__META_FIEL__META___59063A47">
           <End Role="META_BO" Type="Self.META_BO" Multiplicity="1" />
