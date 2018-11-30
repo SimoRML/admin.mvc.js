@@ -1,7 +1,8 @@
 ﻿<script id="v-form-template" type="text/template">
     <div>
         <form :id="elementId" onsubmit="return false;">
-            <template v-for="field in meta">
+            <template v-for="field in meta"
+                      v-if="field.FORM_SHOW==1 && field.STATUS.trim() !== 'DISABLED'">
                 @*BEFORE*@
                 <component v-if="typeof field.before_component !== 'undefined'"
                            :name="field.FORM_TYPE + '-before-' + elementId"
@@ -11,7 +12,6 @@
                 @*THE COMPONENET*@
                 <component :name="field.FORM_TYPE + '-' + elementId"
                            :is="field.FORM_TYPE"
-                           v-if="field.FORM_SHOW==1 && field.STATUS.trim() == 'ACTIVE'"
                            v-model="body[field.DB_NAME]"
                            v-bind="{id:field.DB_NAME,label:field.FORM_NAME,optional:field.FORM_OPTIONAL,datasource:field.FORM_SOURCE}"></component>
                 @*AFTER*@

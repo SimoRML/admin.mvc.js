@@ -49,6 +49,7 @@
                             <v-form ref="theForm"
                                     meta-datasource="metabo/GetDefinition/META_BO"
                                     api="metabo/"
+                                    v-on:before-submit="beforeSubmitBo"
                                     v-on:submit-success="success"
                                     v-on:submit-fail="error"
                                     v-on:update-mode="switchToUpdate"
@@ -66,7 +67,8 @@
                         <div class="card-content">
                             <v-table ref="versionsTable"
                                      :column-show="['VERSIONS_ID','NUM','STATUS']"
-                                     :column-labels='{"VERSIONS_ID":"#","NUM":"N°"}'></v-table>
+                                     :column-labels='{"VERSIONS_ID":"#","NUM":"N°"}'
+                                     action-component="versions-action"></v-table>
                         </div>
                     </div>
                 </div>
@@ -110,6 +112,16 @@
         </div>
     </div>
 </script>
+<script id="versions-action-template" type="vue/template">
+    <div class="pull-right">
+        <button class="btn btn-success btn-round btn-fab btn-fab-mini btn-fab-x-mini" 
+                title="Commit version"
+                v-if="row.STATUS.trim() === 'PENDING'"
+                v-on:click="commitVersion(row.VERSIONS_ID)">
+            <i class="material-icons">done_outline</i>
+        </button>
+    </div>
+</script>
 <script id="fields-action-template" type="vue/template">
     <div class="pull-right">
         <button class="btn btn-primary btn-round btn-fab btn-fab-mini btn-fab-x-mini"
@@ -122,6 +134,7 @@
 <script id="form-source-template" type="text/template">
     <div class="row" v-if="visible">
         <div class="col-md-12">
+            {{ FORM_SOURCE }}
             <v-text label="Source do données" css-class="col-md-12" v-model="FORM_SOURCE.source" v-on:input="hendleInput"></v-text>
             <v-text label="Champ valeur" css-class="col-md-6" v-model="FORM_SOURCE.value" v-on:input="hendleInput"></v-text>
             <v-text label="Champ display" css-class="col-md-6" v-model="FORM_SOURCE.display" v-on:input="hendleInput"></v-text>
@@ -163,6 +176,7 @@
         }
     });
 
+    // fields action
     Vue.component('fields-action', {
         template: $("#fields-action-template").html(),
         props: {
@@ -176,6 +190,43 @@
         }
     });
 
+    // version
+    Vue.component('versions-action', {
+        template: $("#versions-action-template").html(),
+        props: {
+            row: Object
+        },
+        methods: {
+            commitVersion: (id) => {
+                var me = this;
+                //vapp.$refs.fieldsForm.Get(id);
+                //$("#tab-fields-form").trigger("click");
+                NOTIF.confirm({
+                    title: "Valider la version ?",
+                    text: "Cette action est irréversible, êtes-vous sûr ?",
+                    valider: function () {
+                        var data = EV.getComponent("data");
+                        data.ExecuteSource({
+                            url: "versions/commit/" + id,
+                            method: "POST",
+                            loadComplete: function (obj, response) {
+                                NOTIF.success("Version validée avec succès.");
+                                vapp.$refs.versionsTable.load();
+                            },
+                            fail: function (response) {
+                                console.log(response);
+                                NOTIF.error("Server error ! " + response.responseJSON.ExceptionMessage);
+                            }
+                        });
+
+                        
+                    }
+                });
+            }
+        }
+    });
+
+    // vue
     var vapp = new Vue(
         {
             el: '#my-vue-app',
@@ -220,7 +271,9 @@
                         fieldsCssClass: "disable",
                     };
                 },
-
+                beforeSubmitBo: function (body) {
+                    body.BO_DB_NAME = cleanDBName(body.BO_NAME);
+                },
                 //----------------------------------------- FIELDS SECTION
                 getFieldsUrl: function () {
                     if (typeof this.$refs.theForm === "undefined")
@@ -237,6 +290,7 @@
                     body.DB_TYPE = FormTypeToDbType(body.FORM_TYPE);
                     body.DB_NULL = body.FORM_OPTIONAL;
                     body.GRID_SHOW = 1;
+                    body.FORM_SHOW = 1;
                     body.FORM_NAME = body.GRID_NAME;
                     if (body.FORM_TYPE === "v-select") body.FORM_SOURCE = JSON.stringify(cleanObject(bus.FORM_SOURCE));
                     console.log("fieldsFormbeforeSubmit", body);
@@ -298,6 +352,7 @@
                             STATUS: 'ACTIVE',
                             FORM_TYPE: "v-checkbox",
                             FORM_SHOW: 1,
+                            FORM_OPTIONAL: 1,
                             DEFAULT: 1,
                         },
                         {

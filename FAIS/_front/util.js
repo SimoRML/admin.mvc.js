@@ -112,14 +112,14 @@ var NOTIF = {
             icon: icone,
             message: text
 
-            }, {
+        }, {
                 type: type,
                 timer: 3000,
                 placement: {
                     from: from,
                     align: align
                 }
-        });
+            });
     },
     success: function success(text) {
         this.show(text, 'success');
@@ -132,6 +132,25 @@ var NOTIF = {
     },
     error: function success(text) {
         this.show(text, 'danger');
+    },
+    confirm: function (params) {
+        swal({
+            title: params.title,
+            text: params.text,
+            type: 'warning',
+            showCancelButton: true,
+            confirmButtonClass: 'btn btn-success',
+            cancelButtonClass: 'btn btn-danger',
+            confirmButtonText: 'Valider',
+            buttonsStyling: false
+        }).then(
+            function (a) {
+                params.valider();
+            },
+            function (dismiss) {
+                //console.log("dismiss", dismiss);
+            }
+        );
     }
 }
 
@@ -157,7 +176,11 @@ function GetId() {
 };
 
 function cleanDBName(str) {
-    return str.replace(/[^a-zA-Z0-9 ]/g, "")
+    return str
+        .replace(/[éèëê]/g, "e")
+        .replace(/[à]/g,"a")
+        .replace(/[ç]/g,"c")
+        .replace(/[^a-zA-Z0-9 ]/g, "")
         .replaceAll("  ", " ").replaceAll("  ", " ").replaceAll("  ", " ").replaceAll("  ", " ")
         .replaceAll(" ", "_");
 }

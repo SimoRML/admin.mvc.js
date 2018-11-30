@@ -28,7 +28,7 @@
                         <component v-bind:is="actionComponent" v-bind="{row:item}"></component>
                     </td>
                 </tr>
-                <tr  class="detailRow" v-if="detailRowDefined" v-show="showDetailRow[index] != null && showDetailRow[index]">
+                <tr class="detailRow" v-if="detailRowDefined" v-show="showDetailRow[index] != null && showDetailRow[index]">
                     <td v-bind:colspan="columnCount">
                         <component v-bind:is="detailRow" v-bind="{row:item, columnLabels: columnLabels}"></component>
                     </td>
@@ -52,6 +52,7 @@
             return {
                 list: [],
                 showDetailRow: [],
+                dataSourceUrl: ""
             }
         },
         computed: {
@@ -79,9 +80,10 @@
         methods: {
             load: function (url) {
                 var me = this;
-                if (typeof me.datasource === "undefined" && typeof url === "undefined") return;
-                if (typeof url === "undefined") url = me.datasource;
-
+                if (typeof me.dataSourceUrl === "undefined" && typeof url === "undefined") return;
+                if (typeof url === "undefined" && typeof me.dataSourceUrl !== "undefined") url = me.dataSourceUrl;
+                if (typeof url !== "undefined" && typeof me.dataSourceUrl === "undefined") me.dataSourceUrl = url;
+                console.log(url);
                 var data = EV.getComponent("data");
                 data.ExecuteSource({
                     url: url,
@@ -111,7 +113,7 @@
             }
         },
         created: function () {
-            console.log(0);
+            this.dataSourceUrl = this.datasource;
             this.load();
         }
     });
