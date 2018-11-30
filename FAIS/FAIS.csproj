@@ -241,6 +241,7 @@
     <Compile Include="Controllers\BonController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\MetaBoController.cs" />
+    <Compile Include="Controllers\MetaFieldController.cs" />
     <Compile Include="Controllers\ProfileManagerController.cs" />
     <Compile Include="Controllers\RouterController.cs" />
     <Compile Include="Controllers\ValuesController.cs" />

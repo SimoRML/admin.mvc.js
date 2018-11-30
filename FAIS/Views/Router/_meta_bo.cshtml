@@ -72,7 +72,6 @@
                 </div>
 
                 @Html.Partial("~/Views/Admin/MetaField.cshtml")
-                <v-form-source ref="test"></v-form-source>
             </div>
         </div>
     </div>
@@ -141,13 +140,7 @@
         },
         data: function () {
             return {
-                //{source:"META_BO",value:"META_BO_ID",display:"BO_NAME",filter:"STATUS=1"}
-                FORM_SOURCE: {
-                    source: "",
-                    value: "",
-                    display: "",
-                    filter: "",
-                }
+                FORM_SOURCE: null
             };
         },
         mixins: [MixinBase],
@@ -158,11 +151,18 @@
             }
         },
         mounted: function () {
-            try { this.FORM_SOURCE = JSON.parse(this.data); } catch{ }
-            // console.log("MOUNTED v-form-source : ", this.data);
-            
+            if (this.data == null) {
+                this.FORM_SOURCE = { source: "", value: "", display: "", filter: "" };
+            } else {
+                try {
+                    this.FORM_SOURCE = JSON.parse(this.data);
+                } catch{
+                    this.FORM_SOURCE = { source: "", value: "", display: "", filter: "" };
+                }
+            }
         }
     });
+
     Vue.component('fields-action', {
         template: $("#fields-action-template").html(),
         props: {
@@ -250,7 +250,7 @@
 
                 },
                 fieldsSwitchToUpdate: function (entity) {
-                    
+
                 },
             },
             computed: {
@@ -318,7 +318,7 @@
                     if (el.value == "v-select") {
                         me.$refs.fieldsForm.execute(
                             function (component) {
-                                // console.log("fieldsForm.execute", component);
+                                // console.log("fieldsForm.execute", component.meta[2]);
                                 component.meta[2].after_component.visible = true;
                             }
                         );

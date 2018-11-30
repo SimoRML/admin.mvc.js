@@ -74,7 +74,9 @@
             },
             submit: function () {
                 this.$emit("before-submit", this.body);
+                //   console.log("befor IF");
                 if (!document.getElementById(this.elementId).checkValidity()) return;
+                //   console.log("after IF");
                 var me = this;
                 var body = clone(me.body);
                 delete body.__ob__;
@@ -157,6 +159,7 @@
                 data.Get({
                     url: url,
                     loadComplete: function (obj, response) {
+                        if (typeof response.length === "number") response = response[0];
                         me.updateMode(response);
                         setTimeout(function () {
                             updateDom();

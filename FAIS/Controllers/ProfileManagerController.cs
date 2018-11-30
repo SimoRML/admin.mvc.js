@@ -27,9 +27,10 @@ namespace FAIS.Controllers
                     childs = new
                     {
                         da = new { icon = "dashboard", text = "Meta Bo", href = "#router.metabo" },
+                        bc = new { icon = "dashboard", text = "DA", href = "#bo.index.da" },
                     }
-                }
-                /*
+                },
+          /*      
                 Dashboard = new { icon = "dashboard", text = "Tableau de bord", href = "home", User = User.Identity.Name, parent = false },
 
                 Achat = new
