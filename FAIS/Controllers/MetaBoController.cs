@@ -8,12 +8,9 @@ using System.Data.Entity.Infrastructure;
 using System.IO;
 using System.Linq;
 using System.Net;
-using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web.Http;
 using System.Web.Http.Description;
-using FAIS.Models;
-using FAIS.Models.VForm;
 
 namespace FAIS.Controllers
 {
@@ -122,7 +119,8 @@ namespace FAIS.Controllers
             db.META_BO.Add(mETA_BO);
 
             // int lastVersion = db.VERSIONS.Where(x => x.META_BO_ID == mETA_BO.META_BO_ID).Max(x => x.NUM);
-            db.VERSIONS.Add(new VERSIONS() {
+            db.VERSIONS.Add(new VERSIONS()
+            {
                 META_BO_ID = mETA_BO.META_BO_ID,
                 NUM = 1,
                 SQLQUERY = File.ReadAllText(System.Web.Hosting.HostingEnvironment.MapPath("~/SQL/CreateTable.sql")),
@@ -177,9 +175,15 @@ namespace FAIS.Controllers
         }
 
         [HttpPost]
-        [Route("Crud")]
-        public async Task<IHttpActionResult> Insert(CrudModel model)
+        [Route("Crud/{id}")]
+        public async Task<IHttpActionResult> Insert(int id, Dictionary<string, object> Items)
         {
+            var model = new CrudModel()
+            {
+                MetaBoID = id,
+                Items = Items
+
+            };
             var meta = await db.META_BO.FindAsync(model.MetaBoID);
 
             BO bo_model = new BO()
@@ -195,10 +199,10 @@ namespace FAIS.Controllers
 
             db.BO.Add(bo_model);
             await db.SaveChangesAsync();
-            int id = (int)bo_model.BO_ID;
+            int id_ = (int)bo_model.BO_ID;
 
             model.MetaBO = meta;
-            model.Items.Add("BO_ID", id);
+            model.Items.Add("BO_ID", id_);
             bool insert = model.Insert();
             if (insert != false)
             {
@@ -226,6 +230,34 @@ namespace FAIS.Controllers
             return Ok(model);
         }
 
-       
+        [HttpGet]
+        [Route("Select/{Tname}")]
+        public async Task<IHttpActionResult> Select(string Tname)
+        {
+            var s = new SGBD();
+            var Gen = new BORepositoryGenerator();
+            var dt = s.Cmd(Gen.GenSelect(Tname));
+
+
+            return Ok(dt);
+        }
+
+        [HttpGet]
+        [Route("Crud/{id}/{param}")]
+        public async Task<IHttpActionResult> GetOne(long id, long param)
+        {
+
+
+            var s = new SGBD();
+            var Gen = new BORepositoryGenerator();
+            var meta = await db.META_BO.FindAsync(id);
+            Dictionary<string, object> bind = new Dictionary<string, object>();
+            bind.Add("BO_ID", param);
+            var dt = s.Cmd(Gen.GenSelectOne(meta.BO_NAME), bind);
+
+
+            return Ok(dt);
+        }
+
     }
 }

@@ -37,7 +37,7 @@ namespace FAIS.Models
             catch (Exception ex)
             {
                 // TODO LOG EXCEPTION
-                return null;
+                throw ex;
             }
         }
 

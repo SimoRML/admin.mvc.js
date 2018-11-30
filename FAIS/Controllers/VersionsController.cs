@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.Entity;
 using System.Data.Entity.Infrastructure;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -13,6 +14,8 @@ using FAIS.Models;
 
 namespace FAIS.Controllers
 {
+    [Authorize]
+    [RoutePrefix("api/Versions")]
     public class VersionsController : ApiController
     {
         private FAISEntities db = new FAISEntities();
@@ -28,7 +31,7 @@ namespace FAIS.Controllers
         public async Task<IHttpActionResult> GetVERSIONS(long id)
         {
             List<VERSIONS> vERSIONS = await db.VERSIONS.Where(x => x.META_BO_ID == id).ToListAsync();
-            if (vERSIONS.Count <=0)
+            if (vERSIONS.Count <= 0)
             {
                 return NotFound();
             }
@@ -99,6 +102,61 @@ namespace FAIS.Controllers
             db.VERSIONS.Remove(vERSIONS);
             await db.SaveChangesAsync();
 
+            return Ok(vERSIONS);
+        }
+
+        [HttpPost]
+        [Route("Commit/{id}")]
+        [ResponseType(typeof(VERSIONS))]
+        public async Task<IHttpActionResult> CommitVERSIONS(long id)
+        {
+            VERSIONS vERSIONS = await db.VERSIONS.FindAsync(id);
+            if (vERSIONS == null)
+            {
+                return NotFound();
+            }
+
+            META_BO mETA_BO = await db.META_BO.FindAsync(vERSIONS.META_BO_ID);
+            if (mETA_BO.META_FIELD.Count <= 0)
+            {
+                return BadRequest("No meta field found !");
+            }
+
+            var sqlQuery = File.ReadAllText(System.Web.Hosting.HostingEnvironment.MapPath("~/SQL/CreateTable.sql"));
+
+            var fields = "";
+            foreach (var f in mETA_BO.META_FIELD)
+            {
+                fields += string.Format(" [{0}] {1} {2} , "
+                    , f.DB_NAME
+                    , f.DB_TYPE
+                    , f.DB_NULL == 0 ? " NOT NULL " : " NULL "
+                    );
+            }
+
+            sqlQuery = sqlQuery
+                .Replace("{TABLE_NAME}", mETA_BO.BO_DB_NAME)
+                .Replace("{FIELDS}", fields)
+                .Replace("\r\n", " ")
+                .Replace("\r", " ")
+                .Replace("\n", " ")
+                ;
+            var s = new SGBD();
+            s.Cmd(sqlQuery);
+            s.Cmd(" update versions set STATUS='OLD' where META_BO_ID=" + vERSIONS.META_BO_ID);
+            
+            vERSIONS.STATUS = "ACTIVE";
+            db.VERSIONS.Add(new VERSIONS()
+            {
+                META_BO_ID = mETA_BO.META_BO_ID,
+                NUM = 1,
+                SQLQUERY = File.ReadAllText(System.Web.Hosting.HostingEnvironment.MapPath("~/SQL/CreateTable.sql")),
+                STATUS = "PENDING",
+                CREATED_BY = User.Identity.Name,
+                UPDATED_BY = User.Identity.Name,
+            });
+
+            db.SaveChanges();
             return Ok(vERSIONS);
         }
 

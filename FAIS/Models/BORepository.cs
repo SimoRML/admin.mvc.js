@@ -21,7 +21,7 @@ namespace FAIS.Models
 
         }
 
- 
+
 
 
         //public BORepository(META_BO metaBO)
@@ -53,27 +53,35 @@ namespace FAIS.Models
         private SGBD s = new SGBD();
         private META_BO metaBO;
 
-        public BORepositoryGenerator(META_BO metaBO)
-        {
-            this.metaBO = metaBO;
-        }
 
-        public string GenSelect()
+
+        public string GenSelect(string Tname)
         {
-            // TODO : Filter
+            // TODO : Filter 
             string select = "";
-            select = "select * from " + this.metaBO.BO_NAME + " ";
+            select = "select * from " + Tname + " ";
 
             return select;
         }
 
-        // TODO : GenInsert
+        //  : GenInsert
 
         public string GenInsert(string insetStatements)
         {
             return string.Format("insert into {0} {1} array()", this.metaBO.BO_NAME, insetStatements);
         }
 
+
+        // TODO GenSelectOne (Switch to filter Model)
+
+        public string GenSelectOne(string Tname)
+        {
+            // TODO : Filter 
+            string select = "";
+            select = "select * from " + Tname + " where BO_ID=@BO_ID";
+
+            return select;
+        }
 
         // TODO : GenUpdate
         // TODO : GenDelete

@@ -1,5 +1,6 @@
-﻿
-<div class="col-md-12">
+﻿@model FAIS.Models.META_BO
+
+<div class="col-md-12" id="my-vue-app">
 
     <div class="nav-left">
         <ul class="nav nav-pills nav-pills-icons nav-pills-icons" role="tablist">
@@ -7,12 +8,12 @@
                 color-classes: "nav-pills-primary", "nav-pills-info", "nav-pills-success", "nav-pills-warning","nav-pills-danger"
             -->
             <li class="active">
-                <a href="#description-1" role="tab" data-toggle="tab">
+                <a id="tab-list" href="#description-1" role="tab" data-toggle="tab">
                     <i class="material-icons">list</i> List
                 </a>
             </li>
             <li>
-                <a href="#schedule-1" role="tab" data-toggle="tab">
+                <a id="tab-form" href="#schedule-1" role="tab" data-toggle="tab">
                     <i class="material-icons">add</i> Ajouter
                 </a>
             </li>
@@ -24,33 +25,70 @@
             <div class="card">
                 <div class="card-header">
                     <h4 class="card-title">Description about product</h4>
-                   
+
                 </div>
                 <div class="card-content">
-                    @ViewBag.name
-                    <v-table ref="theTable" ref="editTable"
-                             datasource="metabo/"
-                             :column-ignore="['UPDATED_BY']"
-                             :column-labels='{"META_BO_ID":"#"}'
-                             detail-row="my-detail-row"></v-table>
+
+                    <v-table ref="_Table" datasource="metabo/select/@Model.BO_NAME"
+                             action-component="fields-action"></v-table>
+
                 </div>
             </div>
         </div>
         <div class="tab-pane " id="schedule-1">
             <div class="card">
                 <div class="card-header">
-                    <h4 class="card-title">Location of the product</h4>
-                    <p class="category">
-                        More information here
-                    </p>
+
                 </div>
                 <div class="card-content">
-                    Efficiently unleash cross-media information without cross-media value. Quickly maximize timely deliverables for real-time schemas.
-                    <br />
-                    <br /> Dramatically maintain clicks-and-mortar solutions without functional solutions.
+                    <v-form ref="theForm"
+                            meta-datasource="metabo/GetDefinition/@Model.BO_NAME"
+                            api="metabo/Crud/@Model.META_BO_ID"
+                            v-on:submit-success="success"
+                            v-on:submit-fail="error"></v-form>
                 </div>
             </div>
         </div>
 
     </div>
 </div>
+
+<script id="fields-action-template" type="vue/template">
+    <div class="pull-right">
+        <button class="btn btn-primary btn-round btn-fab btn-fab-mini btn-fab-x-mini"
+                v-on:click="edit(row.BO_ID)">
+            <i class="material-icons">create</i>
+        </button>
+    </div>
+</script>
+
+<script type="text/javascript">
+    var vapp = new Vue(
+        {
+            el: '#my-vue-app',
+            methods: {
+                success: function (response) {
+                    NOTIF.success('Objet enregistré avec succès.');
+                    $("#tab-list").trigger("click");
+                    this.$refs._Table.load();
+                },
+                error: function () {
+                    NOTIF.error('Impossible d\'enregistré l\'objet !');
+                }
+            }
+        });
+
+
+    Vue.component('fields-action', {
+        template: $("#fields-action-template").html(),
+        props: {
+            row: Object
+        },
+        methods: {
+            edit: (id) => {
+                vapp.$refs.theForm.Get(id);
+                $("#tab-form").trigger("click");
+            }
+        }
+    });
+</script>

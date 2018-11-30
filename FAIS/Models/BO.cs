@@ -12,25 +12,14 @@ namespace FAIS.Models
     using System;
     using System.Collections.Generic;
     
-    public partial class META_BO
+    public partial class BO
     {
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public META_BO()
-        {
-            this.META_FIELD = new HashSet<META_FIELD>();
-        }
-    
-        public long META_BO_ID { get; set; }
-        public string BO_NAME { get; set; }
-        public Nullable<int> VERSION { get; set; }
+        public long BO_ID { get; set; }
         public string CREATED_BY { get; set; }
         public Nullable<System.DateTime> CREATED_DATE { get; set; }
         public string UPDATED_BY { get; set; }
         public Nullable<System.DateTime> UPDATED_DATE { get; set; }
         public string STATUS { get; set; }
-        public string BO_DB_NAME { get; set; }
-    
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<META_FIELD> META_FIELD { get; set; }
+        public string BO_TYPE { get; set; }
     }
 }

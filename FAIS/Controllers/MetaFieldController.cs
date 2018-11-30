@@ -61,6 +61,7 @@ namespace FAIS.Controllers
                 return NotFound();
             }
 
+            if (metafeldDB.STATUS.Trim() == "NEW") metafeldDB.DB_NAME = model.DB_NAME;
             metafeldDB.DB_NULL = model.DB_NULL;
             metafeldDB.GRID_NAME = model.GRID_NAME;
             metafeldDB.FORM_NAME = model.FORM_NAME;
@@ -102,6 +103,7 @@ namespace FAIS.Controllers
             }
             mETA_FIELD.CREATED_BY = User.Identity.Name;
             mETA_FIELD.UPDATED_BY = User.Identity.Name;
+            mETA_FIELD.STATUS = "NEW";
             db.META_FIELD.Add(mETA_FIELD);
             await db.SaveChangesAsync();
 
