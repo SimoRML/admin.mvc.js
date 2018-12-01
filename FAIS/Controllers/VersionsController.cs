@@ -135,10 +135,12 @@ namespace FAIS.Controllers
             var sqlQuery = Helper.GetSQL("CreateTable.sql");
                 sqlQuery = string.Format(sqlQuery,
                 vERSIONS.VERSIONS_ID.ToString()
-                , mETA_BO.BO_DB_NAME
+                , mETA_BO.BO_DB_NAME + vERSIONS.NUM
                 , fields
                 , User.Identity.Name
-                , mETA_BO.META_BO_ID.ToString());
+                , mETA_BO.META_BO_ID.ToString()
+                , vERSIONS.NUM
+                , mETA_BO.BO_DB_NAME);
                 
             
             sqlQuery = sqlQuery.Replace("[SQLQUERY]", sqlQuery.Replace("'","''"));

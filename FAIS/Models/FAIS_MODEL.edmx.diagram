@@ -5,13 +5,13 @@
     <!-- Diagram content (shape and connector positions) -->
     <edmx:Diagrams>
       <Diagram DiagramId="3d63c9a22be342f0803a468b8356ded7" Name="Diagram1">
-        <EntityTypeShape EntityType="FAISModel.BO" Width="1.5" PointX="5.75" PointY="0.75" />
         <EntityTypeShape EntityType="FAISModel.BO_CHILDS" Width="1.5" PointX="5.75" PointY="4.75" />
-        <EntityTypeShape EntityType="FAISModel.META_BO" Width="1.5" PointX="0.75" PointY="4" />
         <EntityTypeShape EntityType="FAISModel.VERSIONS" Width="1.5" PointX="3" PointY="6.875" />
-        <AssociationConnector Association="FAISModel.FK__VERSIONS__META_B__4BAC3F29" />
         <EntityTypeShape EntityType="FAISModel.META_FIELD" Width="1.5" PointX="3" PointY="1" />
+        <EntityTypeShape EntityType="FAISModel.META_BO" Width="1.5" PointX="0.75" PointY="3.875" />
         <AssociationConnector Association="FAISModel.FK__META_FIEL__META___33D4B598" />
+        <AssociationConnector Association="FAISModel.FK__VERSIONS__META_B__4BAC3F29" />
+        <EntityTypeShape EntityType="FAISModel.BO" Width="1.5" PointX="5.375" PointY="0.75" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

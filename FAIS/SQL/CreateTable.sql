@@ -2,14 +2,14 @@
 
 	DECLARE @vid int set @vid={0};
 	DECLARE @meta_bo_id int set @meta_bo_id = {4};		
-	DECLARE @vnum int; set @vnum = (select max(num) from VERSIONS where META_BO_ID = @meta_bo_id);
-	DECLARE @table_name_version varchar(100) set @table_name_version = '{1}' + convert(varchar,(@vnum-1));
+	DECLARE @vnum int set @vnum = {5};
 	
-	if EXISTS(SELECT TABLE_NAME FROM FAIS.INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME='{1}') 
+	
+	if @vnum > 1
 	BEGIN
-		exec sp_rename '{1}', @table_name_version;
-		DROP VIEW VIEW_{1};
+		DROP VIEW VIEW_{6};
 	END;
+	
 
 	CREATE TABLE {1} (
 	[BO_ID] bigint NOT NULL,
@@ -30,6 +30,7 @@
 	update versions set STATUS='OLD', UPDATED_BY='{3}', UPDATED_DATE=getdate() where META_BO_ID=@meta_bo_id and STATUS not in('OLD');
 	update versions set STATUS='ACTIVE' , UPDATED_BY='{3}', UPDATED_DATE=getdate() where VERSIONS_ID = @vid;
 	update META_FIELD set STATUS='COMMITED V' + convert(varchar,@vid) where META_BO_ID = @meta_bo_id and STATUS = 'NEW';
+	update META_BO set [VERSION] = @vnum, UPDATED_BY='{3}', UPDATED_DATE=getdate()  where META_BO_ID = @meta_bo_id;
 	insert into versions(META_BO_ID, NUM, SQLQUERY, CREATED_BY, CREATED_DATE, STATUS) 
 				values(@meta_bo_id, @vnum+1, '[SQLQUERY]', '{3}', getdate(),'PENDING');
 

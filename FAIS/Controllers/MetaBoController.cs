@@ -44,7 +44,7 @@ namespace FAIS.Controllers
         public async Task<IHttpActionResult> GetDefinition(string id)
         {
             // META
-            META_BO mETA_BO = await db.META_BO.Where(x => x.BO_NAME == id).FirstOrDefaultAsync();
+            META_BO mETA_BO = await db.META_BO.Where(x => x.BO_DB_NAME == id).FirstOrDefaultAsync();
             if (mETA_BO == null)
             {
                 return NotFound();
