@@ -274,6 +274,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>FAIS_MODEL.edmx</DependentUpon>
     </Compile>
+    <Compile Include="Models\Helper.cs" />
     <Compile Include="Models\IdentityModels.cs" />
     <Compile Include="Models\META_BO.cs">
       <DependentUpon>FAIS_MODEL.tt</DependentUpon>
@@ -285,6 +286,7 @@
     <Compile Include="Models\VERSIONS.cs">
       <DependentUpon>FAIS_MODEL.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\VersionsModels.cs" />
     <Compile Include="Models\VForm\VFormModels.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Providers\ApplicationOAuthProvider.cs" />
@@ -541,6 +543,8 @@
     <Content Include="Content\sass\material-dashboard\_variables.scss" />
     <Content Include="Scripts\vue.js" />
     <Content Include="Scripts\vuex.js" />
+    <Content Include="SQL\CreateTable_v1.sql" />
+    <Content Include="SQL\CreateView.sql" />
     <Content Include="_front\main.js" />
     <Content Include="_front\mixin.js" />
     <Content Include="_front\models\BaseObject.js" />

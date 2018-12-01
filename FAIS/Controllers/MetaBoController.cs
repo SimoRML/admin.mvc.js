@@ -116,6 +116,7 @@ namespace FAIS.Controllers
                 return BadRequest(ModelState);
             }
 
+            mETA_BO.BO_DB_NAME += "_BO_";
             db.META_BO.Add(mETA_BO);
 
             // int lastVersion = db.VERSIONS.Where(x => x.META_BO_ID == mETA_BO.META_BO_ID).Max(x => x.NUM);
@@ -123,7 +124,7 @@ namespace FAIS.Controllers
             {
                 META_BO_ID = mETA_BO.META_BO_ID,
                 NUM = 1,
-                SQLQUERY = File.ReadAllText(System.Web.Hosting.HostingEnvironment.MapPath("~/SQL/CreateTable.sql")),
+                SQLQUERY = Helper.GetSQL("CreateTable.sql"),
                 STATUS = "PENDING",
                 CREATED_BY = User.Identity.Name,
                 UPDATED_BY = User.Identity.Name,
@@ -234,9 +235,16 @@ namespace FAIS.Controllers
         [Route("Select/{Tname}")]
         public async Task<IHttpActionResult> Select(string Tname)
         {
+            var meta = await db.META_BO.Where(x => x.BO_DB_NAME == Tname).FirstOrDefaultAsync();
+            if(meta == null)
+            {
+                return BadRequest();
+            }
+
+
             var s = new SGBD();
             var Gen = new BORepositoryGenerator();
-            var dt = s.Cmd(Gen.GenSelect(Tname));
+            var dt = s.Cmd(Gen.GenSelect(meta.BO_DB_NAME));
 
 
             return Ok(dt);

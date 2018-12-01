@@ -30,7 +30,7 @@ namespace FAIS.Controllers
         [ResponseType(typeof(List<VERSIONS>))]
         public async Task<IHttpActionResult> GetVERSIONS(long id)
         {
-            List<VERSIONS> vERSIONS = await db.VERSIONS.Where(x => x.META_BO_ID == id).ToListAsync();
+            List<VERSIONS> vERSIONS = await db.VERSIONS.Where(x => x.META_BO_ID == id).OrderByDescending(x=>x.VERSIONS_ID).ToListAsync();
             if (vERSIONS.Count <= 0)
             {
                 return NotFound();
@@ -122,8 +122,6 @@ namespace FAIS.Controllers
                 return BadRequest("No meta field found !");
             }
 
-            var sqlQuery = File.ReadAllText(System.Web.Hosting.HostingEnvironment.MapPath("~/SQL/CreateTable.sql"));
-
             var fields = "";
             foreach (var f in mETA_BO.META_FIELD)
             {
@@ -134,30 +132,22 @@ namespace FAIS.Controllers
                     );
             }
 
-            sqlQuery = sqlQuery
-                .Replace("{TABLE_NAME}", mETA_BO.BO_DB_NAME)
-                .Replace("{FIELDS}", fields)
-                .Replace("\r\n", " ")
-                .Replace("\r", " ")
-                .Replace("\n", " ")
-                ;
+            var sqlQuery = Helper.GetSQL("CreateTable.sql");
+                sqlQuery = string.Format(sqlQuery,
+                vERSIONS.VERSIONS_ID.ToString()
+                , mETA_BO.BO_DB_NAME
+                , fields
+                , User.Identity.Name
+                , mETA_BO.META_BO_ID.ToString());
+                
+            
+            sqlQuery = sqlQuery.Replace("[SQLQUERY]", sqlQuery.Replace("'","''"));
+
             var s = new SGBD();
             s.Cmd(sqlQuery);
-            s.Cmd(" update versions set STATUS='OLD' where META_BO_ID=" + vERSIONS.META_BO_ID);
-            
-            vERSIONS.STATUS = "ACTIVE";
-            db.VERSIONS.Add(new VERSIONS()
-            {
-                META_BO_ID = mETA_BO.META_BO_ID,
-                NUM = 1,
-                SQLQUERY = File.ReadAllText(System.Web.Hosting.HostingEnvironment.MapPath("~/SQL/CreateTable.sql")),
-                STATUS = "PENDING",
-                CREATED_BY = User.Identity.Name,
-                UPDATED_BY = User.Identity.Name,
-            });
+            s.Cmd(new VersionsModels().GenerateView(mETA_BO.BO_DB_NAME));
 
-            db.SaveChanges();
-            return Ok(vERSIONS);
+            return Ok();
         }
 
         protected override void Dispose(bool disposing)
