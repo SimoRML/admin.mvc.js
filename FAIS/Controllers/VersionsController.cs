@@ -1,4 +1,4 @@
-﻿using System;
+﻿using FAIS.Models;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Entity;
@@ -6,11 +6,9 @@ using System.Data.Entity.Infrastructure;
 using System.IO;
 using System.Linq;
 using System.Net;
-using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web.Http;
 using System.Web.Http.Description;
-using FAIS.Models;
 
 namespace FAIS.Controllers
 {
@@ -144,7 +142,7 @@ namespace FAIS.Controllers
             var s = new SGBD();
             s.Cmd(sqlQuery);
             s.Cmd(" update versions set STATUS='OLD' where META_BO_ID=" + vERSIONS.META_BO_ID);
-            
+
             vERSIONS.STATUS = "ACTIVE";
             db.VERSIONS.Add(new VERSIONS()
             {
@@ -173,7 +171,15 @@ namespace FAIS.Controllers
         {
             return db.VERSIONS.Count(e => e.VERSIONS_ID == id) > 0;
         }
+        [HttpPost]
+        [Route("gview/{id}")]
+        public async Task<IHttpActionResult> GenerateViews(long id)
+        {
+            VersionsModels view = new VersionsModels();
+            
 
-        public 
+            return Ok(view.GenerateView(null,null));
+        }
+
     }
 }

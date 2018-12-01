@@ -14,7 +14,7 @@ using System.Web.Http.Description;
 
 namespace FAIS.Controllers
 {
-    [Authorize]
+    
     [RoutePrefix("api/MetaBo")]
     public class MetaBoController : ApiController
     {
