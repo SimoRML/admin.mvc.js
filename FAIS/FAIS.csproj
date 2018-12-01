@@ -543,6 +543,7 @@
     <Content Include="Content\sass\material-dashboard\_variables.scss" />
     <Content Include="Scripts\vue.js" />
     <Content Include="Scripts\vuex.js" />
+    <Content Include="SQL\CreateTable_v1.sql" />
     <Content Include="SQL\CreateView.sql" />
     <Content Include="_front\main.js" />
     <Content Include="_front\mixin.js" />

@@ -28,6 +28,7 @@ namespace FAIS.Models
         public string FORM_SOURCE { get; set; }
         public Nullable<int> FORM_SHOW { get; set; }
         public Nullable<int> FORM_OPTIONAL { get; set; }
+        public Nullable<int> IS_FILTER { get; set; }
         public string CREATED_BY { get; set; }
         public Nullable<System.DateTime> CREATED_DATE { get; set; }
         public string UPDATED_BY { get; set; }

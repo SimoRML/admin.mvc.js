@@ -1,2 +1,3 @@
-﻿CREATE VIEW [View_{0}]
-AS {1}
+﻿CREATE VIEW [VIEW_{0}]
+AS
+{1}

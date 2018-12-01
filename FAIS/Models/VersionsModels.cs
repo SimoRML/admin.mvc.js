@@ -6,13 +6,13 @@ namespace FAIS.Models
     {
         //TODO Function (met)
 
-        public string GenerateView(META_BO metabo, VERSIONS version)
+        public string GenerateView(string tableName)
         {
             int nbrFields = 0;
             bool first = true;
             SGBD s = new SGBD();
             string select_ = "";
-            var dt = s.Cmd("SELECT * FROM sys.tables WHERE sys.tables.name  like 'KA%' order by create_date desc ");
+            var dt = s.Cmd("SELECT * FROM sys.tables WHERE sys.tables.name  like '" + tableName.Replace("'", "''") + "%' order by create_date desc ");
             if (dt.Rows.Count > 0)
             {
                 foreach (DataRow item in dt.Rows)
@@ -29,9 +29,7 @@ namespace FAIS.Models
                         select_ += "union select * ,";
                         if (nbrFields != fields.Rows.Count)
                         {
-
                             for (int i = 0; i < (nbrFields - fields.Rows.Count); i++)
-
                             {
                                 select_ += "null,";
                             }
@@ -41,10 +39,7 @@ namespace FAIS.Models
                 }
 
             }
-            string sqlQ = Helper.GetSQL("CreateView.sql");
-
-
-            return string.Format(sqlQ, "KA", select_);
+            return string.Format(Helper.GetSQL("CreateView.sql"), tableName, select_);
         }
     }
 }

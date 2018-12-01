@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.Entity;
 using System.Data.Entity.Infrastructure;
+using System.Data.Entity.Validation;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -61,11 +62,16 @@ namespace FAIS.Controllers
                 return NotFound();
             }
 
-            if (metafeldDB.STATUS.Trim() == "NEW") metafeldDB.DB_NAME = model.DB_NAME;
-            metafeldDB.DB_NULL = model.DB_NULL;
+            if (metafeldDB.STATUS.Trim() == "NEW")
+            {
+                metafeldDB.DB_NAME = model.DB_NAME;
+                metafeldDB.DB_NULL = model.DB_NULL;
+            }
+            if(metafeldDB.STATUS.Trim() == "NEW" || (metafeldDB.FORM_TYPE != "v-datepicker" & metafeldDB.FORM_TYPE != "v-checkbox"))
+                metafeldDB.FORM_TYPE = model.FORM_TYPE;
+
             metafeldDB.GRID_NAME = model.GRID_NAME;
             metafeldDB.FORM_NAME = model.FORM_NAME;
-            metafeldDB.FORM_TYPE = model.FORM_TYPE;
             metafeldDB.FORM_SOURCE = model.FORM_SOURCE;
             metafeldDB.FORM_OPTIONAL = model.FORM_OPTIONAL;
             metafeldDB.UPDATED_BY = User.Identity.Name;
@@ -88,6 +94,9 @@ namespace FAIS.Controllers
                 {
                     throw;
                 }
+            }catch (DbEntityValidationException ex)
+            {
+
             }
 
             return StatusCode(HttpStatusCode.NoContent);
