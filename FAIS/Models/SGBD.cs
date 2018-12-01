@@ -70,7 +70,7 @@ namespace FAIS.Models
             }
         }
 
-        public Boolean Update(string sqlQuery, Dictionary<string, object> parametres = null)
+        public string Update(string sqlQuery, Dictionary<string, object> parametres = null)
         {
             try
             {
@@ -87,7 +87,7 @@ namespace FAIS.Models
                         {
                             da.Fill(ds, "tbl");
 
-                            return true;
+                            return "true";
                         }
                     }
                 }
@@ -95,7 +95,7 @@ namespace FAIS.Models
             catch (Exception ex)
             {
                 // TODO LOG EXCEPTION
-                return false;
+                return ex.Message;
             }
         }
 

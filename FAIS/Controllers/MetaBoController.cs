@@ -5,7 +5,6 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.Entity;
 using System.Data.Entity.Infrastructure;
-using System.IO;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
@@ -14,7 +13,7 @@ using System.Web.Http.Description;
 
 namespace FAIS.Controllers
 {
-    [Authorize]
+
     [RoutePrefix("api/MetaBo")]
     public class MetaBoController : ApiController
     {
@@ -196,6 +195,7 @@ namespace FAIS.Controllers
                 UPDATED_DATE = DateTime.Now,
                 STATUS = "1",
                 BO_TYPE = model.MetaBoID.ToString()
+                
             };
 
             db.BO.Add(bo_model);
@@ -216,19 +216,29 @@ namespace FAIS.Controllers
             }
         }
         [HttpPut]
-        [Route("Crud/{id}")]
-        public async Task<IHttpActionResult> Update(long id, CrudModel model)
+        [Route("Crud/{id}/{bo_id}")]
+        public async Task<IHttpActionResult> Update(long id, long bo_id, Dictionary<string, object> Items)
         {
-            var meta = await db.META_BO.FindAsync(model.MetaBoID);
+            var model = new CrudModel()
+            {
+                MetaBoID = (int)id,
+                Items = Items
+            };
+            var meta = await db.META_BO.FindAsync(id);
 
-            var BO_ToUpdate = db.BO.SingleOrDefault(bo => bo.BO_ID == id);
+            var BO_ToUpdate = db.BO.SingleOrDefault(bo => bo.BO_ID == bo_id);
 
             BO_ToUpdate.UPDATED_BY = User.Identity.Name;
             BO_ToUpdate.UPDATED_DATE = DateTime.Now;
             model.MetaBO = meta;
             await db.SaveChangesAsync();
-            bool update = model.Update();
-            return Ok(model);
+
+            model.Items.Add("BO_ID", BO_ToUpdate.BO_ID);
+            string update_ = model.Update();
+            if (update_ == "true")
+                return Ok(model);
+            else
+                return InternalServerError(new Exception(update_));
         }
 
         [HttpGet]
@@ -236,7 +246,7 @@ namespace FAIS.Controllers
         public async Task<IHttpActionResult> Select(string Tname)
         {
             var meta = await db.META_BO.Where(x => x.BO_DB_NAME == Tname).FirstOrDefaultAsync();
-            if(meta == null)
+            if (meta == null)
             {
                 return BadRequest();
             }
@@ -261,7 +271,7 @@ namespace FAIS.Controllers
             var meta = await db.META_BO.FindAsync(id);
             Dictionary<string, object> bind = new Dictionary<string, object>();
             bind.Add("BO_ID", param);
-            var dt = s.Cmd(Gen.GenSelectOne(meta.BO_NAME), bind);
+            var dt = s.Cmd(Gen.GenSelectOne(meta.BO_DB_NAME), bind);
 
 
             return Ok(dt);

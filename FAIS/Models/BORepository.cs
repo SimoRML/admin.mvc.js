@@ -15,14 +15,11 @@ namespace FAIS.Models
 
         }
 
-        public bool ExecUpdate(string statement, Dictionary<string, object> items)
+        public string ExecUpdate(string statement, Dictionary<string, object> items)
         {
             return s.Update(statement, items);
 
         }
-
-
-
 
         //public BORepository(META_BO metaBO)
         //{
@@ -59,18 +56,10 @@ namespace FAIS.Models
         {
             // TODO : Filter 
             string select = "";
-            select = "select * from " + Tname + " ";
+            select = "select * from VIEW_" + Tname + " ";
 
             return select;
         }
-
-        //  : GenInsert
-
-        public string GenInsert(string insetStatements)
-        {
-            return string.Format("insert into {0} {1} array()", this.metaBO.BO_NAME, insetStatements);
-        }
-
 
         // TODO GenSelectOne (Switch to filter Model)
 
@@ -78,7 +67,7 @@ namespace FAIS.Models
         {
             // TODO : Filter 
             string select = "";
-            select = "select * from " + Tname + " where BO_ID=@BO_ID";
+            select = "select * from VIEW_" + Tname + " where BO_ID=@BO_ID";
 
             return select;
         }
