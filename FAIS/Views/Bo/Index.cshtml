@@ -29,7 +29,7 @@
                 </div>
                 <div class="card-content">
 
-                    <v-table ref="_Table" datasource="metabo/select/@Model.BO_NAME"
+                    <v-table ref="_Table" datasource="metabo/select/@Model.BO_DB_NAME"
                              action-component="fields-action"></v-table>
 
                 </div>
@@ -42,7 +42,7 @@
                 </div>
                 <div class="card-content">
                     <v-form ref="theForm"
-                            meta-datasource="metabo/GetDefinition/@Model.BO_NAME"
+                            meta-datasource="metabo/GetDefinition/@Model.BO_DB_NAME"
                             api="metabo/Crud/@Model.META_BO_ID"
                             v-on:submit-success="success"
                             v-on:submit-fail="error"></v-form>
@@ -72,8 +72,8 @@
                     $("#tab-list").trigger("click");
                     this.$refs._Table.load();
                 },
-                error: function () {
-                    NOTIF.error('Impossible d\'enregistré l\'objet !');
+                error: function (Response) {
+                    NOTIF.error('Impossible d\'enregistré l\'objet !<br>' + Response.responseJSON.ExceptionMessage);
                 }
             }
         });

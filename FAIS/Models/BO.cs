@@ -21,5 +21,6 @@ namespace FAIS.Models
         public Nullable<System.DateTime> UPDATED_DATE { get; set; }
         public string STATUS { get; set; }
         public string BO_TYPE { get; set; }
+        public string BO_TARGET { get; set; }
     }
 }

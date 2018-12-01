@@ -15,7 +15,7 @@ namespace FAIS.Controllers
         public PartialViewResult Index(string id)
 
         {
-            var meta = db.META_BO.Where(o => o.BO_NAME == id).FirstOrDefault();
+            var meta = db.META_BO.Where(o => o.BO_DB_NAME == id).FirstOrDefault();
 
 
             return PartialView(meta);
