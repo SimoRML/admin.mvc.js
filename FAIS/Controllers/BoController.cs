@@ -13,11 +13,10 @@ namespace FAIS.Controllers
         // GET: Bo
         [Route("Index/{id}")]
         public PartialViewResult Index(string id)
-
         {
+            id += "_BO_";
             var meta = db.META_BO.Where(o => o.BO_DB_NAME == id).FirstOrDefault();
-
-
+            
             return PartialView(meta);
         }
     }

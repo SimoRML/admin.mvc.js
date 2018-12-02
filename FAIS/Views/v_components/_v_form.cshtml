@@ -2,7 +2,7 @@
     <div>
         <form :id="elementId" onsubmit="return false;">
             <template v-for="field in meta"
-                      v-if="field.FORM_SHOW==1 && field.STATUS.trim() !== 'DISABLED'">
+                      v-if="field.FORM_SHOW==1 && field.STATUS.trim() !== 'DISABLED' && field.STATUS.trim() !== 'NEW'">
                 @*BEFORE*@
                 <component v-if="typeof field.before_component !== 'undefined'"
                            :name="field.FORM_TYPE + '-before-' + elementId"
@@ -65,8 +65,8 @@
                     if (this.meta[i].STATUS.trim().toLowerCase() == 'pk') {
                         this.pk.key = this.meta[i].DB_NAME;
                     } else {
-                        if (typeof this.meta[i].DEFAULT !== "undefined")
-                            this.body[this.meta[i].DB_NAME] = this.meta[i].DEFAULT;
+                        if (typeof this.meta[i].FORM_DEFAULT !== "undefined" && this.meta[i].FORM_DEFAULT != null)
+                            this.body[this.meta[i].DB_NAME] = this.meta[i].FORM_DEFAULT;
                         else
                             this.body[this.meta[i].DB_NAME] = null;
                     }

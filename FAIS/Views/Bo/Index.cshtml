@@ -1,94 +1,110 @@
 ﻿@model FAIS.Models.META_BO
 
-<div class="col-md-12" id="my-vue-app">
-
-    <div class="nav-left">
-        <ul class="nav nav-pills nav-pills-icons nav-pills-icons" role="tablist">
-            <!--
-                color-classes: "nav-pills-primary", "nav-pills-info", "nav-pills-success", "nav-pills-warning","nav-pills-danger"
-            -->
-            <li class="active">
-                <a id="tab-list" href="#description-1" role="tab" data-toggle="tab">
-                    <i class="material-icons">list</i> List
-                </a>
-            </li>
-            <li>
-                <a id="tab-form" href="#schedule-1" role="tab" data-toggle="tab">
-                    <i class="material-icons">add</i> Ajouter
-                </a>
-            </li>
-
-        </ul>
+@if (Model.STATUS == "PENDING")
+{
+    <div class="col-md-12" id="my-vue-app">
+        <div class="alert alert-warning">
+            <span>
+                <b> Warning - </b>
+                THE BUSINESS OBJECT IS PENDING SETUP !
+                <br />
+                YOU MUST COMMIT A VERSION TO START PRODUCTION.
+            </span>
+        </div>
     </div>
-    <div class="tab-content">
-        <div class="tab-pane active" id="description-1">
-            <div class="card">
-                <div class="card-header">
-                    <h4 class="card-title">Description about product</h4>
+}
+else
+{
+    <div class="col-md-12" id="my-vue-app">
 
-                </div>
-                <div class="card-content">
+        <div class="nav-left">
+            <ul class="nav nav-pills nav-pills-icons nav-pills-icons" role="tablist">
+                <!--
+                    color-classes: "nav-pills-primary", "nav-pills-info", "nav-pills-success", "nav-pills-warning","nav-pills-danger"
+                -->
+                <li class="active">
+                    <a id="tab-list" href="#description-1" role="tab" data-toggle="tab">
+                        <i class="material-icons">list</i> List
+                    </a>
+                </li>
+                <li>
+                    <a id="tab-form" href="#schedule-1" role="tab" data-toggle="tab">
+                        <i class="material-icons">add</i> Ajouter
+                    </a>
+                </li>
 
-                    <v-table ref="_Table" datasource="metabo/select/@Model.BO_DB_NAME"
-                             action-component="fields-action"></v-table>
+            </ul>
+        </div>
+        <div class="tab-content">
+            <div class="tab-pane active" id="description-1">
+                <div class="card">
+                    <div class="card-header">
+                        <h4 class="card-title">Description about product</h4>
 
+                    </div>
+                    <div class="card-content">
+
+                        <v-table ref="_Table" datasource="metabo/select/@Model.BO_DB_NAME"
+                                 action-component="fields-action"></v-table>
+
+                    </div>
                 </div>
             </div>
-        </div>
-        <div class="tab-pane " id="schedule-1">
-            <div class="card">
-                <div class="card-header">
+            <div class="tab-pane " id="schedule-1">
+                <div class="card">
+                    <div class="card-header">
 
-                </div>
-                <div class="card-content">
-                    <v-form ref="theForm"
-                            meta-datasource="metabo/GetDefinition/@Model.BO_DB_NAME"
-                            api="metabo/Crud/@Model.META_BO_ID"
-                            v-on:submit-success="success"
-                            v-on:submit-fail="error"></v-form>
+                    </div>
+                    <div class="card-content">
+                        <v-form ref="theForm"
+                                meta-datasource="metabo/GetDefinition/@Model.BO_DB_NAME"
+                                api="metabo/Crud/@Model.META_BO_ID"
+                                v-on:submit-success="success"
+                                v-on:submit-fail="error"></v-form>
+                    </div>
                 </div>
             </div>
+
         </div>
-
     </div>
-</div>
 
-<script id="fields-action-template" type="vue/template">
-    <div class="pull-right">
-        <button class="btn btn-primary btn-round btn-fab btn-fab-mini btn-fab-x-mini"
-                v-on:click="edit(row.BO_ID)">
-            <i class="material-icons">create</i>
-        </button>
-    </div>
-</script>
+    <script id="fields-action-template" type="vue/template">
+        <div class="pull-right">
+            <button class="btn btn-primary btn-round btn-fab btn-fab-mini btn-fab-x-mini"
+                    v-on:click="edit(row.BO_ID)">
+                <i class="material-icons">create</i>
+            </button>
+        </div>
+    </script>
 
-<script type="text/javascript">
-    var vapp = new Vue(
-        {
-            el: '#my-vue-app',
+    <script type="text/javascript">
+        var vapp = new Vue(
+            {
+                el: '#my-vue-app',
+                methods: {
+                    success: function (response) {
+                        NOTIF.success('Objet enregistré avec succès.');
+                        $("#tab-list").trigger("click");
+                        this.$refs._Table.load();
+                    },
+                    error: function (Response) {
+                        NOTIF.error('Impossible d\'enregistré l\'objet !<br>' + Response.responseJSON.ExceptionMessage);
+                    }
+                }
+            });
+
+
+        Vue.component('fields-action', {
+            template: $("#fields-action-template").html(),
+            props: {
+                row: Object
+            },
             methods: {
-                success: function (response) {
-                    NOTIF.success('Objet enregistré avec succès.');
-                    $("#tab-list").trigger("click");
-                    this.$refs._Table.load();
-                },
-                error: function (Response) {
-                    NOTIF.error('Impossible d\'enregistré l\'objet !<br>' + Response.responseJSON.ExceptionMessage);
+                edit: (id) => {
+                    vapp.$refs.theForm.Get(id);
+                    $("#tab-form").trigger("click");
                 }
             }
         });
-
-
-    Vue.component('fields-action', {
-        template: $("#fields-action-template").html(),
-        props: {
-            row: Object
-        },
-        methods: {
-            edit: (id) => {
-                vapp.$refs.theForm.Get(id);
-                $("#tab-form").trigger("click");
-            }
-        }
-    });
-</script>
+    </script>
+}

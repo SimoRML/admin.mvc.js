@@ -16,7 +16,7 @@
           <Property Name="UPDATED_DATE" Type="datetime" />
           <Property Name="STATUS" Type="char" MaxLength="10" />
           <Property Name="BO_TYPE" Type="varchar" MaxLength="100" />
-          <Property Name="BO_TARGET" Type="varchar" MaxLength="100" />
+          <Property Name="VERSION" Type="int" />
         </EntityType>
         <EntityType Name="BO_CHILDS">
           <Key>
@@ -37,7 +37,7 @@
           <Property Name="CREATED_DATE" Type="datetime" />
           <Property Name="UPDATED_BY" Type="varchar" MaxLength="100" />
           <Property Name="UPDATED_DATE" Type="datetime" />
-          <Property Name="STATUS" Type="char" MaxLength="10" />
+          <Property Name="STATUS" Type="varchar" MaxLength="50" />
           <Property Name="BO_DB_NAME" Type="varchar" MaxLength="50" />
         </EntityType>
         <EntityType Name="META_FIELD">
@@ -59,11 +59,13 @@
           <Property Name="FORM_SHOW" Type="int" />
           <Property Name="FORM_OPTIONAL" Type="int" />
           <Property Name="IS_FILTER" Type="int" />
+          <Property Name="FORM_DEFAULT" Type="varchar" MaxLength="100" />
           <Property Name="CREATED_BY" Type="varchar" MaxLength="100" Nullable="false" />
           <Property Name="CREATED_DATE" Type="datetime" />
           <Property Name="UPDATED_BY" Type="varchar" MaxLength="100" />
           <Property Name="UPDATED_DATE" Type="datetime" />
           <Property Name="STATUS" Type="varchar" MaxLength="50" />
+          <Property Name="VERSION" Type="int" />
         </EntityType>
         <EntityType Name="VERSIONS">
           <Key>
@@ -103,6 +105,9 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Function Name="MoveBoToCurrentVersion" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="BO_ID" Type="bigint" Mode="In" />
+        </Function>
         <EntityContainer Name="FAISModelStoreContainer">
           <EntitySet Name="BO" EntityType="Self.BO" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="BO_CHILDS" EntityType="Self.BO_CHILDS" Schema="dbo" store:Type="Tables" />
@@ -122,21 +127,6 @@
     <!-- CSDL content -->
     <edmx:ConceptualModels>
       <Schema Namespace="FAISModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
-        <EntityContainer Name="FAISEntities" annotation:LazyLoadingEnabled="true">
-          <EntitySet Name="BO_CHILDS" EntityType="FAISModel.BO_CHILDS" />
-          <EntitySet Name="VERSIONS" EntityType="FAISModel.VERSIONS" />
-          <EntitySet Name="META_FIELD" EntityType="FAISModel.META_FIELD" />
-          <EntitySet Name="META_BO" EntityType="FAISModel.META_BO" />
-          <AssociationSet Name="FK__META_FIEL__META___33D4B598" Association="FAISModel.FK__META_FIEL__META___33D4B598">
-            <End Role="META_BO" EntitySet="META_BO" />
-            <End Role="META_FIELD" EntitySet="META_FIELD" />
-          </AssociationSet>
-          <AssociationSet Name="FK__VERSIONS__META_B__4BAC3F29" Association="FAISModel.FK__VERSIONS__META_B__4BAC3F29">
-            <End Role="META_BO" EntitySet="META_BO" />
-            <End Role="VERSIONS" EntitySet="VERSIONS" />
-          </AssociationSet>
-          <EntitySet Name="BO" EntityType="FAISModel.BO" />
-        </EntityContainer>
         <EntityType Name="BO_CHILDS">
           <Key>
             <PropertyRef Name="BO_PARENT_ID" />
@@ -152,13 +142,46 @@
           <Property Name="VERSIONS_ID" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="META_BO_ID" Type="Int64" />
           <Property Name="NUM" Type="Int32" Nullable="false" />
-          <Property Name="SQLQUERY" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="SQLQUERY" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" Nullable="false" />
           <Property Name="CREATED_BY" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
           <Property Name="CREATED_DATE" Type="DateTime" Precision="3" />
           <Property Name="UPDATED_BY" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
           <Property Name="UPDATED_DATE" Type="DateTime" Precision="3" />
           <Property Name="STATUS" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
           <NavigationProperty Name="META_BO" Relationship="FAISModel.FK__VERSIONS__META_B__4BAC3F29" FromRole="VERSIONS" ToRole="META_BO" />
+        </EntityType>
+        <EntityContainer Name="FAISEntities" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="BO_CHILDS" EntityType="Self.BO_CHILDS" />
+          <EntitySet Name="VERSIONS" EntityType="Self.VERSIONS" />
+          <EntitySet Name="META_BO" EntityType="FAISModel.META_BO" />
+          <EntitySet Name="META_FIELD" EntityType="FAISModel.META_FIELD" />
+          <AssociationSet Name="FK__META_FIEL__META___33D4B598" Association="FAISModel.FK__META_FIEL__META___33D4B598">
+            <End Role="META_BO" EntitySet="META_BO" />
+            <End Role="META_FIELD" EntitySet="META_FIELD" />
+          </AssociationSet>
+          <AssociationSet Name="FK__VERSIONS__META_B__4BAC3F29" Association="FAISModel.FK__VERSIONS__META_B__4BAC3F29">
+            <End Role="META_BO" EntitySet="META_BO" />
+            <End Role="VERSIONS" EntitySet="VERSIONS" />
+          </AssociationSet>
+          <EntitySet Name="BO" EntityType="FAISModel.BO" />
+          <FunctionImport Name="MoveBoToCurrentVersion">
+            <Parameter Name="BO_ID" Mode="In" Type="Int64" />
+          </FunctionImport>
+        </EntityContainer>
+        <EntityType Name="META_BO">
+          <Key>
+            <PropertyRef Name="META_BO_ID" />
+          </Key>
+          <Property Name="META_BO_ID" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="BO_NAME" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="VERSION" Type="Int32" />
+          <Property Name="CREATED_BY" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="CREATED_DATE" Type="DateTime" Precision="3" />
+          <Property Name="UPDATED_BY" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="UPDATED_DATE" Type="DateTime" Precision="3" />
+          <Property Name="STATUS" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="BO_DB_NAME" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="META_FIELD" Relationship="FAISModel.FK__META_FIEL__META___33D4B598" FromRole="META_BO" ToRole="META_FIELD" />
         </EntityType>
         <EntityType Name="META_FIELD">
           <Key>
@@ -179,26 +202,13 @@
           <Property Name="FORM_SHOW" Type="Int32" />
           <Property Name="FORM_OPTIONAL" Type="Int32" />
           <Property Name="IS_FILTER" Type="Int32" />
+          <Property Name="FORM_DEFAULT" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
           <Property Name="CREATED_BY" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="false" />
           <Property Name="CREATED_DATE" Type="DateTime" Precision="3" />
           <Property Name="UPDATED_BY" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
           <Property Name="UPDATED_DATE" Type="DateTime" Precision="3" />
           <Property Name="STATUS" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-        </EntityType>
-        <EntityType Name="META_BO">
-          <Key>
-            <PropertyRef Name="META_BO_ID" />
-          </Key>
-          <Property Name="META_BO_ID" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="BO_NAME" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
           <Property Name="VERSION" Type="Int32" />
-          <Property Name="CREATED_BY" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
-          <Property Name="CREATED_DATE" Type="DateTime" Precision="3" />
-          <Property Name="UPDATED_BY" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
-          <Property Name="UPDATED_DATE" Type="DateTime" Precision="3" />
-          <Property Name="STATUS" Type="String" MaxLength="10" FixedLength="true" Unicode="false" />
-          <Property Name="BO_DB_NAME" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <NavigationProperty Name="META_FIELD" Relationship="FAISModel.FK__META_FIEL__META___33D4B598" FromRole="META_BO" ToRole="META_FIELD" />
         </EntityType>
         <Association Name="FK__META_FIEL__META___33D4B598">
           <End Type="FAISModel.META_BO" Role="META_BO" Multiplicity="1" />
@@ -235,7 +245,7 @@
           <Property Name="UPDATED_DATE" Type="DateTime" Precision="3" />
           <Property Name="STATUS" Type="String" MaxLength="10" FixedLength="true" Unicode="false" />
           <Property Name="BO_TYPE" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
-          <Property Name="BO_TARGET" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="VERSION" Type="Int32" />
         </EntityType>
       </Schema>
     </edmx:ConceptualModels>
@@ -246,49 +256,23 @@
           <EntitySetMapping Name="BO_CHILDS">
             <EntityTypeMapping TypeName="FAISModel.BO_CHILDS">
               <MappingFragment StoreEntitySet="BO_CHILDS">
-                <ScalarProperty Name="BO_CHILD_ID" ColumnName="BO_CHILD_ID" />
                 <ScalarProperty Name="BO_PARENT_ID" ColumnName="BO_PARENT_ID" />
+                <ScalarProperty Name="BO_CHILD_ID" ColumnName="BO_CHILD_ID" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="VERSIONS">
             <EntityTypeMapping TypeName="FAISModel.VERSIONS">
               <MappingFragment StoreEntitySet="VERSIONS">
-                <ScalarProperty Name="STATUS" ColumnName="STATUS" />
-                <ScalarProperty Name="UPDATED_DATE" ColumnName="UPDATED_DATE" />
-                <ScalarProperty Name="UPDATED_BY" ColumnName="UPDATED_BY" />
-                <ScalarProperty Name="CREATED_DATE" ColumnName="CREATED_DATE" />
-                <ScalarProperty Name="CREATED_BY" ColumnName="CREATED_BY" />
-                <ScalarProperty Name="SQLQUERY" ColumnName="SQLQUERY" />
-                <ScalarProperty Name="NUM" ColumnName="NUM" />
-                <ScalarProperty Name="META_BO_ID" ColumnName="META_BO_ID" />
                 <ScalarProperty Name="VERSIONS_ID" ColumnName="VERSIONS_ID" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="META_FIELD">
-            <EntityTypeMapping TypeName="FAISModel.META_FIELD">
-              <MappingFragment StoreEntitySet="META_FIELD">
-                <ScalarProperty Name="STATUS" ColumnName="STATUS" />
-                <ScalarProperty Name="UPDATED_DATE" ColumnName="UPDATED_DATE" />
-                <ScalarProperty Name="UPDATED_BY" ColumnName="UPDATED_BY" />
-                <ScalarProperty Name="CREATED_DATE" ColumnName="CREATED_DATE" />
-                <ScalarProperty Name="CREATED_BY" ColumnName="CREATED_BY" />
-                <ScalarProperty Name="IS_FILTER" ColumnName="IS_FILTER" />
-                <ScalarProperty Name="FORM_OPTIONAL" ColumnName="FORM_OPTIONAL" />
-                <ScalarProperty Name="FORM_SHOW" ColumnName="FORM_SHOW" />
-                <ScalarProperty Name="FORM_SOURCE" ColumnName="FORM_SOURCE" />
-                <ScalarProperty Name="FORM_TYPE" ColumnName="FORM_TYPE" />
-                <ScalarProperty Name="FORM_FORMAT" ColumnName="FORM_FORMAT" />
-                <ScalarProperty Name="FORM_NAME" ColumnName="FORM_NAME" />
-                <ScalarProperty Name="GRID_SHOW" ColumnName="GRID_SHOW" />
-                <ScalarProperty Name="GRID_FORMAT" ColumnName="GRID_FORMAT" />
-                <ScalarProperty Name="GRID_NAME" ColumnName="GRID_NAME" />
-                <ScalarProperty Name="DB_NULL" ColumnName="DB_NULL" />
-                <ScalarProperty Name="DB_TYPE" ColumnName="DB_TYPE" />
-                <ScalarProperty Name="DB_NAME" ColumnName="DB_NAME" />
                 <ScalarProperty Name="META_BO_ID" ColumnName="META_BO_ID" />
-                <ScalarProperty Name="META_FIELD_ID" ColumnName="META_FIELD_ID" />
+                <ScalarProperty Name="NUM" ColumnName="NUM" />
+                <ScalarProperty Name="SQLQUERY" ColumnName="SQLQUERY" />
+                <ScalarProperty Name="CREATED_BY" ColumnName="CREATED_BY" />
+                <ScalarProperty Name="CREATED_DATE" ColumnName="CREATED_DATE" />
+                <ScalarProperty Name="UPDATED_BY" ColumnName="UPDATED_BY" />
+                <ScalarProperty Name="UPDATED_DATE" ColumnName="UPDATED_DATE" />
+                <ScalarProperty Name="STATUS" ColumnName="STATUS" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
@@ -307,10 +291,38 @@
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
+          <EntitySetMapping Name="META_FIELD">
+            <EntityTypeMapping TypeName="FAISModel.META_FIELD">
+              <MappingFragment StoreEntitySet="META_FIELD">
+                <ScalarProperty Name="VERSION" ColumnName="VERSION" />
+                <ScalarProperty Name="STATUS" ColumnName="STATUS" />
+                <ScalarProperty Name="UPDATED_DATE" ColumnName="UPDATED_DATE" />
+                <ScalarProperty Name="UPDATED_BY" ColumnName="UPDATED_BY" />
+                <ScalarProperty Name="CREATED_DATE" ColumnName="CREATED_DATE" />
+                <ScalarProperty Name="CREATED_BY" ColumnName="CREATED_BY" />
+                <ScalarProperty Name="FORM_DEFAULT" ColumnName="FORM_DEFAULT" />
+                <ScalarProperty Name="IS_FILTER" ColumnName="IS_FILTER" />
+                <ScalarProperty Name="FORM_OPTIONAL" ColumnName="FORM_OPTIONAL" />
+                <ScalarProperty Name="FORM_SHOW" ColumnName="FORM_SHOW" />
+                <ScalarProperty Name="FORM_SOURCE" ColumnName="FORM_SOURCE" />
+                <ScalarProperty Name="FORM_TYPE" ColumnName="FORM_TYPE" />
+                <ScalarProperty Name="FORM_FORMAT" ColumnName="FORM_FORMAT" />
+                <ScalarProperty Name="FORM_NAME" ColumnName="FORM_NAME" />
+                <ScalarProperty Name="GRID_SHOW" ColumnName="GRID_SHOW" />
+                <ScalarProperty Name="GRID_FORMAT" ColumnName="GRID_FORMAT" />
+                <ScalarProperty Name="GRID_NAME" ColumnName="GRID_NAME" />
+                <ScalarProperty Name="DB_NULL" ColumnName="DB_NULL" />
+                <ScalarProperty Name="DB_TYPE" ColumnName="DB_TYPE" />
+                <ScalarProperty Name="DB_NAME" ColumnName="DB_NAME" />
+                <ScalarProperty Name="META_BO_ID" ColumnName="META_BO_ID" />
+                <ScalarProperty Name="META_FIELD_ID" ColumnName="META_FIELD_ID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
           <EntitySetMapping Name="BO">
             <EntityTypeMapping TypeName="FAISModel.BO">
               <MappingFragment StoreEntitySet="BO">
-                <ScalarProperty Name="BO_TARGET" ColumnName="BO_TARGET" />
+                <ScalarProperty Name="VERSION" ColumnName="VERSION" />
                 <ScalarProperty Name="BO_TYPE" ColumnName="BO_TYPE" />
                 <ScalarProperty Name="STATUS" ColumnName="STATUS" />
                 <ScalarProperty Name="UPDATED_DATE" ColumnName="UPDATED_DATE" />
@@ -321,6 +333,7 @@
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
+          <FunctionImportMapping FunctionImportName="MoveBoToCurrentVersion" FunctionName="FAISModel.Store.MoveBoToCurrentVersion" />
         </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>
@@ -335,7 +348,7 @@
     <Options>
       <DesignerInfoPropertySet>
         <DesignerProperty Name="ValidateOnBuild" Value="true" />
-        <DesignerProperty Name="EnablePluralization" Value="False" />
+        <DesignerProperty Name="EnablePluralization" Value="false" />
         <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
         <DesignerProperty Name="UseLegacyProvider" Value="false" />
         <DesignerProperty Name="CodeGenerationStrategy" Value="None" />

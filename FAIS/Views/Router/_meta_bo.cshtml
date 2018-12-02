@@ -30,7 +30,7 @@
                     <div class="card-content">
                         <v-table ref="theTable"
                                  datasource="metabo/"
-                                 :column-ignore="['UPDATED_BY','META_FIELD','STATUS','UPDATED_DATE','VERSION']"
+                                 :column-ignore="['UPDATED_BY','META_FIELD','BO_DB_NAME','UPDATED_DATE','VERSION']"
                                  :column-labels='{"META_BO_ID":"#","BO_NAME":"Nom","CREATED_BY":"Crée par","CREATED_DATE":"Le"}'
                                  detail-row="meta-bo-detail-row"></v-table>
                     </div>
@@ -353,7 +353,7 @@
                             FORM_TYPE: "v-checkbox",
                             FORM_SHOW: 1,
                             FORM_OPTIONAL: 1,
-                            DEFAULT: 1,
+                            FORM_DEFAULT: 1,
                         },
                         {
                             DB_NAME: 'IS_FILTER',
@@ -362,7 +362,7 @@
                             FORM_TYPE: "v-checkbox",
                             FORM_SHOW: 1,
                             FORM_OPTIONAL: 1,
-                            DEFAULT: 0,
+                            FORM_DEFAULT: 0,
                         },
                         {
                             DB_NAME: 'FORM_SOURCE',

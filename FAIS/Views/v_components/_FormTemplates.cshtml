@@ -58,6 +58,19 @@
     }
 </script>
 
+@*-----------------------------------------------------------------------------------------------------LABEL-----------------------*@
+<script id="v-label-template" type="text/template">
+    <div :id="elementId" :class="cssClass + ' form-group label-floating'">
+        <label class="control-label">{{ label }}<i v-show="isOptional"> - optionel</i></label>
+        <label style="top:0; color:#555; margin: 5px 0;">{{ value }}</label>
+    </div>
+</script>
+<script type="text/javascript">
+    Vue.component('v-label', {
+        template: $("#v-label-template").html(),
+        mixins: [FormMixin]
+    });
+</script>
 
 @*-----------------------------------------------------------------------------------------------------EMAIL-----------------------*@
 <script id="v-email-template" type="text/template">
@@ -97,9 +110,8 @@
 @*-----------------------------------------------------------------------------------------------------hidden-----------------------*@
 <script id="v-hidden-template" type="text/template">
     <div :id="elementId">
-        <input type="hidden" 
-               :value="value"
-               >
+        <input type="hidden"
+               :value="value">
     </div>
 </script>
 <script type="text/javascript">

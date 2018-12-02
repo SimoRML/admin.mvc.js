@@ -81,7 +81,7 @@ jQuery.fn.apiload = function (url, params, callback) {
 
 function updateDom() {
     $.material.init();
-    if ($(".selectpicker").length != 0) {
+    if ($(".selectpicker").length !== 0) {
         $(".selectpicker").selectpicker();
     }
     $('.datepicker').datetimepicker({

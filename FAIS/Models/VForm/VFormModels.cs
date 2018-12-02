@@ -75,7 +75,7 @@ namespace FAIS.Models.VForm
             }
             if (fields != "") fields = fields.Remove(0, 1);
             if (values != "") values = values.Remove(0, 1);
-            return string.Format("insert into {0} ({1}) values ({2}) ", MetaBO.BO_DB_NAME, fields, values);
+            return string.Format("insert into {0} ({1}) values ({2}) ", MetaBO.BO_DB_NAME + MetaBO.VERSION, fields, values);
         }
 
         public string FormatUpdate()
@@ -87,7 +87,7 @@ namespace FAIS.Models.VForm
             }
             if (Field_Values != "") Field_Values = Field_Values.Remove(0, 1);
 
-            return string.Format("Update {0} set {1}  where BO_ID=@BO_ID", MetaBO.BO_DB_NAME, Field_Values);
+            return string.Format("Update {0} set {1}  where BO_ID=@BO_ID", MetaBO.BO_DB_NAME + MetaBO.VERSION, Field_Values);
 
         }
 
@@ -95,7 +95,7 @@ namespace FAIS.Models.VForm
         {
             string Field_Values = "";
 
-            return string.Format("delete from {0} where BO_ID = {1}  where BO_ID=@BO_ID", MetaBO.BO_DB_NAME, Field_Values);
+            return string.Format("delete from {0} where BO_ID = {1}  where BO_ID=@BO_ID", MetaBO.BO_DB_NAME + MetaBO.VERSION, Field_Values);
 
         }
 

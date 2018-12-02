@@ -5,11 +5,13 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.Entity;
 using System.Data.Entity.Infrastructure;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using System.Web.Http;
 using System.Web.Http.Description;
+using Z.EntityFramework.Plus;
 
 namespace FAIS.Controllers
 {
@@ -22,7 +24,7 @@ namespace FAIS.Controllers
         // GET: api/MetaBo
         public async Task<IHttpActionResult> GetMETA_BOAsync()
         {
-            return Ok(await db.META_BO.Where(x => x.STATUS == "1").ToListAsync());
+            return Ok(await db.META_BO.Where(x => x.STATUS != "-1").ToListAsync());
         }
 
         // GET: api/MetaBo/5
@@ -42,22 +44,17 @@ namespace FAIS.Controllers
         [Route("GetDefinition/{id}")]
         public async Task<IHttpActionResult> GetDefinition(string id)
         {
-            // META
-            META_BO mETA_BO = await db.META_BO.Where(x => x.BO_DB_NAME == id).FirstOrDefaultAsync();
+            // var sqlLogFile = new StreamWriter(System.Web.Hosting.HostingEnvironment.MapPath("~/SQL/EF.log.sql"));
+            // db.Database.Log = sqlLogFile.Write;
+            META_BO mETA_BO = await db.META_BO
+                .Where(x => x.BO_DB_NAME == id)
+                .IncludeFilter(x => x.META_FIELD.Where(f => f.STATUS != "NEW"))
+                .FirstOrDefaultAsync();
             if (mETA_BO == null)
             {
                 return NotFound();
             }
-
-            //// Entity
-            //int boId = -1;
-            //META_BO entity = null;
-            //if(int.TryParse(id, out boId))
-            //{
-            //    // TODO : call 
-            //    entity = await db.META_BO.Where(x => x.META_BO_ID == boId).FirstOrDefaultAsync();
-            //}
-
+            // sqlLogFile.Close();
             return Ok(mETA_BO);
         }
         [HttpPost]
@@ -78,12 +75,8 @@ namespace FAIS.Controllers
                 return BadRequest(ModelState);
             }
             mETA_BO.META_BO_ID = id;
-            /*
-            if (id != mETA_BO.META_BO_ID)
-            {
-                return BadRequest();
-            }
-            */
+            mETA_BO.UPDATED_BY = User.Identity.Name;
+            mETA_BO.UPDATED_DATE = DateTime.Now;
 
             db.Entry(mETA_BO).State = EntityState.Modified;
 
@@ -116,6 +109,11 @@ namespace FAIS.Controllers
             }
 
             mETA_BO.BO_DB_NAME += "_BO_";
+            mETA_BO.VERSION = 1;
+            mETA_BO.CREATED_BY = User.Identity.Name;
+            mETA_BO.UPDATED_BY = User.Identity.Name;
+            mETA_BO.CREATED_DATE = DateTime.Now;
+            mETA_BO.UPDATED_DATE = DateTime.Now;
             db.META_BO.Add(mETA_BO);
 
             // int lastVersion = db.VERSIONS.Where(x => x.META_BO_ID == mETA_BO.META_BO_ID).Max(x => x.NUM);
@@ -188,14 +186,13 @@ namespace FAIS.Controllers
 
             BO bo_model = new BO()
             {
-
                 CREATED_BY = User.Identity.Name,
                 CREATED_DATE = DateTime.Now,
                 UPDATED_BY = User.Identity.Name,
                 UPDATED_DATE = DateTime.Now,
                 STATUS = "1",
-                BO_TYPE = model.MetaBoID.ToString()
-                
+                BO_TYPE = model.MetaBoID.ToString(),
+                VERSION = meta.VERSION
             };
 
             db.BO.Add(bo_model);
@@ -205,15 +202,10 @@ namespace FAIS.Controllers
             model.MetaBO = meta;
             model.Items.Add("BO_ID", id_);
             bool insert = model.Insert();
-            if (insert != false)
-            {
+            if (insert)
                 return Ok(model);
-            }
             else
-            {
-                return Ok(model);
-
-            }
+                return InternalServerError();
         }
         [HttpPut]
         [Route("Crud/{id}/{bo_id}")]
@@ -234,6 +226,7 @@ namespace FAIS.Controllers
             await db.SaveChangesAsync();
 
             model.Items.Add("BO_ID", BO_ToUpdate.BO_ID);
+            db.MoveBoToCurrentVersion(BO_ToUpdate.BO_ID);
             string update_ = model.Update();
             if (update_ == "true")
                 return Ok(model);
