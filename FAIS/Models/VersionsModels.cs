@@ -42,4 +42,11 @@ namespace FAIS.Models
             return string.Format(Helper.GetSQL("CreateView.sql"), tableName, select_);
         }
     }
+
+    public class MenuFields
+    {
+        public string icon { get; set; }
+        public string text { get; set; }
+        public string href { get; set; }
+    }
 }
