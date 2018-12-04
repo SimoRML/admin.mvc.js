@@ -20,8 +20,8 @@
                         <i class="material-icons i-btn-round" v-show="showDetailRow[index] == null || !showDetailRow[index]">expand_more</i>
                     </td>
                     <template v-for="h in getHeaders">
-                        <td v-if="show(h)">
-                            {{ item[h] }} 
+                        <td v-if="show(h)" v-format="{value:item[h], format:getFormat(h)}">
+                            {{ item[h] }}
                         </td>
                     </template>
                     <td v-if="actionComponentDefined">
@@ -47,12 +47,14 @@
             columnLabels: Object,
             detailRow: String,
             actionComponent: String,
+            metaName: String
         },
         data: function () {
             return {
                 list: [],
                 showDetailRow: [],
-                dataSourceUrl: ""
+                dataSourceUrl: "",
+                meta: null
             }
         },
         computed: {
@@ -75,6 +77,23 @@
             },
             actionComponentDefined: function () {
                 return this.actionComponent != null;
+            },
+            fields: function () {
+                if (this.meta === null) return null;
+                var a = {};
+                this.meta.META_FIELD.forEach((e) => {
+                    a[e.DB_NAME] = e;
+
+                    if (e.FORM_SOURCE !== null)
+                        try { a[e.DB_NAME].FORM_SOURCE = JSON.parse(e.FORM_SOURCE) } catch{ }
+
+                    if (e.GRID_FORMAT !== null)
+                        try { a[e.DB_NAME].GRID_FORMAT = JSON.parse(e.GRID_FORMAT) } catch{ }
+
+                    if (e.FORM_FORMAT !== null)
+                        try { a[e.DB_NAME].FORM_FORMAT = JSON.parse(e.FORM_FORMAT) } catch{ }
+                });
+                return a;
             }
         },
         methods: {
@@ -83,11 +102,12 @@
                 if (typeof me.dataSourceUrl === "undefined" && typeof url === "undefined") return;
                 if (typeof url === "undefined" && typeof me.dataSourceUrl !== "undefined") url = me.dataSourceUrl;
                 if (typeof url !== "undefined" && typeof me.dataSourceUrl === "undefined") me.dataSourceUrl = url;
-                console.log(url);
+                //console.log(url);
                 var data = EV.getComponent("data");
                 data.ExecuteSource({
                     url: url,
                     loadComplete: function (obj, response) {
+                        console.log("v-table.load()", response);
                         me.list = response;
                     }
                 });
@@ -110,11 +130,22 @@
             },
             toggleDetailRow: function (index) {
                 this.$set(this.showDetailRow, index, this.showDetailRow[index] == null ? true : !this.showDetailRow[index]);
+            },
+            getFormat: function (column) {
+                if (this.meta === null) return null;
+                if (typeof this.fields[column] === "undefined") return null;
+                if (typeof this.fields[column].GRID_FORMAT === "undefined") return null;
+                return this.fields[column].GRID_FORMAT;
             }
         },
-        created: function () {
+        mounted: function () {
             this.dataSourceUrl = this.datasource;
             this.load();
+
+            // BIND TO BUS META
+            if (typeof this.metaName === "undefined") return "";
+            if (typeof bus.$data[this.metaName] === "undefined") return "";
+            this.meta = bus.$data[this.metaName];
         }
     });
 </script>

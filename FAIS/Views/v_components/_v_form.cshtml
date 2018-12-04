@@ -13,7 +13,7 @@
                 <component :name="field.FORM_TYPE + '-' + elementId"
                            :is="field.FORM_TYPE"
                            v-model="body[field.DB_NAME]"
-                           v-bind="{id:field.DB_NAME,label:field.FORM_NAME,optional:field.FORM_OPTIONAL,datasource:field.FORM_SOURCE}"></component>
+                           v-bind="{id:field.DB_NAME,label:field.FORM_NAME,optional:field.FORM_OPTIONAL,datasource:field.FORM_SOURCE,fieldName:field.DB_NAME}"></component>
                 @*AFTER*@
                 <component v-if="typeof field.after_component !== 'undefined'"
                            :name="field.FORM_TYPE + '-after-' + elementId"
@@ -65,8 +65,9 @@
                     if (this.meta[i].STATUS.trim().toLowerCase() == 'pk') {
                         this.pk.key = this.meta[i].DB_NAME;
                     } else {
-                        if (typeof this.meta[i].FORM_DEFAULT !== "undefined" && this.meta[i].FORM_DEFAULT != null)
+                        if (typeof this.meta[i].FORM_DEFAULT !== "undefined" && this.meta[i].FORM_DEFAULT != null) {
                             this.body[this.meta[i].DB_NAME] = this.meta[i].FORM_DEFAULT;
+                        }
                         else
                             this.body[this.meta[i].DB_NAME] = null;
                     }
@@ -82,9 +83,9 @@
                 delete body.__ob__;
 
                 var url = me.api;
-                console.log("submit ", url);
+                //console.log("submit ", url);
                 if (this.verb == 'PUT') url = URL.addPart(url, this.pk.value);
-                console.log("submit ", url);
+                //console.log("submit ", url);
 
                 var data = EV.getComponent("data");
                 data.ExecuteSource({
@@ -115,9 +116,12 @@
                 if (typeof inject === "function") inject(me);
 
                 var temp = clone(me.meta);
+                
                 me.meta = null;
                 setTimeout(function () {
+                    // console.log("refresh temp " + me.elementId, temp);
                     me.meta = temp;
+                    // console.log("refresh meta " + me.elementId, me.meta);
                     setTimeout(function () {
                         updateDom();
                     }, 1);
@@ -147,6 +151,7 @@
                 for (var i in me.body) {
                     me.$set(me.body, i, entity[i]);
                 }
+                // console.log("VFROM updateMode::", me.body);
                 me.refresh();
                 me.$emit("update-mode", entity);
             },
@@ -156,9 +161,12 @@
                 var data = EV.getComponent("data");
                 this.pk.value = id;
 
+                // console.log("VFROM GET::" + url, this);
+
                 data.Get({
                     url: url,
                     loadComplete: function (obj, response) {
+                        // console.log("VFROM GET loadComplete ::" + url, response);
                         if (typeof response.length === "number") response = response[0];
                         me.updateMode(response);
                         setTimeout(function () {
@@ -170,7 +178,7 @@
         },
         created: function () {
             var me = this;
-            console.log(me.api + "created");
+            // console.log(me.api + "created");
             // SET FORM META
             if (typeof me.metaDatasource === "undefined") {
                 me.meta = me.metaDefinition;

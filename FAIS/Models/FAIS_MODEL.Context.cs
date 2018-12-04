@@ -29,9 +29,9 @@ namespace FAIS.Models
     
         public virtual DbSet<BO_CHILDS> BO_CHILDS { get; set; }
         public virtual DbSet<VERSIONS> VERSIONS { get; set; }
-        public virtual DbSet<META_BO> META_BO { get; set; }
         public virtual DbSet<META_FIELD> META_FIELD { get; set; }
         public virtual DbSet<BO> BO { get; set; }
+        public virtual DbSet<META_BO> META_BO { get; set; }
     
         public virtual int MoveBoToCurrentVersion(Nullable<long> bO_ID)
         {

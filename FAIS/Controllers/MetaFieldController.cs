@@ -46,6 +46,28 @@ namespace FAIS.Controllers
 
             return Ok(mETA_FIELDs);
         }
+        
+        [HttpPost]
+        [Route("formtype")]
+        public async Task<IHttpActionResult> FormType()
+        {
+            var formTypes = new[] {
+                new { Value= "v-checkbox"   , Display= "Case à cocher" },
+                new { Value= "v-datepicker" , Display= "Date" },
+                new { Value= "v-email"      , Display= "Email" },
+                new { Value= "v-number"     , Display= "Numeric" },
+                new { Value= "v-select"     , Display= "Liste de choix" },
+                new { Value= "v-text"       , Display= "Text" },
+            }.ToList();
+
+            var subForms = await db.META_BO.Where(x => x.TYPE == "subform" && x.STATUS != "PENDING").ToListAsync();
+            foreach (var oneSubForm in subForms)
+            {
+                formTypes.Add(new { Value = "subform-" + oneSubForm.BO_DB_NAME, Display = "@" + oneSubForm.BO_NAME});
+            }
+
+            return Ok(formTypes);
+        }
 
         // PUT: api/MetaField/5
         [ResponseType(typeof(void))]

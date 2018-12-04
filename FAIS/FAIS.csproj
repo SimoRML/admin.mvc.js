@@ -241,7 +241,6 @@
     <Compile Include="Controllers\AdminController.cs" />
     <Compile Include="Controllers\ApiBonController.cs" />
     <Compile Include="Controllers\BoController.cs" />
-    <Compile Include="Controllers\BonController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\MetaBoController.cs" />
     <Compile Include="Controllers\MetaFieldController.cs" />
@@ -597,7 +596,6 @@
     <Content Include="Views\Home\User.cshtml" />
     <Content Include="Views\Home\old.cshtml" />
     <Content Include="Views\Home\Login.cshtml" />
-    <Content Include="Views\Bon\Home.cshtml" />
     <Content Include="Views\Router\_meta_bo.cshtml" />
     <Content Include="Views\v_components\_FormTemplates.cshtml" />
     <Content Include="Views\v_components\_v_menu_item.cshtml" />

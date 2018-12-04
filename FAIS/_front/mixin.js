@@ -14,7 +14,95 @@
             var me = this;
             if (typeof inject === "function") inject(me);
         }
+    },
+    filters: {
+        Display: function (value, source) {
+            console.log("filters Display", value);
+            console.log("filters Display", source);
+            if (typeof bus.$data.A === "undefined") return "DISPLAY=>" + value;
+
+            return bus.$data.A;
+        }
     }
 };
 
-var bus = new Vue({});
+Vue.directive("format", {
+    bind(e1, binding, vnode) {
+        if (binding.value.format === null) return;
+
+        if (binding.value.format.fct === 'Display') {
+            var display = "";
+            for (var i in bus.lists[binding.value.format.source]) {
+                var e = bus.lists[binding.value.format.source][i];
+                console.log("e.Value", e.Value);
+                if (e.Value == binding.value.value) {
+                    display = e.Display;
+                    break;
+                }
+            }
+
+            $(e1).html(display === "" ? binding.value.value : display);
+        }
+        
+    }
+});
+
+var bus = new Vue({
+    data: {
+        lists: {}
+    },
+    methods: {
+        loadList: function (key, datasource, done) {
+            var me = this;
+            if (typeof datasource !== "undefined" && datasource !== null) {
+                
+                var jsonSource = null;
+                if (typeof datasource === "object")
+                    jsonSource = clone(datasource);
+                else {
+                    try { jsonSource = JSON.parse(datasource); } catch{ }
+                }
+                if (jsonSource !== null & typeof jsonSource.source === "undefined" & typeof jsonSource.url === "undefined") {
+                    done(jsonSource);
+                    this.lists[key] = jsonSource;
+                    return;
+                }
+
+                // SET KEY
+                if (typeof jsonSource.source !== "undefined")
+                    key = jsonSource.source;
+
+                var url = "metabo/SelectSource";
+                if (typeof jsonSource.url !== "undefined") url = jsonSource.url;
+
+                // IF LIST IS LAREADY LOADED
+                if (typeof this.lists[key] !== "undefined") {
+                    done(this.lists[key]);
+                    return;
+                }
+
+                var data = EV.getComponent("data");
+                data.ExecuteSource({
+                    url: url,
+                    method: "POST",
+                    data: datasource,
+                    loadComplete: function (obj, response) {
+                        me.lists[key] = response;
+                        done(response);
+                    }
+                });
+            }
+        },
+        setMeta: function (id, value) {
+            // console.log("SET DATA " + id, value);
+            this.$data[id] = value;
+
+            // GET not yet loaded LISTS
+            if (typeof this.$data[id].META_FIELD !== "undefined") {
+                typeof this.$data[id].META_FIELD.forEach((e) => {
+                    this.loadList(e.DB_NAME, e.FORM_SOURCE, () => { });
+                });
+            }
+        }
+    }
+});

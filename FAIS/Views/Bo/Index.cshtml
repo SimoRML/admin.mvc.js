@@ -44,7 +44,9 @@ else
                     </div>
                     <div class="card-content">
 
-                        <v-table ref="_Table" datasource="metabo/select/@Model.BO_DB_NAME"
+                        <v-table ref="_Table" 
+                                 meta-name="@Model.BO_DB_NAME"
+                                 datasource="metabo/select/@Model.BO_DB_NAME"
                                  action-component="fields-action"></v-table>
 
                     </div>
@@ -78,6 +80,7 @@ else
     </script>
 
     <script type="text/javascript">
+        bus.setMeta("@Model.BO_DB_NAME", @Html.Raw(Json.Encode(Model)));
         var vapp = new Vue(
             {
                 el: '#my-vue-app',
