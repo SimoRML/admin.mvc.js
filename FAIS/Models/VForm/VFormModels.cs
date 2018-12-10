@@ -33,6 +33,18 @@ namespace FAIS.Models.VForm
     {
         public int MetaBoID { get; set; }
         public List<FilterItemModel> Items { get; set; }
+        public Dictionary<string, object> mapping
+        {
+            get
+            {
+                Dictionary<string, object> mapp = new Dictionary<string, object>();
+                foreach (var item in Items)
+                {
+                    mapp.Add(item.Field, item.Value);
+                }
+                return mapp;
+            }
+        }
 
         public string Format()
         {

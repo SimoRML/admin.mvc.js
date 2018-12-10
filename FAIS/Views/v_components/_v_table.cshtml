@@ -72,7 +72,7 @@
             columnCount: function () {
                 return this.getHeaders.length;
             },
-            detailRowDefined: function() {
+            detailRowDefined: function () {
                 return this.detailRow != null;
             },
             actionComponentDefined: function () {
@@ -111,6 +111,9 @@
                         me.list = response;
                     }
                 });
+            },
+            loadObject: function (obj) {
+                this.list = obj;
             },
             show: function (colName) {
                 if (typeof this.columnShow !== "undefined") {

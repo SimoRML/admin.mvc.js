@@ -48,5 +48,9 @@ namespace FAIS.Models
         public string icon { get; set; }
         public string text { get; set; }
         public string href { get; set; }
+        public string User { get; set; }
+        public string parent { get; set; }
+        public string childs { get; set; }
+
     }
 }
