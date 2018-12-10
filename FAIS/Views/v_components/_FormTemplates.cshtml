@@ -80,7 +80,7 @@
 
 @*-----------------------------------------------------------------------------------------------------EMAIL-----------------------*@
 <script id="v-email-template" type="text/template">
-    <div :id="elementId" class="form-group label-floating">
+    <div :id="elementId" :class="cssClass + ' form-group label-floating'">
         <label class="control-label">{{ label }}<i v-show="isOptional"> - optionel</i></label>
         <input type="email" class="form-control"
                :value="value"
@@ -145,13 +145,13 @@
 </script>
 @*-----------------------------------------------------------------------------------------------------SELECT-----------------------*@
 <script id="v-select-template" type="text/template">
-    <div :id="elementId" class="form-group label-floating">
+    <div :id="elementId" :class="cssClass + ' form-group label-floating'">
         <label class="control-label">{{ label }}<i v-show="isOptional"> - optionel</i></label>
         <select ref="selectpicker" class="selectpicker" data-style="select-with-transition" title="Choisir"
                 v-model="selected"
                 v-on:change="bindBack($event)"
                 :required="!isOptional">
-            <option disabled> Choisir </option>
+            <option value=""> Choisir </option>
             <option v-for="item in data" :value="item.Value"> {{ item.Display }} </option>
         </select>
     </div>
@@ -185,7 +185,7 @@
 
 @*-----------------------------------------------------------------------------------------------------DatePicker-----------------------*@
 <script id="FormDatePickerTemplate" type="text/template">
-    <div :id="elementId" class="form-group">
+    <div :id="elementId" :class="cssClass + ' form-group'">
         <label class="label-control">
             {{ label }}<i v-show="isOptional"> - optionel</i>
         </label>
@@ -204,7 +204,7 @@
 
 @*-----------------------------------------------------------------------------------------------------checkbox-----------------------*@
 <script id="v-checkbox-template" type="text/template">
-    <div :id="elementId" class="form-group">
+    <div :id="elementId" :class="cssClass + ' form-group'">
         <div class="checkbox">
             <label>
                 <input type="checkbox" name="optionsCheckboxes"

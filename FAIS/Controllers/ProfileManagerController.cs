@@ -18,7 +18,7 @@ namespace FAIS.Controllers
         public HttpResponseMessage Menu()
         {
             FAISEntities db = new FAISEntities();
-            var dt = db.META_BO.Where(x => x.META_BO_ID != 1).ToList();
+            var dt = db.META_BO.Where(x => x.META_BO_ID != 1 && x.TYPE == "form").ToList();
             List<MenuFields> menu_ = new List<MenuFields>();
 
             menu_.Add(new MenuFields { icon = "dashboard", text = "Meta Bo", href = "#router.metabo" });
