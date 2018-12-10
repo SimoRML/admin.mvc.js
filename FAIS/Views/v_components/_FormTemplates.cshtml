@@ -1,13 +1,7 @@
 ﻿<script type="text/javascript">
     var FormMixin = {
         mixins: [MixinBase],
-        props: ['label', 'optional', 'datasource', 'value', 'cssClass']
-        /*{
-            label: String,
-            optional: Number,
-            datasource: String,
-            value: any
-        }*/,
+        props: ['label', 'optional', 'datasource', 'value', 'cssClass', 'fieldName'],
         data: function () {
             return {
                 data: null,
@@ -16,23 +10,35 @@
         },
         created: function () {
             var me = this;
-
+            
+            bus.loadList(this.fieldName, me.datasource, (response) => { me.populateData(response) });
             // GET AND POPULATE DATA SOURCE
-            if (typeof me.datasource !== "undefined" && me.datasource !== null) {
-                if (typeof me.datasource === "object") {
-                    me.populateData(clone(me.datasource));
-                } else {
-                    var data = EV.getComponent("data");
-                    data.ExecuteSource({
-                        url: "metabo/SelectSource",
-                        method: "POST",
-                        data: me.datasource,
-                        loadComplete: function (obj, response) {
-                            me.populateData(response);
-                        }
-                    });
-                }
-            }
+            //if (typeof me.datasource !== "undefined" && me.datasource !== null) {
+
+            //    var jsonSource = null;
+            //    if (typeof me.datasource === "object")
+            //        jsonSource = clone(me.datasource);
+            //    else {
+            //        try { jsonSource = JSON.parse(me.datasource); } catch{ }
+            //    }
+            //    if (jsonSource != null & typeof jsonSource.source === "undefined" & typeof jsonSource.url === "undefined") {
+            //        me.populateData(jsonSource);
+            //        return;
+            //    }
+
+            //    var url = "metabo/SelectSource";
+            //    if (typeof jsonSource.url !== "undefined") url = jsonSource.url;
+
+            //    var data = EV.getComponent("data");
+            //    data.ExecuteSource({
+            //        url: url,
+            //        method: "POST",
+            //        data: me.datasource,
+            //        loadComplete: function (obj, response) {
+            //            me.populateData(response);
+            //        }
+            //    });
+            //}
         },
         computed: {
             isOptional: function () {
@@ -107,6 +113,23 @@
     });
 </script>
 
+@*-----------------------------------------------------------------------------------------------------NUMBER-----------------------*@
+<script id="v-number-template" type="text/template">
+    <div :id="elementId" :class="cssClass + ' form-group label-floating'">
+        <label class="control-label">{{ label }}<i v-show="isOptional"> - optionel</i></label>
+        <input type="number" class="form-control"
+               :value="value"
+               v-on:input="bindBack($event)"
+               :required="!isOptional">
+    </div>
+</script>
+<script type="text/javascript">
+    Vue.component('v-number', {
+        template: $("#v-number-template").html(),
+        mixins: [FormMixin]
+    });
+</script>
+
 @*-----------------------------------------------------------------------------------------------------hidden-----------------------*@
 <script id="v-hidden-template" type="text/template">
     <div :id="elementId">
@@ -146,8 +169,8 @@
             setValue: function () {
                 var me = this;
                 setTimeout(function () {
-                    me.$refs.selectpicker.value = me.selected;
-                    $(me.$refs.selectpicker).selectpicker('refresh');
+                    $("#" + me.elementId + " select").val(me.selected);
+                    $("#" + me.elementId + " select").selectpicker('refresh');
                     bus.$emit(me.elementId + "-changed", me.$refs.selectpicker);
                 }, 100);
             }

@@ -54,10 +54,13 @@ DataSource.prototype.ExecuteSource = function (source) {
         settings["data"] = source["data"];
     }
 
-    console.log("ExecuteSource", settings);
+    if (settings.method === "POST" || settings.method === "PUT")
+        me.Trigger("show", "PagePreloader");
+    //console.log("ExecuteSource", settings);
     $.ajax(settings)
         .done(function (response) {
-            console.log("ExecuteSource done", response);
+            me.Trigger("hide", "PagePreloader");
+            console.log("ExecuteSource : " + settings.method + "::" + settings.url, response);
             try { response = JSON.parse(response); } catch{ }
                 
             var html = "";
@@ -75,6 +78,7 @@ DataSource.prototype.ExecuteSource = function (source) {
                 source.loadComplete(me, response);
         })
         .fail(function (response) {
+            me.Trigger("hide", "PagePreloader");
             if (response.status === 401) {
                 me.logout();
             }

@@ -46,7 +46,7 @@
                             </p>
                         </div>
                         <div class="card-content">
-                            <v-form ref="theForm"
+                            <v-form ref="theForm" id="MetaBoForm"
                                     meta-datasource="metabo/GetDefinition/META_BO"
                                     api="metabo/"
                                     v-on:before-submit="beforeSubmitBo"
@@ -118,7 +118,7 @@
                 title="Commit version"
                 v-if="row.STATUS.trim() === 'PENDING'"
                 v-on:click="commitVersion(row.VERSIONS_ID)">
-            <i class="material-icons">done_outline</i>
+            <i class="material-icons">vertical_align_top</i>
         </button>
     </div>
 </script>
@@ -130,11 +130,9 @@
         </button>
     </div>
 </script>
-
 <script id="form-source-template" type="text/template">
     <div class="row" v-if="visible">
         <div class="col-md-12">
-            {{ FORM_SOURCE }}
             <v-text label="Source do données" css-class="col-md-12" v-model="FORM_SOURCE.source" v-on:input="hendleInput"></v-text>
             <v-text label="Champ valeur" css-class="col-md-6" v-model="FORM_SOURCE.value" v-on:input="hendleInput"></v-text>
             <v-text label="Champ display" css-class="col-md-6" v-model="FORM_SOURCE.display" v-on:input="hendleInput"></v-text>
@@ -285,6 +283,8 @@
                     }
                 },
                 fieldsFormbeforeSubmit: function (body) {
+                    if (body.FORM_OPTIONAL === null) body.FORM_OPTIONAL = 0;
+                    if (body.IS_FILTER === null) body.IS_FILTER = 0;
                     body.META_BO_ID = this.$refs.theForm.pk.value;
                     body.DB_NAME = cleanDBName(body.GRID_NAME);
                     body.DB_TYPE = FormTypeToDbType(body.FORM_TYPE);
@@ -330,13 +330,7 @@
                             STATUS: 'ACTIVE',
                             FORM_NAME: "Type",
                             FORM_TYPE: "v-select",
-                            FORM_SOURCE: [
-                                { Value: 'v-checkbox', Display: "Case à cocher" },
-                                { Value: 'v-datepicker', Display: "Date" },
-                                { Value: 'v-email', Display: "Email" },
-                                { Value: 'v-select', Display: "Liste de choix" },
-                                { Value: 'v-text', Display: "Text" },
-                            ],
+                            FORM_SOURCE: { url:"MetaField/formtype"},
                             FORM_SHOW: 1,
                             FORM_OPTIONAL: 0,
                             after_component: {
@@ -412,13 +406,15 @@
 
     function editFormMetaBo(id) {
         // THE FORM
-        vapp.$refs.theForm.Get(id);
-        // FIELDS TABLE
-        vapp.$refs.fieldsTable.load("metafield/metabo/" + id);
-        // versionsTable
-        vapp.$refs.versionsTable.load("versions/" + id);
+        setTimeout(() => {
+            vapp.$refs.theForm.Get(id);
+            // FIELDS TABLE
+            vapp.$refs.fieldsTable.load("metafield/metabo/" + id);
+            // versionsTable
+            vapp.$refs.versionsTable.load("versions/" + id);
 
-        $("#tab-form").trigger("click");
-        $("#container").scrollTop(0);
+            $("#tab-form").trigger("click");
+            $("#container").scrollTop(0);
+        }, 100);
     }
 </script>
