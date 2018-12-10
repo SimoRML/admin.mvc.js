@@ -104,7 +104,32 @@ else
                 </ul>
             </div>
             <div class="tab-content">
-                <div class="tab-pane active" id="@boDbName("list")">
+                <div class="tab-pane active" id="@boDbName(" list")">
+                    <div v-show="filterExists" class="card">
+                        <div class="card-header">
+                            Filter
+                        </div>
+                        <div class="card-content">
+
+                            <form onsubmit="return false;">
+                                @*THE COMPONENET*@
+                                <div class="row">
+                                    <template v-for="field in getFiltre">
+                                        <component :name="field.FORM_TYPE"
+                                                   :is="field.FORM_TYPE"
+                                                   v-model="filterBody[field.DB_NAME].value"
+                                                   v-bind="{label:field.FORM_NAME,optional:1,datasource:field.FORM_SOURCE,fieldName:field.DB_NAME,cssClass:'col-md-3'}"></component>
+                                    </template>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <button type="submit" class="btn btn-fill btn-primary pull-right" v-on:click="filtrer">Filtrer<div class="ripple-container"></div></button>
+                                    </div>
+                                </div>
+
+                            </form>
+                        </div>
+                    </div>
                     <div class="card">
                         <div class="card-content">
                             @renderTable(true)
@@ -180,7 +205,9 @@ else
                         subFormMode: "",
                     }
                 },
-                CurrentMode: {}
+                CurrentMode: {},
+        filterExists: false,
+                    filterBody: {}
             },
             methods: {
                 success: function (response) {
@@ -214,17 +241,66 @@ else
                     this.CurrentMode = this.FormModes.update;
                 },
                 insertMode: function () {
-                    this.CurrentMode = this.FormModes.insert; 
+                    this.CurrentMode = this.FormModes.insert;
                     if (this.hasSubForm) {
                         this.subForms.forEach((e) => {
                             window[e.BO_DB_NAME + "vapp"].$refs.theTable.clear();
                         });
                     }
-                }
+                },
+                    filtrer: function () {
+                        var me = this;
+                        var filterModel = {
+                            MetaBoID: @Model.META_BO_ID,
+                            Items: []
+
+                        };
+                        for (var key in this.filterBody) {
+                            var e = this.filterBody[key];
+                            if (e.value === null || e.value.trim()=='') continue;
+                            filterModel.Items.push(
+                                {
+                                    "Logic": " and ",
+                                    "Field": key,
+                                    "Condition": e.type === "v-text" ? " like " : " = ",
+                                    "Value": e.type === "v-text" ? "%"+e.value+"%" : e.value
+                                }
+                            );
+                        }
+
+                        var data = EV.getComponent("data");
+                        data.ExecuteSource({
+                            url: "metabo/filter",
+                            data: JSON.stringify(filterModel),
+                            method: "POST",
+                            loadComplete: function (obj, response) {
+                                me.$refs.theTable.loadObject(response);
+                            },
+                            fail: function (response) {
+                                console.log("fail : ",response);
+                            }
+                        });
+                    }
             },
             mounted: function(){
                 this.CurrentMode = this.FormModes.insert;
-            }
+            },
+                computed: {
+                    getFiltre: function () {
+                        var arrFields = [];
+                        var META_FIELDS = bus.$data.@Model.BO_DB_NAME;
+
+                        META_FIELDS.META_FIELD.forEach((e) => {
+                            if (e.IS_FILTER === 1) {
+                                arrFields.push(e);
+                                this.filterBody[e.DB_NAME] = {type : e.FORM_TYPE,value : null};
+                                this.filterExists = true;
+                            }
+                        });
+
+                        return arrFields;
+                    }
+                }
         });
 
         Vue.component('@boDbName("-action")', {

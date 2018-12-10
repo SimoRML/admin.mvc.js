@@ -6,7 +6,6 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.Entity;
 using System.Data.Entity.Infrastructure;
-using System.IO;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
@@ -162,9 +161,20 @@ namespace FAIS.Controllers
         public async Task<IHttpActionResult> Filter(FilterModel model)
         {
             var meta = await db.META_BO.FindAsync(model.MetaBoID);
-            // var BoRepository = new BORepository(meta);
+            if (meta == null)
+            {
+                return BadRequest();
+            }
 
-            return Ok();
+
+            var s = new SGBD();
+            var Gen = new BORepositoryGenerator();
+            string reqSelect = Gen.GenSelect(meta.BO_DB_NAME) + " where 1=1 " + model.Format();
+            var dt = s.Cmd(reqSelect, model.mapping);
+
+
+            return Ok(dt);
+            //return Ok();
         }
 
         [HttpPost]

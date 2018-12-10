@@ -29,7 +29,10 @@ namespace FAIS.Controllers
                 {
                     icon = "dashboard",
                     text = item.BO_NAME,
-                    href = "bo.index." + item.BO_DB_NAME.Replace("_BO_", "")
+                    href = "bo.index." + item.BO_DB_NAME.Replace("_BO_", ""),
+                    User = null,
+                    parent = null,
+                    childs = null
                 });
             }
 
@@ -44,7 +47,7 @@ namespace FAIS.Controllers
                     href = "home",
                     User = User.Identity.Name,
                     parent = true,
-                    childs = menu_
+                    childs = menu_.ToArray()
                 },
 
             };
@@ -73,6 +76,6 @@ namespace FAIS.Controllers
         public void Delete(int id)
         {
         }
-      
+
     }
 }
