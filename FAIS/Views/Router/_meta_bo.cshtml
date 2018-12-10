@@ -29,12 +29,24 @@
                     </div>
                     <div class="card-content">
                         <v-table ref="theTable"
+                                 meta-name="META_BO"
                                  datasource="metabo/"
                                  :column-ignore="['UPDATED_BY','META_FIELD','BO_DB_NAME','UPDATED_DATE','VERSION']"
                                  :column-labels='{"META_BO_ID":"#","BO_NAME":"Nom","CREATED_BY":"Crée par","CREATED_DATE":"Le"}'
                                  detail-row="meta-bo-detail-row"></v-table>
                     </div>
                 </div>
+                @*<div class="card">
+                    <div class="card-header">
+                        <h4 class="card-title">INCLUDE TEST</h4>
+                        <p class="category">
+                            INCLUDE TEST objects
+                        </p>
+                    </div>
+                    <div class="card-content">
+                        <div v-include="{url:'bo/test'}"></div>
+                    </div>
+                </div>*@
             </div>
             <div class="tab-pane" id="form">
                 <div class="col-md-6">
@@ -132,7 +144,7 @@
 </script>
 <script id="form-source-template" type="text/template">
     <div class="row" v-if="visible">
-        <div class="col-md-12">
+        <div class="col-md-12" v-if='typeof FORM_SOURCE !== "undefined" && typeof FORM_SOURCE.source !== "undefined"'>
             <v-text label="Source do données" css-class="col-md-12" v-model="FORM_SOURCE.source" v-on:input="hendleInput"></v-text>
             <v-text label="Champ valeur" css-class="col-md-6" v-model="FORM_SOURCE.value" v-on:input="hendleInput"></v-text>
             <v-text label="Champ display" css-class="col-md-6" v-model="FORM_SOURCE.display" v-on:input="hendleInput"></v-text>
@@ -171,6 +183,7 @@
                     this.FORM_SOURCE = { source: "", value: "", display: "", filter: "" };
                 }
             }
+            bus.FORM_SOURCE = this.FORM_SOURCE;
         }
     });
 
@@ -292,7 +305,14 @@
                     body.GRID_SHOW = 1;
                     body.FORM_SHOW = 1;
                     body.FORM_NAME = body.GRID_NAME;
-                    if (body.FORM_TYPE === "v-select") body.FORM_SOURCE = JSON.stringify(cleanObject(bus.FORM_SOURCE));
+                    if (body.FORM_TYPE === "v-select") {
+                        body.FORM_SOURCE = JSON.stringify(cleanObject(bus.FORM_SOURCE));
+                        if (typeof bus.FORM_SOURCE.source !== "undefined") {
+                            console.log("bus.FORM_SOURCE", bus.FORM_SOURCE);
+                            body.GRID_FORMAT = JSON.stringify({ fct: "Display", source: bus.FORM_SOURCE.source });
+                            console.log("body.GRID_FORMAT", body.GRID_FORMAT);
+                        }
+                    }
                     console.log("fieldsFormbeforeSubmit", body);
                 },
                 fieldsFormSuccess: function (response) {

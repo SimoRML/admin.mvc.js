@@ -5,7 +5,7 @@
 	DECLARE @vnum int set @vnum = {5};
 	
 	
-	if @vnum > 1
+	if OBJECT_ID('VIEW_{6}', 'V') IS NOT NULL
 	BEGIN
 		DROP VIEW VIEW_{6};
 	END;

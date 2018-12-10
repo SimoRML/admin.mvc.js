@@ -3,6 +3,7 @@ $(function () {
     $("#v-components").load("router/vcomponents", function (response, status, xhr) {
         if (status === "success") LOAD();
     });
+    $("#minimizeSidebar").trigger("click");
 });
 
 function LOAD() {

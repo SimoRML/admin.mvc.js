@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 using System.Web.Http;
 using System.Web.Http.Description;
 using FAIS.Models;
+using FAIS.Models.Repository;
 
 namespace FAIS.Controllers
 {
@@ -116,7 +117,7 @@ namespace FAIS.Controllers
                 return NotFound();
             }
 
-            META_BO mETA_BO = await db.META_BO.FindAsync(vERSIONS.META_BO_ID);
+            META_BO mETA_BO = await new MetaBoRepo().GetMETAForCommitAsync(vERSIONS.META_BO_ID.Value); // await db.META_BO.FindAsync(vERSIONS.META_BO_ID);
             if (mETA_BO.META_FIELD.Count <= 0)
             {
                 return BadRequest("No meta field found !");

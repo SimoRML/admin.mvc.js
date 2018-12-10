@@ -62,6 +62,7 @@ namespace FAIS.Models.VForm
     public class CrudModel : BORepository
     {
         public int MetaBoID { get; set; }
+        public int BO_ID { get; set; }
         // public string MetaBoNAME { get; set; }
         public Dictionary<string, object> Items { get; set; }
 

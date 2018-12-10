@@ -1,8 +1,34 @@
 ﻿@model FAIS.Models.META_BO
+@{
+    string boDbName(string txt)
+    {
+        return Model.BO_DB_NAME + txt;
+    }
+    bool isSubForm = ViewBag.isSubForm != null;
+}
+@helper renderTable(bool includeDatasource)
+{
+    <v-table ref="theTable"
+             meta-name="@Model.BO_DB_NAME"
+             @if (includeDatasource) { @: datasource="metabo/select/@Model.BO_DB_NAME"
+             }
+             action-component="@Model.BO_DB_NAME-action"></v-table>
+}
+@helper renderForm()
+{
+    <v-form ref="theForm"
+            meta-datasource="metabo/GetDefinition/@Model.BO_DB_NAME"
+            api="metabo/Crud/@Model.META_BO_ID"
+            v-on:submit-success="success"
+            v-on:submit-fail="error"
+            v-on:get-definition-done="getDefinitionDone"
+            v-on:update-mode="updateMode"
+            v-on:insert-mode="insertMode"></v-form>
+}
 
 @if (Model.STATUS == "PENDING")
 {
-    <div class="col-md-12" id="my-vue-app">
+    <div class="col-md-12" id="@boDbName("-vue-app")">
         <div class="alert alert-warning">
             <span>
                 <b> Warning - </b>
@@ -15,62 +41,109 @@
 }
 else
 {
-    <div class="col-md-12" id="my-vue-app">
-
-        <div class="nav-left">
-            <ul class="nav nav-pills nav-pills-icons nav-pills-icons" role="tablist">
-                <!--
-                    color-classes: "nav-pills-primary", "nav-pills-info", "nav-pills-success", "nav-pills-warning","nav-pills-danger"
-                -->
+    <div class="col-md-12" id="@boDbName("-vue-app")">
+        @if (isSubForm)
+        {
+            <ul class="nav nav-pills nav-pills-warning">
                 <li class="active">
-                    <a id="tab-list" href="#description-1" role="tab" data-toggle="tab">
-                        <i class="material-icons">list</i> List
-                    </a>
+                    <a id="@boDbName("tab-list")" href="#@boDbName("_table")" data-toggle="tab">Liste</a>
                 </li>
                 <li>
-                    <a id="tab-form" href="#schedule-1" role="tab" data-toggle="tab">
-                        <i class="material-icons">add</i> Ajouter
-                    </a>
+                    <a id="@boDbName("tab-form")" href="#@boDbName("_form")" data-toggle="tab" v-show="CurrentMode.mode === 'update'">Modifier</a>
                 </li>
-
+                <li>
+                    <a id="@boDbName("tab-form-add")" href="#@boDbName("_form")" data-toggle="tab" v-on:click="$refs.theForm.reset()">Ajouter</a>
+                </li>
             </ul>
-        </div>
-        <div class="tab-content">
-            <div class="tab-pane active" id="description-1">
-                <div class="card">
-                    <div class="card-header">
-                        <h4 class="card-title">Description about product</h4>
-
-                    </div>
-                    <div class="card-content">
-
-                        <v-table ref="_Table" 
-                                 meta-name="@Model.BO_DB_NAME"
-                                 datasource="metabo/select/@Model.BO_DB_NAME"
-                                 action-component="fields-action"></v-table>
-
-                    </div>
+            <div class="tab-content">
+                <div class="tab-pane active" id="@boDbName("_table")">
+                    @renderTable(false)
+                </div>
+                <div class="tab-pane" id="@boDbName("_form")">
+                    @renderForm()
                 </div>
             </div>
-            <div class="tab-pane " id="schedule-1">
-                <div class="card">
-                    <div class="card-header">
+            <br />
+        }
+        else
+        {
 
-                    </div>
-                    <div class="card-content">
-                        <v-form ref="theForm"
-                                meta-datasource="metabo/GetDefinition/@Model.BO_DB_NAME"
-                                api="metabo/Crud/@Model.META_BO_ID"
-                                v-on:submit-success="success"
-                                v-on:submit-fail="error"></v-form>
+            <div class="nav-left">
+                <ul class="nav nav-pills nav-pills-icons" role="tablist">
+                    <!--
+        color-classes: "nav-pills-primary", "nav-pills-info", "nav-pills-success", "nav-pills-warning","nav-pills-danger"
+    -->
+                    <li class="active">
+                        <a id="@boDbName("tab-list")" href="#@boDbName("list")" role="tab" data-toggle="tab">
+                            @if (!isSubForm)
+                            {
+                                <i class="material-icons">list</i>
+                            }
+                            Liste
+                        </a>
+
+                    </li>
+                    <li>
+                        <a id="@boDbName("tab-form")" href="#@boDbName("form")" role="tab" data-toggle="tab" v-show="CurrentMode.mode === 'update'">
+                            @if (!isSubForm)
+                            {
+                            <i class="material-icons">create</i>
+                            }
+                            Modifier
+                        </a>
+                    </li>
+                    <li>
+                        <a id="@boDbName("tab-form-add")" href="#@boDbName("form")" role="tab" data-toggle="tab" v-on:click="$refs.theForm.reset()">
+                            @if (!isSubForm)
+                            {
+                                <i class="material-icons">note_add</i>
+                            }
+                            Ajouter
+                        </a>
+                    </li>
+                </ul>
+            </div>
+            <div class="tab-content">
+                <div class="tab-pane active" id="@boDbName("list")">
+                    <div class="card">
+                        <div class="card-content">
+                            @renderTable(true)
+                        </div>
                     </div>
                 </div>
-            </div>
+                <div class="tab-pane " id="@boDbName("form")">
+                    <div :class="{'col-md-6':hasSubForm}">
+                        <div class="card">
+                            <div class="card-header">
+                                <h4 class="card-title">{{ CurrentMode.title }}</h4>
+                                <p class="category">
+                                    {{ CurrentMode.subtitle }}
+                                </p>
+                            </div>
+                            <div class="card-content">
+                                @renderForm()
+                            </div>
+                        </div>
+                    </div>
+                    <div :class="'col-md-6 ' + CurrentMode.subFormMode" v-if="hasSubForm" v-for="subform in subForms">
+                        <div class="card">
+                            <div class="card-header">
+                                <h4 class="card-title">{{ subform.FORM_NAME }}</h4>
+                            </div>
+                            <div class="card-content">
+                                <div v-include="{url:subform.url}"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
-        </div>
+            </div>
+        }
+
     </div>
 
-    <script id="fields-action-template" type="vue/template">
+
+    <script id="@boDbName("-action-template")" type="vue/template">
         <div class="pull-right">
             <button class="btn btn-primary btn-round btn-fab btn-fab-mini btn-fab-x-mini"
                     v-on:click="edit(row.BO_ID)">
@@ -78,34 +151,91 @@ else
             </button>
         </div>
     </script>
-
     <script type="text/javascript">
         bus.setMeta("@Model.BO_DB_NAME", @Html.Raw(Json.Encode(Model)));
-        var vapp = new Vue(
-            {
-                el: '#my-vue-app',
-                methods: {
-                    success: function (response) {
-                        NOTIF.success('Objet enregistré avec succès.');
-                        $("#tab-list").trigger("click");
-                        this.$refs._Table.load();
+    </script>
+
+    <script type="text/javascript">
+        var @boDbName("vapp") = new Vue(
+        {
+            el: '#@boDbName("-vue-app")',
+            data: {
+                hasSubForm: false,
+                subForms: [],
+                FormModes: {
+                    insert:{
+                        mode: "insert",
+                        icon: "note_add",
+                        tab: "Ajouter",
+                        title: "@Model.BO_NAME",
+                        subtitle: "Créer un nouvel object",
+                        subFormMode: "disable",
                     },
-                    error: function (Response) {
-                        NOTIF.error('Impossible d\'enregistré l\'objet !<br>' + Response.responseJSON.ExceptionMessage);
+                    update: {
+                        mode: "update",
+                        icon: "create",
+                        tab: "Modifier",
+                        title: "@Model.BO_NAME",
+                        subtitle: "Modifier l'objet",
+                        subFormMode: "",
+                    }
+                },
+                CurrentMode: {}
+            },
+            methods: {
+                success: function (response) {
+                    NOTIF.success('Objet enregistré avec succès.');
+                    if (this.$refs.theForm.mode() === "insert" && this.hasSubForm) {
+                        this.$refs.theForm.Get(response.BO_ID);
+                    } else $("#@boDbName("tab-list")").trigger("click");
+
+                    this.$refs.theTable.load();
+                },
+                error: function (Response) {
+                    NOTIF.error('Impossible d\'enregistré l\'objet !<br>' + Response.responseJSON.ExceptionMessage);
+                },
+                getDefinitionDone: function () {
+                    this.hasSubForm = this.$refs.theForm.subFroms.length > 0;
+                    this.subForms = this.$refs.theForm.subFroms;
+                    this.subForms.forEach((e) => {
+                        e.BO_DB_NAME = e.FORM_TYPE.replaceAll("subform-", "")
+                        e.url = "bo/subform/" + e.BO_DB_NAME.replaceAll("_BO_", "");
+                        console.log("subform " + e.BO_DB_NAME, e);
+                    });
+                },
+                updateMode: function (entity) {
+                    if (this.hasSubForm) {
+                        this.subForms.forEach((e) => {
+                            window[e.BO_DB_NAME + "vapp"].$refs.theTable.load("metabo/SelectChilds/" + e.BO_DB_NAME + "/" + entity.BO_ID);
+                            window[e.BO_DB_NAME + "vapp"].$refs.theForm.$data.crudApi = URL.addPart(window[e.BO_DB_NAME + "vapp"].$refs.theForm.$props.api, entity.BO_ID);
+                        });
+                    }
+                    this.FormModes.update.title = "@Model.BO_NAME : " + entity.BO_ID;
+                    this.CurrentMode = this.FormModes.update;
+                },
+                insertMode: function () {
+                    this.CurrentMode = this.FormModes.insert; 
+                    if (this.hasSubForm) {
+                        this.subForms.forEach((e) => {
+                            window[e.BO_DB_NAME + "vapp"].$refs.theTable.clear();
+                        });
                     }
                 }
-            });
+            },
+            mounted: function(){
+                this.CurrentMode = this.FormModes.insert;
+            }
+        });
 
-
-        Vue.component('fields-action', {
-            template: $("#fields-action-template").html(),
+        Vue.component('@boDbName("-action")', {
+            template: $("#@boDbName("-action-template")").html(),
             props: {
                 row: Object
             },
             methods: {
                 edit: (id) => {
-                    vapp.$refs.theForm.Get(id);
-                    $("#tab-form").trigger("click");
+                    @boDbName("vapp").$refs.theForm.Get(id);
+                    $("#@boDbName("tab-form")").trigger("click");
                 }
             }
         });

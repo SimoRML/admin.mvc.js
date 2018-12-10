@@ -1,4 +1,5 @@
 ﻿using FAIS.Models;
+using FAIS.Models.Repository;
 using FAIS.Models.VForm;
 using System;
 using System.Collections.Generic;
@@ -44,17 +45,11 @@ namespace FAIS.Controllers
         [Route("GetDefinition/{id}")]
         public async Task<IHttpActionResult> GetDefinition(string id)
         {
-            // var sqlLogFile = new StreamWriter(System.Web.Hosting.HostingEnvironment.MapPath("~/SQL/EF.log.sql"));
-            // db.Database.Log = sqlLogFile.Write;
-            META_BO mETA_BO = await db.META_BO
-                .Where(x => x.BO_DB_NAME == id)
-                .IncludeFilter(x => x.META_FIELD.Where(f => f.STATUS != "NEW"))
-                .FirstOrDefaultAsync();
+            META_BO mETA_BO = await new MetaBoRepo().GetMETAAsync(id);
             if (mETA_BO == null)
             {
                 return NotFound();
             }
-            // sqlLogFile.Close();
             return Ok(mETA_BO);
         }
         [HttpPost]
@@ -180,7 +175,6 @@ namespace FAIS.Controllers
             {
                 MetaBoID = id,
                 Items = Items
-
             };
             var meta = await db.META_BO.FindAsync(model.MetaBoID);
 
@@ -200,6 +194,7 @@ namespace FAIS.Controllers
             int id_ = (int)bo_model.BO_ID;
 
             model.MetaBO = meta;
+            model.BO_ID = id_;
             model.Items.Add("BO_ID", id_);
             bool insert = model.Insert();
             if (insert)
@@ -207,6 +202,50 @@ namespace FAIS.Controllers
             else
                 return InternalServerError();
         }
+
+        [HttpPost]
+        [Route("Crud/{id}/{parentId}")]
+        public async Task<IHttpActionResult> InsertChilds(int id, long parentId, Dictionary<string, object> Items)
+        {
+            var model = new CrudModel()
+            {
+                MetaBoID = id,
+                Items = Items
+            };
+            var meta = await db.META_BO.FindAsync(model.MetaBoID);
+
+            BO bo_model = new BO()
+            {
+                CREATED_BY = User.Identity.Name,
+                CREATED_DATE = DateTime.Now,
+                UPDATED_BY = User.Identity.Name,
+                UPDATED_DATE = DateTime.Now,
+                STATUS = "1",
+                BO_TYPE = model.MetaBoID.ToString(),
+                VERSION = meta.VERSION
+            };
+            db.BO.Add(bo_model);
+            await db.SaveChangesAsync();
+
+            db.BO_CHILDS.Add(new BO_CHILDS()
+            {
+                BO_PARENT_ID = parentId,
+                BO_CHILD_ID = bo_model.BO_ID,
+                RELATION = "1..*"
+            });
+            await db.SaveChangesAsync();
+
+            int id_ = (int)bo_model.BO_ID;
+
+            model.MetaBO = meta;
+            model.Items.Add("BO_ID", id_);
+            bool insert = model.Insert();
+            if (insert)
+                return Ok(model);
+            else
+                return InternalServerError();
+        }
+
         [HttpPut]
         [Route("Crud/{id}/{bo_id}")]
         public async Task<IHttpActionResult> Update(long id, long bo_id, Dictionary<string, object> Items)
@@ -233,6 +272,12 @@ namespace FAIS.Controllers
             else
                 return InternalServerError(new Exception(update_));
         }
+        [HttpPut]
+        [Route("Crud/{id}/{parentId}/{bo_id}")]
+        public async Task<IHttpActionResult> UpdateChilds(long id, long parentId, long bo_id, Dictionary<string, object> Items)
+        {
+            return await Update(id, bo_id, Items);
+        }
 
         [HttpGet]
         [Route("Select/{Tname}")]
@@ -244,11 +289,26 @@ namespace FAIS.Controllers
                 return BadRequest();
             }
 
-
             var s = new SGBD();
             var Gen = new BORepositoryGenerator();
             var dt = s.Cmd(Gen.GenSelect(meta.BO_DB_NAME));
 
+            return Ok(dt);
+        }
+
+        [HttpGet]
+        [Route("SelectChilds/{Tname}/{parentId}")]
+        public async Task<IHttpActionResult> SelectChilds(string Tname, long parentId)
+        {
+            var meta = await db.META_BO.Where(x => x.BO_DB_NAME == Tname).FirstOrDefaultAsync();
+            if (meta == null)
+            {
+                return BadRequest();
+            }
+
+            var s = new SGBD();
+            var Gen = new BORepositoryGenerator();
+            var dt = s.Cmd(Gen.GenSelectChilds(meta.BO_DB_NAME, parentId));
 
             return Ok(dt);
         }

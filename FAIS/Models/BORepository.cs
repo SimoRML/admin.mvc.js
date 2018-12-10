@@ -61,6 +61,14 @@ namespace FAIS.Models
             return select;
         }
 
+        public string GenSelectChilds(string Tname, long parentId)
+        {
+            // TODO : Filter 
+            string select = "";
+            select = "select * from VIEW_" + Tname + " where BO_ID in (select BO_CHILD_ID from BO_CHILDS where BO_PARENT_ID = "+parentId+")";
+
+            return select;
+        }
         // TODO GenSelectOne (Switch to filter Model)
 
         public string GenSelectOne(string Tname)

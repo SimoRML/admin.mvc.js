@@ -16,5 +16,6 @@ namespace FAIS.Models
     {
         public long BO_PARENT_ID { get; set; }
         public long BO_CHILD_ID { get; set; }
+        public string RELATION { get; set; }
     }
 }

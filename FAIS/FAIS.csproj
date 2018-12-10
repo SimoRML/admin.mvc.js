@@ -284,6 +284,7 @@
     <Compile Include="Models\META_FIELD.cs">
       <DependentUpon>FAIS_MODEL.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\Repository\MetaBoRepo.cs" />
     <Compile Include="Models\SGBD.cs" />
     <Compile Include="Models\VERSIONS.cs">
       <DependentUpon>FAIS_MODEL.tt</DependentUpon>
@@ -309,6 +310,7 @@
     <Content Include="Content\img\card-1.jpeg" />
     <Content Include="Content\img\card-2.jpeg" />
     <Content Include="Content\img\card-3.jpeg" />
+    <Content Include="Content\img\cloud_error.png" />
     <Content Include="Content\img\default-avatar.png" />
     <Content Include="Content\img\faces\avatar.jpg" />
     <Content Include="Content\img\faces\card-profile1-square.jpg" />
@@ -417,6 +419,7 @@
     <Content Include="Content\img\flags\YE.png" />
     <Content Include="Content\img\header-doc.jpeg" />
     <Content Include="Content\img\image_placeholder.jpg" />
+    <Content Include="Content\img\loading.jpg" />
     <Content Include="Content\img\lock.jpeg" />
     <Content Include="Content\img\login.jpeg" />
     <Content Include="Content\img\mask.png" />
@@ -602,6 +605,8 @@
     <Content Include="Views\Router\testmenu.cshtml" />
     <Content Include="Views\Admin\MetaField.cshtml" />
     <Content Include="Views\Bo\Index.cshtml" />
+    <Content Include="Views\Bo\Test.cshtml" />
+    <Content Include="Views\Bo\SubForm.cshtml" />
     <None Include="Views\v_components\_v_table.cshtml" />
     <None Include="Views\v_components\_v_form.cshtml" />
     <Content Include="Views\Router\_v_vomponents.cshtml" />

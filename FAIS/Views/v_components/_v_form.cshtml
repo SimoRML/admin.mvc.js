@@ -2,7 +2,7 @@
     <div>
         <form :id="elementId" onsubmit="return false;">
             <template v-for="field in meta"
-                      v-if="field.FORM_SHOW==1 && field.STATUS.trim() !== 'DISABLED' && field.STATUS.trim() !== 'NEW'">
+                      v-if="field.FORM_SHOW==1 && field.STATUS.trim() !== 'DISABLED' && field.STATUS.trim() !== 'NEW' && field.FORM_TYPE.match('subform-') === null">
                 @*BEFORE*@
                 <component v-if="typeof field.before_component !== 'undefined'"
                            :name="field.FORM_TYPE + '-before-' + elementId"
@@ -43,7 +43,9 @@
                 pk: {
                     key: "",
                     value: -1
-                }
+                },
+                subFroms: [],
+                crudApi: null,
             }
         },
         methods: {
@@ -62,6 +64,10 @@
             },
             formatBody: function (entity) {
                 for (var i in this.meta) {
+                    if (this.meta[i].FORM_TYPE.match('subform-') !== null) {
+                        this.subFroms.push(this.meta[i]);
+                        continue;
+                    }
                     if (this.meta[i].STATUS.trim().toLowerCase() == 'pk') {
                         this.pk.key = this.meta[i].DB_NAME;
                     } else {
@@ -82,7 +88,7 @@
                 var body = clone(me.body);
                 delete body.__ob__;
 
-                var url = me.api;
+                var url = me.crudApi;
                 //console.log("submit ", url);
                 if (this.verb == 'PUT') url = URL.addPart(url, this.pk.value);
                 //console.log("submit ", url);
@@ -116,7 +122,7 @@
                 if (typeof inject === "function") inject(me);
 
                 var temp = clone(me.meta);
-                
+
                 me.meta = null;
                 setTimeout(function () {
                     // console.log("refresh temp " + me.elementId, temp);
@@ -135,10 +141,12 @@
                     url: me.metaDatasource,
                     loadComplete: function (obj, response) {
                         me.meta = response.META_FIELD;
+                        bus.setMeta(response.BO_DB_NAME, response);
                         me.formatBody();
                         setTimeout(function () {
                             updateDom();
                         }, 500);
+                        me.$emit("get-definition-done");
                     }
                 });
             },
@@ -178,7 +186,8 @@
         },
         created: function () {
             var me = this;
-            // console.log(me.api + "created");
+            me.crudApi = me.api;
+
             // SET FORM META
             if (typeof me.metaDatasource === "undefined") {
                 me.meta = me.metaDefinition;

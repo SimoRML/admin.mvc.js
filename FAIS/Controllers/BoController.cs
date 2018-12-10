@@ -1,5 +1,6 @@
 ﻿using FAIS.Models;
 using FAIS.Models.Authorize;
+using FAIS.Models.Repository;
 using System.Linq;
 using System.Web.Mvc;
 using Z.EntityFramework.Plus;
@@ -16,11 +17,25 @@ namespace FAIS.Controllers
         public PartialViewResult Index(string id)
         {
             id += "_BO_";
-            var meta = db.META_BO.Where(o => o.BO_DB_NAME == id)
-                .IncludeFilter(x => x.META_FIELD.Where(f => f.STATUS != "NEW"))
-                .FirstOrDefault();
-            
+            var meta = new MetaBoRepo().GetMETA(id);
+
             return PartialView(meta);
+        }
+
+        [Route("SubForm/{id}")]
+        public PartialViewResult SubForm(string id)
+        {
+            ViewBag.isSubForm = true;
+            id += "_BO_";
+            var meta = new MetaBoRepo().GetMETA(id);
+
+            return PartialView("Index",meta);
+        }
+
+        [Route("test")]
+        public PartialViewResult Test()
+        {
+            return PartialView();
         }
     }
 }

@@ -93,9 +93,11 @@ namespace FAIS.Controllers
                 metafeldDB.FORM_TYPE = model.FORM_TYPE;
 
             metafeldDB.GRID_NAME = model.GRID_NAME;
+            metafeldDB.GRID_FORMAT = model.GRID_FORMAT;
             metafeldDB.FORM_NAME = model.FORM_NAME;
             metafeldDB.FORM_SOURCE = model.FORM_SOURCE;
             metafeldDB.FORM_OPTIONAL = model.FORM_OPTIONAL;
+            metafeldDB.IS_FILTER = model.IS_FILTER;
             metafeldDB.UPDATED_BY = User.Identity.Name;
             metafeldDB.UPDATED_DATE = DateTime.Now;
 

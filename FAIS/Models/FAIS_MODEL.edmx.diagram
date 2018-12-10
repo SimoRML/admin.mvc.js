@@ -5,10 +5,10 @@
     <!-- Diagram content (shape and connector positions) -->
     <edmx:Diagrams>
       <Diagram DiagramId="c189e708268c4e0992ecb304ee113d06" Name="Diagram1" ZoomLevel="100">
-        <EntityTypeShape EntityType="FAISModel.BO_CHILDS" Width="1.5" PointX="5.75" PointY="4.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="FAISModel.BO_CHILDS" Width="1.5" PointX="5.75" PointY="8.125" IsExpanded="true" />
         <EntityTypeShape EntityType="FAISModel.VERSIONS" Width="1.5" PointX="3" PointY="7.125" IsExpanded="true" />
         <EntityTypeShape EntityType="FAISModel.META_FIELD" Width="1.5" PointX="3" PointY="11" />
-        <EntityTypeShape EntityType="FAISModel.BO" Width="1.5" PointX="0.75" PointY="0.75" />
+        <EntityTypeShape EntityType="FAISModel.BO" Width="1.5" PointX="7.875" PointY="7" />
         <EntityTypeShape EntityType="FAISModel.META_BO" Width="1.5" PointX="0.75" PointY="10.125" />
         <AssociationConnector Association="FAISModel.FK__META_FIEL__META___33D4B598" />
         <AssociationConnector Association="FAISModel.FK__VERSIONS__META_B__4BAC3F29" />

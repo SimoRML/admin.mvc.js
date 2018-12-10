@@ -34,8 +34,8 @@ Vue.directive("format", {
             var display = "";
             for (var i in bus.lists[binding.value.format.source]) {
                 var e = bus.lists[binding.value.format.source][i];
-                console.log("e.Value", e.Value);
-                if (e.Value == binding.value.value) {
+                // console.log("e.Value", e.Value);
+                if (e.Value === binding.value.value) {
                     display = e.Display;
                     break;
                 }
@@ -44,6 +44,25 @@ Vue.directive("format", {
             $(e1).html(display === "" ? binding.value.value : display);
         }
         
+    }
+});
+
+Vue.directive("include", {
+    bind(e1, binding, vnode) {
+        console.log("include", binding);
+        var url = binding.value.url;
+        var $element = $(e1);
+        var $preloaderElement = $element.parent(".card").length > 0 ? $element.parent(".card") : $element;
+        $preloaderElement.addClass("preLoader");
+        $element.load(url, function (response, status, xhr) {
+            $preloaderElement.removeClass("preLoader");
+            if (status === "success") {
+                
+                updateDom();
+            } else {
+                $preloaderElement.addClass("preLoaderError");
+            }
+        });
     }
 });
 

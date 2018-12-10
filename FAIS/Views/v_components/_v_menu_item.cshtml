@@ -10,7 +10,9 @@
         <div :class="'v-collapse ' + getOpenClass()">
             <ul class="nav">
                 <li v-for="item in childs">
-                    <a :href="'#' + item.href">{{ item.text }}</a>
+                    <a :href="'#' + item.href" style="padding-left: 60px;">
+                        {{ item.text }}
+                    </a>
                 </li>
             </ul>
         </div>

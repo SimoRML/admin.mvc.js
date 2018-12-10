@@ -26,9 +26,9 @@ namespace FAIS.Models
                     }
                     else
                     {
-                        select_ += "union select * ,";
                         if (nbrFields != fields.Rows.Count)
                         {
+                            select_ += "union select * ,";
                             for (int i = 0; i < (nbrFields - fields.Rows.Count); i++)
                             {
                                 select_ += "null,";

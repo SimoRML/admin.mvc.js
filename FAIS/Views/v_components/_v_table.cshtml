@@ -1,41 +1,48 @@
 ﻿<script id="TableComponentTemplate" type="text/template">
-    <table class="table table-striped table-no-bordered table-hover" cellspacing="0" width="100%" style="width:100%">
-        <thead>
-            <tr>
-                <th v-if="detailRowDefined"></th>
-                <template v-for="h in getHeaders">
-                    <th v-if="show(h)">
-                        {{ getLabel(h) }}
-                    </th>
-                </template>
-                <th v-if="actionComponentDefined"></th>
-            </tr>
-        </thead>
-        <tbody>
-            <template v-for="(item, index) in list">
+    <div>
+        <div class="alert alert-with-icon" data-notify="container"  v-show="list.length <= 0">
+            <i class="material-icons" data-notify="icon">border_clear</i>
+            <span data-notify="message">Aucune donnée à afficher !</span>
+        </div>
+
+        <table class="table table-striped table-no-bordered table-hover" cellspacing="0" width="100%" style="width:100%">
+            <thead>
                 <tr>
-                    <td v-if="detailRowDefined"
-                        v-on:click="toggleDetailRow(index)">
-                        <i class="material-icons i-btn-round" v-show="showDetailRow[index] != null && showDetailRow[index]">expand_less</i>
-                        <i class="material-icons i-btn-round" v-show="showDetailRow[index] == null || !showDetailRow[index]">expand_more</i>
-                    </td>
+                    <th v-if="detailRowDefined"></th>
                     <template v-for="h in getHeaders">
-                        <td v-if="show(h)" v-format="{value:item[h], format:getFormat(h)}">
-                            {{ item[h] }}
-                        </td>
+                        <th v-if="show(h)">
+                            {{ getLabel(h) }}
+                        </th>
                     </template>
-                    <td v-if="actionComponentDefined">
-                        <component v-bind:is="actionComponent" v-bind="{row:item}"></component>
-                    </td>
+                    <th v-if="actionComponentDefined"></th>
                 </tr>
-                <tr class="detailRow" v-if="detailRowDefined" v-show="showDetailRow[index] != null && showDetailRow[index]">
-                    <td v-bind:colspan="columnCount">
-                        <component v-bind:is="detailRow" v-bind="{row:item, columnLabels: columnLabels}"></component>
-                    </td>
-                </tr>
-            </template>
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+                <template v-for="(item, index) in list">
+                    <tr>
+                        <td v-if="detailRowDefined"
+                            v-on:click="toggleDetailRow(index)">
+                            <i class="material-icons i-btn-round" v-show="showDetailRow[index] != null && showDetailRow[index]">expand_less</i>
+                            <i class="material-icons i-btn-round" v-show="showDetailRow[index] == null || !showDetailRow[index]">expand_more</i>
+                        </td>
+                        <template v-for="h in getHeaders">
+                            <td v-if="show(h)" v-format="{value:item[h], format:getFormat(h)}">
+                                {{ item[h] }}
+                            </td>
+                        </template>
+                        <td v-if="actionComponentDefined">
+                            <component v-bind:is="actionComponent" v-bind="{row:item}"></component>
+                        </td>
+                    </tr>
+                    <tr class="detailRow" v-if="detailRowDefined" v-show="showDetailRow[index] != null && showDetailRow[index]">
+                        <td v-bind:colspan="columnCount">
+                            <component v-bind:is="detailRow" v-bind="{row:item, columnLabels: columnLabels}"></component>
+                        </td>
+                    </tr>
+                </template>
+            </tbody>
+        </table>
+    </div>
 </script>
 <script type="text/javascript">
     Vue.component('v-table', {
@@ -100,17 +107,18 @@
             load: function (url) {
                 var me = this;
                 if (typeof me.dataSourceUrl === "undefined" && typeof url === "undefined") return;
-                if (typeof url === "undefined" && typeof me.dataSourceUrl !== "undefined") url = me.dataSourceUrl;
-                if (typeof url !== "undefined" && typeof me.dataSourceUrl === "undefined") me.dataSourceUrl = url;
-                //console.log(url);
+                if (typeof url !== "undefined") me.dataSourceUrl = url;
+                else url = me.dataSourceUrl;
                 var data = EV.getComponent("data");
                 data.ExecuteSource({
                     url: url,
                     loadComplete: function (obj, response) {
-                        console.log("v-table.load()", response);
                         me.list = response;
                     }
                 });
+            },
+            clear: function () { 
+                this.list = [];
             },
             show: function (colName) {
                 if (typeof this.columnShow !== "undefined") {

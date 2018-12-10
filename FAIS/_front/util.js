@@ -166,7 +166,7 @@ var URL = {
         return url + (url.indexOf("?") < 0 ? "?" : "&") + param;
     },
     addPart: function (url, part) {
-        console.log("addPart : " + url, part);
+       //console.log("addPart : " + url, part);
         return url + (url.slice(-1) === "/" ? "" : "/") + part;
     }
 };

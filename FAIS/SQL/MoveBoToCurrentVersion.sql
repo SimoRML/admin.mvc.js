@@ -37,7 +37,7 @@ BEGIN
 		
 		
 		DECLARE fields_cursor CURSOR FOR 
-			select DB_NAME from META_FIELD where META_BO_ID = @metBoId AND [VERSION] <= @boVersion;
+			select DB_NAME from META_FIELD where META_BO_ID = @metBoId AND [VERSION] <= @boVersion AND FORM_TYPE not like 'subform-%';
 
 		OPEN fields_cursor  
 		FETCH NEXT FROM fields_cursor INTO @oneField

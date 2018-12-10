@@ -25,6 +25,7 @@
           </Key>
           <Property Name="BO_PARENT_ID" Type="bigint" Nullable="false" />
           <Property Name="BO_CHILD_ID" Type="bigint" Nullable="false" />
+          <Property Name="RELATION" Type="varchar" MaxLength="50" />
         </EntityType>
         <EntityType Name="META_BO">
           <Key>
@@ -135,6 +136,7 @@
           </Key>
           <Property Name="BO_PARENT_ID" Type="Int64" Nullable="false" />
           <Property Name="BO_CHILD_ID" Type="Int64" Nullable="false" />
+          <Property Name="RELATION" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
         </EntityType>
         <EntityType Name="VERSIONS">
           <Key>
@@ -258,6 +260,7 @@
           <EntitySetMapping Name="BO_CHILDS">
             <EntityTypeMapping TypeName="FAISModel.BO_CHILDS">
               <MappingFragment StoreEntitySet="BO_CHILDS">
+                <ScalarProperty Name="RELATION" ColumnName="RELATION" />
                 <ScalarProperty Name="BO_PARENT_ID" ColumnName="BO_PARENT_ID" />
                 <ScalarProperty Name="BO_CHILD_ID" ColumnName="BO_CHILD_ID" />
               </MappingFragment>
