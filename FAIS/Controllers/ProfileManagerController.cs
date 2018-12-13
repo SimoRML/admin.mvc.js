@@ -3,8 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Threading.Tasks;
 using System.Web.Http;
-
+using System.Web.Http.Description;
 
 namespace FAIS.Controllers
 {
@@ -12,16 +13,16 @@ namespace FAIS.Controllers
     [RoutePrefix("api/Profile")]
     public class ProfileManagerController : ApiController
     {
+        FAISEntities db = new FAISEntities();
         // GET: api/ProfileManager
         [HttpGet]
         [Route("Menu")]
         public HttpResponseMessage Menu()
         {
-            FAISEntities db = new FAISEntities();
             var dt = db.META_BO.Where(x => x.META_BO_ID != 1 && x.TYPE == "form").ToList();
             List<MenuFields> menu_ = new List<MenuFields>();
 
-            menu_.Add(new MenuFields { icon = "dashboard", text = "Meta Bo", href = "#router.metabo" });
+            // menu_.Add(new MenuFields { icon = "dashboard", text = "Meta Bo", href = "#router.metabo" });
 
             foreach (var item in dt)
             {
@@ -42,39 +43,38 @@ namespace FAIS.Controllers
             {
                 Admin = new
                 {
-                    icon = "add_shopping_cart",
+                    icon = "build",
                     text = "Administration",
+                    href = "home",
+                    User = User.Identity.Name,
+                    parent = true,
+                    childs = new[] {
+                        new MenuFields { icon = "dashboard", text = "Meta Bo", href = "router.metabo" },
+                        new MenuFields { icon = "dashboard", text = "Workflow", href = "workflow.home" }
+                    }
+                },
+                Bo = new
+                {
+                    icon = "extension",
+                    text = "Objects",
                     href = "home",
                     User = User.Identity.Name,
                     parent = true,
                     childs = menu_.ToArray()
                 },
-
             };
             return this.Request.CreateResponse(
                 HttpStatusCode.OK,
                 menu);
         }
 
-        // GET: api/ProfileManager/5
-        public string Get(int id)
+        [HttpGet]
+        [ResponseType(typeof(List<string>))]
+        [Route("Validators")]
+        public async Task<IHttpActionResult> GetValidators()
         {
-            return "value";
-        }
-
-        // POST: api/ProfileManager
-        public void Post([FromBody]string value)
-        {
-        }
-
-        // PUT: api/ProfileManager/5
-        public void Put(int id, [FromBody]string value)
-        {
-        }
-
-        // DELETE: api/ProfileManager/5
-        public void Delete(int id)
-        {
+            List<string> validators = await db.Database.SqlQuery<string>("SELECT [Email] FROM [AspNetUsers] order by Email").ToListAsync();            
+            return Ok(validators);
         }
 
     }

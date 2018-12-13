@@ -76,6 +76,8 @@ DataSource.prototype.ExecuteSource = function (source) {
             // LOAD COMPLETE
             if (typeof source.loadComplete === "function")
                 source.loadComplete(me, response);
+            if (typeof source.done === "function")
+                source.done(response);
         })
         .fail(function (response) {
             me.Trigger("hide", "PagePreloader");

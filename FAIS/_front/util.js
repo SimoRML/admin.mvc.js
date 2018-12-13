@@ -151,7 +151,30 @@ var NOTIF = {
                 //console.log("dismiss", dismiss);
             }
         );
-    }
+    },
+    modal: function (params) {
+        swal({
+            width: params.width,
+            html: "<div id='modal' style='height:"+params.height+"; overflow-y:auto'></div>",
+            showCancelButton: true,
+            confirmButtonClass: 'btn btn-success',
+            cancelButtonClass: 'btn',
+            confirmButtonText: 'Enregistrer',
+            cancelButtonText: 'Fermer',
+            buttonsStyling: false,
+            showCloseButton:true,
+            onOpen: (e) => {
+                EV.getComponent("Router").LoadFor($("#modal"), params.url, params.load);
+            }
+        }).then(
+            function (a) {
+                params.valider();
+            },
+            function (dismiss) {
+                //console.log("dismiss", dismiss);
+            }
+        );
+    },
 }
 
 function sideBarFix() {

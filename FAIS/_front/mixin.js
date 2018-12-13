@@ -49,7 +49,7 @@ Vue.directive("format", {
 
 Vue.directive("include", {
     bind(e1, binding, vnode) {
-        console.log("include", binding);
+        // console.log("include", binding);
         var url = binding.value.url;
         var $element = $(e1);
         var $preloaderElement = $element.parent(".card").length > 0 ? $element.parent(".card") : $element;
@@ -68,7 +68,8 @@ Vue.directive("include", {
 
 var bus = new Vue({
     data: {
-        lists: {}
+        lists: {},
+        scope: {},
     },
     methods: {
         loadList: function (key, datasource, done) {
@@ -92,9 +93,11 @@ var bus = new Vue({
                     key = jsonSource.source;
 
                 var url = "metabo/SelectSource";
+                var method = "POST";
                 if (typeof jsonSource.url !== "undefined") url = jsonSource.url;
+                if (typeof jsonSource.method !== "undefined") method = jsonSource.method;
 
-                // IF LIST IS LAREADY LOADED
+                // IF LIST IS ALREADY LOADED
                 if (typeof this.lists[key] !== "undefined") {
                     done(this.lists[key]);
                     return;
@@ -103,7 +106,7 @@ var bus = new Vue({
                 var data = EV.getComponent("data");
                 data.ExecuteSource({
                     url: url,
-                    method: "POST",
+                    method: method,
                     data: datasource,
                     loadComplete: function (obj, response) {
                         me.lists[key] = response;
@@ -122,6 +125,10 @@ var bus = new Vue({
                     this.loadList(e.DB_NAME, e.FORM_SOURCE, () => { });
                 });
             }
+        },
+        setScope: function (id, value) {
+            this.$set(this.scope, id, value);
+            //this.$data[id] = value;
         }
     }
 });

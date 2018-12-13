@@ -46,3 +46,14 @@ Router.prototype.Load = function (page) {
         }
     });
 };
+Router.prototype.LoadFor = function ($target, url, load) {
+    var me = this;
+    $target.addClass("preLoader");
+    $target.load(url, function (response, status, xhr) {
+        $target.removeClass("preLoader");
+        if (status === "success") {
+            updateDom();
+            if (typeof load === "function") load();
+        }
+    });
+};

@@ -239,7 +239,6 @@
     <Compile Include="Areas\HelpPage\XmlDocumentationProvider.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\AdminController.cs" />
-    <Compile Include="Controllers\ApiBonController.cs" />
     <Compile Include="Controllers\BoController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\MetaBoController.cs" />
@@ -248,6 +247,7 @@
     <Compile Include="Controllers\RouterController.cs" />
     <Compile Include="Controllers\ValuesController.cs" />
     <Compile Include="Controllers\VersionsController.cs" />
+    <Compile Include="Controllers\WorkflowController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -610,6 +610,8 @@
     <None Include="Views\v_components\_v_table.cshtml" />
     <None Include="Views\v_components\_v_form.cshtml" />
     <Content Include="Views\Router\_v_vomponents.cshtml" />
+    <Content Include="Views\Workflow\Home.cshtml" />
+    <Content Include="Views\Workflow\Validation.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

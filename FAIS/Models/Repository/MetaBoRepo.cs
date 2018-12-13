@@ -48,6 +48,14 @@ namespace FAIS.Models.Repository
         }
 
 
+        public async System.Threading.Tasks.Task<List<META_BO>> GetMETAListAsync()
+        {
+            return await db.META_BO
+               .Where(x => x.TYPE == "form" && x.STATUS != "-1")
+               .IncludeFilter(x => x.META_FIELD.Where(f => f.STATUS != "NEW" ))
+               .ToListAsync();
+        }
+
         // FOR COMMIT
         public async System.Threading.Tasks.Task<META_BO> GetMETAForCommitAsync(string dbName)
         {
@@ -67,5 +75,7 @@ namespace FAIS.Models.Repository
 
             return meta;
         }
+
+
     }
 }

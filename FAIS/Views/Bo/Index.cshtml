@@ -8,7 +8,6 @@ bool isSubForm = ViewBag.isSubForm != null;
 }
 @helper renderTable(bool includeDatasource)
 {
-                    /**/
     <v-table ref="theTable"
              meta-name="@Model.BO_DB_NAME"
              @if (includeDatasource){ @: datasource="metabo/select/@Model.BO_DB_NAME"
@@ -17,7 +16,6 @@ bool isSubForm = ViewBag.isSubForm != null;
 }
 @helper renderForm()
 {
-                    /**/
     <v-form ref="theForm"
             meta-datasource="metabo/GetDefinition/@Model.BO_DB_NAME"
             api="metabo/Crud/@Model.META_BO_ID"
@@ -46,7 +44,7 @@ else
     <div class="col-md-12" id="@boDbName("-vue-app")">
         @if (isSubForm)
         {
-            <ul class="nav nav-pills nav-pills-warning">
+            <ul class="nav nav-pills nav-pills-info">
                 <li class="active">
                     <a id="@boDbName("tab-list")" href="#@boDbName("_table")" data-toggle="tab">Liste</a>
                 </li>
