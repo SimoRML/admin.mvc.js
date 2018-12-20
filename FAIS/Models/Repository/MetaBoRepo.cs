@@ -1,5 +1,7 @@
-﻿using System;
+﻿using FAIS.Models.VForm;
+using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Data.Entity;
 using System.Linq;
 using System.Web;
@@ -51,7 +53,7 @@ namespace FAIS.Models.Repository
         public async System.Threading.Tasks.Task<List<META_BO>> GetMETAListAsync()
         {
             return await db.META_BO
-               .Where(x => x.TYPE == "form" && x.STATUS != "-1")
+               .Where(x => /*x.TYPE == "form" && */x.STATUS != "-1")
                .IncludeFilter(x => x.META_FIELD.Where(f => f.STATUS != "NEW" ))
                .ToListAsync();
         }
@@ -76,6 +78,32 @@ namespace FAIS.Models.Repository
             return meta;
         }
 
+        public static List<SelectDataModel> GetDataSources()
+        {
+            SGBD s = new SGBD();
+            List<SelectDataModel> sources = new List<SelectDataModel>();
+
+            DataTable brute = s.Cmd(Helper.GetSQL("SelectDataSources.sql"));
+
+            var last = string.Empty;
+            foreach (DataRow row in brute.Rows)
+            {
+                if(row["TABLE_NAME"].ToString() != last)
+                {
+                    last = row["TABLE_NAME"].ToString();
+                    sources.Add(new SelectDataModel()
+                    {
+                        Value = last,
+                        Display = last.Replace("VIEW_","").Replace("_BO_", ""),
+                        Attributes = new Dictionary<string, string>()
+                    });
+                }
+                var attributes = sources.Last().Attributes;
+                attributes.Add(row["Field"].ToString(), row["Key"].ToString());
+            }
+
+            return sources;
+        }
 
     }
 }

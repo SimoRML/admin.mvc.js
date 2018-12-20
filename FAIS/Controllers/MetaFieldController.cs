@@ -58,6 +58,7 @@ namespace FAIS.Controllers
                 new { Value= "v-number"     , Display= "Numeric" },
                 new { Value= "v-select"     , Display= "Liste de choix" },
                 new { Value= "v-text"       , Display= "Text" },
+                new { Value= "v-textarea"   , Display= "Zone de text" },
             }.ToList();
 
             var subForms = await db.META_BO.Where(x => x.TYPE == "subform" && x.STATUS != "PENDING").ToListAsync();

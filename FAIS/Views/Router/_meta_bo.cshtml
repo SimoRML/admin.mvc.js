@@ -37,16 +37,16 @@
                     </div>
                 </div>
                 @*<div class="card">
-                    <div class="card-header">
-                        <h4 class="card-title">INCLUDE TEST</h4>
-                        <p class="category">
-                            INCLUDE TEST objects
-                        </p>
-                    </div>
-                    <div class="card-content">
-                        <div v-include="{url:'bo/test'}"></div>
-                    </div>
-                </div>*@
+                        <div class="card-header">
+                            <h4 class="card-title">INCLUDE TEST</h4>
+                            <p class="category">
+                                INCLUDE TEST objects
+                            </p>
+                        </div>
+                        <div class="card-content">
+                            <div v-include="{url:'bo/test'}"></div>
+                        </div>
+                    </div>*@
             </div>
             <div class="tab-pane" id="form">
                 <div class="col-md-6">
@@ -86,9 +86,12 @@
                 </div>
 
                 @Html.Partial("~/Views/Admin/MetaField.cshtml")
+
+                @*<div v-include="{url:'admin/metafields'}"></div>*@
             </div>
         </div>
     </div>
+
 
 
 
@@ -126,7 +129,7 @@
 </script>
 <script id="versions-action-template" type="vue/template">
     <div class="pull-right">
-        <button class="btn btn-success btn-round btn-fab btn-fab-mini btn-fab-x-mini" 
+        <button class="btn btn-success btn-round btn-fab btn-fab-mini btn-fab-x-mini"
                 title="Commit version"
                 v-if="row.STATUS.trim() === 'PENDING'"
                 v-on:click="commitVersion(row.VERSIONS_ID)">
@@ -143,12 +146,48 @@
     </div>
 </script>
 <script id="form-source-template" type="text/template">
-    <div class="row" v-if="visible">
-        <div class="col-md-12" v-if='typeof FORM_SOURCE !== "undefined" && typeof FORM_SOURCE.source !== "undefined"'>
-            <v-text label="Source do données" css-class="col-md-12" v-model="FORM_SOURCE.source" v-on:input="hendleInput"></v-text>
-            <v-text label="Champ valeur" css-class="col-md-6" v-model="FORM_SOURCE.value" v-on:input="hendleInput"></v-text>
-            <v-text label="Champ display" css-class="col-md-6" v-model="FORM_SOURCE.display" v-on:input="hendleInput"></v-text>
-            <v-text label="Filtre" optional="1" css-class="col-md-12" v-model="FORM_SOURCE.filter" v-on:input="hendleInput"></v-text>
+    <div class="row" v-if="visible" style="margin: 10px;background: #eee;border-radius: 5px;">
+        {{ reInit() }}
+        <div class="col-md-12">
+            <ul class="nav nav-pills" role="tablist">
+                <li class="active">
+                    <a href="#manuelle" role="tab" data-toggle="tab" v-on:click="type = 'list'; hendleInput()">
+                        Liste personalisée
+                    </a>
+                </li>
+                <li>
+                    <a href="#source_de_donnees" role="tab" data-toggle="tab" v-on:click="type = 'source'; reInit(); hendleInput()">
+                        Source de données
+                    </a>
+                </li>
+            </ul>
+        </div>
+        <div class="col-md-12">
+            <div class="tab-content">
+                <div class="tab-pane active" id="manuelle">
+                    <div class="col-md-12">
+                        <div class="form-group label-floating">
+                            <label class="control-label">Entrez un élément par ligne</label>
+                            <textarea class="form-control" style="height:168px; padding: 5px;" v-model="manualList" v-on:input="hendleInput" :required="isSourceOptional() === 1"></textarea>
+                        </div>
+                    </div>
+                </div>
+                <div class="tab-pane" id="source_de_donnees">
+                    <div class="col-md-12" v-if='typeof FORM_SOURCE !== "undefined" && FORM_SOURCE !== null && typeof FORM_SOURCE.source !== "undefined"'>
+                        <v-select ref="ddl_source" id="ddl_source" label="Source de données" fieldName="source de donnees"
+                                  v-model="FORM_SOURCE.source"
+                                  datasource="metabo/GetDataSources"
+                                  :optional="isSourceOptional()"
+                                  v-on:changed="sourceChanged"></v-select>
+                        <v-label label="Champ valeur" css-class="col-md-6" v-model="FORM_SOURCE.value"></v-label>
+                        <v-select ref="ddl_display" id="ddl_display" css-class="col-md-6"
+                                  label="Champ display"
+                                  v-model="FORM_SOURCE.display"
+                                  :optional="isSourceOptional()"></v-select>
+                        <v-text label="Filtre" optional="1" css-class="col-md-12" v-model="FORM_SOURCE.filter" v-on:input="hendleInput"></v-text>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </script>
@@ -163,26 +202,71 @@
         },
         data: function () {
             return {
-                FORM_SOURCE: null
+                FORM_SOURCE: null,
+                type: "list",
+                manualList: ""
             };
         },
         mixins: [MixinBase],
         methods: {
+            isSourceOptional: function () {
+                return this.type === "source" ? 0 : 1;
+            },
             hendleInput: function () {
-                //if (typeof bus.FORM_SOURCE === "undefined")
-                bus.FORM_SOURCE = this.FORM_SOURCE;
+                bus.FORM_SOURCE = this.val();
+            },
+            val: function () {
+                if (this.type === "list") {
+                    var arr = [];
+                    var lines = this.manualList.split('\n');
+                    for (var i in lines) {
+                        var value = lines[i].trim();
+                        if (value === "") continue;
+                        arr.push({ Value: value, Display: value });
+                    }
+                    return arr;
+                } else return this.FORM_SOURCE;
+            },
+            reInit: function () {
+                if (this.FORM_SOURCE == null) this.FORM_SOURCE = { source: "", value: "", display: "", filter: "" };
+                this.isSourceOptional();
+            },
+            sourceChanged: function (value, object) { 
+                var DisplaySelectData = [];
+                for (var field in object.Attributes) {
+                    if (object.Attributes[field] === "PRI") this.FORM_SOURCE.value = field;
+                    else DisplaySelectData.push({ Value: field, Display: field});
+                }
+                this.$refs.ddl_display.populateData(DisplaySelectData);
+                this.$refs.ddl_display.setValue(this.FORM_SOURCE.display);
             }
         },
         mounted: function () {
-            if (this.data == null) {
-                this.FORM_SOURCE = { source: "", value: "", display: "", filter: "" };
-            } else {
-                try {
-                    this.FORM_SOURCE = JSON.parse(this.data);
-                } catch{
-                    this.FORM_SOURCE = { source: "", value: "", display: "", filter: "" };
+            try {
+                var tmp = JSON.parse(this.data);
+                if (Array.isArray(tmp)) {
+                    this.type = "list";
+                    for (var i in tmp)
+                        this.manualList += tmp[i].Value + "\n";
+                    setTimeout(() => {
+                        $("a[href='#manuelle']").trigger("click");
+                    }, 100);
                 }
+                else {
+                    this.type = "source";
+                    this.FORM_SOURCE = tmp;
+                    // console.log("MOUNTED", this.data, tmp.display);
+                    setTimeout(() => {
+                        $("a[href='#source_de_donnees']").trigger("click");
+                    }, 100);
+                    // this.$refs.ddl_source.setValue(this.FORM_SOURCE.source);
+                    // console.log("calling ddl_display.setValue", this.FORM_SOURCE.display);
+                    // this.$refs.ddl_display.setValue(this.FORM_SOURCE.display);
+                }
+            } catch{
+                this.FORM_SOURCE = { source: "", value: "", display: "", filter: "" }; 
             }
+
             bus.FORM_SOURCE = this.FORM_SOURCE;
         }
     });
@@ -230,7 +314,7 @@
                             }
                         });
 
-                        
+
                     }
                 });
             }
@@ -271,7 +355,7 @@
                         title: "BO : " + entity.BO_NAME,
                         subtitle: "Modifier / configurer le BO",
                         fieldsCssClass: "",
-                    };
+                    }; 
                 },
                 switchToInsert: function () {
                     this.FormMode = {
@@ -280,7 +364,7 @@
                         title: "Business object",
                         subtitle: "Créer un nouveau business object",
                         fieldsCssClass: "disable",
-                    };
+                    }; 
                 },
                 beforeSubmitBo: function (body) {
                     body.BO_DB_NAME = cleanDBName(body.BO_NAME);
@@ -305,15 +389,14 @@
                     body.GRID_SHOW = 1;
                     body.FORM_SHOW = 1;
                     body.FORM_NAME = body.GRID_NAME;
+
+                    // FORM_SOURCE
                     if (body.FORM_TYPE === "v-select") {
                         body.FORM_SOURCE = JSON.stringify(cleanObject(bus.FORM_SOURCE));
-                        if (typeof bus.FORM_SOURCE.source !== "undefined") {
-                            console.log("bus.FORM_SOURCE", bus.FORM_SOURCE);
+                        if (!Array.isArray(body.FORM_SOURCE) & typeof bus.FORM_SOURCE.source !== "undefined") {
                             body.GRID_FORMAT = JSON.stringify({ fct: "Display", source: bus.FORM_SOURCE.source });
-                            console.log("body.GRID_FORMAT", body.GRID_FORMAT);
                         }
                     }
-                    console.log("fieldsFormbeforeSubmit", body);
                 },
                 fieldsFormSuccess: function (response) {
                     NOTIF.success('Champ enregistré avec succès.');
@@ -350,7 +433,7 @@
                             STATUS: 'ACTIVE',
                             FORM_NAME: "Type",
                             FORM_TYPE: "v-select",
-                            FORM_SOURCE: { url:"MetaField/formtype"},
+                            FORM_SOURCE: { url: "MetaField/formtype" },
                             FORM_SHOW: 1,
                             FORM_OPTIONAL: 0,
                             after_component: {
@@ -388,7 +471,7 @@
                 }
             },
             created: function () {
-                console.log("VueApp created");
+                // console.log("VueApp created");
             },
             mounted: function () {
                 var me = this;
@@ -396,7 +479,6 @@
                     if (el.value == "v-select") {
                         me.$refs.fieldsForm.execute(
                             function (component) {
-                                // console.log("fieldsForm.execute", component.meta[2]);
                                 component.meta[2].after_component.visible = true;
                             }
                         );
@@ -430,6 +512,7 @@
             vapp.$refs.theForm.Get(id);
             // FIELDS TABLE
             vapp.$refs.fieldsTable.load("metafield/metabo/" + id);
+
             // versionsTable
             vapp.$refs.versionsTable.load("versions/" + id);
 

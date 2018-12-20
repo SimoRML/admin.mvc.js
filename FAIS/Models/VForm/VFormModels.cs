@@ -7,6 +7,7 @@ namespace FAIS.Models.VForm
     {
         public string Value { get; set; }
         public string Display { get; set; }
+        public Dictionary<string, string> Attributes { get; set; }
     }
     public class SelectSourceModel
     {

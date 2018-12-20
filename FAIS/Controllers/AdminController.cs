@@ -19,5 +19,11 @@ namespace FAIS.Controllers
 
             return PartialView();
         }
+
+        public PartialViewResult MetaFields()
+        {
+
+            return PartialView();
+        }
     }
 }

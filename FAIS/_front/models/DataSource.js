@@ -60,7 +60,7 @@ DataSource.prototype.ExecuteSource = function (source) {
     $.ajax(settings)
         .done(function (response) {
             me.Trigger("hide", "PagePreloader");
-            console.log("ExecuteSource : " + settings.method + "::" + settings.url, response);
+            //console.log("ExecuteSource : " + settings.method + "::" + settings.url, response);
             try { response = JSON.parse(response); } catch{ }
                 
             var html = "";
@@ -78,6 +78,8 @@ DataSource.prototype.ExecuteSource = function (source) {
                 source.loadComplete(me, response);
             if (typeof source.done === "function")
                 source.done(response);
+
+            setTimeout(() => { updateDom(); }, 100);
         })
         .fail(function (response) {
             me.Trigger("hide", "PagePreloader");

@@ -552,6 +552,7 @@
     <Content Include="SQL\CreateView.sql" />
     <Content Include="SQL\InitMetaBo.sql" />
     <Content Include="SQL\MoveBoToCurrentVersion.sql" />
+    <Content Include="SQL\SelectDataSources.sql" />
     <Content Include="_front\main.js" />
     <Content Include="_front\mixin.js" />
     <Content Include="_front\models\BaseObject.js" />
@@ -607,6 +608,7 @@
     <Content Include="Views\Bo\Index.cshtml" />
     <Content Include="Views\Bo\Test.cshtml" />
     <Content Include="Views\Bo\SubForm.cshtml" />
+    <Content Include="Views\Admin\MetaFields.cshtml" />
     <None Include="Views\v_components\_v_table.cshtml" />
     <None Include="Views\v_components\_v_form.cshtml" />
     <Content Include="Views\Router\_v_vomponents.cshtml" />

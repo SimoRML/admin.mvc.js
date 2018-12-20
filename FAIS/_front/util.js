@@ -10,6 +10,7 @@ function clone(src) {
     return Object.assign({}, src);
 }
 function cleanObject(obj) {
+    if (Array.isArray(obj)) return obj;
     var tmp = clone(obj);
     if (typeof tmp.__ob__ !== "undefined") delete tmp.__ob__;
     return tmp;

@@ -60,6 +60,12 @@ namespace FAIS.Controllers
             return Ok(data);
         }
 
+        [HttpGet]
+        [Route("GetDataSources")]
+        public async Task<IHttpActionResult> GetDataSources()
+        {
+            return Ok(MetaBoRepo.GetDataSources());
+        }
         // PUT: api/MetaBo/5
         [ResponseType(typeof(void))]
         public async Task<IHttpActionResult> PutMETA_BO(long id, META_BO mETA_BO)

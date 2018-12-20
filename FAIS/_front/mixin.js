@@ -11,6 +11,7 @@
     },
     methods: {
         execute: function (inject) {
+            // console.log("execute", inject);
             var me = this;
             if (typeof inject === "function") inject(me);
         }
@@ -80,22 +81,29 @@ var bus = new Vue({
                 if (typeof datasource === "object")
                     jsonSource = clone(datasource);
                 else {
-                    try { jsonSource = JSON.parse(datasource); } catch{ }
+                    try { 
+                        jsonSource = JSON.parse(datasource); 
+                    } catch{ 
+                        if (typeof datasource === "string")
+                            jsonSource = {url:datasource, method: "GET"};
+                    }
                 }
-                if (jsonSource !== null & typeof jsonSource.source === "undefined" & typeof jsonSource.url === "undefined") {
+                if (jsonSource !== null && typeof jsonSource.source === "undefined" & typeof jsonSource.url === "undefined") {
                     done(jsonSource);
                     this.lists[key] = jsonSource;
                     return;
                 }
 
-                // SET KEY
-                if (typeof jsonSource.source !== "undefined")
-                    key = jsonSource.source;
-
                 var url = "metabo/SelectSource";
                 var method = "POST";
                 if (typeof jsonSource.url !== "undefined") url = jsonSource.url;
                 if (typeof jsonSource.method !== "undefined") method = jsonSource.method;
+
+                // SET KEY
+                if (typeof jsonSource.source !== "undefined")
+                    key = jsonSource.source;
+                if (typeof key === "undefined")
+                    key = url;
 
                 // IF LIST IS ALREADY LOADED
                 if (typeof this.lists[key] !== "undefined") {
