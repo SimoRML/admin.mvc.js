@@ -1,3 +1,4 @@
+var baseUrl = "/";
 String.prototype.replaceAll = function (searchStr, replaceStr) {
     var str = this;
 
@@ -191,6 +192,7 @@ var URL = {
     },
     addPart: function (url, part) {
        //console.log("addPart : " + url, part);
+        if (part.slice(0) === "/") part = part.substr(1);
         return url + (url.slice(-1) === "/" ? "" : "/") + part;
     }
 };

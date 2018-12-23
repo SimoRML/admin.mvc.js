@@ -2,10 +2,12 @@
 function DataSource(id, config){
 	BaseObject.call(this,id,"DataSource");
     this.config = config || [];
-    this.config.loginPath = "/home/login";
+    this.config.loginPath = URL.addPart(baseUrl,"/home/login");
     this.logout = function () {
         localStorage.removeItem("_tkn_");
-        window.location = this.config.loginPath + "?returnUrl=";
+        var loginUrl = this.config.loginPath + "?returnUrl=";
+        console.log("logout", loginUrl);
+        //if(window.location.href !== loginUrl) window.location = loginUrl;
     };
     this.getToken = function () {
         if (localStorage.getItem("_tkn_") === null) {
@@ -56,11 +58,11 @@ DataSource.prototype.ExecuteSource = function (source) {
 
     if (settings.method === "POST" || settings.method === "PUT")
         me.Trigger("show", "PagePreloader");
-    //console.log("ExecuteSource", settings);
+    console.log("ExecuteSource", settings);
     $.ajax(settings)
         .done(function (response) {
             me.Trigger("hide", "PagePreloader");
-            //console.log("ExecuteSource : " + settings.method + "::" + settings.url, response);
+            console.log("ExecuteSource : " + settings.method + "::" + settings.url, response);
             try { response = JSON.parse(response); } catch{ }
                 
             var html = "";

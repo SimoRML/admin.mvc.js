@@ -1,0 +1,3 @@
+﻿CREATE VIEW [VIEW_{0}]
+AS
+{1}

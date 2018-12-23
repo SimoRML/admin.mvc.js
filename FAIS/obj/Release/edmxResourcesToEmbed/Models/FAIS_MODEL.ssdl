@@ -1,0 +1,123 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Schema Namespace="FAISModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+  <EntityType Name="BO">
+    <Key>
+      <PropertyRef Name="BO_ID" />
+    </Key>
+    <Property Name="BO_ID" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="CREATED_BY" Type="varchar" MaxLength="100" />
+    <Property Name="CREATED_DATE" Type="datetime" />
+    <Property Name="UPDATED_BY" Type="varchar" MaxLength="100" />
+    <Property Name="UPDATED_DATE" Type="datetime" />
+    <Property Name="STATUS" Type="char" MaxLength="10" />
+    <Property Name="BO_TYPE" Type="varchar" MaxLength="100" />
+    <Property Name="VERSION" Type="int" />
+  </EntityType>
+  <EntityType Name="BO_CHILDS">
+    <Key>
+      <PropertyRef Name="BO_PARENT_ID" />
+      <PropertyRef Name="BO_CHILD_ID" />
+    </Key>
+    <Property Name="BO_PARENT_ID" Type="bigint" Nullable="false" />
+    <Property Name="BO_CHILD_ID" Type="bigint" Nullable="false" />
+    <Property Name="RELATION" Type="varchar" MaxLength="50" />
+  </EntityType>
+  <EntityType Name="META_BO">
+    <Key>
+      <PropertyRef Name="META_BO_ID" />
+    </Key>
+    <Property Name="META_BO_ID" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="BO_NAME" Type="varchar" MaxLength="100" />
+    <Property Name="VERSION" Type="int" />
+    <Property Name="CREATED_BY" Type="varchar" MaxLength="100" />
+    <Property Name="CREATED_DATE" Type="datetime" />
+    <Property Name="UPDATED_BY" Type="varchar" MaxLength="100" />
+    <Property Name="UPDATED_DATE" Type="datetime" />
+    <Property Name="STATUS" Type="varchar" MaxLength="50" />
+    <Property Name="BO_DB_NAME" Type="varchar" MaxLength="50" />
+    <Property Name="TYPE" Type="varchar" MaxLength="50" />
+  </EntityType>
+  <EntityType Name="META_FIELD">
+    <Key>
+      <PropertyRef Name="META_FIELD_ID" />
+    </Key>
+    <Property Name="META_FIELD_ID" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="META_BO_ID" Type="bigint" Nullable="false" />
+    <Property Name="DB_NAME" Type="varchar" MaxLength="100" Nullable="false" />
+    <Property Name="DB_TYPE" Type="varchar" MaxLength="20" Nullable="false" />
+    <Property Name="DB_NULL" Type="int" Nullable="false" />
+    <Property Name="GRID_NAME" Type="varchar" MaxLength="100" Nullable="false" />
+    <Property Name="GRID_FORMAT" Type="varchar" MaxLength="100" />
+    <Property Name="GRID_SHOW" Type="int" />
+    <Property Name="FORM_NAME" Type="varchar" MaxLength="100" />
+    <Property Name="FORM_FORMAT" Type="varchar" MaxLength="100" />
+    <Property Name="FORM_TYPE" Type="varchar" MaxLength="100" Nullable="false" />
+    <Property Name="FORM_SOURCE" Type="varchar" MaxLength="1000" />
+    <Property Name="FORM_SHOW" Type="int" />
+    <Property Name="FORM_OPTIONAL" Type="int" />
+    <Property Name="IS_FILTER" Type="int" />
+    <Property Name="FORM_DEFAULT" Type="varchar" MaxLength="100" />
+    <Property Name="CREATED_BY" Type="varchar" MaxLength="100" Nullable="false" />
+    <Property Name="CREATED_DATE" Type="datetime" />
+    <Property Name="UPDATED_BY" Type="varchar" MaxLength="100" />
+    <Property Name="UPDATED_DATE" Type="datetime" />
+    <Property Name="STATUS" Type="varchar" MaxLength="50" />
+    <Property Name="VERSION" Type="int" />
+  </EntityType>
+  <EntityType Name="VERSIONS">
+    <Key>
+      <PropertyRef Name="VERSIONS_ID" />
+    </Key>
+    <Property Name="VERSIONS_ID" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="META_BO_ID" Type="bigint" />
+    <Property Name="NUM" Type="int" Nullable="false" />
+    <Property Name="SQLQUERY" Type="varchar(max)" Nullable="false" />
+    <Property Name="CREATED_BY" Type="varchar" MaxLength="100" />
+    <Property Name="CREATED_DATE" Type="datetime" />
+    <Property Name="UPDATED_BY" Type="varchar" MaxLength="100" />
+    <Property Name="UPDATED_DATE" Type="datetime" />
+    <Property Name="STATUS" Type="varchar" MaxLength="10" />
+  </EntityType>
+  <Association Name="FK__META_FIEL__META___33D4B598">
+    <End Role="META_BO" Type="Self.META_BO" Multiplicity="1" />
+    <End Role="META_FIELD" Type="Self.META_FIELD" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="META_BO">
+        <PropertyRef Name="META_BO_ID" />
+      </Principal>
+      <Dependent Role="META_FIELD">
+        <PropertyRef Name="META_BO_ID" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK__VERSIONS__META_B__4BAC3F29">
+    <End Role="META_BO" Type="Self.META_BO" Multiplicity="0..1" />
+    <End Role="VERSIONS" Type="Self.VERSIONS" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="META_BO">
+        <PropertyRef Name="META_BO_ID" />
+      </Principal>
+      <Dependent Role="VERSIONS">
+        <PropertyRef Name="META_BO_ID" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Function Name="MoveBoToCurrentVersion" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+    <Parameter Name="BO_ID" Type="bigint" Mode="In" />
+  </Function>
+  <EntityContainer Name="FAISModelStoreContainer">
+    <EntitySet Name="BO" EntityType="Self.BO" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="BO_CHILDS" EntityType="Self.BO_CHILDS" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="META_BO" EntityType="Self.META_BO" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="META_FIELD" EntityType="Self.META_FIELD" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="VERSIONS" EntityType="Self.VERSIONS" Schema="dbo" store:Type="Tables" />
+    <AssociationSet Name="FK__META_FIEL__META___33D4B598" Association="Self.FK__META_FIEL__META___33D4B598">
+      <End Role="META_BO" EntitySet="META_BO" />
+      <End Role="META_FIELD" EntitySet="META_FIELD" />
+    </AssociationSet>
+    <AssociationSet Name="FK__VERSIONS__META_B__4BAC3F29" Association="Self.FK__VERSIONS__META_B__4BAC3F29">
+      <End Role="META_BO" EntitySet="META_BO" />
+      <End Role="VERSIONS" EntitySet="VERSIONS" />
+    </AssociationSet>
+  </EntityContainer>
+</Schema>

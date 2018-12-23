@@ -1,0 +1,88 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+  <EntityContainerMapping StorageEntityContainer="FAISModelStoreContainer" CdmEntityContainer="FAISEntities">
+    <EntitySetMapping Name="BO">
+      <EntityTypeMapping TypeName="FAISModel.BO">
+        <MappingFragment StoreEntitySet="BO">
+          <ScalarProperty Name="BO_ID" ColumnName="BO_ID" />
+          <ScalarProperty Name="CREATED_BY" ColumnName="CREATED_BY" />
+          <ScalarProperty Name="CREATED_DATE" ColumnName="CREATED_DATE" />
+          <ScalarProperty Name="UPDATED_BY" ColumnName="UPDATED_BY" />
+          <ScalarProperty Name="UPDATED_DATE" ColumnName="UPDATED_DATE" />
+          <ScalarProperty Name="STATUS" ColumnName="STATUS" />
+          <ScalarProperty Name="BO_TYPE" ColumnName="BO_TYPE" />
+          <ScalarProperty Name="VERSION" ColumnName="VERSION" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="BO_CHILDS">
+      <EntityTypeMapping TypeName="FAISModel.BO_CHILDS">
+        <MappingFragment StoreEntitySet="BO_CHILDS">
+          <ScalarProperty Name="RELATION" ColumnName="RELATION" />
+          <ScalarProperty Name="BO_PARENT_ID" ColumnName="BO_PARENT_ID" />
+          <ScalarProperty Name="BO_CHILD_ID" ColumnName="BO_CHILD_ID" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="META_BO">
+      <EntityTypeMapping TypeName="FAISModel.META_BO">
+        <MappingFragment StoreEntitySet="META_BO">
+          <ScalarProperty Name="TYPE" ColumnName="TYPE" />
+          <ScalarProperty Name="META_BO_ID" ColumnName="META_BO_ID" />
+          <ScalarProperty Name="BO_NAME" ColumnName="BO_NAME" />
+          <ScalarProperty Name="VERSION" ColumnName="VERSION" />
+          <ScalarProperty Name="CREATED_BY" ColumnName="CREATED_BY" />
+          <ScalarProperty Name="CREATED_DATE" ColumnName="CREATED_DATE" />
+          <ScalarProperty Name="UPDATED_BY" ColumnName="UPDATED_BY" />
+          <ScalarProperty Name="UPDATED_DATE" ColumnName="UPDATED_DATE" />
+          <ScalarProperty Name="STATUS" ColumnName="STATUS" />
+          <ScalarProperty Name="BO_DB_NAME" ColumnName="BO_DB_NAME" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="META_FIELD">
+      <EntityTypeMapping TypeName="FAISModel.META_FIELD">
+        <MappingFragment StoreEntitySet="META_FIELD">
+          <ScalarProperty Name="META_FIELD_ID" ColumnName="META_FIELD_ID" />
+          <ScalarProperty Name="META_BO_ID" ColumnName="META_BO_ID" />
+          <ScalarProperty Name="DB_NAME" ColumnName="DB_NAME" />
+          <ScalarProperty Name="DB_TYPE" ColumnName="DB_TYPE" />
+          <ScalarProperty Name="DB_NULL" ColumnName="DB_NULL" />
+          <ScalarProperty Name="GRID_NAME" ColumnName="GRID_NAME" />
+          <ScalarProperty Name="GRID_FORMAT" ColumnName="GRID_FORMAT" />
+          <ScalarProperty Name="GRID_SHOW" ColumnName="GRID_SHOW" />
+          <ScalarProperty Name="FORM_NAME" ColumnName="FORM_NAME" />
+          <ScalarProperty Name="FORM_FORMAT" ColumnName="FORM_FORMAT" />
+          <ScalarProperty Name="FORM_TYPE" ColumnName="FORM_TYPE" />
+          <ScalarProperty Name="FORM_SOURCE" ColumnName="FORM_SOURCE" />
+          <ScalarProperty Name="FORM_SHOW" ColumnName="FORM_SHOW" />
+          <ScalarProperty Name="FORM_OPTIONAL" ColumnName="FORM_OPTIONAL" />
+          <ScalarProperty Name="IS_FILTER" ColumnName="IS_FILTER" />
+          <ScalarProperty Name="FORM_DEFAULT" ColumnName="FORM_DEFAULT" />
+          <ScalarProperty Name="CREATED_BY" ColumnName="CREATED_BY" />
+          <ScalarProperty Name="CREATED_DATE" ColumnName="CREATED_DATE" />
+          <ScalarProperty Name="UPDATED_BY" ColumnName="UPDATED_BY" />
+          <ScalarProperty Name="UPDATED_DATE" ColumnName="UPDATED_DATE" />
+          <ScalarProperty Name="STATUS" ColumnName="STATUS" />
+          <ScalarProperty Name="VERSION" ColumnName="VERSION" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="VERSIONS">
+      <EntityTypeMapping TypeName="FAISModel.VERSIONS">
+        <MappingFragment StoreEntitySet="VERSIONS">
+          <ScalarProperty Name="VERSIONS_ID" ColumnName="VERSIONS_ID" />
+          <ScalarProperty Name="META_BO_ID" ColumnName="META_BO_ID" />
+          <ScalarProperty Name="NUM" ColumnName="NUM" />
+          <ScalarProperty Name="SQLQUERY" ColumnName="SQLQUERY" />
+          <ScalarProperty Name="CREATED_BY" ColumnName="CREATED_BY" />
+          <ScalarProperty Name="CREATED_DATE" ColumnName="CREATED_DATE" />
+          <ScalarProperty Name="UPDATED_BY" ColumnName="UPDATED_BY" />
+          <ScalarProperty Name="UPDATED_DATE" ColumnName="UPDATED_DATE" />
+          <ScalarProperty Name="STATUS" ColumnName="STATUS" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <FunctionImportMapping FunctionImportName="MoveBoToCurrentVersion" FunctionName="FAISModel.Store.MoveBoToCurrentVersion" />
+  </EntityContainerMapping>
+</Mapping>

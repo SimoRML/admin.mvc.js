@@ -212,6 +212,7 @@ namespace FAIS.Controllers
             model.MetaBO = meta;
             model.BO_ID = id_;
             model.Items.Add("BO_ID", id_);
+            //return Ok(model.FormatInsert());
             bool insert = model.Insert();
             if (insert)
                 return Ok(model);
@@ -281,7 +282,7 @@ namespace FAIS.Controllers
             await db.SaveChangesAsync();
 
             model.Items.Add("BO_ID", BO_ToUpdate.BO_ID);
-            db.MoveBoToCurrentVersion(BO_ToUpdate.BO_ID);
+            // db.MoveBoToCurrentVersion(BO_ToUpdate.BO_ID);
             string update_ = model.Update();
             if (update_ == "true")
                 return Ok(model);

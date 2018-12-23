@@ -136,7 +136,7 @@ namespace FAIS.Controllers
             var sqlQuery = Helper.GetSQL("CreateTable.sql");
                 sqlQuery = string.Format(sqlQuery,
                 vERSIONS.VERSIONS_ID.ToString()
-                , mETA_BO.BO_DB_NAME + vERSIONS.NUM
+                , mETA_BO.BO_DB_NAME
                 , fields
                 , User.Identity.Name
                 , mETA_BO.META_BO_ID.ToString()
@@ -148,7 +148,7 @@ namespace FAIS.Controllers
 
             var s = new SGBD();
             s.Cmd(sqlQuery);
-            s.Cmd(new VersionsModels().GenerateView(mETA_BO.BO_DB_NAME));
+            // s.Cmd(new VersionsModels().GenerateView(mETA_BO.BO_DB_NAME));
 
             return Ok();
         }

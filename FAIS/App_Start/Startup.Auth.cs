@@ -47,9 +47,9 @@ namespace FAIS
             app.UseOAuthBearerTokens(OAuthOptions);
 
             // Décommenter les lignes suivantes pour activer la connexion avec des fournisseurs de connexion tiers
-            //app.UseMicrosoftAccountAuthentication(
-            //    clientId: "",
-            //    clientSecret: "");
+            app.UseMicrosoftAccountAuthentication(
+                clientId: "7a32145e-7759-48d8-9146-c1d978e5fb0c",
+                clientSecret: "Ig9Nr6qW85og7L24YjtHA5YRpypak+fOD/U5bS93ZdU=");
 
             //app.UseTwitterAuthentication(
             //    consumerKey: "",

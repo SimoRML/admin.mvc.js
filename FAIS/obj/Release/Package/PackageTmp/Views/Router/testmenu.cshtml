@@ -1,0 +1,284 @@
+﻿<div id="testmenu">
+    <template v-for="(item,cle) in list">
+        <v-menu-item
+                     :cle="cle"
+                     :href="item.href"
+                     :parent="item.parent"
+                     :text="item.text"
+                     :icon="item.icon"
+                     :childs="item.childs"
+                     ></v-menu-item>
+    </template>
+</div>
+
+<script>
+
+    var vm = new Vue({
+        el: "#testmenu",
+        data: {
+            list: {
+                "Dashboard": {
+                    "icon": "dashboard",
+                    "text": "Tableau de bord",
+                    "href": "home",
+                    "User": "karim@karim.com",
+                    "parent": false
+                },
+                "Achat": {
+                    "icon": "add_shopping_cart",
+                    "text": "Achat",
+                    "href": "home",
+                    "User": "karim@karim.com",
+                    "parent": true,
+                    "childs": {
+                        "da": {
+                            "icon": "dashboard",
+                            "text": "Demande d'achat",
+                            "href": "home"
+                        },
+                        "bc": {
+                            "icon": "dashboard",
+                            "text": "Bon de commande",
+                            "href": "home"
+                        },
+                        "br": {
+                            "icon": "dashboard",
+                            "text": "Bon de reception",
+                            "href": "home"
+                        },
+                        "ff": {
+                            "icon": "dashboard",
+                            "text": "Facture fournisseur",
+                            "href": "home"
+                        }
+                    }
+                },
+                "Stock": {
+                    "icon": "sd_card",
+                    "text": "Stock",
+                    "href": "home",
+                    "User": "karim@karim.com",
+                    "parent": true,
+                    "childs": {
+                        "br": {
+                            "icon": "dashboard",
+                            "text": "Bon de reception",
+                            "href": "home"
+                        },
+                        "bs": {
+                            "icon": "dashboard",
+                            "text": "Bon de sortie",
+                            "href": "home"
+                        },
+                        "inventaire": {
+                            "icon": "dashboard",
+                            "text": "Inventaire",
+                            "href": "home"
+                        },
+                        "Valorisation": {
+                            "icon": "dashboard",
+                            "text": "Valorisation",
+                            "href": "home"
+                        },
+                        "cc": {
+                            "icon": "dashboard",
+                            "text": "Calcul des coûts",
+                            "href": "home"
+                        },
+                        "etatmonth": {
+                            "icon": "dashboard",
+                            "text": "Etat mensuel du stock",
+                            "href": "home"
+                        }
+                    }
+                },
+                "MainOeuvre": {
+                    "icon": "group_add",
+                    "text": "Main d'oeuvre",
+                    "href": "home",
+                    "User": "karim@karim.com",
+                    "parent": true,
+                    "childs": {
+                        "mot_Journalier": {
+                            "icon": "dashboard",
+                            "text": "Main d'oeuvre Travaux Journaliers",
+                            "href": "home"
+                        },
+                        "mot_total": {
+                            "icon": "dashboard",
+                            "text": "Main d'oeuvre Travaux Total ",
+                            "href": "home"
+                        },
+                        "heureSup": {
+                            "icon": "dashboard",
+                            "text": "Main d'oeuvre Heure SUP",
+                            "href": "home"
+                        },
+                        "absence": {
+                            "icon": "dashboard",
+                            "text": "Déclaration d'absences",
+                            "href": "home"
+                        }
+                    }
+                },
+                "Immobilisation": {
+                    "icon": "time_to_leave",
+                    "text": "Immobilisation",
+                    "href": "home",
+                    "User": "karim@karim.com",
+                    "parent": true,
+                    "childs": {
+                        "atelier": {
+                            "icon": "dashboard",
+                            "text": "Atelier",
+                            "href": "home"
+                        },
+                        "materiel": {
+                            "icon": "dashboard",
+                            "text": "Matériel",
+                            "href": "home"
+                        }
+                    }
+                },
+                "Budget": {
+                    "icon": "attach_money",
+                    "text": "Budget",
+                    "href": "home",
+                    "User": "karim@karim.com",
+                    "parent": true,
+                    "childs": {
+                        "Assolement": {
+                            "icon": "dashboard",
+                            "text": "Assolement",
+                            "href": "home"
+                        }
+                    }
+                },
+                "Vente": {
+                    "icon": "monetization_on",
+                    "text": "Vente",
+                    "href": "home",
+                    "User": "karim@karim.com",
+                    "parent": true,
+                    "childs": {
+                        "Vente": {
+                            "icon": "dashboard",
+                            "text": "Vente",
+                            "href": "home"
+                        },
+                        "Facture": {
+                            "icon": "dashboard",
+                            "text": "Facture",
+                            "href": "home"
+                        }
+                    }
+                },
+                "Dematerialisation": {
+                    "icon": "commute",
+                    "text": "Dématérialisation",
+                    "href": "home",
+                    "User": "karim@karim.com",
+                    "parent": false
+                },
+                "Reporting": {
+                    "icon": "print",
+                    "text": "Reporting",
+                    "href": "home",
+                    "User": "karim@karim.com",
+                    "parent": true,
+                    "childs": {
+                        "Vente": {
+                            "icon": "dashboard",
+                            "text": "Etat stock",
+                            "href": "home"
+                        },
+                        "stock_par_date": {
+                            "icon": "dashboard",
+                            "text": "Stock par date",
+                            "href": "home"
+                        },
+                        "stock_par_mois": {
+                            "icon": "dashboard",
+                            "text": "Stock par mois",
+                            "href": "home"
+                        },
+                        "ventilation_materiel": {
+                            "icon": "dashboard",
+                            "text": "Ventilation Matériel",
+                            "href": "home"
+                        },
+                        "mo_tj": {
+                            "icon": "dashboard",
+                            "text": "MO - Travaux Journaliers",
+                            "href": "home"
+                        },
+                        "mo_h_sup": {
+                            "icon": "dashboard",
+                            "text": "MO - Heures SUP",
+                            "href": "home"
+                        },
+                        "mo_absence": {
+                            "icon": "dashboard",
+                            "text": "MO - Absences",
+                            "href": "home"
+                        }
+                    }
+                },
+                "Edition": {
+                    "icon": "find_replace",
+                    "text": "Edition",
+                    "href": "home",
+                    "User": "karim@karim.com",
+                    "parent": true,
+                    "childs": {
+                        "edition_da": {
+                            "icon": "dashboard",
+                            "text": "Demande d'achat",
+                            "href": "home"
+                        },
+                        "edition_bc": {
+                            "icon": "dashboard",
+                            "text": "bon de commande",
+                            "href": "home"
+                        },
+                        "edition_br": {
+                            "icon": "dashboard",
+                            "text": "Bon de réception",
+                            "href": "home"
+                        },
+                        "edition_bs": {
+                            "icon": "dashboard",
+                            "text": "Bon de sortie",
+                            "href": "home"
+                        },
+                        "edition_vs": {
+                            "icon": "dashboard",
+                            "text": "Ventilation sorties",
+                            "href": "home"
+                        }
+                    }
+                },
+                "Analytics": {
+                    "icon": "pie_chart",
+                    "text": "Analitics",
+                    "href": "home",
+                    "User": "karim@karim.com",
+                    "parent": true,
+                    "childs": {
+                        "edition_da": {
+                            "icon": "dashboard",
+                            "text": "Consommations valorisées / Article",
+                            "href": "home"
+                        },
+                        "edition_bc": {
+                            "icon": "dashboard",
+                            "text": "Consommations valorisées / Catégorie",
+                            "href": "home"
+                        }
+                    }
+                }
+            }
+        }
+    });
+
+</script>
