@@ -41,6 +41,7 @@ DataSource.prototype.Init = function () {
 
 DataSource.prototype.ExecuteSource = function (source) {
     var me = this;
+    if (source.url === "") return;
     var settings = {
         "async": true,
         "crossDomain": false,
@@ -58,7 +59,7 @@ DataSource.prototype.ExecuteSource = function (source) {
 
     if (settings.method === "POST" || settings.method === "PUT")
         me.Trigger("show", "PagePreloader");
-    console.log("ExecuteSource", settings);
+    console.log("ExecuteSource call ." + source.url + ".", settings);
     $.ajax(settings)
         .done(function (response) {
             me.Trigger("hide", "PagePreloader");

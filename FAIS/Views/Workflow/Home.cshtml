@@ -70,7 +70,7 @@
                     <a tabindex="-1" href="javascript:;">Définir le busiess object</a>
                     <ul class="dropdown-menu">
                         <li v-for="meta in metaList">
-                            <a href="javascript:;" v-on:click="selectedMeta = { value: meta.META_BO_ID, display: meta.BO_NAME }">{{ meta.BO_NAME }}</a>
+                            <a href="javascript:;" v-on:click="val({ value: meta.META_BO_ID, display: meta.BO_NAME })">{{ meta.BO_NAME }}</a>
                         </li>
                     </ul>
                 </li>
@@ -115,6 +115,15 @@
                 metaList: [],
                 selectedMeta: { value: -1, display: "Choisir" },
             };
+        },
+        methods: {
+            val: function (value) {
+                if (typeof value !== "undefined") {
+                    this.selectedMeta = value;
+                    this.$emit("value-changed", { index: this.index, value: this.selectedMeta });
+                }
+                return this.selectedMeta;
+            },            
         },
         mounted: function () {
             var me = this;
@@ -162,6 +171,12 @@
                         Nouveau busniss object
                     </a>
                 </li>
+                <li>
+                    <a href="javascript:;" v-on:click="$emit('add-validation', index); isLast=false">
+                        <i class="material-icons">done_outline</i>
+                        Validation
+                    </a>
+                </li>
             </ul>
         </div>
     </div>
@@ -201,6 +216,7 @@
                     <template v-if="item.type === 'bo'">
                         <bo :ref="'node_' + index"
                             :index="index"
+                            v-on:value-changed="setItemValue"
                             v-on:add-bo="addBo"
                             v-on:add-validation="addValidation"
                             v-on:remove-node="removeNode"></bo>
@@ -209,6 +225,7 @@
                         <validation :ref="'node_' + index"
                                     :index="index"
                                     v-on:add-bo="addBo"
+                                    v-on:add-validation="addValidation"
                                     v-on:remove-node="removeNode"
                                     v-on:configurer-validation="configurerValidation"></validation>
                     </template>
@@ -220,7 +237,7 @@
     </div>
     <div class="card-footer" style="padding-bottom: 35px;">
         <div class="pull-right">
-            <button type="submit" class="btn btn-fill btn-sm btn-primary">Enregitrer<div class="ripple-container"></div></button>
+            <button type="submit" class="btn btn-fill btn-sm btn-primary" v-on:click="submit">Enregitrer<div class="ripple-container"></div></button>
             <button type="button" class="btn btn-fill btn-sm btn-secondary">Annuler<div class="ripple-container"></div></button>
         </div>
     </div>
@@ -234,6 +251,39 @@
             flowItems: [{ type: "bo", status: "new", next: null, precedent: null }/*, { type: "validation", status: "new", precedent: 0, next: null }*/],
         },
         methods: {
+            submit: function () { 
+                var workflow = [], errors = [];
+
+                // VALIDATION
+                for (var i in this.flowItems){ 
+                    var item = clone(this.flowItems[i]);
+                    if (typeof item.index === "undefined") {
+                        errors.push("Le noeud N° <b>"+ (parseInt(i) + 1) +"</b> n'est pas configuré !");
+                        continue;
+                    }
+                    workflow.push(item);
+                }
+                if (errors.length > 0) {
+                    NOTIF.warning(errors.join("<br>"));
+                } else {
+                    // FORMATAGE
+                    for (var i in workflow) {
+                        var item = workflow[i];
+                        if (item.next != null) {
+                            item.next = item.next.index;
+                        }
+                        console.log(item);
+                        //
+                    }
+
+                    // SUBMIT
+                    console.log("submit", workflow);
+                }                
+            },
+            setItemValue: function (payload) {
+                this.flowItems[payload.index].index = payload.index;
+                this.flowItems[payload.index].value = payload.value;
+            },
             addBo: function (index) {
                 var bo = { type: "bo", status: "new", precedent: index, next: null };
                 this.flowItems[index].next = bo;
@@ -271,11 +321,12 @@
                     height: "80vh",
                     url: "workflow/validation/" + metaBoId,
                     load: function () {
-                        validationVapp.val(item.data);
+                        validationVapp.val(item.value);
                     },
                     valider: () => {
-                        item.data = validationVapp.val(); // { metaBoId: metaBoId, rules: validationVapp.$data.rules, validators: validationVapp.$data.validators };
-                        me.$refs["node_" + index][0].$data.configured = item.data.rules.length > 0 && item.data.validators.length;
+                        me.setItemValue({ index: index, value: validationVapp.val() });
+                        //item.value = validationVapp.val(); // { metaBoId: metaBoId, rules: validationVapp.$data.rules, validators: validationVapp.$data.validators };
+                        me.$refs["node_" + index][0].$data.configured = item.value.rules.length > 0 && item.value.validators.length;
                     }
                 });
             }

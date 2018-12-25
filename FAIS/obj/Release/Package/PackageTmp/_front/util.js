@@ -1,4 +1,4 @@
-var baseUrl = "";
+var baseUrl = "/";
 String.prototype.replaceAll = function (searchStr, replaceStr) {
     var str = this;
 
@@ -157,14 +157,14 @@ var NOTIF = {
     modal: function (params) {
         swal({
             width: params.width,
-            html: "<div id='modal' style='height:"+params.height+"; overflow-y:auto'></div>",
+            html: "<div id='modal' style='height:" + params.height + "; overflow-y:auto'></div>",
             showCancelButton: true,
             confirmButtonClass: 'btn btn-success',
             cancelButtonClass: 'btn',
             confirmButtonText: 'Enregistrer',
             cancelButtonText: 'Fermer',
             buttonsStyling: false,
-            showCloseButton:true,
+            showCloseButton: true,
             onOpen: (e) => {
                 EV.getComponent("Router").LoadFor($("#modal"), params.url, params.load);
             }
@@ -176,8 +176,8 @@ var NOTIF = {
                 //console.log("dismiss", dismiss);
             }
         );
-    },
-}
+    }
+};
 
 function sideBarFix() {
     if (isWindows) {
@@ -192,13 +192,14 @@ var URL = {
     },
     addPart: function (url, part) {
        //console.log("addPart : " + url, part);
+        if (typeof part.slice !== "undefined" && part.slice(0) === "/") part = part.substr(1);
         return url + (url.slice(-1) === "/" ? "" : "/") + part;
     }
 };
 
 function GetId() {
     return '_' + Math.random().toString(36).substr(2, 9);
-};
+}
 
 function cleanDBName(str) {
     return str
