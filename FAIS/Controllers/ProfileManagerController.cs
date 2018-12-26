@@ -50,7 +50,8 @@ namespace FAIS.Controllers
                     parent = true,
                     childs = new[] {
                         new MenuFields { icon = "dashboard", text = "Meta Bo", href = "router.metabo" },
-                        new MenuFields { icon = "dashboard", text = "Workflow", href = "workflow.home" }
+                        new MenuFields { icon = "dashboard", text = "Workflow", href = "workflow.home" },
+                        new MenuFields { icon = "pie_chart", text = "Reporting", href = "home.reporting" },
                     }
                 },
                 Bo = new

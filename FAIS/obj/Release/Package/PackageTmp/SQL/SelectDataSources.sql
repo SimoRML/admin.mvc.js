@@ -16,6 +16,5 @@
 FROM
   SYSOBJECTS t inner join INFORMATION_SCHEMA.COLUMNS c on t.name = c.TABLE_NAME
 WHERE xtype in ( 'U', 'V')
-AND t.name like '%_BO_%' 
-OR t.name like '__' 
+AND (t.name like '%_BO_%' OR t.name like 'liste_%' )
 order by TABLE_NAME, [Field]
