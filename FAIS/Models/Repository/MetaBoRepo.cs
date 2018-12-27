@@ -145,7 +145,8 @@ namespace FAIS.Models.Repository
 
             META_BO mbo = new META_BO
             {
-                BO_NAME = BoName
+                BO_NAME = BoName,
+                TYPE = "form"
             };
 
             mbo = repo.Create(mbo, userName);
