@@ -184,6 +184,47 @@ namespace FAIS.Controllers
         }
 
         [HttpPost]
+        [Route("CrudMultiple/{id}")]
+        public async Task<IHttpActionResult> InsertMultiple(int id, List<Dictionary<string, object>> Items)
+        {
+            bool insert = false;
+            foreach (var ligne in Items)
+            {
+                var model = new CrudModel()
+                {
+                    MetaBoID = id,
+                    Items = ligne
+                };
+                var meta = await db.META_BO.FindAsync(model.MetaBoID);
+
+                BO bo_model = new BO()
+                {
+                    CREATED_BY = User.Identity.Name,
+                    CREATED_DATE = DateTime.Now,
+                    UPDATED_BY = User.Identity.Name,
+                    UPDATED_DATE = DateTime.Now,
+                    STATUS = "1",
+                    BO_TYPE = model.MetaBoID.ToString(),
+                    VERSION = meta.VERSION
+                };
+
+                db.BO.Add(bo_model);
+                await db.SaveChangesAsync();
+                int id_ = (int)bo_model.BO_ID;
+
+                model.MetaBO = meta;
+                model.BO_ID = id_;
+                model.Items.Add("BO_ID", id_);
+                //return Ok(model.FormatInsert());
+                insert  = model.Insert();
+            }
+            if (insert)
+                return Ok();
+            else
+                return InternalServerError();
+        }
+
+        [HttpPost]
         [Route("Crud/{id}")]
         public async Task<IHttpActionResult> Insert(int id, Dictionary<string, object> Items)
         {

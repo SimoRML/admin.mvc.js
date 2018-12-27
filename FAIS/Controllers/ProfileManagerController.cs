@@ -52,7 +52,8 @@ namespace FAIS.Controllers
                         new MenuFields { icon = "dashboard", text = "Meta Bo", href = "router.metabo" },
                         new MenuFields { icon = "dashboard", text = "Workflow", href = "workflow.home" },
                         new MenuFields { icon = "pie_chart", text = "Reporting", href = "home.reporting" },
-                    }
+                    },
+                    open= false,
                 },
                 Bo = new
                 {
@@ -61,7 +62,8 @@ namespace FAIS.Controllers
                     href = "home",
                     User = User.Identity.Name,
                     parent = true,
-                    childs = menu_.ToArray()
+                    childs = menu_.ToArray(),
+                    open = false,
                 },
             };
             return this.Request.CreateResponse(

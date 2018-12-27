@@ -23,7 +23,7 @@ function Environement(id){
 			var actions = EV.TL["T" + EV.T].actions;
 			delete EV.TL["T" + EV.T];
 			for(var i = 0; i < actions.length; i++){
-				//eval("console.log('EV', EV);");
+                //console.log("EV.Childs['"+actions[i].id+"']."+actions[i].fct+"()");
 				eval("EV.Childs[actions[i].id]."+actions[i].fct+"()");
 			}
 		}
