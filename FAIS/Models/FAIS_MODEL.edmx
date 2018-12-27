@@ -4,7 +4,7 @@
   <edmx:Runtime>
     <!-- SSDL content -->
     <edmx:StorageModels>
-    <Schema Namespace="FAISModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+    <Schema Namespace="FAIS_Model.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
         <EntityType Name="BO">
           <Key>
             <PropertyRef Name="BO_ID" />
@@ -110,7 +110,7 @@
         <Function Name="MoveBoToCurrentVersion" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="BO_ID" Type="bigint" Mode="In" />
         </Function>
-        <EntityContainer Name="FAISModelStoreContainer">
+        <EntityContainer Name="FAIS_ModelStoreContainer">
           <EntitySet Name="BO" EntityType="Self.BO" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="BO_CHILDS" EntityType="Self.BO_CHILDS" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="META_BO" EntityType="Self.META_BO" Schema="dbo" store:Type="Tables" />
@@ -128,7 +128,7 @@
       </Schema></edmx:StorageModels>
     <!-- CSDL content -->
     <edmx:ConceptualModels>
-      <Schema Namespace="FAISModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+      <Schema Namespace="FAIS_Model" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
         <EntityType Name="BO">
           <Key>
             <PropertyRef Name="BO_ID" />
@@ -164,8 +164,8 @@
           <Property Name="UPDATED_DATE" Type="DateTime" Precision="3" />
           <Property Name="STATUS" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
           <Property Name="BO_DB_NAME" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <NavigationProperty Name="META_FIELD" Relationship="Self.FK__META_FIEL__META___33D4B598" FromRole="META_BO" ToRole="META_FIELD" />
           <Property Name="TYPE" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="META_FIELD" Relationship="Self.FK__META_FIEL__META___33D4B598" FromRole="META_BO" ToRole="META_FIELD" />
         </EntityType>
         <EntityType Name="META_FIELD">
           <Key>
@@ -248,7 +248,7 @@
             <End Role="VERSIONS" EntitySet="VERSIONS" />
           </AssociationSet>
           <FunctionImport Name="MoveBoToCurrentVersion">
-          <Parameter Name="BO_ID" Mode="In" Type="Int64" />
+            <Parameter Name="BO_ID" Mode="In" Type="Int64" />
           </FunctionImport>
         </EntityContainer>
       </Schema>
@@ -256,9 +256,9 @@
     <!-- C-S mapping content -->
     <edmx:Mappings>
       <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
-        <EntityContainerMapping StorageEntityContainer="FAISModelStoreContainer" CdmEntityContainer="FAISEntities">
+        <EntityContainerMapping StorageEntityContainer="FAIS_ModelStoreContainer" CdmEntityContainer="FAISEntities">
           <EntitySetMapping Name="BO">
-            <EntityTypeMapping TypeName="FAISModel.BO">
+            <EntityTypeMapping TypeName="FAIS_Model.BO">
               <MappingFragment StoreEntitySet="BO">
                 <ScalarProperty Name="BO_ID" ColumnName="BO_ID" />
                 <ScalarProperty Name="CREATED_BY" ColumnName="CREATED_BY" />
@@ -272,18 +272,17 @@
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="BO_CHILDS">
-            <EntityTypeMapping TypeName="FAISModel.BO_CHILDS">
+            <EntityTypeMapping TypeName="FAIS_Model.BO_CHILDS">
               <MappingFragment StoreEntitySet="BO_CHILDS">
-                <ScalarProperty Name="RELATION" ColumnName="RELATION" />
                 <ScalarProperty Name="BO_PARENT_ID" ColumnName="BO_PARENT_ID" />
                 <ScalarProperty Name="BO_CHILD_ID" ColumnName="BO_CHILD_ID" />
+                <ScalarProperty Name="RELATION" ColumnName="RELATION" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="META_BO">
-            <EntityTypeMapping TypeName="FAISModel.META_BO">
+            <EntityTypeMapping TypeName="FAIS_Model.META_BO">
               <MappingFragment StoreEntitySet="META_BO">
-                <ScalarProperty Name="TYPE" ColumnName="TYPE" />
                 <ScalarProperty Name="META_BO_ID" ColumnName="META_BO_ID" />
                 <ScalarProperty Name="BO_NAME" ColumnName="BO_NAME" />
                 <ScalarProperty Name="VERSION" ColumnName="VERSION" />
@@ -293,11 +292,12 @@
                 <ScalarProperty Name="UPDATED_DATE" ColumnName="UPDATED_DATE" />
                 <ScalarProperty Name="STATUS" ColumnName="STATUS" />
                 <ScalarProperty Name="BO_DB_NAME" ColumnName="BO_DB_NAME" />
+                <ScalarProperty Name="TYPE" ColumnName="TYPE" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="META_FIELD">
-            <EntityTypeMapping TypeName="FAISModel.META_FIELD">
+            <EntityTypeMapping TypeName="FAIS_Model.META_FIELD">
               <MappingFragment StoreEntitySet="META_FIELD">
                 <ScalarProperty Name="META_FIELD_ID" ColumnName="META_FIELD_ID" />
                 <ScalarProperty Name="META_BO_ID" ColumnName="META_BO_ID" />
@@ -325,7 +325,7 @@
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="VERSIONS">
-            <EntityTypeMapping TypeName="FAISModel.VERSIONS">
+            <EntityTypeMapping TypeName="FAIS_Model.VERSIONS">
               <MappingFragment StoreEntitySet="VERSIONS">
                 <ScalarProperty Name="VERSIONS_ID" ColumnName="VERSIONS_ID" />
                 <ScalarProperty Name="META_BO_ID" ColumnName="META_BO_ID" />
@@ -339,7 +339,7 @@
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-          <FunctionImportMapping FunctionImportName="MoveBoToCurrentVersion" FunctionName="FAISModel.Store.MoveBoToCurrentVersion" />
+          <FunctionImportMapping FunctionImportName="MoveBoToCurrentVersion" FunctionName="FAIS_Model.Store.MoveBoToCurrentVersion" />
         </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>

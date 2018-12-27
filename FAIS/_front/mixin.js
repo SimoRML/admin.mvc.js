@@ -44,7 +44,7 @@ Vue.directive("format", {
 
             $(e1).html(display === "" ? binding.value.value : display);
         }
-        
+
     }
 });
 
@@ -58,7 +58,7 @@ Vue.directive("include", {
         $element.load(url, function (response, status, xhr) {
             $preloaderElement.removeClass("preLoader");
             if (status === "success") {
-                
+
                 updateDom();
             } else {
                 $preloaderElement.addClass("preLoaderError");
@@ -68,24 +68,26 @@ Vue.directive("include", {
 });
 
 var bus = new Vue({
+    el: '#bus',
     data: {
         lists: {},
         scope: {},
+        menu: [],
     },
     methods: {
         loadList: function (key, datasource, done) {
             var me = this;
             if (typeof datasource !== "undefined" && datasource !== null) {
-                
+
                 var jsonSource = null;
                 if (typeof datasource === "object")
                     jsonSource = clone(datasource);
                 else {
-                    try { 
-                        jsonSource = JSON.parse(datasource); 
-                    } catch{ 
+                    try {
+                        jsonSource = JSON.parse(datasource);
+                    } catch{
                         if (typeof datasource === "string")
-                            jsonSource = {url:datasource, method: "GET"};
+                            jsonSource = { url: datasource, method: "GET" };
                     }
                 }
                 if (jsonSource !== null && typeof jsonSource.source === "undefined" & typeof jsonSource.url === "undefined") {

@@ -4,6 +4,7 @@ $(function () {
         if (status === "success") LOAD();
     });
     $("#minimizeSidebar").trigger("click");
+
 });
 
 function LOAD() {
@@ -16,12 +17,7 @@ function LOAD() {
                 loadComplete: function (obj, response) {
                     obj.TriggerFor("Preloader", "hide");
                     obj.TriggerFor("Router", "LoadHomePage");
-                    var vmenu = new Vue({
-                        el: '#sidebar',
-                        data: {
-                            list: response
-                        }
-                    });
+                    bus.menu = response;
                     sideBarFix();
                 }
 

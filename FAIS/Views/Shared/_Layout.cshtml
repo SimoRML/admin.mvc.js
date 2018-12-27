@@ -30,7 +30,7 @@
     </div>
 
 
-    <div class="wrapper">
+    <div class="wrapper" id="bus">
         <div class="sidebar" id="sidebar" data-active-color="green" data-background-color="black" data-image="/Content/img/sidebar-4.jpg">
             <!--
                 Tip 1: You can change the color of active element of the sidebar using: data-active-color="purple | blue | green | orange | red | rose"
@@ -38,13 +38,13 @@
                 Tip 3: you can change the color of the sidebar with data-background-color="white | black"
             -->
             <div class="logo">
-                <a href="http:/www.creative-tim.com" class="simple-text">
-                    Creative Tim
+                <a href="http://laspheredigitale.com/" class="simple-text">
+                   LASPEREDIGITALE
                 </a>
             </div>
             <div class="logo logo-mini">
-                <a href="http:/www.creative-tim.com" class="simple-text">
-                    Ct
+                <a href="http://laspheredigitale.com/" class="simple-text">
+                    SPH
                 </a>
             </div>
             <div class="sidebar-wrapper">
@@ -73,7 +73,7 @@
                     </div>
                 </div>
                 <ul class="nav" id="MyMenu">
-                    <template v-for="(item,cle) in list">
+                    <template v-for="(item,cle) in menu">
                         <v-menu-item :cle="cle"
                                      :href="item.href"
                                      :parent="item.parent"

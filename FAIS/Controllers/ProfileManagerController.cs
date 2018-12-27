@@ -22,7 +22,7 @@ namespace FAIS.Controllers
             var dt = db.META_BO.Where(x => x.META_BO_ID != 1 && x.TYPE == "form").ToList();
             List<MenuFields> menu_ = new List<MenuFields>();
 
-            // menu_.Add(new MenuFields { icon = "dashboard", text = "Meta Bo", href = "#router.metabo" });
+            menu_.Add(new MenuFields { icon = "dashboard", text = "Reporting", href = "#reporting.index" });
 
             foreach (var item in dt)
             {
