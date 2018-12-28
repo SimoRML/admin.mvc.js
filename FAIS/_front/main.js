@@ -5,6 +5,10 @@ $(function () {
     });
     $("#minimizeSidebar").trigger("click");
 
+
+    $('.sidebar .sidebar-wrapper, .main-panel').perfectScrollbar('destroy');
+
+
 });
 
 function LOAD() {

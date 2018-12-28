@@ -183,6 +183,12 @@ function sideBarFix() {
     if (isWindows) {
         $('.sidebar .sidebar-wrapper, .main-panel').perfectScrollbar('destroy');
         $('.sidebar .sidebar-wrapper, .main-panel').perfectScrollbar();
+        setTimeout(function () {
+            $('body').addClass('sidebar-mini');
+
+            $('.sidebar .collapse').css('height', 'auto');
+            md.misc.sidebar_mini_active = true;
+        }, 300);
     }
 }
 
