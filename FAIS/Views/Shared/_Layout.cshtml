@@ -30,7 +30,7 @@
     </div>
 
 
-    <div class="wrapper" id="bus">
+    <div class="wrapper" id="">
         <div class="sidebar" id="sidebar" data-active-color="green" data-background-color="black" data-image="/Content/img/sidebar-4.jpg">
             <!--
                 Tip 1: You can change the color of active element of the sidebar using: data-active-color="purple | blue | green | orange | red | rose"
@@ -73,6 +73,37 @@
                     </div>
                 </div>
                 <ul class="nav" id="MyMenu">
+                    <li>
+                        <a data-toggle="collapse" class="collapsed" aria-expanded="false">
+                            <i class="material-icons">image</i>
+                            <p>
+                                Pages
+                                <b class="caret"></b>
+                            </p>
+                        </a>
+                        <div class="collapse"  aria-expanded="false" style="height: auto;">
+                            <ul class="nav">
+                                <li>
+                                    <a href="./pages/pricing.html">Pricing</a>
+                                </li>
+                                <li>
+                                    <a href="./pages/timeline.html">Timeline</a>
+                                </li>
+                                <li>
+                                    <a href="./pages/login.html">Login Page</a>
+                                </li>
+                                <li>
+                                    <a href="./pages/register.html">Register Page</a>
+                                </li>
+                                <li>
+                                    <a href="./pages/lock.html">Lock Screen Page</a>
+                                </li>
+                                <li>
+                                    <a href="./pages/user.html">User Profile</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </li>
                     <template v-for="(item,cle) in menu">
                         <v-menu-item :cle="cle"
                                      :href="item.href"
@@ -80,9 +111,9 @@
                                      :text="item.text"
                                      :icon="item.icon"
                                      :childs="item.childs"
-                                     :open="item.open"
-                                     ></v-menu-item>
+                                     :open="item.open"></v-menu-item>
                     </template>
+
                 </ul>
             </div>
         </div>

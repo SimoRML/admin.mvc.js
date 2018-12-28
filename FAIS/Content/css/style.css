@@ -56,6 +56,7 @@
     overflow: hidden;
     height: 0px;
     transition: height 0.5s;
+
 }
 
     .v-collapse.open {
@@ -64,7 +65,49 @@
         transition: height 0.5s;
     }
 
+/*.sidebar-mini .sidebar .nav li:hover .v-collapse, .sidebar-mini .sidebar .nav li:focus .v-collapse {
+    display: block;
+    position: absolute;
+    top: 0;
+    left: 81px;
+    box-shadow: 0 1px 4px 0 rgba(0, 0, 0, 0.14);
+    border-radius: 6px;
+    color: rgba(0,0,0, 0.87);
+    background: #fff;
+}
+.sidebar-mini .sidebar .v-collapse .nav {
+    width: 180px;
+    height: auto;
+    position: relative;
+    margin: 5px 0;
+}
 
+    .sidebar-mini .sidebar .v-collapse .nav > li a {
+        margin-left: 5px;
+        margin-right: 5px;
+    }
+
+    .sidebar-mini .sidebar .v-collapse .nav:before {
+        border-right: 11px solid #ccc;
+        border-top: 11px solid rgba(0, 0, 0, 0);
+        border-bottom: 11px solid rgba(0, 0, 0, 0);
+        position: absolute;
+        content: "";
+        display: inline-block;
+        left: -11px;
+        top: 9px;
+    }
+
+    .sidebar-mini .sidebar .v-collapse .nav:after {
+        border-right: 11px solid #fff;
+        border-top: 11px solid rgba(0, 0, 0, 0);
+        border-bottom: 11px solid rgba(0, 0, 0, 0);
+        position: absolute;
+        content: "";
+        display: inline-block;
+        left: -10px;
+        top: 9px;
+    }*/
 
 .disable:before {
     content: '';
@@ -199,6 +242,6 @@
     margin-right: 10px;
 }
 
-.bootstrap-select{
-    margin-top:2px;
+.bootstrap-select {
+    margin-top: 2px;
 }
