@@ -155,7 +155,7 @@
     $(function () {
         EV = new Environement("Accueil");
         var data = new DataSource("data", {
-            baseUrl: "/",
+            baseUrl: URL.addPart(baseUrl,"/"),
             sources: [
                 {
                     on: {

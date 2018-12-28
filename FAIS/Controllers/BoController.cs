@@ -32,6 +32,15 @@ namespace FAIS.Controllers
             return PartialView("Index",meta);
         }
 
+        // GET: Bo
+        [Route("admin/{id}")]
+        public PartialViewResult Admin(string id)
+        {
+            var meta = new MetaBoRepo().GetMETA(id);
+
+            return PartialView("Index", meta);
+        }
+
         [Route("test")]
         public PartialViewResult Test()
         {

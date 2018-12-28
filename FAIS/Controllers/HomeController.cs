@@ -30,5 +30,11 @@ namespace FAIS.Controllers
         {
             return RedirectToAction("Login");
         }
+
+        
+        public PartialViewResult Reporting()
+        {
+            return PartialView();
+        }
     }
 }

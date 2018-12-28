@@ -56,7 +56,7 @@ namespace FAIS.Models
         {
             // TODO : Filter 
             string select = "";
-            select = "select * from VIEW_" + Tname + " ";
+            select = "select * from  " + Tname + " ";
 
             return select;
         }
@@ -65,7 +65,7 @@ namespace FAIS.Models
         {
             // TODO : Filter 
             string select = "";
-            select = "select * from VIEW_" + Tname + " where BO_ID in (select BO_CHILD_ID from BO_CHILDS where BO_PARENT_ID = "+parentId+")";
+            select = "select * from  " + Tname + " where BO_ID in (select BO_CHILD_ID from BO_CHILDS where BO_PARENT_ID = "+parentId+")";
 
             return select;
         }
@@ -75,7 +75,7 @@ namespace FAIS.Models
         {
             // TODO : Filter 
             string select = "";
-            select = "select * from VIEW_" + Tname + " where BO_ID=@BO_ID";
+            select = "select * from  " + Tname + " where BO_ID=@BO_ID";
 
             return select;
         }

@@ -458,7 +458,6 @@
     <Content Include="Content\js\perfect-scrollbar.jquery.min.js" />
     <Content Include="Content\js\sweetalert2.js" />
     <Content Include="favicon.ico" />
-    <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />
     <Content Include="Models\FAIS_MODEL.Context.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
@@ -571,6 +570,7 @@
     <Content Include="Models\FAIS_MODEL.edmx.diagram">
       <DependentUpon>FAIS_MODEL.edmx</DependentUpon>
     </Content>
+    <None Include="Properties\PublishProfiles\FolderProfile.pubxml" />
     <None Include="Scripts\jquery-3.3.1.intellisense.js" />
     <Content Include="Scripts\jquery-3.3.1.js" />
     <Content Include="Scripts\jquery-3.3.1.min.js" />
@@ -610,7 +610,7 @@
     <Content Include="Views\Bo\Test.cshtml" />
     <Content Include="Views\Bo\SubForm.cshtml" />
     <Content Include="Views\Admin\MetaFields.cshtml" />
-    <Content Include="Views\Reporting\index.cshtml" />
+    <Content Include="Views\Home\reporting.cshtml" />
     <None Include="Views\v_components\_v_table.cshtml" />
     <None Include="Views\v_components\_v_form.cshtml" />
     <Content Include="Views\Router\_v_vomponents.cshtml" />
@@ -619,18 +619,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="fonts\glyphicons-halflings-regular.woff2" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="fonts\glyphicons-halflings-regular.woff" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="fonts\glyphicons-halflings-regular.ttf" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="fonts\glyphicons-halflings-regular.eot" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

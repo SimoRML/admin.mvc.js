@@ -75,6 +75,10 @@ var bus = new Vue({
         menu: [],
     },
     methods: {
+        init: function () {
+            this.lists = {};
+            this.scope = {};
+        },
         loadList: function (key, datasource, done) {
             var me = this;
             if (typeof datasource !== "undefined" && datasource !== null) {
@@ -142,3 +146,20 @@ var bus = new Vue({
         }
     }
 });
+
+var SideBarVue;
+function SideBarVueInit(menu) {
+    SideBarVue = new Vue({
+        el: '#sidebar',
+        data: {
+            menu: menu
+        },
+        methods: {
+            closeAll: function () { 
+                for (var i in this.menu) {
+                    this.menu[i].open = false;
+                }
+            }
+        }
+    });
+}

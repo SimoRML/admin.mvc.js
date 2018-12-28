@@ -50,7 +50,7 @@ namespace FAIS.Models
                 {
                     if (parametres != null)
                         foreach (var item in parametres)
-                            cmd.Parameters.AddWithValue(item.Key, item.Value);
+                            cmd.Parameters.AddWithValue(item.Key, item.Value == null ? "" : item.Value);
 
                     using (da = new SqlDataAdapter(cmd))
                     {

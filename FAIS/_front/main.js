@@ -17,10 +17,9 @@ function LOAD() {
                 loadComplete: function (obj, response) {
                     obj.TriggerFor("Preloader", "hide");
                     obj.TriggerFor("Router", "LoadHomePage");
-                    bus.menu = response;
+                    SideBarVueInit(response);
                     sideBarFix();
                 }
-
             },
             {
                 url: "Account/Logout",
