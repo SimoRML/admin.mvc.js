@@ -286,6 +286,8 @@
       <DependentUpon>FAIS_MODEL.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\Repository\MetaBoRepo.cs" />
+    <Compile Include="Models\Repository\MetaFieldRepo.cs" />
+    <Compile Include="Models\Repository\VersionsRepo.cs" />
     <Compile Include="Models\SGBD.cs" />
     <Compile Include="Models\VERSIONS.cs">
       <DependentUpon>FAIS_MODEL.tt</DependentUpon>

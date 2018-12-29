@@ -73,13 +73,15 @@
                     </div>
                 </div>
                 <ul class="nav" id="MyMenu">
-                    <template v-for="(item,cle) in list">
+                    <template v-for="(item,cle) in menu">
                         <v-menu-item :cle="cle"
                                      :href="item.href"
                                      :parent="item.parent"
                                      :text="item.text"
                                      :icon="item.icon"
-                                     :childs="item.childs"></v-menu-item>
+                                     :childs="item.childs"
+                                     :open="item.open"
+                                     ></v-menu-item>
                     </template>
                 </ul>
             </div>

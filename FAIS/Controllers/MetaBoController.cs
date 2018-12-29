@@ -108,27 +108,27 @@ namespace FAIS.Controllers
                 return BadRequest(ModelState);
             }
 
-            mETA_BO.BO_DB_NAME += "_BO_";
-            mETA_BO.VERSION = 1;
-            mETA_BO.CREATED_BY = User.Identity.Name;
-            mETA_BO.UPDATED_BY = User.Identity.Name;
-            mETA_BO.CREATED_DATE = DateTime.Now;
-            mETA_BO.UPDATED_DATE = DateTime.Now;
-            db.META_BO.Add(mETA_BO);
+            //mETA_BO.BO_DB_NAME += "_BO_";
+            //mETA_BO.VERSION = 1;
+            //mETA_BO.CREATED_BY = User.Identity.Name;
+            //mETA_BO.UPDATED_BY = User.Identity.Name;
+            //mETA_BO.CREATED_DATE = DateTime.Now;
+            //mETA_BO.UPDATED_DATE = DateTime.Now;
+            //db.META_BO.Add(mETA_BO);
 
-            // int lastVersion = db.VERSIONS.Where(x => x.META_BO_ID == mETA_BO.META_BO_ID).Max(x => x.NUM);
-            db.VERSIONS.Add(new VERSIONS()
-            {
-                META_BO_ID = mETA_BO.META_BO_ID,
-                NUM = 1,
-                SQLQUERY = Helper.GetSQL("CreateTable.sql"),
-                STATUS = "PENDING",
-                CREATED_BY = User.Identity.Name,
-                UPDATED_BY = User.Identity.Name,
-            });
+            //// int lastVersion = db.VERSIONS.Where(x => x.META_BO_ID == mETA_BO.META_BO_ID).Max(x => x.NUM);
+            //db.VERSIONS.Add(new VERSIONS()
+            //{
+            //    META_BO_ID = mETA_BO.META_BO_ID,
+            //    NUM = 1,
+            //    SQLQUERY = Helper.GetSQL("CreateTable.sql"),
+            //    STATUS = "PENDING",
+            //    CREATED_BY = User.Identity.Name,
+            //    UPDATED_BY = User.Identity.Name,
+            //});
 
-            await db.SaveChangesAsync();
-
+            //await db.SaveChangesAsync();
+            mETA_BO = await new MetaBoRepo().CreateAndSaveAsync(mETA_BO, User.Identity.Name);
             return CreatedAtRoute("DefaultApi", new { id = mETA_BO.META_BO_ID }, mETA_BO);
         }
 
@@ -386,6 +386,21 @@ namespace FAIS.Controllers
 
 
             return Ok(dt);
+        }
+
+
+
+
+        [HttpPost]
+        [Route("Mass")]
+        public IHttpActionResult Mass(List<BoBulk> models)
+        {
+            foreach (var model in models)
+            {
+                model.CreateMetaBo(User.Identity.Name);
+            }
+
+            return Ok("CREATED");
         }
 
     }

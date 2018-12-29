@@ -211,11 +211,11 @@
 @*-----------------------------------------------------------------------------------------------------DatePicker-----------------------*@
 <script id="FormDatePickerTemplate" type="text/template">
     <div :id="elementId" :class="cssClass + ' form-group'">
-        <label class="label-control">
+        <label class="label-control" v-show="typeof label !== 'undefined'">
             {{ label }}<i v-show="isOptional"> - optionel</i>
         </label>
-        <input type="text" class="form-control datepicker"
-               :value="value"
+        <input type="date" class="form-control"
+               :value="value && value.split('T')[0]"
                v-on:input="bindBack($event)"
                :required="!isOptional" />
     </div>
