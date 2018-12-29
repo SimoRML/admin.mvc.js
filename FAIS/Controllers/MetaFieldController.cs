@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 using System.Web.Http;
 using System.Web.Http.Description;
 using FAIS.Models;
+using FAIS.Models.Repository;
 
 namespace FAIS.Controllers
 {
@@ -135,12 +136,7 @@ namespace FAIS.Controllers
             {
                 return BadRequest(ModelState);
             }
-            mETA_FIELD.CREATED_BY = User.Identity.Name;
-            mETA_FIELD.UPDATED_BY = User.Identity.Name;
-            mETA_FIELD.STATUS = "NEW";
-            db.META_FIELD.Add(mETA_FIELD);
-            await db.SaveChangesAsync();
-
+            mETA_FIELD = await new MetaFieldRepo().CreateAndSaveAsync(mETA_FIELD, User.Identity.Name);
             return CreatedAtRoute("DefaultApi", new { id = mETA_FIELD.META_FIELD_ID }, mETA_FIELD);
         }
 

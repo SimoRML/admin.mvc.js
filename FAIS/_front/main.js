@@ -41,7 +41,7 @@ function LOAD() {
 
     EV.CreateObject(new Router("Router", "#viewcontainer",
         {
-            home: "#bon.home",
+            home: "#router.metabo",
         }
     ));
 

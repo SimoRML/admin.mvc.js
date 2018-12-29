@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.Entity;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Web;
 using Z.EntityFramework.Plus;
 
@@ -12,7 +13,7 @@ namespace FAIS.Models.Repository
     public class MetaBoRepo
     {
         private FAISEntities db = new FAISEntities();
-        public async System.Threading.Tasks.Task<META_BO> GetMETAAsync(string dbName)
+        public async Task<META_BO> GetMETAAsync(string dbName)
         {
             META_BO meta = await db.META_BO
                .Where(x => x.BO_DB_NAME == dbName)
@@ -30,7 +31,7 @@ namespace FAIS.Models.Repository
 
             return meta;
         }
-        public async System.Threading.Tasks.Task<META_BO> GetMETAAsync(long id)
+        public async Task<META_BO> GetMETAAsync(long id)
         {
             META_BO meta = await db.META_BO
                .Where(x => x.META_BO_ID == id)
@@ -50,7 +51,7 @@ namespace FAIS.Models.Repository
         }
 
 
-        public async System.Threading.Tasks.Task<List<META_BO>> GetMETAListAsync()
+        public async Task<List<META_BO>> GetMETAListAsync()
         {
             return await db.META_BO
                .Where(x => /*x.TYPE == "form" && */x.STATUS != "-1")
@@ -59,7 +60,7 @@ namespace FAIS.Models.Repository
         }
 
         // FOR COMMIT
-        public async System.Threading.Tasks.Task<META_BO> GetMETAForCommitAsync(string dbName)
+        public async Task<META_BO> GetMETAForCommitAsync(string dbName)
         {
             META_BO meta = await db.META_BO
                .Where(x => x.BO_DB_NAME == dbName)
@@ -68,7 +69,7 @@ namespace FAIS.Models.Repository
 
             return meta;
         }
-        public async System.Threading.Tasks.Task<META_BO> GetMETAForCommitAsync(long id)
+        public async Task<META_BO> GetMETAForCommitAsync(long id)
         {
             META_BO meta = await db.META_BO
                .Where(x => x.META_BO_ID == id)
@@ -105,31 +106,28 @@ namespace FAIS.Models.Repository
             return sources;
         }
 
+        public async Task<META_BO> CreateAndSaveAsync(META_BO mETA_BO, string userName)
+        {
+            mETA_BO = Create(mETA_BO, userName);
+            db.META_BO.Add(mETA_BO);
+            
+            VERSIONS version = new VersionsRepo().Create(mETA_BO.META_BO_ID, userName);
+            db.VERSIONS.Add(version);
+
+            await db.SaveChangesAsync();
+            return mETA_BO;
+        }
         public META_BO Create(META_BO mETA_BO, string userName)
         {
-            mETA_BO.BO_DB_NAME += "_BO_";
+            mETA_BO.BO_DB_NAME = Helper.cleanDBName(mETA_BO.BO_DB_NAME) + "_BO_";
             mETA_BO.VERSION = 1;
             mETA_BO.CREATED_BY = userName;
             mETA_BO.UPDATED_BY = userName;
             mETA_BO.CREATED_DATE = DateTime.Now;
             mETA_BO.UPDATED_DATE = DateTime.Now;
-            db.META_BO.Add(mETA_BO);
 
-            // int lastVersion = db.VERSIONS.Where(x => x.META_BO_ID == mETA_BO.META_BO_ID).Max(x => x.NUM);
-            db.VERSIONS.Add(new VERSIONS()
-            {
-                META_BO_ID = mETA_BO.META_BO_ID,
-                NUM = 1,
-                SQLQUERY = Helper.GetSQL("CreateTable.sql"),
-                STATUS = "PENDING",
-                CREATED_BY = userName,
-                UPDATED_BY = userName,
-            });
-
-            db.SaveChanges();
             return mETA_BO;
         }
-
     }
 
     public class BoBulk
@@ -141,23 +139,31 @@ namespace FAIS.Models.Repository
         public void CreateMetaBo(string userName)
         {
             userName = "api_" + userName;
-            MetaBoRepo repo = new MetaBoRepo();
+            MetaBoRepo borepo = new MetaBoRepo();
+            VersionsRepo vrepo = new VersionsRepo();
 
             META_BO mbo = new META_BO
             {
                 BO_NAME = BoName,
+                BO_DB_NAME = BoName,
                 TYPE = "form"
             };
 
-            mbo = repo.Create(mbo, userName);
+            mbo = borepo.Create(mbo, userName);
+            db.META_BO.Add(mbo);
+
+            VERSIONS version = vrepo.Create(mbo.META_BO_ID, userName);
+            db.VERSIONS.Add(version);
+
+            // db.SaveChanges();
 
             foreach (var f in Fields)
             {
-                META_FIELD field = f.MetaField(mbo.META_BO_ID, userName);
-
-                db.META_FIELD.Add(field);
+                db.META_FIELD.Add(new MetaFieldRepo().Create(f.MetaField(mbo.META_BO_ID, userName), userName));
             }
             db.SaveChanges();
+
+            Task.Run(async () => await vrepo.CommitAsync(version.VERSIONS_ID, userName));
         }
     }
 

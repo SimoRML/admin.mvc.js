@@ -111,45 +111,45 @@ namespace FAIS.Controllers
         [ResponseType(typeof(VERSIONS))]
         public async Task<IHttpActionResult> CommitVERSIONS(long id)
         {
-            VERSIONS vERSIONS = await db.VERSIONS.FindAsync(id);
-            if (vERSIONS == null)
-            {
-                return NotFound();
-            }
+            //VERSIONS vERSIONS = await db.VERSIONS.FindAsync(id);
+            //if (vERSIONS == null)
+            //{
+            //    return NotFound();
+            //}
 
-            META_BO mETA_BO = await new MetaBoRepo().GetMETAForCommitAsync(vERSIONS.META_BO_ID.Value); // await db.META_BO.FindAsync(vERSIONS.META_BO_ID);
-            if (mETA_BO.META_FIELD.Count <= 0)
-            {
-                return BadRequest("No meta field found !");
-            }
+            //META_BO mETA_BO = await new MetaBoRepo().GetMETAForCommitAsync(vERSIONS.META_BO_ID.Value); // await db.META_BO.FindAsync(vERSIONS.META_BO_ID);
+            //if (mETA_BO.META_FIELD.Count <= 0)
+            //{
+            //    return BadRequest("No meta field found !");
+            //}
 
-            var fields = "";
-            foreach (var f in mETA_BO.META_FIELD)
-            {
-                fields += string.Format(" [{0}] {1} {2} , "
-                    , f.DB_NAME
-                    , f.DB_TYPE
-                    , f.DB_NULL == 0 ? " NOT NULL " : " NULL "
-                    );
-            }
+            //var fields = "";
+            //foreach (var f in mETA_BO.META_FIELD)
+            //{
+            //    fields += string.Format(" [{0}] {1} {2} , "
+            //        , f.DB_NAME
+            //        , f.DB_TYPE
+            //        , f.DB_NULL == 0 ? " NOT NULL " : " NULL "
+            //        );
+            //}
 
-            var sqlQuery = Helper.GetSQL("CreateTable.sql");
-                sqlQuery = string.Format(sqlQuery,
-                vERSIONS.VERSIONS_ID.ToString()
-                , mETA_BO.BO_DB_NAME
-                , fields
-                , User.Identity.Name
-                , mETA_BO.META_BO_ID.ToString()
-                , vERSIONS.NUM
-                , mETA_BO.BO_DB_NAME);
-                
-            
-            sqlQuery = sqlQuery.Replace("[SQLQUERY]", sqlQuery.Replace("'","''"));
+            //var sqlQuery = Helper.GetSQL("CreateTable.sql");
+            //    sqlQuery = string.Format(sqlQuery,
+            //    vERSIONS.VERSIONS_ID.ToString()
+            //    , mETA_BO.BO_DB_NAME
+            //    , fields
+            //    , User.Identity.Name
+            //    , mETA_BO.META_BO_ID.ToString()
+            //    , vERSIONS.NUM
+            //    , mETA_BO.BO_DB_NAME);
 
-            var s = new SGBD();
-            s.Cmd(sqlQuery);
-            // s.Cmd(new VersionsModels().GenerateView(mETA_BO.BO_DB_NAME));
 
+            //sqlQuery = sqlQuery.Replace("[SQLQUERY]", sqlQuery.Replace("'","''"));
+
+            //var s = new SGBD();
+            //s.Cmd(sqlQuery);
+            //// s.Cmd(new VersionsModels().GenerateView(mETA_BO.BO_DB_NAME));
+            await new VersionsRepo().CommitAsync(id, User.Identity.Name);
             return Ok();
         }
 

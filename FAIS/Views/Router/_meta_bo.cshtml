@@ -370,7 +370,7 @@
                     }; 
                 },
                 beforeSubmitBo: function (body) {
-                    body.BO_DB_NAME = cleanDBName(body.BO_NAME);
+                    // body.BO_DB_NAME = cleanDBName(body.BO_NAME);
                 },
                 //----------------------------------------- FIELDS SECTION
                 getFieldsUrl: function () {
@@ -386,7 +386,7 @@
                     if (body.FORM_OPTIONAL === null) body.FORM_OPTIONAL = 0;
                     if (body.IS_FILTER === null) body.IS_FILTER = 0;
                     body.META_BO_ID = this.$refs.theForm.pk.value;
-                    body.DB_NAME = cleanDBName(body.GRID_NAME);
+                    body.DB_NAME = body.GRID_NAME; //cleanDBName(body.GRID_NAME);
                     body.DB_TYPE = FormTypeToDbType(body.FORM_TYPE);
                     body.DB_NULL = body.FORM_OPTIONAL;
                     body.GRID_SHOW = 1;

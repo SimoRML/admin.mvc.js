@@ -128,7 +128,7 @@ namespace FAIS.Controllers
             //});
 
             //await db.SaveChangesAsync();
-            mETA_BO = new MetaBoRepo().Create(mETA_BO, User.Identity.Name);
+            mETA_BO = await new MetaBoRepo().CreateAndSaveAsync(mETA_BO, User.Identity.Name);
             return CreatedAtRoute("DefaultApi", new { id = mETA_BO.META_BO_ID }, mETA_BO);
         }
 
