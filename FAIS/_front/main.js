@@ -3,11 +3,6 @@ $(function () {
     $("#v-components").load("router/vcomponents", function (response, status, xhr) {
         if (status === "success") LOAD();
     });
-    $("#minimizeSidebar").trigger("click");
-
-
-    $('.sidebar .sidebar-wrapper, .main-panel').perfectScrollbar('destroy');
-
 
 });
 
@@ -52,3 +47,8 @@ function LOAD() {
 
 
 }
+
+$('#minimizeSidebar').click(function () {
+    $(".v-collapse.open").addClass("collapse");
+    $(".v-collapse.open").removeClass("open");
+});
