@@ -1,8 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
-  <EntityContainerMapping StorageEntityContainer="FAISModelStoreContainer" CdmEntityContainer="FAISEntities">
+  <EntityContainerMapping StorageEntityContainer="FAIS_ModelStoreContainer" CdmEntityContainer="FAISEntities">
     <EntitySetMapping Name="BO">
-      <EntityTypeMapping TypeName="FAISModel.BO">
+      <EntityTypeMapping TypeName="FAIS_Model.BO">
         <MappingFragment StoreEntitySet="BO">
           <ScalarProperty Name="BO_ID" ColumnName="BO_ID" />
           <ScalarProperty Name="CREATED_BY" ColumnName="CREATED_BY" />
@@ -16,18 +16,18 @@
       </EntityTypeMapping>
     </EntitySetMapping>
     <EntitySetMapping Name="BO_CHILDS">
-      <EntityTypeMapping TypeName="FAISModel.BO_CHILDS">
+      <EntityTypeMapping TypeName="FAIS_Model.BO_CHILDS">
         <MappingFragment StoreEntitySet="BO_CHILDS">
-          <ScalarProperty Name="RELATION" ColumnName="RELATION" />
           <ScalarProperty Name="BO_PARENT_ID" ColumnName="BO_PARENT_ID" />
           <ScalarProperty Name="BO_CHILD_ID" ColumnName="BO_CHILD_ID" />
+          <ScalarProperty Name="RELATION" ColumnName="RELATION" />
         </MappingFragment>
       </EntityTypeMapping>
     </EntitySetMapping>
     <EntitySetMapping Name="META_BO">
-      <EntityTypeMapping TypeName="FAISModel.META_BO">
+      <EntityTypeMapping TypeName="FAIS_Model.META_BO">
         <MappingFragment StoreEntitySet="META_BO">
-          <ScalarProperty Name="TYPE" ColumnName="TYPE" />
+          <ScalarProperty Name="JSON_DATA" ColumnName="JSON_DATA" />
           <ScalarProperty Name="META_BO_ID" ColumnName="META_BO_ID" />
           <ScalarProperty Name="BO_NAME" ColumnName="BO_NAME" />
           <ScalarProperty Name="VERSION" ColumnName="VERSION" />
@@ -37,12 +37,14 @@
           <ScalarProperty Name="UPDATED_DATE" ColumnName="UPDATED_DATE" />
           <ScalarProperty Name="STATUS" ColumnName="STATUS" />
           <ScalarProperty Name="BO_DB_NAME" ColumnName="BO_DB_NAME" />
+          <ScalarProperty Name="TYPE" ColumnName="TYPE" />
         </MappingFragment>
       </EntityTypeMapping>
     </EntitySetMapping>
     <EntitySetMapping Name="META_FIELD">
-      <EntityTypeMapping TypeName="FAISModel.META_FIELD">
+      <EntityTypeMapping TypeName="FAIS_Model.META_FIELD">
         <MappingFragment StoreEntitySet="META_FIELD">
+          <ScalarProperty Name="JSON_DATA" ColumnName="JSON_DATA" />
           <ScalarProperty Name="META_FIELD_ID" ColumnName="META_FIELD_ID" />
           <ScalarProperty Name="META_BO_ID" ColumnName="META_BO_ID" />
           <ScalarProperty Name="DB_NAME" ColumnName="DB_NAME" />
@@ -69,7 +71,7 @@
       </EntityTypeMapping>
     </EntitySetMapping>
     <EntitySetMapping Name="VERSIONS">
-      <EntityTypeMapping TypeName="FAISModel.VERSIONS">
+      <EntityTypeMapping TypeName="FAIS_Model.VERSIONS">
         <MappingFragment StoreEntitySet="VERSIONS">
           <ScalarProperty Name="VERSIONS_ID" ColumnName="VERSIONS_ID" />
           <ScalarProperty Name="META_BO_ID" ColumnName="META_BO_ID" />
@@ -83,6 +85,6 @@
         </MappingFragment>
       </EntityTypeMapping>
     </EntitySetMapping>
-    <FunctionImportMapping FunctionImportName="MoveBoToCurrentVersion" FunctionName="FAISModel.Store.MoveBoToCurrentVersion" />
+    <FunctionImportMapping FunctionImportName="MoveBoToCurrentVersion" FunctionName="FAIS_Model.Store.MoveBoToCurrentVersion" />
   </EntityContainerMapping>
 </Mapping>

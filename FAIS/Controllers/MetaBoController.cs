@@ -74,11 +74,20 @@ namespace FAIS.Controllers
             {
                 return BadRequest(ModelState);
             }
-            mETA_BO.META_BO_ID = id;
-            mETA_BO.UPDATED_BY = User.Identity.Name;
-            mETA_BO.UPDATED_DATE = DateTime.Now;
+            META_BO meta = await db.META_BO.FindAsync(id);
+            if(meta == null)
+            {
+                return BadRequest("META_BO NOT FOUND !");
+            }
 
-            db.Entry(mETA_BO).State = EntityState.Modified;
+            meta.BO_NAME = mETA_BO.BO_NAME;
+            meta.TYPE = mETA_BO.TYPE;
+            meta.JSON_DATA = mETA_BO.JSON_DATA;
+
+            meta.UPDATED_BY = User.Identity.Name;
+            meta.UPDATED_DATE = DateTime.Now;
+
+            db.Entry(meta).State = EntityState.Modified;
 
             try
             {

@@ -613,11 +613,11 @@
     <Content Include="Views\Bo\SubForm.cshtml" />
     <Content Include="Views\Admin\MetaFields.cshtml" />
     <Content Include="Views\Home\reporting.cshtml" />
-    <None Include="Views\v_components\_v_table.cshtml" />
-    <None Include="Views\v_components\_v_form.cshtml" />
     <Content Include="Views\Router\_v_vomponents.cshtml" />
     <Content Include="Views\Workflow\Home.cshtml" />
     <Content Include="Views\Workflow\Validation.cshtml" />
+    <Content Include="Views\v_components\_v_form.cshtml" />
+    <Content Include="Views\v_components\_v_table.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

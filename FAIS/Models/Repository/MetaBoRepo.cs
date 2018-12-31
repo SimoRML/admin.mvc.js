@@ -119,7 +119,7 @@ namespace FAIS.Models.Repository
         }
         public META_BO Create(META_BO mETA_BO, string userName)
         {
-            mETA_BO.BO_DB_NAME = Helper.cleanDBName(mETA_BO.BO_DB_NAME) + "_BO_";
+            mETA_BO.BO_DB_NAME = Helper.cleanDBName(mETA_BO.BO_DB_NAME == null ? mETA_BO.BO_NAME : mETA_BO.BO_DB_NAME) + "_BO_";
             mETA_BO.VERSION = 1;
             mETA_BO.CREATED_BY = userName;
             mETA_BO.UPDATED_BY = userName;
@@ -127,6 +127,16 @@ namespace FAIS.Models.Repository
             mETA_BO.UPDATED_DATE = DateTime.Now;
 
             return mETA_BO;
+        }
+
+        public async Task<META_BO_EX> FindMetaBoExAsync(long id)
+        {
+            return await db.Database.SqlQuery<META_BO_EX>("select JSON_VALUE(JSON_DATA, '$.TITLE') TITLE, JSON_VALUE(JSON_DATA, '$.GROUPE') GROUPE, * from META_BO WHERE META_BO_ID = " + id).FirstAsync();
+        }
+
+        public async Task<List<META_BO_EX>> GetMetaBoExAsync(string where)
+        {
+            return await db.Database.SqlQuery<META_BO_EX>("select JSON_VALUE(JSON_DATA, '$.TITLE') TITLE, JSON_VALUE(JSON_DATA, '$.GROUPE') GROUPE, * from META_BO " + where).ToListAsync();
         }
     }
 
@@ -199,5 +209,11 @@ namespace FAIS.Models.Repository
                 STATUS = "NEW"
             };
         }
+    }
+
+    public class META_BO_EX : META_BO
+    {
+        public string TITLE { get; set; }
+        public string GROUPE { get; set; }
     }
 }

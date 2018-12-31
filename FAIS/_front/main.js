@@ -49,6 +49,7 @@ function LOAD() {
 }
 
 $('#minimizeSidebar').click(function () {
+    console.error("111");   
     $(".v-collapse.open").addClass("collapse");
     $(".v-collapse.open").removeClass("open");
 });

@@ -1,0 +1,200 @@
+﻿<script id="TableComponentTemplate" type="text/template">
+    <div>
+        <div class="alert alert-with-icon" data-notify="container"  v-show="list.length <= 0">
+            <i class="material-icons" data-notify="icon">border_clear</i>
+            <span data-notify="message">Aucune donnée à afficher !</span>
+        </div>
+
+        <table class="table table-striped table-no-bordered table-hover" cellspacing="0" width="100%" style="width:100%">
+            <thead>
+                <tr>
+                    <th v-if="detailRowDefined"></th>
+                    <template v-for="h in getHeaders">
+                        <th v-if="show(h)">
+                            {{ getLabel(h) }}
+                        </th>
+                    </template>
+                    <th v-if="actionComponentDefined"></th>
+                    <th v-for="addColumn in additionalColumns">
+                        {{ addColumn.GRID_NAME }}
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                <template v-for="(item, index) in list">
+                    <tr>
+                        @*DETAIL ROW BTN*@
+                        <td v-if="detailRowDefined"
+                            v-on:click="toggleDetailRow(index)">
+                            <i class="material-icons i-btn-round" v-show="showDetailRow[index] != null && showDetailRow[index]">expand_less</i>
+                            <i class="material-icons i-btn-round" v-show="showDetailRow[index] == null || !showDetailRow[index]">expand_more</i>
+                        </td>
+
+                        @*TABLE COLUMNS*@
+                        <template v-for="h in getHeaders">
+                            <td v-if="show(h)" v-format="{value:item[h], format:getFormat(h)}">
+                                {{ item[h] }}
+                            </td>
+                        </template>
+
+                        @*ACTION COMPONENET*@
+                        <td v-if="actionComponentDefined">
+                            <component v-bind:is="actionComponent" v-bind="{row:item}"></component>
+                        </td>
+
+                        @*ADDITIONA COLUMN*@
+                        <td v-for="addColumn in additionalColumns">
+                            <template v-if="addColumn.GRID_FORMAT.type == 'button'">
+                                <div class="pull-right">
+                                    <button :class="addColumn.GRID_FORMAT.color + ' btn btn-round btn-fab btn-fab-mini btn-fab-x-mini'"
+                                            v-on:click="additionalColumnAction(addColumn.GRID_FORMAT.action, addColumn.GRID_FORMAT.data, item.BO_ID)">
+                                        <i class="material-icons">{{ addColumn.GRID_FORMAT.icon }}</i>
+                                    </button>
+                                </div>
+                            </template>
+                            <template v-else>
+                                {{ addColumn.GRID_FORMAT }}
+                            </template>
+                        </td>
+                    </tr>
+
+                    @*DETAIL ROW*@
+                    <tr class="detailRow" v-if="detailRowDefined" v-show="showDetailRow[index] != null && showDetailRow[index]">
+                        <td v-bind:colspan="columnCount">
+                            <component v-bind:is="detailRow" v-bind="{row:item, columnLabels: columnLabels}"></component>
+                        </td>
+                    </tr>
+                </template>
+            </tbody>
+        </table>
+    </div>
+</script>
+<script type="text/javascript">
+    Vue.component('v-table', {
+        template: $("#TableComponentTemplate").html(),
+        props: {
+            datasource: String,
+            columnIgnore: Array,
+            columnShow: Array,
+            columnLabels: Object,
+            detailRow: String,
+            actionComponent: String,
+            metaName: String
+        },
+        data: function () {
+            return {
+                list: [],
+                showDetailRow: [],
+                dataSourceUrl: "",
+                meta: null,
+                additionalColumns: []
+            }
+        },
+        computed: {
+            getHeaders: function () {
+                if (this.list.length > 0) {
+                    var headers = [];
+                    for (var h in this.list[0]) {
+                        headers.push(h);
+                    }
+                    return headers;
+                }
+                else
+                    return [];
+            },
+            columnCount: function () {
+                return this.getHeaders.length;
+            },
+            detailRowDefined: function () {
+                return this.detailRow != null;
+            },
+            actionComponentDefined: function () {
+                return this.actionComponent != null;
+            },
+            fields: function () {
+                if (this.meta === null) return null;
+                var a = {};
+                this.meta.META_FIELD.forEach((e) => {
+                    a[e.DB_NAME] = e;
+
+                    if (e.FORM_SOURCE !== null)
+                        try { a[e.DB_NAME].FORM_SOURCE = JSON.parse(e.FORM_SOURCE) } catch{ }
+
+                    if (e.GRID_FORMAT !== null) {
+                        try { 
+                            a[e.DB_NAME].GRID_FORMAT = JSON.parse(e.GRID_FORMAT);
+                            if (e.DB_NAME === "additional.column")
+                                this.additionalColumns.push(e);
+                        } catch{ }
+                    }
+                    if (e.FORM_FORMAT !== null)
+                        try { a[e.DB_NAME].FORM_FORMAT = JSON.parse(e.FORM_FORMAT) } catch{ }
+                });
+                return a;
+            }
+        },
+        methods: {
+            load: function (url) {
+                var me = this;
+                if (typeof me.dataSourceUrl === "undefined" && typeof url === "undefined") return;
+                if (typeof url !== "undefined") me.dataSourceUrl = url;
+                else url = me.dataSourceUrl;
+                var data = EV.getComponent("data");
+                data.ExecuteSource({
+                    url: url,
+                    loadComplete: function (obj, response) {
+                        me.list = response;
+                    }
+                });
+            },
+            clear: function () { 
+                this.list = [];
+            },
+            loadObject: function (obj) {
+                this.list = obj;
+            },
+            show: function (colName) {
+                if (typeof this.columnShow !== "undefined") {
+                    return this.columnShow.includes(colName);
+                } else {
+                    if (typeof this.columnIgnore === "undefined")
+                        return true;
+                    else
+                        return !this.columnIgnore.includes(colName);
+                }
+            },
+            getLabel: function (colName) {
+                if (typeof this.columnLabels === "undefined" || typeof this.columnLabels[colName] === "undefined")
+                    return colName;
+                else
+                    return this.columnLabels[colName];
+            },
+            toggleDetailRow: function (index) {
+                this.$set(this.showDetailRow, index, this.showDetailRow[index] == null ? true : !this.showDetailRow[index]);
+            },
+            getFormat: function (column) {
+                if (this.meta === null) return null;
+                if (typeof this.fields[column] === "undefined") return null;
+                if (typeof this.fields[column].GRID_FORMAT === "undefined") return null;
+                return this.fields[column].GRID_FORMAT;
+            },
+            additionalColumnAction: function (action, data, id) {
+                switch (action) {
+                    case "redirect":
+                        window.location = URL.addPart(data, id);
+                        break;
+                    default:
+                }
+            }
+        },
+        mounted: function () {
+            this.dataSourceUrl = this.datasource;
+            this.load();
+
+            // BIND TO BUS META
+            if (typeof this.metaName === "undefined") return "";
+            if (typeof bus.$data[this.metaName] === "undefined") return "";
+            this.meta = bus.$data[this.metaName];
+        }
+    });
+</script>

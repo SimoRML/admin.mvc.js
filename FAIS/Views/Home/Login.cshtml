@@ -19,12 +19,21 @@
     <!--  CSS for Demo Purpose, don't include it in your project     -->
     <link href="~/Content//css/demo.css" rel="stylesheet" />
     <!--     Fonts and icons     -->
-    <link href="http://maxcdn.bootstrapcdn.com/font-awesome/latest/css/font-awesome.min.css" rel="stylesheet">
+    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/latest/css/font-awesome.min.css" rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Material+Icons" />
+    <link href="~/Content/css/style.css" rel="stylesheet" />
 </head>
 
 
 <body>
+    <div id="PagePreloader" class="container PagePreloader" style="display:none">
+        <center style="margin:10% 0 0 0">
+            <div class="loader"></div>
+            <br />
+            Chargement en cours
+        </center>
+    </div>
+
     <nav class="navbar navbar-primary navbar-transparent navbar-absolute">
         <div class="container">
             <div class="navbar-header">
@@ -222,6 +231,7 @@
             ]
         });
         EV.CreateObject(data);
+        EV.CreateObject(new Preloader("PagePreloader"));
     });
 
 </script>

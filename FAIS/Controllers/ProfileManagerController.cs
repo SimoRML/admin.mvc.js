@@ -1,5 +1,8 @@
 ﻿using FAIS.Models;
+using FAIS.Models.Repository;
+using System;
 using System.Collections.Generic;
+using System.Dynamic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -17,58 +20,54 @@ namespace FAIS.Controllers
         // GET: api/ProfileManager
         [HttpGet]
         [Route("Menu")]
-        public HttpResponseMessage Menu()
+        public async Task<IHttpActionResult> Menu()
         {
-            var dt = db.META_BO.Where(x => x.META_BO_ID != 1 && x.TYPE == "form").ToList();
-            List<MenuFields> menu_ = new List<MenuFields>();
+            var metas = await new MetaBoRepo().GetMetaBoExAsync(" WHERE CREATED_BY <> 'admin' AND TYPE='form'");
 
-            menu_.Add(new MenuFields { icon = "dashboard", text = "Reporting", href = "#reporting.index" });
-
-            foreach (var item in dt)
+            Dictionary<string, object> menu = new Dictionary<string, object>();
+            menu.Add("Admin", new
             {
-                menu_.Add(new MenuFields
-                {
-                    icon = "dashboard",
-                    text = item.BO_NAME,
-                    href = "bo.index." + item.BO_DB_NAME.Replace("_BO_", ""),
-                    User = null,
-                    parent = null,
-                    childs = null
-                });
-            }
-
-
-
-            var menu = new
-            {
-                Admin = new
-                {
-                    icon = "build",
-                    text = "Administration",
-                    href = "home",
-                    User = User.Identity.Name,
-                    parent = true,
-                    childs = new[] {
+                icon = "build",
+                text = "Administration",
+                href = "home",
+                User = User.Identity.Name,
+                parent = true,
+                childs = new[] {
                         new MenuFields { icon = "dashboard", text = "Meta Bo", href = "router.metabo" },
                         new MenuFields { icon = "dashboard", text = "Workflow", href = "workflow.home" },
                         new MenuFields { icon = "pie_chart", text = "Reporting", href = "home.reporting" },
                     },
-                    open= false,
-                },
-                Bo = new
+                open = false,
+            });
+
+            foreach (var meta in metas)
+            {
+                if (meta.GROUPE == null) meta.GROUPE = "Objects";
+
+                if (!menu.ContainsKey(meta.GROUPE))
                 {
-                    icon = "extension",
-                    text = "Objects",
-                    href = "home",
-                    User = User.Identity.Name,
-                    parent = true,
-                    childs = menu_.ToArray(),
-                    open = false,
-                },
-            };
-            return this.Request.CreateResponse(
-                HttpStatusCode.OK,
-                menu);
+                    menu.Add(meta.GROUPE, new Dictionary<string, object>()
+                        {
+                            { "icon", "layers" },
+                            { "text", meta.GROUPE },
+                            { "href", "home" },
+                            { "User", User.Identity.Name },
+                            { "parent", true },
+                            { "childs", new List<object>() },
+                            { "open", false }
+                        });
+                }
+                ((List<object>)((Dictionary<string, object>)menu[meta.GROUPE])["childs"]).Add(new
+                {
+                    icon = "",
+                    text = meta.BO_NAME,
+                    href = "bo.index." + meta.BO_DB_NAME.Replace("_BO_", ""),
+                    User = "",
+                    parent = false,
+                    childs = ""
+                });
+            }
+            return Ok(menu);
         }
 
         [HttpGet]
@@ -76,7 +75,7 @@ namespace FAIS.Controllers
         [Route("Validators")]
         public async Task<IHttpActionResult> GetValidators()
         {
-            List<string> validators = await db.Database.SqlQuery<string>("SELECT [Email] FROM [AspNetUsers] order by Email").ToListAsync();            
+            List<string> validators = await db.Database.SqlQuery<string>("SELECT [Email] FROM [AspNetUsers] order by Email").ToListAsync();
             return Ok(validators);
         }
 

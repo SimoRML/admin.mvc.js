@@ -56,6 +56,7 @@
     overflow: hidden;
     height: 0px;
     transition: height 0.5s;
+
 }
 
     .v-collapse.open {
@@ -199,6 +200,6 @@
     margin-right: 10px;
 }
 
-.bootstrap-select{
-    margin-top:2px;
+.bootstrap-select {
+    margin-top: 2px;
 }

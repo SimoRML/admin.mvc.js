@@ -10,6 +10,8 @@ bool isSubForm = ViewBag.isSubForm != null;
 {
     <v-table ref="theTable"
              meta-name="@Model.BO_DB_NAME"
+             :column-show="columnShow"
+             :column-labels="columnLabels"
              @if (includeDatasource){ @: datasource="metabo/select/@Model.BO_DB_NAME"
              }
              action-component="@Model.BO_DB_NAME-action"></v-table>
@@ -164,7 +166,7 @@ else
                     <div :class="'col-md-6 ' + CurrentMode.subFormMode" v-if="hasSubForm" v-for="subform in subForms">
                         <div class="card">
                             <div class="card-header">
-                                <h4 class="card-title">{{ subform.FORM_NAME }}</h4>
+                                <h4 class="card-title subFormTitle">{{ subform.FORM_NAME }}</h4>
                             </div>
                             <div class="card-content">
                                 <div v-include="{url:subform.url}"></div>
@@ -188,7 +190,28 @@ else
         </div>
     </script>
     <script type="text/javascript">
-        bus.setMeta("@Model.BO_DB_NAME", @Html.Raw(Json.Encode(Model)));
+        var @boDbName("META_BO") = @Html.Raw(Json.Encode(Model));
+
+        // parse json data
+        try {
+            console.log("PARDING JSON");
+            window["@boDbName("META_BO")"].JSON_DATA = JSON.parse(window["@boDbName("META_BO")"].JSON_DATA);
+            if ("@isSubForm"=="True") {
+                $(".subFormTitle").html(window["@boDbName("META_BO")"].JSON_DATA.TITLE);
+            } else {
+                $("#pageTitle").html(window["@boDbName("META_BO")"].JSON_DATA.TITLE);
+            }
+        } catch {}
+
+        // build table props from meta_fields
+        var @boDbName("columnShow") = [];
+        var @boDbName("columnLabels") = { };
+        window["@boDbName("META_BO")"].META_FIELD.forEach((e) => { 
+            if (e.GRID_SHOW == 1) window["@boDbName("columnShow")"].push(e.DB_NAME);
+            window["@boDbName("columnLabels")"][e.DB_NAME] = e.GRID_NAME;
+        });
+
+        bus.setMeta("@Model.BO_DB_NAME", @boDbName("META_BO"));
     </script>
 
     <script type="text/javascript">
@@ -203,7 +226,7 @@ else
                         mode: "insert",
                         icon: "note_add",
                         tab: "Ajouter",
-                        title: "@Model.BO_NAME",
+                        title: "@Html.Raw(Model.BO_NAME)",
                         subtitle: "Créer un nouvel object",
                         subFormMode: "disable",
                     },
@@ -211,14 +234,16 @@ else
                         mode: "update",
                         icon: "create",
                         tab: "Modifier",
-                        title: "@Model.BO_NAME",
+                        title: "@Html.Raw(Model.BO_NAME)",
                         subtitle: "Modifier l'objet",
                         subFormMode: "",
                     }
                 },
                 CurrentMode: {},
                 filterExists: false,
-                filterBody: {}
+                filterBody: {},
+                columnShow: @boDbName("columnShow"),
+                columnLabels: @boDbName("columnLabels"),
             },
             computed: {
                 getFiltre: function () {
@@ -247,7 +272,7 @@ else
                 },
                 error: function (Response) {
                     console.log('Impossible d\'enregistré l\'objet !<br>', Response);
-                    NOTIF.error('Impossible d\'enregistré l\'objet !<br>' + 
+                    NOTIF.error('Impossible d\'enregistré l\'objet !<br>' +
                         (typeof Response.responseJSON === "undefined" ? Response.statusText : Response.responseJSON.ExceptionMessage));
                 },
                 getDefinitionDone: function () {

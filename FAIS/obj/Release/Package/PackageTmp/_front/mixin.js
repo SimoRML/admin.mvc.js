@@ -70,51 +70,57 @@ Vue.directive("include", {
 var bus = new Vue({
     data: {
         lists: {},
+        listsConfig: {},
+        listPil: [],
         scope: {},
     },
     methods: {
-        init: function () {
+        init: function () { 
             this.lists = {};
+            this.listsConfig = {};
             this.scope = {};
         },
         loadList: function (key, datasource, done) {
             var me = this;
             if (typeof datasource !== "undefined" && datasource !== null) {
-
+                
                 var jsonSource = null;
                 if (typeof datasource === "object")
                     jsonSource = clone(datasource);
                 else {
-                    try {
-                        jsonSource = JSON.parse(datasource);
-                    } catch{
+                    try { 
+                        jsonSource = JSON.parse(datasource); 
+                    } catch{ 
                         if (typeof datasource === "string")
-                            jsonSource = { url: datasource, method: "GET" };
+                            jsonSource = {url:datasource, method: "GET"};
                     }
                 }
                 if (jsonSource !== null && typeof jsonSource.source === "undefined" & typeof jsonSource.url === "undefined") {
                     done(jsonSource);
+                    if (typeof key === "undefined") key = GetId();
                     this.lists[key] = jsonSource;
                     return;
                 }
 
-                var url = "metabo/SelectSource";
+                var url = "shared/SelectSource";
                 var method = "POST";
                 if (typeof jsonSource.url !== "undefined") url = jsonSource.url;
                 if (typeof jsonSource.method !== "undefined") method = jsonSource.method;
 
                 // SET KEY
                 if (typeof jsonSource.source !== "undefined")
-                    key = jsonSource.source;
+                    key = JSON.stringify(jsonSource);
                 if (typeof key === "undefined")
                     key = url;
 
                 // IF LIST IS ALREADY LOADED
                 if (typeof this.lists[key] !== "undefined") {
-                    done(this.lists[key]);
+                    if (this.lists[key] === "loading") this.listPil.push(done);
+                    else done(this.lists[key]);
                     return;
                 }
-
+                
+                this.lists[key] = "loading";
                 var data = EV.getComponent("data");
                 data.ExecuteSource({
                     url: url,
@@ -122,10 +128,23 @@ var bus = new Vue({
                     data: datasource,
                     loadComplete: function (obj, response) {
                         me.lists[key] = response;
+                        me.listsConfig[key] = {key: key, datasource: datasource, done: done};
                         done(response);
+
+                        // list pil
+                        while (me.listPil.length > 0) me.listPil.pop()(me.lists[key]);
+                    },
+                    fail: function () {
+                        delete me.lists[key];
+                        me.listPil = [];
                     }
                 });
             }
+        },
+        reLoadList: function (key) {
+            if (typeof this.listsConfig[key] === "undefined") return;
+            delete this.lists[key];
+            this.loadList(this.listsConfig[key].key, this.listsConfig[key].datasource, this.listsConfig[key].done);
         },
         setMeta: function (id, value) {
             // console.log("SET DATA " + id, value);

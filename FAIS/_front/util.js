@@ -183,8 +183,8 @@ function sideBarFix() {
     if (isWindows) {
         $('.sidebar .sidebar-wrapper, .main-panel').perfectScrollbar('destroy');
         $('.sidebar .sidebar-wrapper, .main-panel').perfectScrollbar();
-        $("#minimizeSidebar").trigger("click");
-        $('.sidebar .sidebar-wrapper, .main-panel').perfectScrollbar('destroy');
+        // $("#minimizeSidebar").trigger("click");
+        // $('.sidebar .sidebar-wrapper, .main-panel').perfectScrollbar('destroy');
 
 
     }

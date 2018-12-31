@@ -41,6 +41,7 @@
           <Property Name="STATUS" Type="varchar" MaxLength="50" />
           <Property Name="BO_DB_NAME" Type="varchar" MaxLength="50" />
           <Property Name="TYPE" Type="varchar" MaxLength="50" />
+          <Property Name="JSON_DATA" Type="nvarchar(max)" />
         </EntityType>
         <EntityType Name="META_FIELD">
           <Key>
@@ -68,6 +69,7 @@
           <Property Name="UPDATED_DATE" Type="datetime" />
           <Property Name="STATUS" Type="varchar" MaxLength="50" />
           <Property Name="VERSION" Type="int" />
+          <Property Name="JSON_DATA" Type="nvarchar(max)" />
         </EntityType>
         <EntityType Name="VERSIONS">
           <Key>
@@ -166,6 +168,7 @@
           <Property Name="BO_DB_NAME" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
           <Property Name="TYPE" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
           <NavigationProperty Name="META_FIELD" Relationship="Self.FK__META_FIEL__META___33D4B598" FromRole="META_BO" ToRole="META_FIELD" />
+          <Property Name="JSON_DATA" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
         </EntityType>
         <EntityType Name="META_FIELD">
           <Key>
@@ -193,6 +196,7 @@
           <Property Name="UPDATED_DATE" Type="DateTime" Precision="3" />
           <Property Name="STATUS" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
           <Property Name="VERSION" Type="Int32" />
+          <Property Name="JSON_DATA" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
         </EntityType>
         <EntityType Name="VERSIONS">
           <Key>
@@ -248,7 +252,7 @@
             <End Role="VERSIONS" EntitySet="VERSIONS" />
           </AssociationSet>
           <FunctionImport Name="MoveBoToCurrentVersion">
-            <Parameter Name="BO_ID" Mode="In" Type="Int64" />
+          <Parameter Name="BO_ID" Mode="In" Type="Int64" />
           </FunctionImport>
         </EntityContainer>
       </Schema>
@@ -283,6 +287,7 @@
           <EntitySetMapping Name="META_BO">
             <EntityTypeMapping TypeName="FAIS_Model.META_BO">
               <MappingFragment StoreEntitySet="META_BO">
+                <ScalarProperty Name="JSON_DATA" ColumnName="JSON_DATA" />
                 <ScalarProperty Name="META_BO_ID" ColumnName="META_BO_ID" />
                 <ScalarProperty Name="BO_NAME" ColumnName="BO_NAME" />
                 <ScalarProperty Name="VERSION" ColumnName="VERSION" />
@@ -299,6 +304,7 @@
           <EntitySetMapping Name="META_FIELD">
             <EntityTypeMapping TypeName="FAIS_Model.META_FIELD">
               <MappingFragment StoreEntitySet="META_FIELD">
+                <ScalarProperty Name="JSON_DATA" ColumnName="JSON_DATA" />
                 <ScalarProperty Name="META_FIELD_ID" ColumnName="META_FIELD_ID" />
                 <ScalarProperty Name="META_BO_ID" ColumnName="META_BO_ID" />
                 <ScalarProperty Name="DB_NAME" ColumnName="DB_NAME" />

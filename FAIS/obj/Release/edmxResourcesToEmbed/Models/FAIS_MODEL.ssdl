@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Schema Namespace="FAISModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+<Schema Namespace="FAIS_Model.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
   <EntityType Name="BO">
     <Key>
       <PropertyRef Name="BO_ID" />
@@ -36,6 +36,7 @@
     <Property Name="STATUS" Type="varchar" MaxLength="50" />
     <Property Name="BO_DB_NAME" Type="varchar" MaxLength="50" />
     <Property Name="TYPE" Type="varchar" MaxLength="50" />
+    <Property Name="JSON_DATA" Type="nvarchar(max)" />
   </EntityType>
   <EntityType Name="META_FIELD">
     <Key>
@@ -63,6 +64,7 @@
     <Property Name="UPDATED_DATE" Type="datetime" />
     <Property Name="STATUS" Type="varchar" MaxLength="50" />
     <Property Name="VERSION" Type="int" />
+    <Property Name="JSON_DATA" Type="nvarchar(max)" />
   </EntityType>
   <EntityType Name="VERSIONS">
     <Key>
@@ -105,7 +107,7 @@
   <Function Name="MoveBoToCurrentVersion" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
     <Parameter Name="BO_ID" Type="bigint" Mode="In" />
   </Function>
-  <EntityContainer Name="FAISModelStoreContainer">
+  <EntityContainer Name="FAIS_ModelStoreContainer">
     <EntitySet Name="BO" EntityType="Self.BO" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="BO_CHILDS" EntityType="Self.BO_CHILDS" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="META_BO" EntityType="Self.META_BO" Schema="dbo" store:Type="Tables" />
