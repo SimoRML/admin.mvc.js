@@ -183,6 +183,10 @@ function sideBarFix() {
     if (isWindows) {
         $('.sidebar .sidebar-wrapper, .main-panel').perfectScrollbar('destroy');
         $('.sidebar .sidebar-wrapper, .main-panel').perfectScrollbar();
+        $("#minimizeSidebar").trigger("click");
+        $('.sidebar .sidebar-wrapper, .main-panel').perfectScrollbar('destroy');
+
+
     }
 }
 
@@ -191,7 +195,7 @@ var URL = {
         return url + (url.indexOf("?") < 0 ? "?" : "&") + param;
     },
     addPart: function (url, part) {
-       //console.log("addPart : " + url, part);
+        //console.log("addPart : " + url, part);
         if (typeof part.slice !== "undefined" && part.slice(0) === "/") part = part.substr(1);
         return url + (url.slice(-1) === "/" ? "" : "/") + part;
     }
@@ -204,8 +208,8 @@ function GetId() {
 function cleanDBName(str) {
     return str
         .replace(/[éèëê]/g, "e")
-        .replace(/[à]/g,"a")
-        .replace(/[ç]/g,"c")
+        .replace(/[à]/g, "a")
+        .replace(/[ç]/g, "c")
         .replace(/[^a-zA-Z0-9 ]/g, "")
         .replaceAll("  ", " ").replaceAll("  ", " ").replaceAll("  ", " ").replaceAll("  ", " ")
         .replaceAll(" ", "_");

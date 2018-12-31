@@ -68,9 +68,11 @@ Vue.directive("include", {
 });
 
 var bus = new Vue({
+    el: '#bus',
     data: {
         lists: {},
         scope: {},
+        menu: [],
     },
     methods: {
         init: function () {
