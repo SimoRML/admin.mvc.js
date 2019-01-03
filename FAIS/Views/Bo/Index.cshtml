@@ -1,10 +1,10 @@
 ﻿@model FAIS.Models.META_BO
 @{
-string boDbName(string txt)
-{
-    return Model.BO_DB_NAME + txt;
-}
-bool isSubForm = ViewBag.isSubForm != null;
+    string boDbName(string txt)
+    {
+        return Model.BO_DB_NAME + txt;
+    }
+    bool isSubForm = ViewBag.isSubForm != null;
 }
 @helper renderTable(bool includeDatasource)
 {
@@ -12,7 +12,7 @@ bool isSubForm = ViewBag.isSubForm != null;
              meta-name="@Model.BO_DB_NAME"
              :column-show="columnShow"
              :column-labels="columnLabels"
-             @if (includeDatasource){ @: datasource="metabo/select/@Model.BO_DB_NAME"
+             @if (includeDatasource) { @: datasource="metabo/select/@Model.BO_DB_NAME"
              }
              action-component="@Model.BO_DB_NAME-action"></v-table>
 }
@@ -194,7 +194,7 @@ else
 
         // parse json data
         try {
-            console.log("PARDING JSON");
+           // console.log("PARDING JSON");
             window["@boDbName("META_BO")"].JSON_DATA = JSON.parse(window["@boDbName("META_BO")"].JSON_DATA);
             if ("@isSubForm"=="True") {
                 $(".subFormTitle").html(window["@boDbName("META_BO")"].JSON_DATA.TITLE);
@@ -206,7 +206,7 @@ else
         // build table props from meta_fields
         var @boDbName("columnShow") = [];
         var @boDbName("columnLabels") = { };
-        window["@boDbName("META_BO")"].META_FIELD.forEach((e) => { 
+        window["@boDbName("META_BO")"].META_FIELD.forEach((e) => {
             if (e.GRID_SHOW == 1) window["@boDbName("columnShow")"].push(e.DB_NAME);
             window["@boDbName("columnLabels")"][e.DB_NAME] = e.GRID_NAME;
         });

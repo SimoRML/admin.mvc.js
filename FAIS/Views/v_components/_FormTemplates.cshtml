@@ -10,7 +10,7 @@
         },
         created: function () {
             var me = this;
-            // console.log("LOADING DATA SOURCE", me.datasource);
+            console.log("LOADING DATA SOURCE", me.datasource);
             bus.loadList(this.fieldName, me.datasource, (response) => { me.populateData(response) });
         },
         computed: {
@@ -26,8 +26,9 @@
                     this.$emit('input', e.target.value, this.data);
 
                 bus.$emit(this.elementId + "-changed", e.target);
-
+                console.log("**" + e.target.type);
                 if (e.target.type == "select-one") {
+                    //console.log(e.target.value);
                     this.emitChanged(e.target.value);
                 }
             },
@@ -187,11 +188,13 @@
                 }, 100);
             },
             emitChanged: function (value) {
+                //console.log("__" + value);
                 if (value == "") return;
                 if (this.data == null) return;
+
                 var selectedObject = null;
-                // console.log("emitChanged (" + this.id + ") value", value);
-                // console.log("emitChanged (" + this.id + ") data", this.data);
+                //console.log("emitChanged (" + this.id + ") value", value);
+                //console.log("emitChanged (" + this.id + ") data", this.data);
                 this.data.forEach((item) => {
                     if (item.Value == value)
                         selectedObject = item;
