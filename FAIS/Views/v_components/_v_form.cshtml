@@ -147,9 +147,9 @@
                         me.meta = response.META_FIELD;
                         // CONCAT ADDITIONAL FIELDS
                         if (me.additionalFields != null && me.additionalFields.length > 0) {
-                            console.log("CONCAT ADDITIONAL FIELDS before", me.additionalFields);
+                            // console.log("CONCAT ADDITIONAL FIELDS before", me.additionalFields);
                             me.meta = me.meta.concat(me.additionalFields);
-                            console.log("CONCAT ADDITIONAL FIELDS after", me.meta);
+                            // console.log("CONCAT ADDITIONAL FIELDS after", me.meta);
                         }
                         bus.setMeta(response.BO_DB_NAME, response);
                         me.formatBody();

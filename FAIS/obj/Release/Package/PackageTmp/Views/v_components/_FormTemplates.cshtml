@@ -11,7 +11,7 @@
         created: function () {
             var me = this;
             // console.log("LOADING DATA SOURCE", me.datasource);
-            bus.loadList(this.fieldName, me.datasource, (response) => { me.populateData(response) });
+            // bus.loadList(this.fieldName, me.datasource, (response) => { me.populateData(response) });
         },
         computed: {
             isOptional: function () {
@@ -33,7 +33,8 @@
             },
             populateData: function (data) {
                 var me = this;
-                // console.log("populateData : " + me.id);
+
+                //console.log("------ > populateData", me.id, data);
                 me.data = data;
                 if (me.$refs.selectpicker != null)
                     me.setValue();
@@ -201,6 +202,9 @@
             }
         },
         mounted: function () {
+            var me = this;
+            //console.log("call from select ", me.id);
+            bus.loadList(this.fieldName, me.datasource, (response) => { me.populateData(response) });
             this.setValue();
         }
     });

@@ -89,12 +89,13 @@ namespace FAIS.Controllers
             if (metafeldDB.STATUS.Trim() == "NEW")
             {
                 metafeldDB.DB_NAME = model.DB_NAME;
-                metafeldDB.DB_NULL = model.DB_NULL;
+                metafeldDB.DB_NULL = 1;//model.DB_NULL;
             }
             if(metafeldDB.STATUS.Trim() == "NEW" || (metafeldDB.FORM_TYPE != "v-datepicker" & metafeldDB.FORM_TYPE != "v-checkbox"))
                 metafeldDB.FORM_TYPE = model.FORM_TYPE;
 
             metafeldDB.GRID_NAME = model.GRID_NAME;
+            metafeldDB.GRID_SHOW = model.GRID_SHOW;
             metafeldDB.GRID_FORMAT = model.GRID_FORMAT;
             metafeldDB.FORM_NAME = model.FORM_NAME;
             metafeldDB.FORM_SOURCE = model.FORM_SOURCE;
