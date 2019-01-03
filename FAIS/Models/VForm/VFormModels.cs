@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
+using System.Linq;
 
 namespace FAIS.Models.VForm
 {
@@ -15,19 +17,51 @@ namespace FAIS.Models.VForm
         public string Value { get; set; }
         public string Display { get; set; }
         public string Filter { get; set; }
+
         private string sqlQuery
         {
             get
             {
                 // TODO : prevent SQL injection
                 if (this.Filter == null) this.Filter = "";
-                return String.Format("Select convert(varchar,{0}) as value, {1} as display from {2} {3}", this.Value, this.Display, this.Source, this.Filter.Trim() == "" ? "" : " where " + this.Filter);
+                return String.Format("Select convert(varchar,{0}) as value, {1} as display,* from {2} {3}", this.Value, this.Display, this.Source, this.Filter.Trim() == "" ? "" : " where " + this.Filter);
             }
         }
 
-        public async System.Threading.Tasks.Task<List<SelectDataModel>> GetAsync(FAISEntities db)
+        //public async System.Threading.Tasks.Task<List<SelectDataModel>> GetAsync(FAISEntities db)
+        //{
+        //    return await db.Database.SqlQuery<SelectDataModel>(this.sqlQuery).ToListAsync();
+        //}
+
+        public List<SelectDataModel> Get()
         {
-            return await db.Database.SqlQuery<SelectDataModel>(this.sqlQuery).ToListAsync();
+            SGBD s = new SGBD();
+            List<SelectDataModel> sources = new List<SelectDataModel>();
+
+
+            DataTable brute = s.Cmd(this.sqlQuery);
+
+
+            foreach (DataRow row in brute.Rows)
+            {
+
+                sources.Add(new SelectDataModel()
+                {
+                    Value = row["value"].ToString(),
+                    Display = row["display"].ToString(),
+                    Attributes = new Dictionary<string, string>()
+                });
+
+                var attributes = sources.Last().Attributes;
+                foreach (DataColumn coll in brute.Columns)
+                {
+                    attributes.Add(coll.ColumnName, row[coll.ColumnName].ToString());
+
+                }
+
+            }
+
+            return sources;
         }
     }
 
@@ -90,7 +124,7 @@ namespace FAIS.Models.VForm
             }
             if (fields != "") fields = fields.Remove(0, 1);
             if (values != "") values = values.Remove(0, 1);
-            return string.Format("insert into {0} ({1}) values ({2}) ", MetaBO.BO_DB_NAME  , fields, values);
+            return string.Format("insert into {0} ({1}) values ({2}) ", MetaBO.BO_DB_NAME, fields, values);
         }
 
         public string FormatUpdate()
@@ -102,7 +136,7 @@ namespace FAIS.Models.VForm
             }
             if (Field_Values != "") Field_Values = Field_Values.Remove(0, 1);
 
-            return string.Format("Update {0} set {1}  where BO_ID=@BO_ID", MetaBO.BO_DB_NAME  , Field_Values);
+            return string.Format("Update {0} set {1}  where BO_ID=@BO_ID", MetaBO.BO_DB_NAME, Field_Values);
 
         }
 
@@ -110,7 +144,7 @@ namespace FAIS.Models.VForm
         {
             string Field_Values = "";
 
-            return string.Format("delete from {0} where BO_ID = {1}  where BO_ID=@BO_ID", MetaBO.BO_DB_NAME  , Field_Values);
+            return string.Format("delete from {0} where BO_ID = {1}  where BO_ID=@BO_ID", MetaBO.BO_DB_NAME, Field_Values);
 
         }
 
