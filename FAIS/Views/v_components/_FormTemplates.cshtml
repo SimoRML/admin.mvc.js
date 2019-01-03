@@ -150,7 +150,9 @@
                 v-on:change="bindBack($event)"
                 :required="!isOptional">
             <option value=""> Choisir </option>
-            <option v-for="item in data" :value="item.Value"> {{ item.Display }} </option>
+            <option v-for="item in data" 
+                    :value="item.Value"
+                    :class="display(item)"> {{ item.Display }} </option>
         </select>
     </div>
 </script>
@@ -163,11 +165,18 @@
                 selected: this.value
             }
         },
+        computed: {
+            isConditional: function () { 
+                try {
+                    var jsona = JSON.parse(this.datasource);
+                    return typeof jsona.parent !== "undefined" && jsona.parent !== "" && jsona.linkfield !== "";
+                } catch {}
+                return false;
+            }
+        },
         watch: {
-            value: function (newVal, oldVal) { // watch it
-                // console.log('(' + this.id + ') value changed: ', newVal, ' | was: ', oldVal, ' | selected: ' + this.selected)
+            value: function (newVal, oldVal) {
                 this.setValue(newVal);
-
             }
         },
         methods: {
@@ -199,6 +208,9 @@
                 });
                 // console.log("emitChanged (" + this.id +") selectedObject", selectedObject);
                 this.$emit('changed', value, selectedObject);
+            },
+            display: function (item) {
+                console.log("diala",item);
             }
         },
         mounted: function () {

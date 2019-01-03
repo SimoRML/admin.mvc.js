@@ -135,7 +135,7 @@
             }
         },
         methods: {
-            load: function (url) {
+            load: function (url, done) {
                 var me = this;
                 if (typeof me.dataSourceUrl === "undefined" && typeof url === "undefined") return;
                 if (typeof url !== "undefined") me.dataSourceUrl = url;
@@ -147,6 +147,8 @@
                     loadComplete: function (obj, response) {
                         me.loadingHide();
                         me.list = response;
+
+                        if (typeof done === "function") done(response);
                     },
                     fail: function () {
                         me.loadingError();

@@ -175,6 +175,7 @@
                 </div>
                 <div class="tab-pane" id="source_de_donnees">
                     <div class="col-md-12" v-if='typeof FORM_SOURCE !== "undefined" && FORM_SOURCE !== null && typeof FORM_SOURCE.source !== "undefined"'>
+                        <h4>Source de données</h4>
                         <v-select ref="ddl_source" id="ddl_source" label="Source de données" fieldName="source de donnees"
                                   v-model="FORM_SOURCE.source"
                                   datasource="metabo/GetDataSources"
@@ -186,9 +187,20 @@
                                   v-model="FORM_SOURCE.display"
                                   :optional="isSourceOptional()"></v-select>
                         <v-text label="Filtre" optional="1" css-class="col-md-12" v-model="FORM_SOURCE.filter" v-on:input="hendleInput"></v-text>
+
+                        <h4>Liste conditionelle</h4>
+                        <v-select label="Liste mère" 
+                                  :datasource="{key:'selectFields'}"
+                                  v-model="FORM_SOURCE.parent"></v-select>
+                        <v-select ref="ddl_link_field" label="Champ de liaison" 
+                                  :datasource="{key:'selectFields'}"
+                                  v-model="FORM_SOURCE.link_field"></v-select>
                     </div>
                 </div>
             </div>
+        </div>
+        <div class="col-md-12">
+            
         </div>
     </div>
 </script>
@@ -229,17 +241,18 @@
                 } else return this.FORM_SOURCE;
             },
             reInit: function () {
-                if (this.FORM_SOURCE == null) this.FORM_SOURCE = { source: "", value: "", display: "", filter: "" };
+                if (this.FORM_SOURCE == null) this.FORM_SOURCE = { source: "", value: "", display: "", filter: "", parent: "", link_field: "" };
                 this.isSourceOptional();
             },
-            sourceChanged: function (value, object) { 
+            sourceChanged: function (value, object) {
                 var DisplaySelectData = [];
                 for (var field in object.Attributes) {
                     if (object.Attributes[field] === "PRI") this.FORM_SOURCE.value = field;
-                    else DisplaySelectData.push({ Value: field, Display: field});
+                    else DisplaySelectData.push({ Value: field, Display: field });
                 }
                 this.$refs.ddl_display.populateData(DisplaySelectData);
                 this.$refs.ddl_display.setValue(this.FORM_SOURCE.display);
+                this.$refs.ddl_link_field.populateData(DisplaySelectData);
             }
         },
         mounted: function () {
@@ -265,7 +278,7 @@
                     // this.$refs.ddl_display.setValue(this.FORM_SOURCE.display);
                 }
             } catch{
-                this.FORM_SOURCE = { source: "", value: "", display: "", filter: "" }; 
+                this.FORM_SOURCE = { source: "", value: "", display: "", filter: "" };
             }
 
             bus.FORM_SOURCE = this.FORM_SOURCE;
@@ -361,7 +374,7 @@
                         title: "BO : " + entity.BO_NAME,
                         subtitle: "Modifier / configurer le BO",
                         fieldsCssClass: "",
-                    }; 
+                    };
                 },
                 switchToInsert: function () {
                     this.FormMode = {
@@ -370,7 +383,7 @@
                         title: "Business object",
                         subtitle: "Créer un nouveau business object",
                         fieldsCssClass: "disable",
-                    }; 
+                    };
                 },
                 beforeSubmitBo: function (body) {
                     // body.BO_DB_NAME = cleanDBName(body.BO_NAME);
@@ -404,6 +417,7 @@
                     // FORM_SOURCE
                     if (body.FORM_TYPE === "v-select") {
                         body.FORM_SOURCE = JSON.stringify(cleanObject(bus.FORM_SOURCE));
+                        console.log("body.FORM_SOURCE", body.FORM_SOURCE);
                         if (!Array.isArray(body.FORM_SOURCE) & typeof bus.FORM_SOURCE.source !== "undefined") {
                             body.GRID_FORMAT = JSON.stringify({ fct: "Display", source: bus.FORM_SOURCE.source });
                         }
@@ -422,7 +436,7 @@
                 },
             },
             computed: {
-                metaBoAdditionalFields: function () { 
+                metaBoAdditionalFields: function () {
                     return [
                         {
                             DB_NAME: 'JSON_DATA.TITLE',
@@ -440,7 +454,7 @@
                             FORM_SHOW: 1,
                             FORM_OPTIONAL: 1,
                         }
-                        ];
+                    ];
                 },
                 fieldsFormMetaDefinition: function () {
                     return [
@@ -551,7 +565,16 @@
         setTimeout(() => {
             vapp.$refs.theForm.Get(id);
             // FIELDS TABLE
-            vapp.$refs.fieldsTable.load("metafield/metabo/" + id);
+            vapp.$refs.fieldsTable.load("metafield/metabo/" + id,
+                function (data) {
+                    var selectFields = [];
+                    data.forEach((e) => { 
+                        if (e.FORM_TYPE === "v-select")
+                            selectFields.push({Value: e.DB_NAME, Display:e.FORM_NAME, Attributes: e});
+                    });
+                    bus.setList("selectFields", selectFields);
+                }
+                );
 
             // versionsTable
             vapp.$refs.versionsTable.load("versions/" + id);
