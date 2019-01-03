@@ -1,5 +1,5 @@
 ﻿<script id="TableComponentTemplate" type="text/template">
-    <div>
+    <div :id="elementId">
         <div class="alert alert-with-icon" data-notify="container"  v-show="list.length <= 0">
             <i class="material-icons" data-notify="icon">border_clear</i>
             <span data-notify="message">Aucune donnée à afficher !</span>
@@ -72,6 +72,7 @@
 <script type="text/javascript">
     Vue.component('v-table', {
         template: $("#TableComponentTemplate").html(),
+        mixins: [MixinBase],
         props: {
             datasource: String,
             columnIgnore: Array,
@@ -140,10 +141,15 @@
                 if (typeof url !== "undefined") me.dataSourceUrl = url;
                 else url = me.dataSourceUrl;
                 var data = EV.getComponent("data");
+                me.loadingShow();
                 data.ExecuteSource({
                     url: url,
                     loadComplete: function (obj, response) {
+                        me.loadingHide();
                         me.list = response;
+                    },
+                    fail: function () {
+                        me.loadingError();
                     }
                 });
             },

@@ -204,6 +204,6 @@
     margin-top: 2px;
 }
 
-.card-content{
+.scroll-x{
     overflow-x: auto !important;
 }

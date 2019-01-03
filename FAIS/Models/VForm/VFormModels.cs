@@ -20,6 +20,7 @@ namespace FAIS.Models.VForm
             get
             {
                 // TODO : prevent SQL injection
+                if (this.Filter == null) this.Filter = "";
                 return String.Format("Select convert(varchar,{0}) as value, {1} as display from {2} {3}", this.Value, this.Display, this.Source, this.Filter.Trim() == "" ? "" : " where " + this.Filter);
             }
         }

@@ -58,7 +58,7 @@ else
                 </li>
             </ul>
             <div class="tab-content">
-                <div class="tab-pane active" id="@boDbName("_table")">
+                <div class="tab-pane active scroll-x" id="@boDbName("_table")">
                     @renderTable(false)
                 </div>
                 <div class="tab-pane" id="@boDbName("_form")">
@@ -131,7 +131,7 @@ else
                                         <component :name="field.FORM_TYPE"
                                                    :is="field.FORM_TYPE"
                                                    v-model="filterBody[field.DB_NAME].value"
-                                                   v-bind="{label:field.FORM_NAME,optional:1,datasource:field.FORM_SOURCE,fieldName:field.DB_NAME,cssClass:'col-md-3'}"></component>
+                                                   v-bind="{id:field.DB_NAME+'_filter',label:field.FORM_NAME,optional:1,datasource:field.FORM_SOURCE,fieldName:field.DB_NAME,cssClass:'col-md-3'}"></component>
                                     </template>
                                 </div>
                                 <div class="row">
@@ -144,7 +144,7 @@ else
                         </div>
                     </div>
                     <div class="card">
-                        <div class="card-content">
+                        <div class="card-content scroll-x">
                             @renderTable(true)
                         </div>
                     </div>
@@ -194,7 +194,6 @@ else
 
         // parse json data
         try {
-            console.log("PARDING JSON");
             window["@boDbName("META_BO")"].JSON_DATA = JSON.parse(window["@boDbName("META_BO")"].JSON_DATA);
             if ("@isSubForm"=="True") {
                 $(".subFormTitle").html(window["@boDbName("META_BO")"].JSON_DATA.TITLE);

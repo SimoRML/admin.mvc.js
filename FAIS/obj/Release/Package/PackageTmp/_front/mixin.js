@@ -7,6 +7,11 @@
                 return GetId();
             else
                 return this.id;
+        },
+        preLoaderTarget: function () {
+            var $me = $("#" + this.elementId);
+            if ($me.closest(".card").length > 0) return $me.closest(".card");
+            return $me;
         }
     },
     methods: {
@@ -14,6 +19,14 @@
             // console.log("execute", inject);
             var me = this;
             if (typeof inject === "function") inject(me);
+        },
+        toggleLoading: function () {
+            console.log("LOADING", this.preLoaderTarget);
+            this.preLoaderTarget.toggleClass("preLoader");
+        },
+        loadingError: function () {
+            this.preLoaderTarget.removeClass("preLoader");
+            this.preLoaderTarget.addClass("preLoaderError");
         }
     },
     filters: {
@@ -71,19 +84,19 @@ var bus = new Vue({
     data: {
         lists: {},
         listsConfig: {},
-        listPil: [],
+        listPil: {},
         scope: {},
     },
     methods: {
         init: function () { 
             this.lists = {};
             this.listsConfig = {};
+            this.listPil = {};
             this.scope = {};
         },
         loadList: function (key, datasource, done) {
             var me = this;
-            if (typeof datasource !== "undefined" && datasource !== null) {
-                
+            if (typeof datasource !== "undefined" && datasource !== null && datasource !== "") {
                 var jsonSource = null;
                 if (typeof datasource === "object")
                     jsonSource = clone(datasource);
@@ -102,7 +115,7 @@ var bus = new Vue({
                     return;
                 }
 
-                var url = "shared/SelectSource";
+                var url = "metabo/SelectSource";
                 var method = "POST";
                 if (typeof jsonSource.url !== "undefined") url = jsonSource.url;
                 if (typeof jsonSource.method !== "undefined") method = jsonSource.method;
@@ -113,10 +126,15 @@ var bus = new Vue({
                 if (typeof key === "undefined")
                     key = url;
 
-                // IF LIST IS ALREADY LOADED
+                // IF LIST IS ALREADY LOADED or being loaded
                 if (typeof this.lists[key] !== "undefined") {
-                    if (this.lists[key] === "loading") this.listPil.push(done);
-                    else done(this.lists[key]);
+                    if (this.lists[key] === "loading") {
+                        if(typeof this.listPil[key] === "undefined") this.listPil[key] = [];
+                        this.listPil[key].push(done);
+                    }
+                    else {
+                        done(this.lists[key]);
+                    }
                     return;
                 }
                 
@@ -132,7 +150,11 @@ var bus = new Vue({
                         done(response);
 
                         // list pil
-                        while (me.listPil.length > 0) me.listPil.pop()(me.lists[key]);
+                        if (typeof me.listPil[key] !== "undefined") {                            
+                            while (me.listPil[key].length > 0) {
+                                me.listPil[key].pop()(me.lists[key]);                                
+                            }
+                        }
                     },
                     fail: function () {
                         delete me.lists[key];
@@ -153,6 +175,7 @@ var bus = new Vue({
             // GET not yet loaded LISTS
             if (typeof this.$data[id].META_FIELD !== "undefined") {
                 typeof this.$data[id].META_FIELD.forEach((e) => {
+                    // console.log("call from mixing");
                     this.loadList(e.DB_NAME, e.FORM_SOURCE, () => { });
                 });
             }

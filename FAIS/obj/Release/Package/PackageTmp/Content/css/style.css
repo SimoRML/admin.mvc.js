@@ -203,3 +203,7 @@
 .bootstrap-select {
     margin-top: 2px;
 }
+
+.scroll-x{
+    overflow-x: auto !important;
+}
