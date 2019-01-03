@@ -11,7 +11,6 @@ using System.Net;
 using System.Threading.Tasks;
 using System.Web.Http;
 using System.Web.Http.Description;
-using Z.EntityFramework.Plus;
 
 namespace FAIS.Controllers
 {
@@ -56,7 +55,7 @@ namespace FAIS.Controllers
         [ResponseType(typeof(List<SelectDataModel>))]
         public async Task<IHttpActionResult> SelectSource(SelectSourceModel model)
         {
-            var data = await model.GetAsync(db);
+            var data = model.Get();
             return Ok(data);
         }
 
@@ -75,7 +74,7 @@ namespace FAIS.Controllers
                 return BadRequest(ModelState);
             }
             META_BO meta = await db.META_BO.FindAsync(id);
-            if(meta == null)
+            if (meta == null)
             {
                 return BadRequest("META_BO NOT FOUND !");
             }
@@ -225,7 +224,7 @@ namespace FAIS.Controllers
                 model.BO_ID = id_;
                 model.Items.Add("BO_ID", id_);
                 //return Ok(model.FormatInsert());
-                insert  = model.Insert();
+                insert = model.Insert();
             }
             if (insert)
                 return Ok();
