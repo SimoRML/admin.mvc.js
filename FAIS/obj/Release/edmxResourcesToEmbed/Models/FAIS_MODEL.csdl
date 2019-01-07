@@ -49,12 +49,12 @@
     <Property Name="DB_TYPE" Type="String" MaxLength="20" FixedLength="false" Unicode="false" Nullable="false" />
     <Property Name="DB_NULL" Type="Int32" Nullable="false" />
     <Property Name="GRID_NAME" Type="String" MaxLength="100" FixedLength="false" Unicode="false" Nullable="false" />
-    <Property Name="GRID_FORMAT" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+    <Property Name="GRID_FORMAT" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
     <Property Name="GRID_SHOW" Type="Int32" />
     <Property Name="FORM_NAME" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
-    <Property Name="FORM_FORMAT" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+    <Property Name="FORM_FORMAT" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
     <Property Name="FORM_TYPE" Type="String" MaxLength="100" FixedLength="false" Unicode="false" Nullable="false" />
-    <Property Name="FORM_SOURCE" Type="String" MaxLength="1000" FixedLength="false" Unicode="false" />
+    <Property Name="FORM_SOURCE" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
     <Property Name="FORM_SHOW" Type="Int32" />
     <Property Name="FORM_OPTIONAL" Type="Int32" />
     <Property Name="IS_FILTER" Type="Int32" />

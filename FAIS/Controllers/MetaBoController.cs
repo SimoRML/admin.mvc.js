@@ -23,7 +23,7 @@ namespace FAIS.Controllers
         // GET: api/MetaBo
         public async Task<IHttpActionResult> GetMETA_BOAsync()
         {
-            return Ok(await new MetaBoRepo().GetMETAListAsync());
+            return Ok(await new MetaBoRepo().GetMETAListOnlyAsync());
         }
 
         // GET: api/MetaBo/5

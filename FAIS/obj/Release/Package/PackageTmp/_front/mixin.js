@@ -20,9 +20,11 @@
             var me = this;
             if (typeof inject === "function") inject(me);
         },
-        toggleLoading: function () {
-            console.log("LOADING", this.preLoaderTarget);
-            this.preLoaderTarget.toggleClass("preLoader");
+        loadingShow: function () {
+            this.preLoaderTarget.addClass("preLoader");
+        },
+        loadingHide: function () {
+            this.preLoaderTarget.removeClass("preLoader");
         },
         loadingError: function () {
             this.preLoaderTarget.removeClass("preLoader");
@@ -108,6 +110,14 @@ var bus = new Vue({
                             jsonSource = {url:datasource, method: "GET"};
                     }
                 }
+
+                //Fill from bus lists by key
+                if (jsonSource !== null && typeof jsonSource.key !== "undefined") {
+                    done(this.lists[jsonSource.key]);
+                    return;
+                }
+
+                // Manual filling
                 if (jsonSource !== null && typeof jsonSource.source === "undefined" & typeof jsonSource.url === "undefined") {
                     done(jsonSource);
                     if (typeof key === "undefined") key = GetId();
@@ -167,6 +177,9 @@ var bus = new Vue({
             if (typeof this.listsConfig[key] === "undefined") return;
             delete this.lists[key];
             this.loadList(this.listsConfig[key].key, this.listsConfig[key].datasource, this.listsConfig[key].done);
+        },
+        setList: function (key, data){
+            this.lists[key] = data;
         },
         setMeta: function (id, value) {
             // console.log("SET DATA " + id, value);

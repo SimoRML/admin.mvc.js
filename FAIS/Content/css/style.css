@@ -207,3 +207,19 @@
 .scroll-x{
     overflow-x: auto !important;
 }
+
+
+.innerBox {
+    background: #f5f5f5;
+    border-radius: 3px;
+    box-shadow: #000 0px 0px 6px;
+    padding: 5px 20px;
+    margin-bottom: 10px;
+}
+.min-table td{
+    padding:0px !important;
+}
+.min-table td .form-group{
+    padding:0px !important;
+    margin:0px !important;
+}

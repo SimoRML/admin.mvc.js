@@ -59,6 +59,11 @@ namespace FAIS.Models.Repository
                .ToListAsync();
         }
 
+        public async Task<List<META_BO>> GetMETAListOnlyAsync()
+        {
+            return await db.Database.SqlQuery<META_BO>("select * from META_BO where STATUS<>'-1' or STATUS is null").ToListAsync();
+        }
+
         // FOR COMMIT
         public async Task<META_BO> GetMETAForCommitAsync(string dbName)
         {

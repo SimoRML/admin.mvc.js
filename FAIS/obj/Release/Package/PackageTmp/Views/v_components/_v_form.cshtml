@@ -174,13 +174,13 @@
                     for (var i in jsonData) {
                         entity["JSON_DATA." + i] = jsonData[i];
                     }
-                    console.log("JSON_DATA", entity);
+                    // console.log("JSON_DATA", entity);
                 } catch { }
 
                 for (var i in me.body) {
                     me.$set(me.body, i, entity[i]);
                 }
-                console.log("VFROM updateMode::", me.body);
+                // console.log("VFROM updateMode::", me.body);
                 me.refresh();
                 me.$emit("update-mode", entity);
             },

@@ -135,18 +135,20 @@
             }
         },
         methods: {
-            load: function (url) {
+            load: function (url, done) {
                 var me = this;
                 if (typeof me.dataSourceUrl === "undefined" && typeof url === "undefined") return;
                 if (typeof url !== "undefined") me.dataSourceUrl = url;
                 else url = me.dataSourceUrl;
                 var data = EV.getComponent("data");
-                me.toggleLoading();
+                me.loadingShow();
                 data.ExecuteSource({
                     url: url,
                     loadComplete: function (obj, response) {
-                        me.toggleLoading();
+                        me.loadingHide();
                         me.list = response;
+
+                        if (typeof done === "function") done(response);
                     },
                     fail: function () {
                         me.loadingError();

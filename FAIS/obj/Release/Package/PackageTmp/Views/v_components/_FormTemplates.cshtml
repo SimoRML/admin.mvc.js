@@ -25,19 +25,11 @@
                 else
                     this.$emit('input', e.target.value, this.data);
 
-                bus.$emit(this.elementId + "-changed", e.target);
-
+                // bus.$emit(this.elementId + "-changed", e.target);
+                console.log("BIND BACK", this.elementId );
                 if (e.target.type == "select-one") {
                     this.emitChanged(e.target.value);
                 }
-            },
-            populateData: function (data) {
-                var me = this;
-
-                //console.log("------ > populateData", me.id, data);
-                me.data = data;
-                if (me.$refs.selectpicker != null)
-                    me.setValue();
             }
         }
     }
@@ -46,7 +38,7 @@
 @*-----------------------------------------------------------------------------------------------------LABEL-----------------------*@
 <script id="v-label-template" type="text/template">
     <div :id="elementId" :class="cssClass + ' form-group label-floating'">
-        <label class="control-label">{{ label }}<i v-show="isOptional"> - optionel</i></label>
+        <label class="control-label">{{ label }}<i v-show="isOptional"> - optionnel</i></label>
         <input type="text" class="form-control"
                :value="value" readonly>
     </div>
@@ -61,7 +53,7 @@
 @*-----------------------------------------------------------------------------------------------------EMAIL-----------------------*@
 <script id="v-email-template" type="text/template">
     <div :id="elementId" :class="cssClass + ' form-group label-floating'">
-        <label class="control-label">{{ label }}<i v-show="isOptional"> - optionel</i></label>
+        <label class="control-label">{{ label }}<i v-show="isOptional"> - optionnel</i></label>
         <input type="email" class="form-control"
                :value="value"
                v-on:input="bindBack($event)"
@@ -79,7 +71,7 @@
 @*-----------------------------------------------------------------------------------------------------TEXT-----------------------*@
 <script id="v-text-template" type="text/template">
     <div :id="elementId" :class="cssClass + ' form-group label-floating'">
-        <label class="control-label">{{ label }}<i v-show="isOptional"> - optionel</i></label>
+        <label class="control-label">{{ label }}<i v-show="isOptional"> - optionnel</i></label>
         <input type="text" class="form-control"
                :value="value"
                v-on:input="bindBack($event)"
@@ -97,7 +89,7 @@
 @*-----------------------------------------------------------------------------------------------------TEXT AREA-----------------------*@
 <script id="v-textarea-template" type="text/template">
     <div :id="elementId" :class="cssClass + ' form-group label-floating'">
-        <label class="control-label">{{ label }}<i v-show="isOptional"> - optionel</i></label>
+        <label class="control-label">{{ label }}<i v-show="isOptional"> - optionnel</i></label>
         <textarea type="text" class="form-control" style="min-height: 100px;"
                   :value="value"
                   v-on:input="bindBack($event)"
@@ -114,7 +106,7 @@
 @*-----------------------------------------------------------------------------------------------------NUMBER-----------------------*@
 <script id="v-number-template" type="text/template">
     <div :id="elementId" :class="cssClass + ' form-group label-floating'">
-        <label class="control-label">{{ label }}<i v-show="isOptional"> - optionel</i></label>
+        <label class="control-label">{{ label }}<i v-show="isOptional"> - optionnel</i></label>
         <input type="number" class="form-control"
                :value="value"
                v-on:input="bindBack($event)"
@@ -144,13 +136,20 @@
 @*-----------------------------------------------------------------------------------------------------SELECT-----------------------*@
 <script id="v-select-template" type="text/template">
     <div :id="elementId" :class="cssClass + ' form-group label-floating'">
-        <label class="control-label">{{ label }}<i v-show="isOptional"> - optionel</i></label>
+        <label class="control-label">{{ label }}<i v-show="isOptional"> - optionnel</i></label>
         <select ref="selectpicker" class="selectpicker" data-style="select-with-transition" title="Choisir"
                 v-model="selected"
                 v-on:change="bindBack($event)"
                 :required="!isOptional">
             <option value=""> Choisir </option>
-            <option v-for="item in data" :value="item.Value"> {{ item.Display }} </option>
+            <template v-if="isConditional">
+                <option v-for="item in filteredData" 
+                    :value="item.Value"> {{ item.Display }} </option>
+            </template>
+            <template v-else>
+                <option v-for="item in data" 
+                    :value="item.Value"> {{ item.Display }} </option>
+            </template>            
         </select>
     </div>
 </script>
@@ -160,14 +159,29 @@
         mixins: [FormMixin],
         data: function () {
             return {
-                selected: this.value
+                selected: this.value,
+                parentValue: null,
+                linkField: null,
+                parent: null,
+                filteredData: []
+            }
+        },
+        computed: {
+            isConditional: function () { 
+                try {
+                    var jsona = JSON.parse(this.datasource);
+                    if (typeof jsona.parent !== "undefined" && jsona.parent !== "" && jsona.link_field !== "") {
+                        this.linkField = jsona.link_field;
+                        this.parent = jsona.parent;
+                        return true;
+                    }
+                } catch {}
+                return false;
             }
         },
         watch: {
-            value: function (newVal, oldVal) { // watch it
-                // console.log('(' + this.id + ') value changed: ', newVal, ' | was: ', oldVal, ' | selected: ' + this.selected)
+            value: function (newVal, oldVal) {
                 this.setValue(newVal);
-
             }
         },
         methods: {
@@ -183,7 +197,7 @@
                     // console.log("setValue : " + me.id, "'" + me.selected + "'");
                     $("#" + me.elementId + " select").val(me.selected);
                     $("#" + me.elementId + " select").selectpicker('refresh');
-                    bus.$emit(me.elementId + "-changed", me.$refs.selectpicker);
+                    // bus.$emit(me.elementId + "-changed", me.$refs.selectpicker);
                     me.emitChanged(me.selected);
                 }, 100);
             },
@@ -191,21 +205,40 @@
                 if (value == "") return;
                 if (this.data == null) return;
                 var selectedObject = null;
-                // console.log("emitChanged (" + this.id + ") value", value);
-                // console.log("emitChanged (" + this.id + ") data", this.data);
                 this.data.forEach((item) => {
                     if (item.Value == value)
                         selectedObject = item;
                 });
-                // console.log("emitChanged (" + this.id +") selectedObject", selectedObject);
+
+                if (value == null && selectedObject == null) return;
                 this.$emit('changed', value, selectedObject);
+                bus.$emit(this.elementId + "-changed", value, selectedObject);
+            },
+            populateData: function (data) {
+                var me = this;                
+                me.data = data;
+                me.setValue();
             }
         },
         mounted: function () {
             var me = this;
-            //console.log("call from select ", me.id);
             bus.loadList(this.fieldName, me.datasource, (response) => { me.populateData(response) });
             this.setValue();
+            
+            if (this.isConditional) {
+                bus.$on(me.parent + "-changed", (value, obj) => {
+                    var filteredData = [];
+                    me.data.forEach((e) => {
+                        if (e.Attributes[me.linkField] == value) filteredData.push(clone(e));
+                    });
+                    // console.log(filteredData);
+                    me.filteredData = filteredData;
+                    me.setValue();
+                });
+            }
+        },
+        beforeDestroy() {
+            bus.$off(this.parent + "-changed");
         }
     });
 
@@ -216,7 +249,7 @@
 <script id="FormDatePickerTemplate" type="text/template">
     <div :id="elementId" :class="cssClass + ' form-group'">
         <label class="label-control" v-show="typeof label !== 'undefined'">
-            {{ label }}<i v-show="isOptional"> - optionel</i>
+            {{ label }}<i v-show="isOptional"> - optionnel</i>
         </label>
         <input type="date" class="form-control"
                :value="value && value.split('T')[0]"
@@ -239,7 +272,7 @@
                 <input type="checkbox" name="optionsCheckboxes"
                        v-model="isChecked"
                        v-on:change="bindBack($event)"
-                       :required="!isOptional">{{ label }}<i v-show="isOptional"> - optionel</i>
+                       :required="!isOptional">{{ label }}<i v-show="isOptional"> - optionnel</i>
             </label>
         </div>
     </div>

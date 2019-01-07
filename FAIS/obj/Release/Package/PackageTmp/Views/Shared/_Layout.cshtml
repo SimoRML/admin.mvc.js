@@ -1,11 +1,17 @@
-﻿<!doctype html>
+﻿@{ 
+    var title = System.Configuration.ConfigurationManager.AppSettings["title"];
+    var link = System.Configuration.ConfigurationManager.AppSettings["homeLink"];
+    var photo = System.Configuration.ConfigurationManager.AppSettings["userPhoto"];
+}
+
+<!doctype html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
     <link rel="apple-touch-icon" sizes="76x76" href="~/Content/img/apple-icon.png" />
     <link rel="icon" type="image/png" href="~/Content/img/favicon.png" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
-    <title>LA SPHERE DIGITALE</title>
+    <title>WD - @title</title>
     <meta content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0' name='viewport' />
     <meta name="viewport" content="width=device-width" />
     <!-- Bootstrap core CSS     -->
@@ -38,23 +44,23 @@
                 Tip 3: you can change the color of the sidebar with data-background-color="white | black"
             -->
             <div class="logo">
-                <a href="http://fais.online/" target="_blank" class="simple-text">
-                    LA SPHERE DIGITALE
+                <a href="@link" target="_blank" class="simple-text">
+                    @title
                 </a>
             </div>
             <div class="logo logo-mini">
-                <a href="http://fais.online/" target="_blank" class="simple-text">
+                <a href="@link" target="_blank" class="simple-text">
                     SD
                 </a>
             </div>
             <div class="sidebar-wrapper">
                 <div class="user">
                     <div class="photo">
-                        <img src="https://media.licdn.com/dms/image/C4D03AQFN65EuRQIjwg/profile-displayphoto-shrink_800_800/0?e=1551312000&v=beta&t=6v_21m9TfNqM0UIVLUM48PC59g_Fzyr9OOEzOdlS7a4" />
+                        <img src="@photo" />
                     </div>
                     <div class="info">
                         <a data-toggle="collapse" href="#collapseExample" class="collapsed">
-                            Noureddine Boudass
+                            @User.Identity.Name
                             <b class="caret"></b>
                         </a>
                         <div class="collapse" id="collapseExample">
@@ -188,7 +194,7 @@
                     </nav>
                     <p class="copyright pull-right">
 
-                        <a href="http://fais.online/" target="_blank">LA SPHERE DIGITALE</a>
+                        <a href="@link" target="_blank">@title</a>
                     </p>
                 </div>
             </footer>

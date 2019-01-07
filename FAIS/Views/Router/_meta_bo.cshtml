@@ -49,7 +49,7 @@
                     </div>*@
             </div>
             <div class="tab-pane" id="form">
-                <div class="col-md-6">
+                <div class="col-md-4">
                     <div class="card">
                         <div class="card-header">
                             <h4 class="card-title">{{ FormMode.title }}</h4>
@@ -97,8 +97,6 @@
 
 
 </div>
-<style>
-</style>
 <script id="MetaBoDetailRow" type="text/template">
     <div>
         <div class="col-md-4">
@@ -147,7 +145,7 @@
     </div>
 </script>
 <script id="form-source-template" type="text/template">
-    <div class="row" v-if="visible" style="margin: 10px;background: #eee;border-radius: 5px;">
+    <div class="row" v-if="visible" style="margin: 10px;">
         {{ reInit() }}
         <div class="col-md-12">
             <ul class="nav nav-pills" role="tablist">
@@ -166,7 +164,7 @@
         <div class="col-md-12">
             <div class="tab-content">
                 <div class="tab-pane active" id="manuelle">
-                    <div class="col-md-12">
+                    <div class="col-md-12 innerBox">
                         <div class="form-group label-floating">
                             <label class="control-label">Entrez un élément par ligne</label>
                             <textarea class="form-control" style="height:168px; padding: 5px;" v-model="manualList" v-on:input="hendleInput" :required="isSourceOptional() === 1"></textarea>
@@ -175,32 +173,77 @@
                 </div>
                 <div class="tab-pane" id="source_de_donnees">
                     <div class="col-md-12" v-if='typeof FORM_SOURCE !== "undefined" && FORM_SOURCE !== null && typeof FORM_SOURCE.source !== "undefined"'>
-                        <h4>Source de données</h4>
-                        <v-select ref="ddl_source" id="ddl_source" label="Source de données" fieldName="source de donnees"
-                                  v-model="FORM_SOURCE.source"
-                                  datasource="metabo/GetDataSources"
-                                  :optional="isSourceOptional()"
-                                  v-on:changed="sourceChanged"></v-select>
-                        <v-label label="Champ valeur" css-class="col-md-6" v-model="FORM_SOURCE.value"></v-label>
-                        <v-select ref="ddl_display" id="ddl_display" css-class="col-md-6"
-                                  label="Champ display"
-                                  v-model="FORM_SOURCE.display"
-                                  :optional="isSourceOptional()"></v-select>
-                        <v-text label="Filtre" optional="1" css-class="col-md-12" v-model="FORM_SOURCE.filter" v-on:input="hendleInput"></v-text>
-
-                        <h4>Liste conditionelle</h4>
-                        <v-select label="Liste mère" 
-                                  :datasource="{key:'selectFields'}"
-                                  v-model="FORM_SOURCE.parent"></v-select>
-                        <v-select ref="ddl_link_field" label="Champ de liaison" 
-                                  :datasource="{key:'selectFields'}"
-                                  v-model="FORM_SOURCE.link_field"></v-select>
+                        <div class="row innerBox">
+                            <h4> > Source de données</h4>
+                            <v-select ref="ddl_source" id="ddl_source" label="Source de données" fieldName="source de donnees"
+                                      v-model="FORM_SOURCE.source"
+                                      datasource="metabo/GetDataSources"
+                                      :optional="isSourceOptional()"
+                                      v-on:changed="sourceChanged"></v-select>
+                            <v-label label="Champ valeur" css-class="col-md-6" v-model="FORM_SOURCE.value"></v-label>
+                            <v-select ref="ddl_display" id="ddl_display" css-class="col-md-6"
+                                      label="Champ display"
+                                      v-model="FORM_SOURCE.display"
+                                      :optional="isSourceOptional()"></v-select>
+                            <v-text label="Filtre" optional="1" css-class="col-md-12" v-model="FORM_SOURCE.filter" v-on:input="hendleInput"></v-text>
+                        </div>
+                        <div class="row innerBox" v-if="sourceFields != null">
+                            <h4> > Détail fields</h4>
+                            <table class="table min-table">
+                                <thead>
+                                    <tr>
+                                        <th width="1px"></th>
+                                        <th>Champ</th>
+                                        <th>Libéllé</th>
+                                        <th>Largeur</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr v-for="(value,index) in sourceFields">
+                                        <td>
+                                            <input :id="value" type="checkbox" v-model="FORM_SOURCE.detail[index].checked" />
+                                        </td>
+                                        <td><label :for="value">{{ index }}</label></td>
+                                        <td>
+                                            <input type="text" class="form-control" v-model="FORM_SOURCE.detail[index].label"/>
+                                        </td>
+                                        <td>
+                                            <select class="form-control" v-model="FORM_SOURCE.detail[index].class">
+                                                <option value="col-md-12">100%</option>
+                                                <option value="col-md-6">50%</option>
+                                                <option value="col-md-4">25%</option>
+                                            </select>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="row innerBox">
+                            <h4> > Liste conditionelle</h4>
+                            <v-select label="Liste mère" optional="1"
+                                      :datasource="{key:'selectFields'}"
+                                      v-model="FORM_SOURCE.parent"></v-select>
+                            <v-select ref="ddl_link_field" label="Champ de liaison" optional="1"
+                                      v-model="FORM_SOURCE.link_field"></v-select>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
+    </div>
+</script>
+
+
+<script id="form-autofill-template" type="text/template">
+    <div class="row" v-if="visible" style="margin: 10px;background: #eee;border-radius: 5px;">
+        {{ reInit() }}
         <div class="col-md-12">
-            
+            <h4>Remplissage automatique</h4>
+            <v-select label="Champ source" optional="1"
+                      :datasource="{key:'selectFields'}"
+                      v-model="FORM_SOURCE.autofill.parent"></v-select>
+            <v-select ref="ddl_value" label="Champ valeur" optional="1"
+                      v-model="FORM_SOURCE.autofill.value"></v-select>
         </div>
     </div>
 </script>
@@ -217,7 +260,8 @@
             return {
                 FORM_SOURCE: null,
                 type: "list",
-                manualList: ""
+                manualList: "",
+                sourceFields: null,
             };
         },
         mixins: [MixinBase],
@@ -252,7 +296,15 @@
                 }
                 this.$refs.ddl_display.populateData(DisplaySelectData);
                 this.$refs.ddl_display.setValue(this.FORM_SOURCE.display);
+
                 this.$refs.ddl_link_field.populateData(DisplaySelectData);
+                
+                this.sourceFields = object.Attributes;
+                if (typeof this.FORM_SOURCE.detail === "undefined") this.FORM_SOURCE.detail = {};
+                for (var index in this.sourceFields) {
+                    if (typeof this.FORM_SOURCE.detail[index] === "undefined") this.FORM_SOURCE.detail[index] = { checked: false, label: "", class:"col-md-12"};
+                    this.sourceFields[index] = GetId();
+                }
             }
         },
         mounted: function () {
@@ -279,6 +331,58 @@
                 }
             } catch{
                 this.FORM_SOURCE = { source: "", value: "", display: "", filter: "" };
+            }
+
+            bus.FORM_SOURCE = this.FORM_SOURCE;
+        }
+    });
+
+    // v-form-autofill
+    Vue.component('v-form-autofill', {
+        template: $("#form-autofill-template").html(),
+        props: {
+            visible: Boolean,
+            data: String
+        },
+        data: function () {
+            return {
+                FORM_SOURCE: null,
+                type: "list",
+                manualList: ""
+            };
+        },
+        mixins: [MixinBase],
+        methods: {
+            hendleInput: function () {
+                bus.FORM_SOURCE = this.val();
+            },
+            val: function () {
+                if (this.type === "list") {
+                    var arr = [];
+                    var lines = this.manualList.split('\n');
+                    for (var i in lines) {
+                        var value = lines[i].trim();
+                        if (value === "") continue;
+                        arr.push({ Value: value, Display: value });
+                    }
+                    return arr;
+                } else return this.FORM_SOURCE;
+            },
+            reInit: function () {
+                if (this.FORM_SOURCE == null) this.FORM_SOURCE = { autofill: { parent: "", value: "" } };
+            }
+        },
+        mounted: function () {
+            try {
+                var tmp = JSON.parse(this.data);
+                if (Array.isArray(tmp)) {
+
+                }
+                else {
+
+                }
+            } catch{
+                this.FORM_SOURCE = { autofill: { parent: "", value: "" } };
             }
 
             bus.FORM_SOURCE = this.FORM_SOURCE;
@@ -409,18 +513,28 @@
                     body.META_BO_ID = this.$refs.theForm.pk.value;
                     body.DB_NAME = body.GRID_NAME; //cleanDBName(body.GRID_NAME);
                     body.DB_TYPE = FormTypeToDbType(body.FORM_TYPE);
-                    body.DB_NULL = body.FORM_OPTIONAL;
+                    body.DB_NULL = 1;
                     // body.GRID_SHOW = 1;
                     body.FORM_SHOW = 1;
                     body.FORM_NAME = body.GRID_NAME;
 
                     // FORM_SOURCE
                     if (body.FORM_TYPE === "v-select") {
-                        body.FORM_SOURCE = JSON.stringify(cleanObject(bus.FORM_SOURCE));
-                        console.log("body.FORM_SOURCE", body.FORM_SOURCE);
-                        if (!Array.isArray(body.FORM_SOURCE) & typeof bus.FORM_SOURCE.source !== "undefined") {
-                            body.GRID_FORMAT = JSON.stringify({ fct: "Display", source: bus.FORM_SOURCE.source });
+                        // clean detail fields
+                        var FORM_SOURCE = bus.FORM_SOURCE;
+                        if (typeof FORM_SOURCE.detail !== "undefined") {
+                            var detail = {};
+                            for (var index in FORM_SOURCE.detail) {
+                                if (FORM_SOURCE.detail[index].checked) detail[index] = FORM_SOURCE.detail[index];
+                            }
+                            FORM_SOURCE.detail = detail;
                         }
+
+                        if (!Array.isArray(FORM_SOURCE) & typeof FORM_SOURCE.source !== "undefined") {
+                            body.GRID_FORMAT = JSON.stringify({ fct: "Display", source: JSON.stringify(FORM_SOURCE) });
+                        }
+
+                        body.FORM_SOURCE = JSON.stringify(cleanObject(FORM_SOURCE));
                     }
                 },
                 fieldsFormSuccess: function (response) {
@@ -496,6 +610,12 @@
                             FORM_SHOW: 1,
                             FORM_OPTIONAL: 1,
                             FORM_DEFAULT: 1,
+                            //before_component: {
+                            //    ref: "formAutofill",
+                            //    name: 'v-form-autofill',
+                            //    visible: false,
+                            //    model: "FORM_SOURCE"
+                            //}
                         },
                         {
                             DB_NAME: 'FORM_OPTIONAL',
@@ -529,17 +649,24 @@
             },
             mounted: function () {
                 var me = this;
-                bus.$on("FORM_TYPE-changed", (el) => {
-                    if (el.value == "v-select") {
+                bus.$on("FORM_TYPE-changed", (value) => {
+                    me.$refs.fieldsForm.execute(
+                        function (component) {
+                            component.meta[2].after_component.visible = false;
+                            //component.meta[3].before_component.visible = false;
+                        }
+                    );
+
+                    if (value == "v-select") {
                         me.$refs.fieldsForm.execute(
                             function (component) {
                                 component.meta[2].after_component.visible = true;
                             }
                         );
-                    } else {
+                    } else if (value == "v-text") {
                         me.$refs.fieldsForm.execute(
                             function (component) {
-                                component.meta[2].after_component.visible = false;
+                                //component.meta[3].before_component.visible = true;
                             }
                         );
                     }
@@ -568,18 +695,20 @@
             vapp.$refs.fieldsTable.load("metafield/metabo/" + id,
                 function (data) {
                     var selectFields = [];
-                    data.forEach((e) => { 
+                    data.forEach((e) => {
                         if (e.FORM_TYPE === "v-select")
-                            selectFields.push({Value: e.DB_NAME, Display:e.FORM_NAME, Attributes: e});
+                            selectFields.push({ Value: e.DB_NAME, Display: e.FORM_NAME, Attributes: e });
                     });
                     bus.setList("selectFields", selectFields);
                 }
-                );
+            );
+            vapp.$refs.fieldsForm.reset(); 
 
             // versionsTable
             vapp.$refs.versionsTable.load("versions/" + id);
 
             $("#tab-form").trigger("click");
+            $("#fields-tab-list").trigger("click");
             $("#container").scrollTop(0);
         }, 100);
     }

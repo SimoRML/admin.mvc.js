@@ -48,12 +48,12 @@
     <Property Name="DB_TYPE" Type="varchar" MaxLength="20" Nullable="false" />
     <Property Name="DB_NULL" Type="int" Nullable="false" />
     <Property Name="GRID_NAME" Type="varchar" MaxLength="100" Nullable="false" />
-    <Property Name="GRID_FORMAT" Type="varchar" MaxLength="100" />
+    <Property Name="GRID_FORMAT" Type="nvarchar(max)" />
     <Property Name="GRID_SHOW" Type="int" />
     <Property Name="FORM_NAME" Type="varchar" MaxLength="100" />
-    <Property Name="FORM_FORMAT" Type="varchar" MaxLength="100" />
+    <Property Name="FORM_FORMAT" Type="nvarchar(max)" />
     <Property Name="FORM_TYPE" Type="varchar" MaxLength="100" Nullable="false" />
-    <Property Name="FORM_SOURCE" Type="varchar" MaxLength="1000" />
+    <Property Name="FORM_SOURCE" Type="nvarchar(max)" />
     <Property Name="FORM_SHOW" Type="int" />
     <Property Name="FORM_OPTIONAL" Type="int" />
     <Property Name="IS_FILTER" Type="int" />
