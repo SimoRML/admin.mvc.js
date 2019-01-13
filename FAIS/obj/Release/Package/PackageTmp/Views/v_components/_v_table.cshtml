@@ -1,6 +1,6 @@
 ﻿<script id="TableComponentTemplate" type="text/template">
     <div :id="elementId">
-        <div class="alert alert-with-icon" data-notify="container"  v-show="list.length <= 0">
+        <div class="alert alert-with-icon" data-notify="container" v-show="list.length <= 0">
             <i class="material-icons" data-notify="icon">border_clear</i>
             <span data-notify="message">Aucune donnée à afficher !</span>
         </div>
@@ -77,10 +77,19 @@
             datasource: String,
             columnIgnore: Array,
             columnShow: Array,
-            columnLabels: Object,
+            columns: Object,
             detailRow: String,
             actionComponent: String,
-            metaName: String
+            metaName: String,
+            editable: {
+                type: Boolean,
+                default: false
+            },
+            pk: String,
+            preventFirstLoad: {
+                type: Boolean,
+                default: false
+            },
         },
         data: function () {
             return {
@@ -122,7 +131,7 @@
                         try { a[e.DB_NAME].FORM_SOURCE = JSON.parse(e.FORM_SOURCE) } catch{ }
 
                     if (e.GRID_FORMAT !== null) {
-                        try { 
+                        try {
                             a[e.DB_NAME].GRID_FORMAT = JSON.parse(e.GRID_FORMAT);
                             if (e.DB_NAME === "additional.column")
                                 this.additionalColumns.push(e);
@@ -135,31 +144,47 @@
             }
         },
         methods: {
-            load: function (url, done) {
+            setList: function (data) {
+                this.list = data;
+
+                this.listConfig = [];
+                for (var i in this.list) {
+                    this.listConfig.push({ rowClass: "", state: "old", changed: false });
+                }
+                if (this.editable) this.newLine();
+
+                //setTimeout(() => {
+                //    /*
+                //    $("#" + this.elementId + " table").DataTable().destroy();
+                //    $("#" + this.elementId + " table").DataTable({
+                //        "paging": true,
+                //        "ordering": true,
+                //        "info": true
+                //    });
+                //    */
+                //}, 500);
+            },
+            load: function (url) {
                 var me = this;
                 if (typeof me.dataSourceUrl === "undefined" && typeof url === "undefined") return;
                 if (typeof url !== "undefined") me.dataSourceUrl = url;
                 else url = me.dataSourceUrl;
+
+                if (this.preventFirstLoad) return;
                 var data = EV.getComponent("data");
-                me.loadingShow();
                 data.ExecuteSource({
                     url: url,
                     loadComplete: function (obj, response) {
-                        me.loadingHide();
-                        me.list = response;
-
-                        if (typeof done === "function") done(response);
-                    },
-                    fail: function () {
-                        me.loadingError();
+                        console.log("loadComplete", response);
+                        me.setList(response);
                     }
                 });
             },
-            clear: function () { 
+            clear: function () {
                 this.list = [];
             },
             loadObject: function (obj) {
-                this.list = obj;
+                this.setList(obj);
             },
             show: function (colName) {
                 if (typeof this.columnShow !== "undefined") {
