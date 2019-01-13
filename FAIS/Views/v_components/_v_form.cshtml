@@ -76,6 +76,7 @@
                     } else {
                         // SET DEFAULT VALUE
                         // console.log("SET DEFAULT VALUE ", this.meta[i].DB_NAME , (typeof this.meta[i].FORM_DEFAULT !== "undefined" && this.meta[i].FORM_DEFAULT != null));
+                        if (this.meta[i].FORM_TYPE == '') continue;
                         if (typeof this.meta[i].FORM_DEFAULT !== "undefined" && this.meta[i].FORM_DEFAULT != null) {
                             this.body[this.meta[i].DB_NAME] = this.meta[i].FORM_DEFAULT;
                         }
@@ -167,7 +168,7 @@
             updateMode: function (entity) {
                 var me = this;
                 me.verb = "PUT";
-                
+
                 // PARSE JSON_DATA
                 try {
                     var jsonData = JSON.parse(entity.JSON_DATA);

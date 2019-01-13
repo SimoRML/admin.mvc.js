@@ -61,7 +61,7 @@
                     @*DETAIL ROW*@
                     <tr class="detailRow" v-if="detailRowDefined" v-show="showDetailRow[index] != null && showDetailRow[index]">
                         <td v-bind:colspan="columnCount">
-                            <component v-bind:is="detailRow" v-bind="{row:item, columnLabels: columnLabels}"></component>
+                            <component v-bind:is="detailRow" v-bind="{row:item,metafield:meta_field}"></component>
                         </td>
                     </tr>
                 </template>
@@ -97,6 +97,7 @@
                 showDetailRow: [],
                 dataSourceUrl: "",
                 meta: null,
+                meta_field: {},
                 additionalColumns: []
             }
         },
@@ -223,11 +224,14 @@
         mounted: function () {
             this.dataSourceUrl = this.datasource;
             this.load();
-
+            me = this;
             // BIND TO BUS META
             if (typeof this.metaName === "undefined") return "";
             if (typeof bus.$data[this.metaName] === "undefined") return "";
             this.meta = bus.$data[this.metaName];
+            this.meta.META_FIELD.forEach((e) => {
+                me.meta_field[e.DB_NAME] = e;
+            });
         }
     });
 </script>
