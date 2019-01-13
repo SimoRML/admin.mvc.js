@@ -9,7 +9,7 @@ namespace FAIS.Models.VForm
     {
         public string Value { get; set; }
         public string Display { get; set; }
-        public Dictionary<string, string> Attributes { get; set; }
+        public Dictionary<string, object> Attributes { get; set; }
     }
     public class SelectSourceModel
     {
@@ -49,7 +49,7 @@ namespace FAIS.Models.VForm
                 {
                     Value = row["value"].ToString(),
                     Display = row["display"].ToString(),
-                    Attributes = new Dictionary<string, string>()
+                    Attributes = new Dictionary<string, object>()
                 });
 
                 var attributes = sources.Last().Attributes;

@@ -14,7 +14,8 @@ bool isSubForm = ViewBag.isSubForm != null;
              :column-labels="columnLabels"
              @if (includeDatasource){ @: datasource="metabo/select/@Model.BO_DB_NAME"
              }
-             action-component="@Model.BO_DB_NAME-action"></v-table>
+             action-component="@Model.BO_DB_NAME-action"
+            :prevent-first-load="filterExists"></v-table>
 }
 @helper renderForm()
 {

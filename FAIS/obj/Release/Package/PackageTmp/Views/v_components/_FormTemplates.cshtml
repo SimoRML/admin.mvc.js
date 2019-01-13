@@ -26,7 +26,6 @@
                     this.$emit('input', e.target.value, this.data);
 
                 // bus.$emit(this.elementId + "-changed", e.target);
-                console.log("BIND BACK", this.elementId );
                 if (e.target.type == "select-one") {
                     this.emitChanged(e.target.value);
                 }
@@ -143,14 +142,26 @@
                 :required="!isOptional">
             <option value=""> Choisir </option>
             <template v-if="isConditional">
-                <option v-for="item in filteredData" 
-                    :value="item.Value"> {{ item.Display }} </option>
+                <option v-for="item in filteredData"
+                        :value="item.Value">
+                    {{ item.Display }}
+                </option>
             </template>
             <template v-else>
-                <option v-for="item in data" 
-                    :value="item.Value"> {{ item.Display }} </option>
-            </template>            
+                <option v-for="item in data"
+                        :value="item.Value">
+                    {{ item.Display }}
+                </option>
+            </template>
         </select>
+        <div class="category form-category" v-if="hasDetailFields && selectedObject != null">
+            <div v-for="(value,index) in detailFields" :class="value.class">
+                <b>{{ value.label }} : </b>
+                <span v-format="{value:selectedObject.Attributes[index], format: value.format}">
+                    {{ selectedObject.Attributes[index] }}
+                </span>
+            </div>
+        </div>
     </div>
 </script>
 <script type="text/javascript">
@@ -160,6 +171,8 @@
         data: function () {
             return {
                 selected: this.value,
+                selectedObject: null,
+                detailFields: null,
                 parentValue: null,
                 linkField: null,
                 parent: null,
@@ -167,7 +180,7 @@
             }
         },
         computed: {
-            isConditional: function () { 
+            isConditional: function () {
                 try {
                     var jsona = JSON.parse(this.datasource);
                     if (typeof jsona.parent !== "undefined" && jsona.parent !== "" && jsona.link_field !== "") {
@@ -175,7 +188,22 @@
                         this.parent = jsona.parent;
                         return true;
                     }
-                } catch {}
+                } catch { }
+                return false;
+            },
+            hasDetailFields: function () {
+                try {
+                    var jsona = JSON.parse(this.datasource);
+                    if (typeof jsona.detail !== "undefined") {
+                        this.detailFields = jsona.detail;
+                        for (var prop in jsona.detail) {
+                            if (jsona.detail.hasOwnProperty(prop)) {
+                                return true;
+                            }
+                        }
+                        return false;
+                    }
+                } catch { }
                 return false;
             }
         },
@@ -204,18 +232,21 @@
             emitChanged: function (value) {
                 if (value == "") return;
                 if (this.data == null) return;
-                var selectedObject = null;
+                var me = this;
+
+                me.selectedObject = null;
+                // console.log("EMIT CHAGED " + this.elementId, this.data);
                 this.data.forEach((item) => {
                     if (item.Value == value)
-                        selectedObject = item;
+                        me.selectedObject = item;
                 });
 
-                if (value == null && selectedObject == null) return;
-                this.$emit('changed', value, selectedObject);
-                bus.$emit(this.elementId + "-changed", value, selectedObject);
+                if (value == null && me.selectedObject == null) return;
+                this.$emit('changed', value, me.selectedObject);
+                bus.$emit(this.elementId + "-changed", value, me.selectedObject);
             },
             populateData: function (data) {
-                var me = this;                
+                var me = this;
                 me.data = data;
                 me.setValue();
             }
@@ -224,7 +255,7 @@
             var me = this;
             bus.loadList(this.fieldName, me.datasource, (response) => { me.populateData(response) });
             this.setValue();
-            
+
             if (this.isConditional) {
                 bus.$on(me.parent + "-changed", (value, obj) => {
                     var filteredData = [];

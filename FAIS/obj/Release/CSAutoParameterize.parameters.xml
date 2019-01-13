@@ -1,9 +1,0 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<parameters>
-  <parameter name="DefaultConnection-Web.config Connection String" description="DefaultConnection Connection String used in web.config by the application to access the database." defaultValue="Data Source=.\sqlexpress01;initial catalog=YODA;integrated security=True" tags="SqlConnectionString">
-    <parameterEntry kind="XmlFile" scope="C:\\www\\_\.net\\NB\\admin\.mvc\.js\\FAIS\\obj\\Release\\Package\\PackageTmp\\Web\.config$" match="/configuration/connectionStrings/add[@name='DefaultConnection']/@connectionString" />
-  </parameter>
-  <parameter name="FAISEntities-Web.config Connection String" description="FAISEntities Connection String used in web.config by the application to access the database." defaultValue="metadata=res://*/Models.FAIS_MODEL.csdl|res://*/Models.FAIS_MODEL.ssdl|res://*/Models.FAIS_MODEL.msl;provider=System.Data.SqlClient;&#xD;&#xA;         provider connection string=&quot;Data Source=.\sqlexpress01;initial catalog=YODA;integrated security=True;MultipleActiveResultSets=True;App=EntityFramework&quot;" tags="SqlConnectionString">
-    <parameterEntry kind="XmlFile" scope="C:\\www\\_\.net\\NB\\admin\.mvc\.js\\FAIS\\obj\\Release\\Package\\PackageTmp\\Web\.config$" match="/configuration/connectionStrings/add[@name='FAISEntities']/@connectionString" />
-  </parameter>
-</parameters>

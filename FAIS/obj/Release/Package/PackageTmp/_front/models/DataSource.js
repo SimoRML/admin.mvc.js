@@ -43,7 +43,7 @@ DataSource.prototype.ExecuteSource = function (source) {
     var me = this;
     if (source.url === "") return;
     var settings = {
-        "async": true,
+        "async": typeof source.async === "undefined" ? true : source.async,
         "crossDomain": false,
         "url": this.config.baseUrl + source.url,
         "method": typeof source.method === "undefined" ? "GET" : source.method,
@@ -59,11 +59,11 @@ DataSource.prototype.ExecuteSource = function (source) {
 
     if (settings.method === "POST" || settings.method === "PUT")
         me.Trigger("show", "PagePreloader");
-    console.log("ExecuteSource call ." + source.url + ".", settings);
+    console.log("ExecuteSource call ." + source.method + "::" + source.url + ".", settings);
     $.ajax(settings)
         .done(function (response) {
             me.Trigger("hide", "PagePreloader");
-            // console.log("ExecuteSource : " + settings.method + "::" + settings.url, response);
+            console.log("ExecuteSource : " + settings.method + "::" + settings.url, response);
             try { response = JSON.parse(response); } catch{ }
                 
             var html = "";

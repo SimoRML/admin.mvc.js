@@ -75,6 +75,7 @@
                         this.pk.key = this.meta[i].DB_NAME;
                     } else {
                         // SET DEFAULT VALUE
+                        // console.log("SET DEFAULT VALUE ", this.meta[i].DB_NAME , (typeof this.meta[i].FORM_DEFAULT !== "undefined" && this.meta[i].FORM_DEFAULT != null));
                         if (typeof this.meta[i].FORM_DEFAULT !== "undefined" && this.meta[i].FORM_DEFAULT != null) {
                             this.body[this.meta[i].DB_NAME] = this.meta[i].FORM_DEFAULT;
                         }

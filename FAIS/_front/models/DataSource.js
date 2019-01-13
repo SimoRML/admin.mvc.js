@@ -43,7 +43,7 @@ DataSource.prototype.ExecuteSource = function (source) {
     var me = this;
     if (source.url === "") return;
     var settings = {
-        "async": true,
+        "async": typeof source.async === "undefined" ? true : source.async,
         "crossDomain": false,
         "url": this.config.baseUrl + source.url,
         "method": typeof source.method === "undefined" ? "GET" : source.method,

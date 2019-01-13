@@ -1,15 +1,16 @@
 $(function () {
     // LOAD VUE COMPONENTS
-    $("#v-components").load("router/vcomponents", function (response, status, xhr) {
+    $("#v-components").load(URL.addPart(baseUrl,"router/vcomponents"), function (response, status, xhr) {
         if (status === "success") LOAD();
     });
-
+    
+    $("#minimizeSidebar").trigger("click");
 });
 
 function LOAD() {
     EV = new Environement("Accueil");
     var data = new DataSource("data", {
-        baseUrl: "/api/",
+        baseUrl: URL.addPart(baseUrl,"/api/"),
         sources: [
             {
                 url: "Profile/Menu",

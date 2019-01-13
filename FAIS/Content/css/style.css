@@ -223,3 +223,7 @@
     padding:0px !important;
     margin:0px !important;
 }
+ul.dropdown-menu.inner {
+    max-height: 190px;
+    overflow-y: auto;
+}

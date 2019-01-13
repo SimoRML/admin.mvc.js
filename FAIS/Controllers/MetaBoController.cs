@@ -397,8 +397,6 @@ namespace FAIS.Controllers
         }
 
 
-
-
         [HttpPost]
         [Route("Mass")]
         public IHttpActionResult Mass(List<BoBulk> models)

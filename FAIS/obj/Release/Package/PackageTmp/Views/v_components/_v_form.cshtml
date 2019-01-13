@@ -8,7 +8,7 @@
                            :name="field.FORM_TYPE + '-before-' + elementId"
                            :ref="field.before_component.ref"
                            :is="field.before_component.name"
-                           v-bind="{visible:field.before_component.visible, data:body[field.after_component.model]}"></component>
+                           v-bind="{visible:field.before_component.visible, data:body[field.before_component.model]}"></component>
                 @*THE COMPONENET*@
                 <component :name="field.FORM_TYPE + '-' + elementId"
                            :is="field.FORM_TYPE"
@@ -75,6 +75,7 @@
                         this.pk.key = this.meta[i].DB_NAME;
                     } else {
                         // SET DEFAULT VALUE
+                        // console.log("SET DEFAULT VALUE ", this.meta[i].DB_NAME , (typeof this.meta[i].FORM_DEFAULT !== "undefined" && this.meta[i].FORM_DEFAULT != null));
                         if (typeof this.meta[i].FORM_DEFAULT !== "undefined" && this.meta[i].FORM_DEFAULT != null) {
                             this.body[this.meta[i].DB_NAME] = this.meta[i].FORM_DEFAULT;
                         }

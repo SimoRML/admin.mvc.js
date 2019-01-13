@@ -29,7 +29,7 @@ Router.prototype.Load = function (page) {
     me.vueApp = null;
     var url = page.replaceAll("#", "").replaceAll(".", "/"); // + "?v="+ (new Date().getTime());
     me.Trigger("show", "PagePreloader");
-    me.$element.load(url, function (response, status, xhr) {
+    me.$element.load(URL.addPart(baseUrl,url), function (response, status, xhr) {
         me.Trigger("hide", "PagePreloader");
         if (status === "success") {
             /*

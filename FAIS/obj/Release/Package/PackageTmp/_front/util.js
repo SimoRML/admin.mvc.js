@@ -196,8 +196,10 @@ var URL = {
     },
     addPart: function (url, part) {
         //console.log("addPart : " + url, part);
-        if (typeof part.slice !== "undefined" && part.slice(0) === "/") part = part.substr(1);
-        return url + (url.slice(-1) === "/" ? "" : "/") + part;
+        if (typeof part.slice !== "undefined" && part[0] === "/") part = part.substr(1);
+        url = url + (url.slice(-1) === "/" ? "" : "/") + part;
+        //console.log("addPart -> " + url);
+        return url;
     }
 };
 

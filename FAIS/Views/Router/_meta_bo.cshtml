@@ -201,9 +201,9 @@
                                 <tbody>
                                     <tr v-for="(value,index) in sourceFields">
                                         <td>
-                                            <input :id="value" type="checkbox" v-model="FORM_SOURCE.detail[index].checked" />
+                                            <input :id="value.id" type="checkbox" v-model="FORM_SOURCE.detail[index].checked" />
                                         </td>
-                                        <td><label :for="value">{{ index }}</label></td>
+                                        <td><label :for="value.id">{{ index }}</label></td>
                                         <td>
                                             <input type="text" class="form-control" v-model="FORM_SOURCE.detail[index].label"/>
                                         </td>
@@ -291,7 +291,7 @@
             sourceChanged: function (value, object) {
                 var DisplaySelectData = [];
                 for (var field in object.Attributes) {
-                    if (object.Attributes[field] === "PRI") this.FORM_SOURCE.value = field;
+                    if (object.Attributes[field].primary === "PRI") this.FORM_SOURCE.value = field;
                     else DisplaySelectData.push({ Value: field, Display: field });
                 }
                 this.$refs.ddl_display.populateData(DisplaySelectData);
@@ -303,7 +303,9 @@
                 if (typeof this.FORM_SOURCE.detail === "undefined") this.FORM_SOURCE.detail = {};
                 for (var index in this.sourceFields) {
                     if (typeof this.FORM_SOURCE.detail[index] === "undefined") this.FORM_SOURCE.detail[index] = { checked: false, label: "", class:"col-md-12"};
-                    this.sourceFields[index] = GetId();
+                    this.sourceFields[index].id = GetId();
+                    this.FORM_SOURCE.detail[index].format = setFormatFromSource(this.sourceFields[index].FORM_SOURCE);
+                    // console.log("FORMAT(" + index + ")", "FORM_SOURCE", this.sourceFields[index].FORM_SOURCE, "format",this.FORM_SOURCE.detail[index].format);
                 }
             }
         },
@@ -424,11 +426,15 @@
                             method: "POST",
                             loadComplete: function (obj, response) {
                                 NOTIF.success("Version validée avec succès.");
-                                vapp.$refs.versionsTable.load();
-                                // data.Init();
 
-                                vapp.$refs.theTable.load();
-                                bus.reLoadList("FORM_TYPE");
+                                setTimeout(() => {
+                                    window.location.reload();
+                                }, 1000);
+                                //vapp.$refs.versionsTable.load();
+                                //// data.Init();
+
+                                //vapp.$refs.theTable.load();
+                                //bus.reLoadList("FORM_TYPE");
                             },
                             fail: function (response) {
                                 console.log(response);
@@ -529,11 +535,7 @@
                             }
                             FORM_SOURCE.detail = detail;
                         }
-
-                        if (!Array.isArray(FORM_SOURCE) & typeof FORM_SOURCE.source !== "undefined") {
-                            body.GRID_FORMAT = JSON.stringify({ fct: "Display", source: JSON.stringify(FORM_SOURCE) });
-                        }
-
+                        body.GRID_FORMAT = setFormatFromSource(FORM_SOURCE);
                         body.FORM_SOURCE = JSON.stringify(cleanObject(FORM_SOURCE));
                     }
                 },
@@ -711,5 +713,12 @@
             $("#fields-tab-list").trigger("click");
             $("#container").scrollTop(0);
         }, 100);
+    }
+
+    function setFormatFromSource(FORM_SOURCE){
+        try { FORM_SOURCE = JSON.parse(FORM_SOURCE); } catch{ }
+        if (!Array.isArray(FORM_SOURCE) & typeof FORM_SOURCE.source !== "undefined") 
+            return JSON.stringify({ fct: "Display", source: JSON.stringify(FORM_SOURCE) });
+        return "";
     }
 </script>

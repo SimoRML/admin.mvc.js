@@ -101,11 +101,11 @@ namespace FAIS.Models.Repository
                     {
                         Value = last,
                         Display = last.Replace("VIEW_", "").Replace("_BO_", ""),
-                        Attributes = new Dictionary<string, string>()
+                        Attributes = new Dictionary<string, object>()
                     });
                 }
                 var attributes = sources.Last().Attributes;
-                attributes.Add(row["Field"].ToString(), row["Key"].ToString());
+                attributes.Add(row["Field"].ToString(), new { primary = row["Key"].ToString(), FORM_SOURCE = row["FORM_SOURCE"].ToString() });
             }
 
             return sources;
@@ -136,13 +136,36 @@ namespace FAIS.Models.Repository
 
         public async Task<META_BO_EX> FindMetaBoExAsync(long id)
         {
-            return await db.Database.SqlQuery<META_BO_EX>("select JSON_VALUE(JSON_DATA, '$.TITLE') TITLE, JSON_VALUE(JSON_DATA, '$.GROUPE') GROUPE, * from META_BO WHERE META_BO_ID = " + id).FirstAsync();
+            META_BO_EX res = await db.Database.SqlQuery<META_BO_EX>("select JSON_VALUE(JSON_DATA, '$.TITLE') TITLE, JSON_VALUE(JSON_DATA, '$.GROUPE') GROUPE, * from META_BO WHERE META_BO_ID = " + id).FirstAsync();
+            return res;
         }
 
         public async Task<List<META_BO_EX>> GetMetaBoExAsync(string where)
         {
             return await db.Database.SqlQuery<META_BO_EX>("select JSON_VALUE(JSON_DATA, '$.TITLE') TITLE, JSON_VALUE(JSON_DATA, '$.GROUPE') GROUPE, * from META_BO " + where).ToListAsync();
         }
+
+        //public async Task<META_BO_EX> FindMetaBoExAsync(long id)
+        //{
+        //    META_BO_EX res = await db.Database.SqlQuery<META_BO_EX>("select * from META_BO WHERE META_BO_ID = " + id).FirstAsync();
+        //    var values = JsonConvert.DeserializeObject<Dictionary<string, string>>(res.JSON_DATA);
+        //    res.TITLE = values["TITLE"];
+        //    res.GROUPE = values["GROUPE"];
+        //    return res;
+        //}
+
+        //public async Task<List<META_BO_EX>> GetMetaBoExAsync(string where)
+        //{
+        //    List<META_BO_EX> liste = await db.Database.SqlQuery<META_BO_EX>("select * from META_BO " + where).ToListAsync();
+        //    foreach (var res in liste)
+        //    {
+        //        var values = JsonConvert.DeserializeObject<Dictionary<string, string>>(res.JSON_DATA);
+        //        res.TITLE = values["TITLE"];
+        //        res.GROUPE = values["GROUPE"];
+        //    }
+
+        //    return liste;
+        //}
     }
 
     public class BoBulk

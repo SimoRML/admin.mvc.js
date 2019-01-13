@@ -156,7 +156,10 @@
         </select>
         <div class="category form-category" v-if="hasDetailFields && selectedObject != null">
             <div v-for="(value,index) in detailFields" :class="value.class">
-                <b>{{ value.label }} : </b> {{ selectedObject.Attributes[index] }}
+                <b>{{ value.label }} : </b>
+                <span v-format="{value:selectedObject.Attributes[index], format: value.format}">
+                    {{ selectedObject.Attributes[index] }}
+                </span>
             </div>
         </div>
     </div>
@@ -177,7 +180,7 @@
             }
         },
         computed: {
-            isConditional: function () { 
+            isConditional: function () {
                 try {
                     var jsona = JSON.parse(this.datasource);
                     if (typeof jsona.parent !== "undefined" && jsona.parent !== "" && jsona.link_field !== "") {
@@ -185,10 +188,10 @@
                         this.parent = jsona.parent;
                         return true;
                     }
-                } catch {}
+                } catch { }
                 return false;
             },
-            hasDetailFields: function () { 
+            hasDetailFields: function () {
                 try {
                     var jsona = JSON.parse(this.datasource);
                     if (typeof jsona.detail !== "undefined") {
@@ -243,7 +246,7 @@
                 bus.$emit(this.elementId + "-changed", value, me.selectedObject);
             },
             populateData: function (data) {
-                var me = this;                
+                var me = this;
                 me.data = data;
                 me.setValue();
             }
@@ -252,7 +255,7 @@
             var me = this;
             bus.loadList(this.fieldName, me.datasource, (response) => { me.populateData(response) });
             this.setValue();
-            
+
             if (this.isConditional) {
                 bus.$on(me.parent + "-changed", (value, obj) => {
                     var filteredData = [];

@@ -42,25 +42,35 @@
     }
 };
 
-Vue.directive("format", {
-    bind(e1, binding, vnode) {
-        if (binding.value.format === null) return;
 
-        if (binding.value.format.fct === 'Display') {
-            var display = "";
-            for (var i in bus.lists[binding.value.format.source]) {
-                var e = bus.lists[binding.value.format.source][i];
-                // console.log("e.Value", e.Value);
-                if (e.Value === binding.value.value) {
-                    display = e.Display;
-                    break;
-                }
+function v_format_directive(e1, binding, vnode) {
+    if (binding.value.format === null) return;
+
+    if (typeof binding.value.format === "string") {
+        try {
+            binding.value.format = JSON.parse(binding.value.format);
+        } catch { }
+    }
+    console.log("FORMAT", binding.value.format);
+    if (binding.value.format.fct === 'Display') {
+        var display = "";
+        var list = bus.getList(binding.value.format.source);
+        // console.log(e1, binding.value.format.source, "list", list);
+        for (var i in list) {
+            var e = list[i];
+            // console.log("e.Value", e.Value);
+            if (e.Value === binding.value.value) {
+                display = e.Display;
+                break;
             }
-
-            $(e1).html(display === "" ? binding.value.value : display);
         }
 
+        $(e1).html(display === "" ? binding.value.value : display);
     }
+}
+Vue.directive("format", {
+    bind: v_format_directive,
+    update: v_format_directive
 });
 
 Vue.directive("include", {
@@ -90,24 +100,45 @@ var bus = new Vue({
         scope: {},
     },
     methods: {
-        init: function () { 
+        init: function () {
             this.lists = {};
             this.listsConfig = {};
             this.listPil = {};
             this.scope = {};
         },
-        loadList: function (key, datasource, done) {
+        getKeyFromSource: function (source) {
+            if (typeof source === "string") {
+                try {
+                    source = JSON.parse(source);
+                } catch (e) {
+                    return source;
+                }
+            }
+            return source.source + "|" + source.value + "|" + source.display + "|" + source.filter;
+        },
+        getList: function (source) {
+            key = this.getKeyFromSource(source);
+
+            // LOAD LIST IF NOT LOADED
+            if (typeof this.lists[key] === "undefined") {
+                this.loadList(source, source, (a) => { console.log("DONA", a); }, false);
+            }
+            return this.lists[key];
+        },
+        loadList: function (key, datasource, done, async) {
+            async = async === "undefined" ? true : async;
+
             var me = this;
             if (typeof datasource !== "undefined" && datasource !== null && datasource !== "") {
                 var jsonSource = null;
                 if (typeof datasource === "object")
                     jsonSource = clone(datasource);
                 else {
-                    try { 
-                        jsonSource = JSON.parse(datasource); 
-                    } catch{ 
+                    try {
+                        jsonSource = JSON.parse(datasource);
+                    } catch{
                         if (typeof datasource === "string")
-                            jsonSource = {url:datasource, method: "GET"};
+                            jsonSource = { url: datasource, method: "GET" };
                     }
                 }
 
@@ -132,14 +163,14 @@ var bus = new Vue({
 
                 // SET KEY
                 if (typeof jsonSource.source !== "undefined")
-                    key = JSON.stringify(jsonSource);
+                    key = this.getKeyFromSource(jsonSource);
                 if (typeof key === "undefined")
                     key = url;
 
                 // IF LIST IS ALREADY LOADED or being loaded
                 if (typeof this.lists[key] !== "undefined") {
                     if (this.lists[key] === "loading") {
-                        if(typeof this.listPil[key] === "undefined") this.listPil[key] = [];
+                        if (typeof this.listPil[key] === "undefined") this.listPil[key] = [];
                         this.listPil[key].push(done);
                     }
                     else {
@@ -147,22 +178,23 @@ var bus = new Vue({
                     }
                     return;
                 }
-                
+
                 this.lists[key] = "loading";
                 var data = EV.getComponent("data");
                 data.ExecuteSource({
                     url: url,
                     method: method,
                     data: datasource,
+                    async: async,
                     loadComplete: function (obj, response) {
                         me.lists[key] = response;
-                        me.listsConfig[key] = {key: key, datasource: datasource, done: done};
+                        me.listsConfig[key] = { key: key, datasource: datasource, done: done };
                         done(response);
 
                         // list pil
-                        if (typeof me.listPil[key] !== "undefined") {                            
+                        if (typeof me.listPil[key] !== "undefined") {
                             while (me.listPil[key].length > 0) {
-                                me.listPil[key].pop()(me.lists[key]);                                
+                                me.listPil[key].pop()(me.lists[key]);
                             }
                         }
                     },
@@ -178,7 +210,7 @@ var bus = new Vue({
             delete this.lists[key];
             this.loadList(this.listsConfig[key].key, this.listsConfig[key].datasource, this.listsConfig[key].done);
         },
-        setList: function (key, data){
+        setList: function (key, data) {
             this.lists[key] = data;
         },
         setMeta: function (id, value) {
@@ -208,7 +240,7 @@ function SideBarVueInit(menu) {
             menu: menu
         },
         methods: {
-            closeAll: function () { 
+            closeAll: function () {
                 for (var i in this.menu) {
                     this.menu[i].open = false;
                 }
