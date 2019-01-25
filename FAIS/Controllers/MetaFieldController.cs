@@ -39,7 +39,7 @@ namespace FAIS.Controllers
         [Route("metabo/{id}")]
         public async Task<IHttpActionResult> GetMetaBoMETA_FIELD(long id)
         {
-            List<META_FIELD> mETA_FIELDs = await db.META_FIELD.Where(x => x.META_BO_ID == id).ToListAsync();
+            List<META_FIELD> mETA_FIELDs = await db.META_FIELD.Where(x => x.META_BO_ID == id && !x.STATUS.Contains("[deleted]")).ToListAsync();
             if (mETA_FIELDs == null)
             {
                 return NotFound();
@@ -56,6 +56,7 @@ namespace FAIS.Controllers
                 new { Value= "v-checkbox"   , Display= "Case à cocher" },
                 new { Value= "v-datepicker" , Display= "Date" },
                 new { Value= "v-email"      , Display= "Email" },
+                new { Value= "v-file"       , Display= "Fichier" },
                 new { Value= "v-number"     , Display= "Numeric" },
                 new { Value= "v-select"     , Display= "Liste de choix" },
                 new { Value= "v-text"       , Display= "Text" },
@@ -151,10 +152,18 @@ namespace FAIS.Controllers
                 return NotFound();
             }
 
-            db.META_FIELD.Remove(mETA_FIELD);
-            await db.SaveChangesAsync();
+            mETA_FIELD.STATUS = "[deleted]" + mETA_FIELD.STATUS;
+            db.Entry(mETA_FIELD).State = EntityState.Modified;
 
-            return Ok(mETA_FIELD);
+            try
+            {
+                await db.SaveChangesAsync();
+                return Ok(new { success = true });
+            }
+            catch (DbEntityValidationException ex)
+            {
+                return Ok(new { success = false });
+            }            
         }
 
         protected override void Dispose(bool disposing)

@@ -17,7 +17,7 @@ namespace FAIS.Models.Repository
         {
             META_BO meta = await db.META_BO
                .Where(x => x.BO_DB_NAME == dbName)
-               .IncludeFilter(x => x.META_FIELD.Where(f => f.STATUS != "NEW"))
+               .IncludeFilter(x => x.META_FIELD.Where(f => f.STATUS != "NEW" && !f.STATUS.Contains("[deleted]")).OrderBy(y => y.META_FIELD_ID))
                .FirstOrDefaultAsync();
 
             return meta;
@@ -26,7 +26,7 @@ namespace FAIS.Models.Repository
         {
             META_BO meta = db.META_BO
                .Where(x => x.BO_DB_NAME == dbName)
-               .IncludeFilter(x => x.META_FIELD.Where(f => f.STATUS != "NEW"))
+               .IncludeFilter(x => x.META_FIELD.Where(f => f.STATUS != "NEW" && !f.STATUS.Contains("[deleted]")))
                .FirstOrDefault();
 
             return meta;
@@ -115,7 +115,7 @@ namespace FAIS.Models.Repository
         {
             mETA_BO = Create(mETA_BO, userName);
             db.META_BO.Add(mETA_BO);
-            
+
             VERSIONS version = new VersionsRepo().Create(mETA_BO.META_BO_ID, userName);
             db.VERSIONS.Add(version);
 

@@ -143,3 +143,8 @@ C:\www\_.net\NB\admin.mvc.js\FAIS\obj\Release\FAIS.csproj.CoreCompileInputs.cach
 C:\www\_.net\NB\admin.mvc.js\FAIS\obj\Release\FAIS.csproj.CopyComplete
 C:\www\_.net\NB\admin.mvc.js\FAIS\obj\Release\FAIS.dll
 C:\www\_.net\NB\admin.mvc.js\FAIS\obj\Release\FAIS.pdb
+C:\www\_.net\NB\admin.mvc.js\FAIS\obj\Release\FAIS.Properties.Resources.resources
+C:\www\_.net\NB\admin.mvc.js\FAIS\obj\Release\FAIS.csproj.GenerateResource.cache
+C:\www\_.net\NB\admin.mvc.js\FAIS\bin\fr-FR\FAIS.resources.dll
+C:\www\_.net\NB\admin.mvc.js\FAIS\obj\Release\FAIS.Resources.lang.fr-FR.resources
+C:\www\_.net\NB\admin.mvc.js\FAIS\obj\Release\fr-FR\FAIS.resources.dll

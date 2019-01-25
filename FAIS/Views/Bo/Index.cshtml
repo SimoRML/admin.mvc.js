@@ -15,7 +15,7 @@
              @if (includeDatasource) { @: datasource="metabo/select/@Model.BO_DB_NAME"
              }
              action-component="@Model.BO_DB_NAME-action"
-             detail-row="@Model.BO_DB_NAME-detail-row"
+             detail-row="default"
              :prevent-first-load="filterExists"></v-table>
 }
 @helper renderForm()
@@ -122,7 +122,7 @@ else
                 <div class="tab-pane active" id="@boDbName("list")">
                     <div v-show="filterExists" class="card">
                         <div class="card-header">
-                            Filter
+                            Filtre
                         </div>
                         <div class="card-content">
 
@@ -291,7 +291,7 @@ else
                             window[e.BO_DB_NAME + "vapp"].$refs.theForm.$data.crudApi = URL.addPart(window[e.BO_DB_NAME + "vapp"].$refs.theForm.$props.api, entity.BO_ID);
                         });
                     }
-                    this.FormModes.update.title = "@Model.BO_NAME : " + entity.BO_ID;
+                    this.FormModes.update.title = "@Html.Raw(Model.BO_NAME): " + entity.BO_ID;
                     this.CurrentMode = this.FormModes.update;
                 },
                 insertMode: function () {
@@ -369,7 +369,6 @@ else
             props: {
                 row: Object,
                 metafield:Object,
-
             },
             methods: {
                 edit: (id) => editFormMetaBo(id)

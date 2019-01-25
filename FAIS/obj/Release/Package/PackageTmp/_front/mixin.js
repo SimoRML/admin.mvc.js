@@ -29,6 +29,26 @@
         loadingError: function () {
             this.preLoaderTarget.removeClass("preLoader");
             this.preLoaderTarget.addClass("preLoaderError");
+        },
+        downloadFile: function (base64,type,fileName){
+            if (base64.match("base64,") !== null) base64 = base64.split('base64,')[1];
+            var blob = b64toBlob(base64, type);
+            var newBlob = new Blob([blob], { type: type });
+
+            if (window.navigator && window.navigator.msSaveOrOpenBlob) {
+                window.navigator.msSaveOrOpenBlob(newBlob);
+                return;
+            } 
+
+            const data = window.URL.createObjectURL(newBlob);
+            var link = document.createElement('a');
+            link.href = data;
+            link.download= fileName;
+            link.click();
+
+            setTimeout(function () {
+                window.URL.revokeObjectURL(data);
+            }, 100);
         }
     },
     filters: {
@@ -51,7 +71,7 @@ function v_format_directive(e1, binding, vnode) {
             binding.value.format = JSON.parse(binding.value.format);
         } catch { }
     }
-    console.log("FORMAT", binding.value.format);
+    // console.log("FORMAT", binding.value.format);
     if (binding.value.format.fct === 'Display') {
         var display = "";
         var list = bus.getList(binding.value.format.source);
@@ -121,7 +141,7 @@ var bus = new Vue({
 
             // LOAD LIST IF NOT LOADED
             if (typeof this.lists[key] === "undefined") {
-                this.loadList(source, source, (a) => { console.log("DONA", a); }, false);
+                this.loadList(source, source, (a) => {  }, false);
             }
             return this.lists[key];
         },
@@ -211,6 +231,7 @@ var bus = new Vue({
             this.loadList(this.listsConfig[key].key, this.listsConfig[key].datasource, this.listsConfig[key].done);
         },
         setList: function (key, data) {
+            console.log("setList", key, data);
             this.lists[key] = data;
         },
         setMeta: function (id, value) {

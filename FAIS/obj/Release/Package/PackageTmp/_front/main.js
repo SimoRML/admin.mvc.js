@@ -46,7 +46,7 @@ function LOAD() {
         }
     ));
 
-
+    Vue.mixin(language);
 }
 
 $('#minimizeSidebar').click(function () {

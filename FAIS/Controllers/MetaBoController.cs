@@ -14,7 +14,7 @@ using System.Web.Http.Description;
 
 namespace FAIS.Controllers
 {
-
+    [Authorize]
     [RoutePrefix("api/MetaBo")]
     public class MetaBoController : ApiController
     {
@@ -195,7 +195,11 @@ namespace FAIS.Controllers
         [Route("CrudMultiple/{id}")]
         public async Task<IHttpActionResult> InsertMultiple(int id, List<Dictionary<string, object>> Items)
         {
-            bool insert = false;
+            var meta = await db.META_BO.FindAsync(id);
+            if (meta == null) return NotFound();
+
+            List<object> result = new List<object>();
+            bool insert = false, deleted = false;
             foreach (var ligne in Items)
             {
                 var model = new CrudModel()
@@ -203,7 +207,6 @@ namespace FAIS.Controllers
                     MetaBoID = id,
                     Items = ligne
                 };
-                var meta = await db.META_BO.FindAsync(model.MetaBoID);
 
                 BO bo_model = new BO()
                 {
@@ -223,13 +226,17 @@ namespace FAIS.Controllers
                 model.MetaBO = meta;
                 model.BO_ID = id_;
                 model.Items.Add("BO_ID", id_);
-                //return Ok(model.FormatInsert());
                 insert = model.Insert();
+
+                result.Add(new { inserted = insert, BO_ID = id_ });
+                if (!insert)
+                {
+                    deleted = true;
+                    db.Entry(bo_model).State = EntityState.Deleted;
+                }
             }
-            if (insert)
-                return Ok();
-            else
-                return InternalServerError();
+            if (deleted) await db.SaveChangesAsync();
+            return Ok(result);
         }
 
         [HttpPost]
@@ -310,6 +317,61 @@ namespace FAIS.Controllers
                 return Ok(model);
             else
                 return InternalServerError();
+        }
+
+        [HttpPost]
+        [Route("CrudMultipleChilds/{id}")]
+        public async Task<IHttpActionResult> InsertMultipleChilds(int id, List<Dictionary<string, object>> Items)
+        {
+            var meta = await db.META_BO.FindAsync(id);
+            if (meta == null) return NotFound();
+
+            List<object> result = new List<object>();
+            bool insert = false, deleted = false;
+            foreach (var ligne in Items) {
+
+                BO bo_model = new BO()
+                {
+                    CREATED_BY = User.Identity.Name,
+                    CREATED_DATE = DateTime.Now,
+                    UPDATED_BY = User.Identity.Name,
+                    UPDATED_DATE = DateTime.Now,
+                    STATUS = "1",
+                    BO_TYPE = id.ToString(),
+                    VERSION = meta.VERSION
+                };
+                db.BO.Add(bo_model);
+                await db.SaveChangesAsync();
+
+                db.BO_CHILDS.Add(new BO_CHILDS()
+                {
+                    BO_PARENT_ID = (long)ligne["parentId"],
+                    BO_CHILD_ID = bo_model.BO_ID,
+                    RELATION = "1..*"
+                });
+                await db.SaveChangesAsync();
+
+                int id_ = (int)bo_model.BO_ID;
+
+                ligne.Remove("parentId");
+                var model = new CrudModel()
+                {
+                    MetaBoID = id,
+                    Items = ligne,
+                    MetaBO = meta
+                };
+                model.Items.Add("BO_ID", id_);
+                insert = model.Insert();
+                result.Add(new { inserted = insert, BO_ID = id_ });
+
+                if (!insert)
+                {
+                    deleted = true;
+                    db.Entry(bo_model).State = EntityState.Deleted;
+                }
+            }
+            if (deleted) await db.SaveChangesAsync();
+            return Ok(result);
         }
 
         [HttpPut]

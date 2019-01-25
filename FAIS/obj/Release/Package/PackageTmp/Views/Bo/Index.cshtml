@@ -1,10 +1,10 @@
 ﻿@model FAIS.Models.META_BO
 @{
-string boDbName(string txt)
-{
-    return Model.BO_DB_NAME + txt;
-}
-bool isSubForm = ViewBag.isSubForm != null;
+    string boDbName(string txt)
+    {
+        return Model.BO_DB_NAME + txt;
+    }
+    bool isSubForm = ViewBag.isSubForm != null;
 }
 @helper renderTable(bool includeDatasource)
 {
@@ -12,10 +12,11 @@ bool isSubForm = ViewBag.isSubForm != null;
              meta-name="@Model.BO_DB_NAME"
              :column-show="columnShow"
              :column-labels="columnLabels"
-             @if (includeDatasource){ @: datasource="metabo/select/@Model.BO_DB_NAME"
+             @if (includeDatasource) { @: datasource="metabo/select/@Model.BO_DB_NAME"
              }
              action-component="@Model.BO_DB_NAME-action"
-            :prevent-first-load="filterExists"></v-table>
+             detail-row="@Model.BO_DB_NAME-detail-row"
+             :prevent-first-load="filterExists"></v-table>
 }
 @helper renderForm()
 {
@@ -206,7 +207,7 @@ else
         // build table props from meta_fields
         var @boDbName("columnShow") = [];
         var @boDbName("columnLabels") = { };
-        window["@boDbName("META_BO")"].META_FIELD.forEach((e) => { 
+        window["@boDbName("META_BO")"].META_FIELD.forEach((e) => {
             if (e.GRID_SHOW == 1) window["@boDbName("columnShow")"].push(e.DB_NAME);
             window["@boDbName("columnLabels")"][e.DB_NAME] = e.GRID_NAME;
         });
@@ -290,7 +291,7 @@ else
                             window[e.BO_DB_NAME + "vapp"].$refs.theForm.$data.crudApi = URL.addPart(window[e.BO_DB_NAME + "vapp"].$refs.theForm.$props.api, entity.BO_ID);
                         });
                     }
-                    this.FormModes.update.title = "@Model.BO_NAME : " + entity.BO_ID;
+                    this.FormModes.update.title = "@Html.Raw(Model.BO_NAME): " + entity.BO_ID;
                     this.CurrentMode = this.FormModes.update;
                 },
                 insertMode: function () {
@@ -350,6 +351,28 @@ else
                     @boDbName("vapp").$refs.theForm.Get(id);
                     $("#@boDbName("tab-form")").trigger("click");
                 }
+            }
+        });
+    </script>
+
+    <script id="@boDbName("-detail-row-template")" type="text/template">
+        <div>
+            <div v-for="field in metafield" class="col-md-3">
+                <b>{{field.GRID_NAME}} : </b><span v-format="{value:row[field.DB_NAME], format:field.GRID_FORMAT}">{{row[field.DB_NAME]}}</span>
+            </div>
+        </div>
+    </script>
+    <script>
+
+        Vue.component('@boDbName("-detail-row")', {
+            template: $("#@boDbName("-detail-row-template")").html(),
+            props: {
+                row: Object,
+                metafield:Object,
+
+            },
+            methods: {
+                edit: (id) => editFormMetaBo(id)
             }
         });
     </script>

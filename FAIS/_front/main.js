@@ -5,6 +5,7 @@ $(function () {
     });
     
     $("#minimizeSidebar").trigger("click");
+    
 });
 
 function LOAD() {
@@ -46,7 +47,7 @@ function LOAD() {
         }
     ));
 
-
+    Vue.mixin(language);
 }
 
 $('#minimizeSidebar').click(function () {

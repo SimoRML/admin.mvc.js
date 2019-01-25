@@ -2,6 +2,7 @@
     var title = System.Configuration.ConfigurationManager.AppSettings["title"];
     var link = System.Configuration.ConfigurationManager.AppSettings["homeLink"];
     var photo = System.Configuration.ConfigurationManager.AppSettings["userPhoto"];
+    var dashboardLink = System.Configuration.ConfigurationManager.AppSettings["dashboardLink"];
 }
 
 <!doctype html>
@@ -113,7 +114,7 @@
                     <div class="collapse navbar-collapse">
                         <ul class="nav navbar-nav navbar-right">
                             <li>
-                                <a href="#pablo" class="dropdown-toggle" data-toggle="dropdown">
+                                <a href="@dashboardLink" class="dropdown-toggle">
                                     <i class="material-icons">dashboard</i>
                                     <p class="hidden-lg hidden-md">Dashboard</p>
                                 </a>
