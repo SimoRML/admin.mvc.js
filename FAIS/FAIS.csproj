@@ -243,6 +243,7 @@
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\MetaBoController.cs" />
     <Compile Include="Controllers\MetaFieldController.cs" />
+    <Compile Include="Controllers\PageController.cs" />
     <Compile Include="Controllers\ProfileManagerController.cs" />
     <Compile Include="Controllers\ReportingController.cs" />
     <Compile Include="Controllers\RouterController.cs" />
@@ -637,6 +638,7 @@
     <Content Include="surface\vendor\waves\waves.min.js" />
     <Content Include="surface\vendor\wow\animate.css" />
     <Content Include="surface\vendor\wow\wow.min.js" />
+    <Content Include="_front\mixins\pager.js" />
     <Content Include="_front\models\lang.js" />
     <Content Include="_front\main.js" />
     <Content Include="_front\mixin.js" />
@@ -709,6 +711,7 @@
     <Content Include="surface\fonts\Material-Design-Iconic-Font.eot" />
     <Content Include="surface\fonts\Material-Design-Iconic-Font.woff" />
     <Content Include="surface\vendor\waves\waves.min.js.map" />
+    <Content Include="Views\Page\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

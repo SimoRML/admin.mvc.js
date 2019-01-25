@@ -17,8 +17,10 @@ namespace FAIS
             bundles.Add(new ScriptBundle("~/bundles/_front-before").Include(
                       "~/_front/util.js"));
 
-            bundles.Add(new ScriptBundle("~/bundles/_front").Include(
-                      "~/_front/models/*.js"));
+            bundles.Add(new ScriptBundle("~/bundles/_front")
+                .Include("~/_front/models/*.js")
+                .Include("~/_front/mixins/*.js")
+                );
 
             bundles.Add(new ScriptBundle("~/bundles/_front-after").Include(
                       "~/_front/main.js"));
