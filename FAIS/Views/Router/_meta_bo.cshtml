@@ -205,7 +205,7 @@
                                         </td>
                                         <td><label :for="value.id">{{ index }}</label></td>
                                         <td>
-                                            <input type="text" class="form-control" v-model="FORM_SOURCE.detail[index].label"/>
+                                            <input type="text" class="form-control" v-model="FORM_SOURCE.detail[index].label" />
                                         </td>
                                         <td>
                                             <select class="form-control" v-model="FORM_SOURCE.detail[index].class">
@@ -298,11 +298,11 @@
                 this.$refs.ddl_display.setValue(this.FORM_SOURCE.display);
 
                 this.$refs.ddl_link_field.populateData(DisplaySelectData);
-                
+
                 this.sourceFields = object.Attributes;
                 if (typeof this.FORM_SOURCE.detail === "undefined") this.FORM_SOURCE.detail = {};
                 for (var index in this.sourceFields) {
-                    if (typeof this.FORM_SOURCE.detail[index] === "undefined") this.FORM_SOURCE.detail[index] = { checked: false, label: "", class:"col-md-12"};
+                    if (typeof this.FORM_SOURCE.detail[index] === "undefined") this.FORM_SOURCE.detail[index] = { checked: false, label: "", class: "col-md-12" };
                     this.sourceFields[index].id = GetId();
                     this.FORM_SOURCE.detail[index].format = setFormatFromSource(this.sourceFields[index].FORM_SOURCE);
                     // console.log("FORMAT(" + index + ")", "FORM_SOURCE", this.sourceFields[index].FORM_SOURCE, "format",this.FORM_SOURCE.detail[index].format);
@@ -704,7 +704,7 @@
                     bus.setList("selectFields", selectFields);
                 }
             );
-            vapp.$refs.fieldsForm.reset(); 
+            vapp.$refs.fieldsForm.reset();
 
             // versionsTable
             vapp.$refs.versionsTable.load("versions/" + id);
@@ -715,9 +715,9 @@
         }, 100);
     }
 
-    function setFormatFromSource(FORM_SOURCE){
+    function setFormatFromSource(FORM_SOURCE) {
         try { FORM_SOURCE = JSON.parse(FORM_SOURCE); } catch{ }
-        if (!Array.isArray(FORM_SOURCE) & typeof FORM_SOURCE.source !== "undefined") 
+        if (!Array.isArray(FORM_SOURCE) & typeof FORM_SOURCE.source !== "undefined")
             return JSON.stringify({ fct: "Display", source: JSON.stringify(FORM_SOURCE) });
         return "";
     }
