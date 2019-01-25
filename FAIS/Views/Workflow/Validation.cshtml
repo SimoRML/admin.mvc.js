@@ -144,6 +144,7 @@
     </div>
 </div>
 <script type="text/javascript">
+    var api=EV.getComponent('data')
     var metaBoId = @ViewBag.id;
     var validationVapp = new Vue({
         el: "#validation-vue-app",
@@ -180,6 +181,12 @@
             bus.lists.metaList.forEach((e) => {
                 if (e.META_BO_ID === metaBoId) {
                     me.meta = e;
+                    api.Get({
+                        url: "MetaField/metabo/" + e.META_BO_ID,
+                        done: function (response) {
+                            me.meta.META_FIELD = response;
+                        }
+                    });
                     return;
                 }
             });

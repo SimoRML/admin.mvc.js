@@ -1,4 +1,5 @@
-﻿<style type="text/css">
+﻿@model FAIS.Models.WORKFLOW
+<style type="text/css">
     .wf-item {
         position: relative;
     }
@@ -30,7 +31,8 @@
 <script type="text/javascript">
     var flowItemBase = {
         props: {
-            index: Number
+            index: Number,
+            value: Object
         },
         data: function () {
             return {
@@ -107,6 +109,7 @@
 </script>
 
 <script type="text/javascript">
+    var workflowId = @ViewBag.id;
     Vue.component('bo', {
         template: $("#bo-template").html(),
         mixins: [flowItemBase],
@@ -123,11 +126,14 @@
                     this.$emit("value-changed", { index: this.index, value: this.selectedMeta });
                 }
                 return this.selectedMeta;
-            },            
+            },
         },
         mounted: function () {
             var me = this;
-            bus.loadList("metaList", { url: "metabo", method: "GET" }, (response) => { me.metaList = response; });
+            bus.loadList("metaList", { url: "metabo", method: "GET" }, (response) => {
+            me.metaList = response;
+            });
+            if (me.value!==null) me.selectedMeta = me.value;
         }
     });
 </script>
@@ -216,6 +222,7 @@
                     <template v-if="item.type === 'bo'">
                         <bo :ref="'node_' + index"
                             :index="index"
+                            :value="item.value"
                             v-on:value-changed="setItemValue"
                             v-on:add-bo="addBo"
                             v-on:add-validation="addValidation"
@@ -245,20 +252,27 @@
 
 <script type="text/javascript">
     bus.setScope("flowLastIndex", 0);
+    var Workflow_items = '@Html.Raw(Model.ITEMS)';
+    try {
+        Workflow_items = JSON.parse(Workflow_items);
+    } catch (e) {
+        Workflow_items = [{ type: "bo", status: "new", next: null, precedent: null }/*, { type: "validation", status: "new", precedent: 0, next: null }*/];
+    }
     var vapp = new Vue({
         el: "#my-vue-app",
         data: {
-            flowItems: [{ type: "bo", status: "new", next: null, precedent: null }/*, { type: "validation", status: "new", precedent: 0, next: null }*/],
+            flowItems: Workflow_items,
+            //flowItems: [{ "type": "bo", "status": "new", "next": null, "precedent": null, "index": 0, "value": { "value": 3, "display": "article" } }],
         },
         methods: {
-            submit: function () { 
+            submit: function () {
                 var workflow = [], errors = [];
 
                 // VALIDATION
-                for (var i in this.flowItems){ 
+                for (var i in this.flowItems) {
                     var item = clone(this.flowItems[i]);
                     if (typeof item.index === "undefined") {
-                        errors.push("Le noeud N° <b>"+ (parseInt(i) + 1) +"</b> n'est pas configuré !");
+                        errors.push("Le noeud N° <b>" + (parseInt(i) + 1) + "</b> n'est pas configuré !");
                         continue;
                     }
                     workflow.push(item);
@@ -273,19 +287,33 @@
                             item.next = item.next.index;
                         }
                         console.log(item);
-                        //
                     }
 
                     // SUBMIT
+                    var me = this;
+                    var data = EV.getComponent("data");
+                    data.Put({
+                        url: 'metabo/Crud/2/' + workflowId,
+                        data: JSON.stringify({
+                            ITEMS: JSON.stringify(workflow)
+                        }),
+                        done: function (response) {
+                            NOTIF.success("Workflow enregistré avec succes");
+                            //  me.reset();
+                        },
+                        fail: function (response) {
+                            NOTIF.error("Server Error ! " + JSON.stringify(response));
+                        }
+                    });
                     console.log("submit", workflow);
-                }                
+                }
             },
             setItemValue: function (payload) {
                 this.flowItems[payload.index].index = payload.index;
                 this.flowItems[payload.index].value = payload.value;
             },
             addBo: function (index) {
-                var bo = { type: "bo", status: "new", precedent: index, next: null };
+                var bo = { type: "bo", status: "new", precedent: index, next: null,value:null };
                 this.flowItems[index].next = bo;
                 this.flowItems.push(bo);
                 this.setLastIndex();
@@ -310,6 +338,9 @@
             configurerValidation: function (index) {
                 var me = this;
                 var item = me.flowItems[index];
+                //Boucla get precedent item 
+                // if is bo stop and get
+                // else get precedent of precedent till you get the nearest bo
                 var metaBoId = me.$refs["node_" + item.precedent][0].selectedMeta.value;
                 if (metaBoId === -1) {
                     NOTIF.warning("Vous devez dabord définir le BO du noeud précédent !");

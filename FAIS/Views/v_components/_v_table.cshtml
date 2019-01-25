@@ -230,7 +230,9 @@
             if (typeof bus.$data[this.metaName] === "undefined") return "";
             this.meta = bus.$data[this.metaName];
             this.meta.META_FIELD.forEach((e) => {
-                me.meta_field[e.DB_NAME] = e;
+                if (e.FORM_TYPE.match('subform-') === null && e.FORM_TYPE!='') {
+                    me.meta_field[e.DB_NAME] = e;
+                }
             });
         }
     });

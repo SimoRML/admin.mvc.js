@@ -85,6 +85,15 @@
           <Property Name="UPDATED_DATE" Type="datetime" />
           <Property Name="STATUS" Type="varchar" MaxLength="10" />
         </EntityType>
+        <EntityType Name="WORKFLOW">
+          <Key>
+            <PropertyRef Name="BO_ID" />
+          </Key>
+          <Property Name="BO_ID" Type="bigint" Nullable="false" />
+          <Property Name="LIBELLE" Type="varchar" MaxLength="50" />
+          <Property Name="ACTIVE" Type="int" />
+          <Property Name="ITEMS" Type="nvarchar(max)" />
+        </EntityType>
         <Association Name="FK__META_FIEL__META___33D4B598">
           <End Role="META_BO" Type="Self.META_BO" Multiplicity="1" />
           <End Role="META_FIELD" Type="Self.META_FIELD" Multiplicity="*" />
@@ -118,6 +127,7 @@
           <EntitySet Name="META_BO" EntityType="Self.META_BO" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="META_FIELD" EntityType="Self.META_FIELD" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="VERSIONS" EntityType="Self.VERSIONS" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="WORKFLOW" EntityType="Self.WORKFLOW" Schema="dbo" store:Type="Tables" />
           <AssociationSet Name="FK__META_FIEL__META___33D4B598" Association="Self.FK__META_FIEL__META___33D4B598">
             <End Role="META_BO" EntitySet="META_BO" />
             <End Role="META_FIELD" EntitySet="META_FIELD" />
@@ -254,7 +264,17 @@
           <FunctionImport Name="MoveBoToCurrentVersion">
           <Parameter Name="BO_ID" Mode="In" Type="Int64" />
           </FunctionImport>
+          <EntitySet Name="WORKFLOW" EntityType="FAIS_Model.WORKFLOW" />
         </EntityContainer>
+        <EntityType Name="WORKFLOW">
+          <Key>
+            <PropertyRef Name="BO_ID" />
+          </Key>
+          <Property Name="BO_ID" Type="Int64" Nullable="false" />
+          <Property Name="LIBELLE" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="ACTIVE" Type="Int32" />
+          <Property Name="ITEMS" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        </EntityType>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -346,6 +366,16 @@
             </EntityTypeMapping>
           </EntitySetMapping>
           <FunctionImportMapping FunctionImportName="MoveBoToCurrentVersion" FunctionName="FAIS_Model.Store.MoveBoToCurrentVersion" />
+          <EntitySetMapping Name="WORKFLOW">
+            <EntityTypeMapping TypeName="FAIS_Model.WORKFLOW">
+              <MappingFragment StoreEntitySet="WORKFLOW">
+                <ScalarProperty Name="ITEMS" ColumnName="ITEMS" />
+                <ScalarProperty Name="ACTIVE" ColumnName="ACTIVE" />
+                <ScalarProperty Name="LIBELLE" ColumnName="LIBELLE" />
+                <ScalarProperty Name="BO_ID" ColumnName="BO_ID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
         </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>
