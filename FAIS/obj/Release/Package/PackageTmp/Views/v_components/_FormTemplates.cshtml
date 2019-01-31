@@ -1,7 +1,7 @@
 ﻿<script type="text/javascript">
     var FormMixin = {
         mixins: [MixinBase],
-        props: ['label', 'optional', 'datasource', 'value', 'cssClass', 'fieldName', 'line', 'column', 'disabled'],
+        props: ['label', 'optional', 'datasource', 'value', 'cssClass', 'fieldName', 'line', 'column', 'disabled', 'detail'],
         data: function () {
             return {
                 data: null,
@@ -47,6 +47,13 @@
         <label class="control-label">{{ label }}</label>
         <input type="text" class="form-control" style="background-size: 100% 0px, 100% 1px;"
                :value="value" readonly>
+        <div class="category form-category" v-if="detail != null">
+            <div class="row">
+                <div class="col-md-12">
+                    <small>{{ detail }}</small>
+                </div>
+            </div>
+        </div>
     </div>
 </script>
 <script type="text/javascript">
@@ -64,6 +71,13 @@
                :value="value"
                v-on:input="bindBack($event)"
                :required="!isOptional" :disabled="disabled">
+        <div class="category form-category" v-if="detail != null">
+            <div class="row">
+                <div class="col-md-12">
+                    <small>{{ detail }}</small>
+                </div>
+            </div>
+        </div>
     </div>
 </script>
 <script type="text/javascript">
@@ -82,6 +96,13 @@
                :value="value"
                v-on:input="bindBack($event)"
                :required="!isOptional" :disabled="disabled">
+        <div class="category form-category" v-if="detail != null">
+            <div class="row">
+                <div class="col-md-12">
+                    <small>{{ detail }}</small>
+                </div>
+            </div>
+        </div>
     </div>
 </script>
 <script type="text/javascript">
@@ -93,29 +114,40 @@
 
 @*-----------------------------------------------------------------------------------------------------FILE-----------------------*@
 <script id="v-file-template" type="text/template">
-    <div :id="elementId" :class="cssClass + ' form-group'">
-        <label class="control-label">{{ label }}<i v-show="isOptional"> - optionnel</i></label>
-        <div class="file-upload">
-            <template v-if="fileType.match('image') !== null">
-                <div class="imageContainer">
-                    <img :src="base64" />
+    <div :id="elementId">
+        <div :class="cssClass + ' form-group'">
+            <label class="control-label">{{ label }}<i v-show="isOptional"> - optionnel</i></label>
+            <div class="file-upload">
+                <template v-if="fileType.match('image') !== null">
+                    <div class="imageContainer">
+                        <img :src="base64" />
+                    </div>
+                </template>
+                <template v-else>
+                    <div class="fileContainer">
+                        {{ name }}
+                    </div>
+                </template>
+            </div>
+            <input type="file" class="form-control"
+                   v-on:input="bindFileBack($event)"
+                   :required="!isOptional && false" :disabled="disabled">
+            <div class="category form-category" v-if="detail != null">
+                <div class="row">
+                    <div class="col-md-12">
+                        <small>{{ detail }}</small>
+                    </div>
                 </div>
-            </template>            
-            <template v-else>
-                <div class="fileContainer">
-                    {{ name }}
-                </div>
-            </template>
+            </div>
         </div>
-        <input type="file" class="form-control"
-               v-on:input="bindFileBack($event)"
-               :required="!isOptional && false" :disabled="disabled">
+        <button v-if="name != ''" type="button" class="btn btn-xs btn-danger" v-on:click="removeFile"><i class="material-icons">close</i> Supprimer le fichier</button>
     </div>
 </script>
 <style>
     .file-upload {
         min-height: 30px;
     }
+
         .file-upload .fileContainer {
             min-height: 30px;
             border: 1px dashed #aaa;
@@ -123,11 +155,13 @@
             border-left: none;
             border-right: none;
         }
+
         .file-upload .imageContainer {
             display: inline-block;
             border: 1px dashed #aaa;
             padding: 5px;
         }
+
         .file-upload img {
             width: 200px;
         }
@@ -136,7 +170,7 @@
     Vue.component('v-file', {
         template: $("#v-file-template").html(),
         mixins: [FormMixin],
-        data: function () { 
+        data: function () {
             return {
                 fileType: "",
                 base64: "",
@@ -144,20 +178,25 @@
             };
         },
         methods: {
+            removeFile: function () {
+                this.fileType = "";
+                this.base64 = "";
+                this.name = "";
+                this.$emit('input', "", { me: this.line, me: this.column });
+            },
             bindFileBack: function (e) {
-                var maxWidth = 500;
+                var maxWidth = 1000;
                 var me = this;
-                var file = document.querySelector('#' + this.elementId + ' > input[type="file"]').files[0];
-                
+                var file = document.querySelector('#' + this.elementId + ' input[type="file"]').files[0];
+
                 getBase64(file).then(
                     data => {
-
                         me.fileType = file.type.match("/") === null ? "application/octet-stream" : file.type;
                         me.name = file.name;
 
                         if (me.fileType.match('image') === null) {
                             me.base64 = data;
-                            me.$emit('input', JSON.stringify({ name: me.name, type: me.fileType, base64: me.base64 }), { me: this.line, me: this.column });                            
+                            me.$emit('input', JSON.stringify({ name: me.name, type: me.fileType, base64: me.base64 }), { me: this.line, me: this.column });
                         } else {
                             $("#tmpImg").remove();
                             $("body").append($("<img id='tmpImg' src='" + data + "' style='position:absolute; letf:-30000px; top:-30000px' />"));
@@ -165,17 +204,16 @@
                             $img.on("load", function () {
                                 if ($(this).width() > maxWidth) { // resize the img
                                     $(this).width(maxWidth);
-                                    var data = resizeImg(this, $(this).width(), $(this).height());
+                                    data = resizeImg(this, $(this).width(), $(this).height());
                                     me.fileType = "image/png";
                                     $("#tmpImg").remove();
                                 }
-
                                 me.base64 = data;
                                 me.$emit('input', JSON.stringify({ name: me.name, type: me.fileType, base64: me.base64 }), { me: this.line, me: this.column });
                             });
                         }
 
-                        
+
                     }
                 );
             }
@@ -201,6 +239,13 @@
                   :value="value"
                   v-on:input="bindBack($event)"
                   :required="!isOptional" :disabled="disabled"></textarea>
+        <div class="category form-category" v-if="detail != null">
+            <div class="row">
+                <div class="col-md-12">
+                    <small>{{ detail }}</small>
+                </div>
+            </div>
+        </div>
     </div>
 </script>
 <script type="text/javascript">
@@ -218,6 +263,13 @@
                :value="value"
                v-on:input="bindBack($event)"
                :required="!isOptional" :disabled="disabled">
+        <div class="category form-category" v-if="detail != null">
+            <div class="row">
+                <div class="col-md-12">
+                    <small>{{ detail }}</small>
+                </div>
+            </div>
+        </div>
     </div>
 </script>
 <script type="text/javascript">
@@ -416,6 +468,13 @@
                :value="value && value.split('T')[0]"
                v-on:input="bindBack($event)"
                :required="!isOptional" :disabled="disabled" />
+        <div class="category form-category" v-if="detail != null">
+            <div class="row">
+                <div class="col-md-12">
+                    <small>{{ detail }}</small>
+                </div>
+            </div>
+        </div>
     </div>
 </script>
 <script type="text/javascript">
@@ -438,6 +497,13 @@
                        v-model="isChecked"
                        v-on:change="bindBack($event)"
                        :required="!isOptional" :disabled="disabled">{{ label }}<i v-show="isOptional"> - optionnel</i>
+                <div class="category form-category" v-if="detail != null">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <small>{{ detail }}</small>
+                        </div>
+                    </div>
+                </div>
             </label>
         </div>
     </div>

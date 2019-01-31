@@ -1,0 +1,36 @@
+﻿<div id="vapp">
+    <v-select label="Layouts"
+              :datasource="{key:'pageLayouts'}"
+              v-on:changed="redirect"
+              ></v-select>
+
+
+    <span v-format="{value:'BO', format:format}">48</span>
+
+
+    <span>{{ FR_1125 | source(compagne, compagne_id, compagne_name) }}</span>
+</div>
+<script type="text/javascript">
+
+    bus.setList("pageLayouts", [
+        { Value: "BO", Display: "Une carte" },
+        { Value: "l_2_1", Display: "Deux colonnes" },
+        { Value: "l_1_2", Display: "Deux lignes" },
+    ]);
+
+    var vapp = new Vue({
+        el: "#vapp",
+        data: {
+            format: {'fct':'Display', 'source': 'pageLayouts'}
+        },
+        methods: {
+            redirect: function(layout){
+                console.log(layout);
+                window.location = "#admin.page." + layout.value;
+            }
+        },
+        mounted: () => {
+            bus.loadList("metaList", JSON.stringify({ source: "meta_bo", value: "META_BO_ID", display: "BO_NAME" }), (response) => {  });
+        }
+    });
+</script>

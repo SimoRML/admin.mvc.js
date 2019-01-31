@@ -1,7 +1,7 @@
 ﻿<script type="text/javascript">
     var FormMixin = {
         mixins: [MixinBase],
-        props: ['label', 'optional', 'datasource', 'value', 'cssClass', 'fieldName', 'line', 'column', 'disabled'],
+        props: ['label', 'optional', 'datasource', 'value', 'cssClass', 'fieldName', 'line', 'column', 'disabled', 'detail'],
         data: function () {
             return {
                 data: null,
@@ -47,6 +47,13 @@
         <label class="control-label">{{ label }}</label>
         <input type="text" class="form-control" style="background-size: 100% 0px, 100% 1px;"
                :value="value" readonly>
+        <div class="category form-category" v-if="detail != null">
+            <div class="row">
+                <div class="col-md-12">
+                    <small>{{ detail }}</small>
+                </div>
+            </div>
+        </div>
     </div>
 </script>
 <script type="text/javascript">
@@ -64,6 +71,13 @@
                :value="value"
                v-on:input="bindBack($event)"
                :required="!isOptional" :disabled="disabled">
+        <div class="category form-category" v-if="detail != null">
+            <div class="row">
+                <div class="col-md-12">
+                    <small>{{ detail }}</small>
+                </div>
+            </div>
+        </div>
     </div>
 </script>
 <script type="text/javascript">
@@ -82,6 +96,13 @@
                :value="value"
                v-on:input="bindBack($event)"
                :required="!isOptional" :disabled="disabled">
+        <div class="category form-category" v-if="detail != null">
+            <div class="row">
+                <div class="col-md-12">
+                    <small>{{ detail }}</small>
+                </div>
+            </div>
+        </div>
     </div>
 </script>
 <script type="text/javascript">
@@ -111,6 +132,13 @@
             <input type="file" class="form-control"
                    v-on:input="bindFileBack($event)"
                    :required="!isOptional && false" :disabled="disabled">
+            <div class="category form-category" v-if="detail != null">
+                <div class="row">
+                    <div class="col-md-12">
+                        <small>{{ detail }}</small>
+                    </div>
+                </div>
+            </div>
         </div>
         <button v-if="name != ''" type="button" class="btn btn-xs btn-danger" v-on:click="removeFile"><i class="material-icons">close</i> Supprimer le fichier</button>
     </div>
@@ -211,6 +239,13 @@
                   :value="value"
                   v-on:input="bindBack($event)"
                   :required="!isOptional" :disabled="disabled"></textarea>
+        <div class="category form-category" v-if="detail != null">
+            <div class="row">
+                <div class="col-md-12">
+                    <small>{{ detail }}</small>
+                </div>
+            </div>
+        </div>
     </div>
 </script>
 <script type="text/javascript">
@@ -228,6 +263,13 @@
                :value="value"
                v-on:input="bindBack($event)"
                :required="!isOptional" :disabled="disabled">
+        <div class="category form-category" v-if="detail != null">
+            <div class="row">
+                <div class="col-md-12">
+                    <small>{{ detail }}</small>
+                </div>
+            </div>
+        </div>
     </div>
 </script>
 <script type="text/javascript">
@@ -426,6 +468,13 @@
                :value="value && value.split('T')[0]"
                v-on:input="bindBack($event)"
                :required="!isOptional" :disabled="disabled" />
+        <div class="category form-category" v-if="detail != null">
+            <div class="row">
+                <div class="col-md-12">
+                    <small>{{ detail }}</small>
+                </div>
+            </div>
+        </div>
     </div>
 </script>
 <script type="text/javascript">
@@ -448,6 +497,13 @@
                        v-model="isChecked"
                        v-on:change="bindBack($event)"
                        :required="!isOptional" :disabled="disabled">{{ label }}<i v-show="isOptional"> - optionnel</i>
+                <div class="category form-category" v-if="detail != null">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <small>{{ detail }}</small>
+                        </div>
+                    </div>
+                </div>
             </label>
         </div>
     </div>

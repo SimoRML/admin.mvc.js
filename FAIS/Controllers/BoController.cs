@@ -46,5 +46,22 @@ namespace FAIS.Controllers
         {
             return PartialView();
         }
+
+        [Route("Formulaire/{id}")]
+        public PartialViewResult Formulaire(string id)
+        {
+            if(! id.Contains("_BO_")) id += "_BO_";
+            var meta = new MetaBoRepo().GetMETA(id);
+
+            return PartialView(meta);
+        }
+        [Route("Table/{id}")]
+        public PartialViewResult Table(string id)
+        {
+            if (!id.Contains("_BO_")) id += "_BO_";
+            var meta = new MetaBoRepo().GetMETA(id);
+
+            return PartialView(meta);
+        }
     }
 }

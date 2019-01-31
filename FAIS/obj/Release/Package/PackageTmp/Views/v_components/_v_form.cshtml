@@ -94,10 +94,14 @@
                 var body = clone(me.body);
                 delete body.__ob__;
 
+                for (var field in body) {
+                    if (body[field] === null) body[field] = "";
+                }
+
                 var url = me.crudApi;
                 //console.log("submit ", url);
                 if (this.verb == 'PUT') url = URL.addPart(url, this.pk.value);
-                //console.log("submit ", url);
+                //console.log("submit ", url, "body", JSON.stringify(body));
 
                 var data = EV.getComponent("data");
                 data.ExecuteSource({
