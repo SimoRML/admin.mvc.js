@@ -138,7 +138,7 @@ else
                                 </div>
                                 <div class="row">
                                     <div class="col-md-12">
-                                        <button type="submit" class="btn btn-fill btn-primary pull-right" v-on:click="filtrer">Filtrer<div class="ripple-container"></div></button>
+                                        <button id="@boDbName("btnFilter")" type="submit" class="btn btn-fill btn-primary pull-right" v-on:click="filtrer">Filtrer<div class="ripple-container"></div></button>
                                     </div>
                                 </div>
 
@@ -269,7 +269,8 @@ else
                         this.$refs.theForm.Get(response.BO_ID);
                     } else $("#@boDbName("tab-list")").trigger("click");
 
-                    this.$refs.theTable.load();
+                    if (this.filterExists) $("#@boDbName("btnFilter")").trigger("click");
+                    else this.$refs.theTable.load();
                 },
                 error: function (Response) {
                     console.log('Impossible d\'enregistré l\'objet !<br>', Response);

@@ -72,7 +72,7 @@ function v_format_directive(e1, binding, vnode) {
         } catch { }
     }
     console.log("FORMAT", binding.value.format);
-    if (binding.value.format.fct === 'Display') {
+    if (binding.value.format.fct.toLowerCase() === 'display') {
         var display = "";
         var list = bus.getList(binding.value.format.source);
         console.log("FORMAT 2 ",e1, "list", list);
@@ -88,6 +88,8 @@ function v_format_directive(e1, binding, vnode) {
         //console.log("FORMAT display", display);
 
         $(e1).html(display === "" ? binding.value.value : display);
+    } else if (binding.value.format.fct.toLowerCase() === 'date') {
+        $(e1).html(binding.value.value && binding.value.value.split('T')[0]);
     }
 }
 Vue.directive("format", {
