@@ -243,7 +243,7 @@
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\MetaBoController.cs" />
     <Compile Include="Controllers\MetaFieldController.cs" />
-    <Compile Include="Controllers\PageController.cs" />
+    <Compile Include="Controllers\PageAPIController.cs" />
     <Compile Include="Controllers\ProfileManagerController.cs" />
     <Compile Include="Controllers\ReportingController.cs" />
     <Compile Include="Controllers\RouterController.cs" />
@@ -285,6 +285,9 @@
       <DependentUpon>FAIS_MODEL.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\META_FIELD.cs">
+      <DependentUpon>FAIS_MODEL.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\PAGE.cs">
       <DependentUpon>FAIS_MODEL.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\Repository\MetaBoRepo.cs" />
@@ -657,6 +660,7 @@
     <Content Include="_front\models\Router.js" />
     <Content Include="_front\models\Preloader.js" />
     <Content Include="_front\store.js" />
+    <Content Include="_front\storedata.js" />
     <Content Include="_front\util.js" />
     <EntityDeploy Include="Models\FAIS_MODEL.edmx">
       <Generator>EntityModelCodeGenerator</Generator>
@@ -719,7 +723,6 @@
     <Content Include="surface\fonts\Material-Design-Iconic-Font.eot" />
     <Content Include="surface\fonts\Material-Design-Iconic-Font.woff" />
     <Content Include="surface\vendor\waves\waves.min.js.map" />
-    <Content Include="Views\Page\Index.cshtml" />
     <Content Include="Views\Admin\Page.cshtml" />
     <Content Include="Views\Admin\PageList.cshtml" />
     <Content Include="Views\Admin\layouts\bo.cshtml" />
@@ -727,6 +730,7 @@
     <Content Include="Views\Admin\layouts\l_2_1.cshtml" />
     <Content Include="Views\Bo\Formulaire.cshtml" />
     <Content Include="Views\Bo\Table.cshtml" />
+    <Content Include="Views\Bo\TableEditable.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

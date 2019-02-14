@@ -14,6 +14,14 @@ namespace FAIS.Controllers
             return View();
         }
 
+        // GET: Page
+        public ActionResult Admin()
+        {
+            return View();
+        }
+
+
+
         // GET: Page/Details/5
         public ActionResult Details(int id)
         {

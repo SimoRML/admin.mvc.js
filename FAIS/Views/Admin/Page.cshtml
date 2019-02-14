@@ -162,11 +162,19 @@
         </div>
         @*----------------------FIN ADD SECTION*@
     </div>
+
+    @*PROPS*@
     <div class="sidebar props">
         <h4 class="">Page</h4>
         <div class="content">
             <div>
                 <v-text label="Titre" v-model="layout.page.title" optional="1"></v-text>
+                <v-text label="Groupe" v-model="layout.page.groupe" optional="1"></v-text>
+
+                <div>
+                    <button type="button" class="btn btn-fill btn-sm btn-success pull-right" v-on:click="previewPage"><i class="material-icons">save</i></button>
+                    <button type="button" class="btn btn-fill btn-sm btn-primary pull-right" v-on:click="savePage"><i class="material-icons">remove_red_eye</i></button>
+                </div>
             </div>
         </div>
 
@@ -213,7 +221,7 @@
             componentsTypes: {
                 FORM: {
                     name: "Formulaire",
-                    icone: "layers",
+                    icone: "tab",
                     class: "",
                     props: {
                         source: { label: "Source de données", type: "v-select", datasource: JSON.stringify({ source: "meta_bo", value: "BO_DB_NAME", display: "BO_NAME", filter: "[STATUS]<>'-1'" }) }
@@ -222,6 +230,14 @@
                 TABLE: {
                     name: "Table",
                     icone: "table_chart",
+                    class: "",
+                    props: {
+                        source: { label: "Source de données", type: "v-select", datasource: JSON.stringify({ source: "meta_bo", value: "BO_DB_NAME", display: "BO_NAME", filter: "[STATUS]<>'-1'" }) }
+                    }
+                },
+                TABLE_EDITABLE: {
+                    name: "Table editable",
+                    icone: "storage",
                     class: "",
                     props: {
                         source: { label: "Source de données", type: "v-select", datasource: JSON.stringify({ source: "meta_bo", value: "BO_DB_NAME", display: "BO_NAME", filter: "[STATUS]<>'-1'" }) }
@@ -270,7 +286,8 @@
             },
             layout: {
                 page: {
-                    title: ""
+                    title: "",
+                    groupe: ""
                 },
                 sections: []
             },
@@ -299,6 +316,11 @@
             }
         },
         methods: {
+            previewPage: function () { 
+            }, 
+            savePage: function () {
+
+            },
             selectedClass: function (line, column, component) {
                 if (typeof component !== "undefined") {
                     if (line == this.currentColumn.line && column == this.currentColumn.column && component == this.currentColumn.component) return "selected";
@@ -356,6 +378,9 @@
                         break;
                     case "TABLE":
                         INCLUDE($compDiv, "bo/table/" + this.selectedComponent.props.source);
+                        break;
+                    case "TABLE_EDITABLE":
+                        INCLUDE($compDiv, "bo/tableeditable/" + this.selectedComponent.props.source);
                         break;
                     case "IMG":
                         var img = JSON.parse(this.selectedComponent.props.image);

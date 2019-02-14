@@ -12,10 +12,16 @@ namespace FAIS.Models
     using System;
     using System.Collections.Generic;
     
-    public partial class BO_CHILDS
+    public partial class PAGE
     {
-        public long BO_PARENT_ID { get; set; }
-        public long BO_CHILD_ID { get; set; }
-        public string RELATION { get; set; }
+        public long PAGE_ID { get; set; }
+        public string TITLE { get; set; }
+        public string GROUPE { get; set; }
+        public string STATUS { get; set; }
+        public string LAYOUT { get; set; }
+        public Nullable<System.DateTime> CREATED_DATE { get; set; }
+        public string CREATED_BY { get; set; }
+        public Nullable<System.DateTime> UPDATED_DATE { get; set; }
+        public string UPDATED_BY { get; set; }
     }
 }

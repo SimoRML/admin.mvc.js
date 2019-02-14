@@ -5,6 +5,26 @@
         padding: 2px;
         width: 100px;
     }
+    .v-table .tableForm {
+        margin: 0;
+        padding: 0;
+    }
+
+    .v-table .not-persisted {
+        background: #fff8e5 !important;
+    }
+
+    .v-table .persisted {
+        background: #e5ffec !important;
+    }
+
+    .v-table .selected {
+        background: #aad5ff !important;
+    }
+
+    .v-table .deleted {
+        background: #db4747 !important;
+    }
 </style>
 <script id="TableComponentTemplate" type="text/template">
     <div :id="elementId">
@@ -47,7 +67,7 @@
                     </thead>
                     <tbody>
                         <template v-for="(item, index) in list.slice(pager.sliceFrom, pager.sliceTo)">
-                            <tr>
+                            <tr :class="listConfig[index].rowClass" v-show="!editable || (editable && listConfig[index].state !== 'deleted')">
                                 @*DETAIL ROW BTN*@
                                 <td v-if="detailRowDefined"
                                     v-on:click="toggleDetailRow(getLineIndex(index))">
@@ -56,28 +76,41 @@
                                 </td>
 
                                 @*TABLE COLUMNS*@
-                                <template v-for="h in getHeaders">
+                                <template v-for="(h,colIndex) in getHeaders">
                                     <template v-if="show(h)">
-                                        <template v-if="listConfig[getLineIndex(index)].columns[h].isFile">
+                                        <template v-if="isForm(h)">
                                             <td>
-                                                <a href="javascript:;" v-on:click="downloadFile(item[h].base64, item[h].type, item[h].name)">
-                                                    <template v-if="item[h].type.match('image') !== null">
-                                                        <div class="imageContainer">
-                                                            <img :src="item[h].base64" />
-                                                        </div>
-                                                    </template>
-                                                    <template v-else>
-                                                        <div class="fileContainer">
-                                                            <i class="material-icons">attachment</i> : {{ item[h].name }}
-                                                        </div>
-                                                    </template>
-                                                </a>
+                                                <component :name="columns[h].form.type + '-' + index + '-' + colIndex"
+                                                           :id="elementId + '¤' + h + '_' + index"
+                                                           :is="columns[h].form.type"
+                                                           v-model="item[h]"
+                                                           v-bind='{cssClass:"tableForm",line:index, column: colIndex, datasource:columns[h].form.datasource, disabled:columns[h].form.disabled}'
+                                                           v-on:input="lineChanged"
+                                                           @*v-bind="{id:field.DB_NAME,label:field.FORM_NAME,optional:field.FORM_OPTIONAL,datasource:field.FORM_SOURCE,fieldName:field.DB_NAME}"*@></component>
                                             </td>
                                         </template>
                                         <template v-else>
-                                            <td v-format="{value:item[h], format:getFormat(h)}">
-                                                {{ item[h] }}
-                                            </td>
+                                            <template v-if="typeof listConfig[getLineIndex(index)].columns != 'undefined' && listConfig[getLineIndex(index)].columns[h].isFile">
+                                                <td>
+                                                    <a href="javascript:;" v-on:click="downloadFile(item[h].base64, item[h].type, item[h].name)">
+                                                        <template v-if="item[h].type.match('image') !== null">
+                                                            <div class="imageContainer">
+                                                                <img :src="item[h].base64" />
+                                                            </div>
+                                                        </template>
+                                                        <template v-else>
+                                                            <div class="fileContainer">
+                                                                <i class="material-icons">attachment</i> : {{ item[h].name }}
+                                                            </div>
+                                                        </template>
+                                                    </a>
+                                                </td>
+                                            </template>
+                                            <template v-else>
+                                                <td v-format="{value:item[h], format:getFormat(h)}">
+                                                    {{ item[h] }}
+                                                </td>
+                                            </template>
                                         </template>
                                     </template>
                                 </template>
@@ -100,6 +133,20 @@
                                     <template v-else>
                                         {{ addColumn.GRID_FORMAT }}
                                     </template>
+                                </td>
+
+                                @*EDITABLE ACTIONS*@
+                                <td v-if="editable" style="white-space: nowrap;">
+                                    <button class="btn btn-success btn-round btn-fab btn-fab-mini btn-fab-x-mini"
+                                            v-show="listConfig[index].changed"
+                                            v-on:click="submitLine(index)">
+                                        <i class="material-icons">save</i>
+                                    </button>
+                                    <button class="btn btn-danger btn-round btn-fab btn-fab-mini btn-fab-x-mini"
+                                            v-show="index < list.length-1"
+                                            v-on:click="deleteLine(index)">
+                                        <i class="material-icons">delete</i>
+                                    </button>
                                 </td>
                             </tr>
 
@@ -212,6 +259,10 @@
                 type: Boolean,
                 default: false
             },
+            showDeleted: {
+                type: Boolean,
+                default: false
+            },
         },
         data: function () {
             return {
@@ -222,6 +273,8 @@
                 meta: null,
                 meta_field: {},
                 additionalColumns: [],
+                api: EV.getComponent("data"),
+                defaultValues: null
             }
         },
         computed: {
@@ -272,27 +325,30 @@
         },
         methods: {
             setList: function (data) {
-                this.list = data;
-                if (this.paging) this.initPager(this.list);
+                var me = this;
+                setTimeout(() => {
+                    me.list = data;
+                    if (me.paging) me.initPager(me.list);
 
-                this.listConfig = [];
-                for (var i in this.list) {
-                    var config = { rowClass: "", state: "old", changed: false, columns: {} };
+                    me.listConfig = [];
+                    for (var i in me.list) {
+                        var config = { rowClass: "", state: "old", changed: false, columns: {} };
 
-                    for (var colIdx in this.list[i]) {
-                        config.columns[colIdx] = { isFile: false };
-                        try {
-                            var json = JSON.parse(this.list[i][colIdx]);
-                            config.columns[colIdx].isFile = typeof json.base64 !== "undefined";
-                            this.list[i][colIdx] = json;
-                        } catch (e) {
+                        for (var colIdx in me.list[i]) {
+                            config.columns[colIdx] = { isFile: false };
+                            try {
+                                var json = JSON.parse(me.list[i][colIdx]);
+                                config.columns[colIdx].isFile = typeof json.base64 !== "undefined";
+                                me.list[i][colIdx] = json;
+                            } catch (e) {
 
+                            }
                         }
-                    }
 
-                    this.listConfig.push(config);
-                }
-                if (this.editable) this.newLine();
+                        me.listConfig.push(config);
+                    }
+                    if (me.editable) me.newLine();
+                }, 100);
             },
             load: function (url, done) {
                 var me = this;
@@ -329,19 +385,29 @@
                 }
             },
             getLabel: function (colName) {
-                if (typeof this.columnLabels === "undefined" || typeof this.columnLabels[colName] === "undefined")
-                    return colName;
-                else
-                    return this.columnLabels[colName];
+                if (typeof this.columns === "undefined" || typeof this.columns[colName] === "undefined") {
+                    if (typeof this.columnLabels === "undefined" || typeof this.columnLabels[colName] === "undefined")
+                        return colName;
+                    else
+                        return this.columnLabels[colName];
+                } else
+                    return this.columns[colName].header;                
             },
             toggleDetailRow: function (index) {
                 this.$set(this.showDetailRow, index, this.showDetailRow[index] == null ? true : !this.showDetailRow[index]);
             },
             getFormat: function (column) {
-                if (this.meta === null) return null;
-                if (typeof this.fields[column] === "undefined") return null;
-                if (typeof this.fields[column].GRID_FORMAT === "undefined") return null;
-                return this.fields[column].GRID_FORMAT;
+                if (this.meta === null) {
+                    if (typeof this.columns === "undefined") return null;
+                    if (typeof this.columns[column] === "undefined") return null;
+                    if (typeof this.columns[column].format === "undefined") return null;
+
+                    return this.columns[column].format;
+                } else {
+                    if (typeof this.fields[column] === "undefined") return null;
+                    if (typeof this.fields[column].GRID_FORMAT === "undefined") return null;
+                    return this.fields[column].GRID_FORMAT;
+                }
             },
             additionalColumnAction: function (action, data, id) {
                 switch (action) {
@@ -353,6 +419,101 @@
             },
             getLineIndex: function (index) {
                 return (this.pager.current * this.pager.size) + index;
+            },
+            isForm: function (colName) {
+                if (typeof this.columns === "undefined") return false;
+                if (typeof this.columns[colName] === "undefined") return false;
+                if(typeof this.columns[colName].form === "undefined") return false;
+                return true;
+            },
+            lineChanged: function (value, payload) {
+                // console.log(payload);
+                //if (payload.firstLoad) return;
+                this.listConfig[payload.line].rowClass = "not-persisted";
+                this.listConfig[payload.line].changed = true;
+            },
+            submitLine: function (lineIndex) {
+                this.$emit('before-submit', this.list[lineIndex]);
+
+                var me = this;
+                if (this.listConfig[lineIndex].state == "new") {
+                    me.list[lineIndex][me.pk] = 0;
+                    me.api.Post({
+                        url: me.datasource,
+                        data: JSON.stringify(me.list[lineIndex]),
+                        done: function (response) {
+                            me.newLine();
+                            me.submited(response, lineIndex);
+                        }
+                    });
+                } else {
+                    me.api.Put({
+                        url: URL.addPart(me.datasource, me.list[lineIndex][me.pk]),
+                        data: JSON.stringify(me.list[lineIndex]),
+                        done: function (response) {
+                            me.submited(response, lineIndex);
+                        }
+                    });
+                }
+            },
+            deleteLine: function (lineIndex) {
+                var me = this;
+
+                if (this.listConfig[lineIndex].state == "new") {
+                    me.listConfig[lineIndex].state = "deleted";
+                } else {
+                    NOTIF.confirm({
+                        title: "Supprimer",
+                        text: "Etes-vous sûr ?",
+                        valider: function () {
+                            me.api.Delete({
+                                url: URL.addPart(me.datasource, me.list[lineIndex][me.pk]),
+                                done: function (response) {
+                                    if (!me.showDeleted) me.listConfig[lineIndex].state = "deleted";
+
+                                    me.listConfig[lineIndex].rowClass = "deleted";
+
+                                    if (typeof response !== "undefined") me.list[lineIndex] = response;
+                                }
+                            });
+                        }
+                    });
+                }
+            },
+            submited: function (response, lineIndex) {
+                if (typeof response !== "undefined") this.list[lineIndex] = response;
+                this.listConfig[lineIndex].rowClass = "persisted";
+                this.listConfig[lineIndex].changed = false;
+                this.listConfig[lineIndex].state = "old";
+                this.$emit("submited", this.list[lineIndex]);
+            },
+            newLine: function () {
+                // console.log("newLine");
+                var line = {};
+                if (this.getHeaders.length > 0) { // TABLE IS NOT EMPTY
+                    for (var i in this.getHeaders) {
+                        if (this.defaultValues != null && typeof this.defaultValues !== "undefined" && typeof this.defaultValues[this.getHeaders[i]] !== "undefined")
+                            line[this.getHeaders[i]] = this.defaultValues[this.getHeaders[i]];
+                        else
+                            line[this.getHeaders[i]] = "";
+                    }
+                } else { // TABLE IS EMPTY
+                    for (var i in this.columns) {
+                        if (this.defaultValues != null && typeof this.defaultValues !== "undefined" && typeof this.defaultValues[i] !== "undefined")
+                            line[i] = this.defaultValues[i];
+                        else
+                            line[i] = "";
+                    }
+                }
+
+                this.list.push(line);
+                this.listConfig.push({ rowClass: "not-persisted", state: "new", changed: false });
+            },
+            selectLine: function (index) {
+                for (var i in this.listConfig) {
+                    if (this.listConfig[i].rowClass.match("selected") !== null) this.listConfig[i].rowClass = "";
+                }
+                this.listConfig[index].rowClass = "selected";
             }
         },
         mounted: function () {

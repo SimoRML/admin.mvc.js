@@ -66,6 +66,20 @@
     <Property Name="VERSION" Type="int" />
     <Property Name="JSON_DATA" Type="nvarchar(max)" />
   </EntityType>
+  <EntityType Name="PAGE">
+    <Key>
+      <PropertyRef Name="PAGE_ID" />
+    </Key>
+    <Property Name="PAGE_ID" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="TITLE" Type="varchar" MaxLength="50" />
+    <Property Name="GROUPE" Type="varchar" MaxLength="50" />
+    <Property Name="STATUS" Type="varchar" MaxLength="10" />
+    <Property Name="LAYOUT" Type="nvarchar(max)" />
+    <Property Name="CREATED_DATE" Type="datetime" />
+    <Property Name="CREATED_BY" Type="varchar" MaxLength="100" />
+    <Property Name="UPDATED_DATE" Type="datetime" />
+    <Property Name="UPDATED_BY" Type="varchar" MaxLength="100" />
+  </EntityType>
   <EntityType Name="VERSIONS">
     <Key>
       <PropertyRef Name="VERSIONS_ID" />
@@ -112,6 +126,7 @@
     <EntitySet Name="BO_CHILDS" EntityType="Self.BO_CHILDS" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="META_BO" EntityType="Self.META_BO" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="META_FIELD" EntityType="Self.META_FIELD" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="PAGE" EntityType="Self.PAGE" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="VERSIONS" EntityType="Self.VERSIONS" Schema="dbo" store:Type="Tables" />
     <AssociationSet Name="FK__META_FIEL__META___33D4B598" Association="Self.FK__META_FIEL__META___33D4B598">
       <End Role="META_BO" EntitySet="META_BO" />

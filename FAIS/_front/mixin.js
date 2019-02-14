@@ -62,6 +62,14 @@
     }
 };
 
+var MixinStore = {
+    store,
+    methods: {
+        getList: function (key) {
+            return this.$store.getters.get(key);
+        }
+    }
+};
 
 function v_format_directive(e1, binding, vnode) {
     if (binding.value.format === null) return;
@@ -72,24 +80,29 @@ function v_format_directive(e1, binding, vnode) {
         } catch { }
     }
     console.log("FORMAT", binding.value.format);
-    if (binding.value.format.fct.toLowerCase() === 'display') {
-        var display = "";
-        var list = bus.getList(binding.value.format.source);
-        console.log("FORMAT 2 ",e1, "list", list);
-        for (var i in list) {
-            var e = list[i];
-            //console.log("FORMAT e.Value", e.Value);
-            // console.log("FORMAT ", e.Value, " === ", binding.value.value, e.Value == binding.value.value);
-            if (e.Value == binding.value.value) {
-                display = e.Display;
-                break;
+    switch (binding.value.format.fct.toLowerCase()) {
+        case 'display':
+            var display = "";
+            var list = bus.getList(binding.value.format.source);
+            console.log("FORMAT 2 ", e1, "list", list);
+            for (var i in list) {
+                var e = list[i];
+                //console.log("FORMAT e.Value", e.Value);
+                // console.log("FORMAT ", e.Value, " === ", binding.value.value, e.Value == binding.value.value);
+                if (e.Value == binding.value.value) {
+                    display = e.Display;
+                    break;
+                }
             }
-        }
-        //console.log("FORMAT display", display);
-
-        $(e1).html(display === "" ? binding.value.value : display);
-    } else if (binding.value.format.fct.toLowerCase() === 'date') {
-        $(e1).html(binding.value.value && binding.value.value.split('T')[0]);
+            $(e1).html(display === "" ? binding.value.value : display);
+            break;
+        case 'store-display':
+            console.log('store-display', store.getters.getFilter({ key: binding.value.format.source, filter: binding.value.format.filter(binding.value.value) })[0][binding.value.format.display]);
+            $(e1).html(store.getters.getFilter({ key: binding.value.format.source, filter: binding.value.format.filter(binding.value.value) })[0][binding.value.format.display]); // x => x.ItemType == "Nature d'activité" && x.ItemListID == binding.value.value ));
+            break;
+        case 'date':
+            $(e1).html(binding.value.value && binding.value.value.split('T')[0]);
+            break;
     }
 }
 Vue.directive("format", {
@@ -132,6 +145,7 @@ Vue.directive("include", {
 });
 
 var bus = new Vue({
+    store,
     data: {
         lists: {},
         listsConfig: {},
@@ -268,7 +282,7 @@ var bus = new Vue({
         setScope: function (id, value) {
             this.$set(this.scope, id, value);
             //this.$data[id] = value;
-        }
+        },
     }
 });
 

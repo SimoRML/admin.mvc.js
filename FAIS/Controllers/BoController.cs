@@ -63,5 +63,13 @@ namespace FAIS.Controllers
 
             return PartialView(meta);
         }
+        [Route("tableeditable/{id}")]
+        public PartialViewResult TableEditable(string id)
+        {
+            if (!id.Contains("_BO_")) id += "_BO_";
+            var meta = new MetaBoRepo().GetMETA(id);
+
+            return PartialView(meta);
+        }
     }
 }
