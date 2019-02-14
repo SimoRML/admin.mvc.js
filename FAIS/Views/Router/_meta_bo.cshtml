@@ -103,11 +103,11 @@
             <dl class="dl-horizontal">
                 <dt>ID : </dt>
                 <dd>{{ row.META_BO_ID }}</dd>
-                <dt>Nom :</dt>
+                <dt>{{ L.Name }} :</dt>
                 <dd>{{ row.BO_NAME }}</dd>
-                <dt>Statut :</dt>
+                <dt>{{ L.status }} :</dt>
                 <dd>{{ row.STATUS }}</dd>
-                <dt>Version :</dt>
+                <dt>{{ L.Version }} :</dt>
                 <dd>{{ row.VERSION }}</dd>
             </dl>
         </div>
@@ -142,6 +142,10 @@
                 v-on:click="edit(row.META_FIELD_ID)">
             <i class="material-icons">create</i>
         </button>
+        <button class="btn btn-danger btn-round btn-fab btn-fab-mini btn-fab-x-mini"
+                v-on:click="remove(row.META_FIELD_ID)">
+            <i class="material-icons">delete</i>
+        </button>
     </div>
 </script>
 <script id="form-source-template" type="text/template">
@@ -166,7 +170,7 @@
                 <div class="tab-pane active" id="manuelle">
                     <div class="col-md-12 innerBox">
                         <div class="form-group label-floating">
-                            <label class="control-label">Entrez un élément par ligne</label>
+                            <label class="control-label">{{ L.enter_one_element_per_ligne }}</label>
                             <textarea class="form-control" style="height:168px; padding: 5px;" v-model="manualList" v-on:input="hendleInput" :required="isSourceOptional() === 1"></textarea>
                         </div>
                     </div>
@@ -179,13 +183,16 @@
                                       v-model="FORM_SOURCE.source"
                                       datasource="metabo/GetDataSources"
                                       :optional="isSourceOptional()"
-                                      v-on:changed="sourceChanged"></v-select>
-                            <v-label label="Champ valeur" css-class="col-md-6" v-model="FORM_SOURCE.value"></v-label>
+                                      v-on:changed="sourceChanged"
+                                      v-on:input="hendleInput"></v-select>
+                            <v-label :label="L.Key" css-class="col-md-6" v-model="FORM_SOURCE.value"></v-label>
                             <v-select ref="ddl_display" id="ddl_display" css-class="col-md-6"
-                                      label="Champ display"
+                                      :label="L.Text_to_display"
                                       v-model="FORM_SOURCE.display"
-                                      :optional="isSourceOptional()"></v-select>
-                            <v-text label="Filtre" optional="1" css-class="col-md-12" v-model="FORM_SOURCE.filter" v-on:input="hendleInput"></v-text>
+                                      :optional="isSourceOptional()"
+                                      v-on:input="hendleInput"
+                                      :multiple="true"></v-select>
+                            <v-text :label="L.Condition" optional="1" css-class="col-md-12" v-model="FORM_SOURCE.filter" v-on:input="hendleInput"></v-text>
                         </div>
                         <div class="row innerBox" v-if="sourceFields != null">
                             <h4> > Détail fields</h4>
@@ -193,9 +200,9 @@
                                 <thead>
                                     <tr>
                                         <th width="1px"></th>
-                                        <th>Champ</th>
-                                        <th>Libéllé</th>
-                                        <th>Largeur</th>
+                                        <th>{{ L.Field }}</th>
+                                        <th>{{ L.Label }}</th>
+                                        <th>{{ L.Width }}</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -220,11 +227,12 @@
                         </div>
                         <div class="row innerBox">
                             <h4> > Liste conditionelle</h4>
-                            <v-select label="Liste mère" optional="1"
+                            <v-select label="Liste mère" optional="1" v-on:input="hendleInput"
                                       :datasource="{key:'selectFields'}"
                                       v-model="FORM_SOURCE.parent"></v-select>
                             <v-select ref="ddl_link_field" label="Champ de liaison" optional="1"
-                                      v-model="FORM_SOURCE.link_field"></v-select>
+                                      v-model="FORM_SOURCE.link_field"
+                                      v-on:input="hendleInput"></v-select>
                         </div>
                     </div>
                 </div>
@@ -248,10 +256,11 @@
     </div>
 </script>
 <script type="text/javascript">
-
+    var api = EV.getComponent("data");
     //v-form-source
     Vue.component('v-form-source', {
         template: $("#form-source-template").html(),
+        mixins: [MixinBase],
         props: {
             visible: Boolean,
             data: String
@@ -264,12 +273,12 @@
                 sourceFields: null,
             };
         },
-        mixins: [MixinBase],
         methods: {
             isSourceOptional: function () {
                 return this.type === "source" ? 0 : 1;
             },
             hendleInput: function () {
+                console.log("hendleInput", this.val())
                 bus.FORM_SOURCE = this.val();
             },
             val: function () {
@@ -285,7 +294,7 @@
                 } else return this.FORM_SOURCE;
             },
             reInit: function () {
-                if (this.FORM_SOURCE == null) this.FORM_SOURCE = { source: "", value: "", display: "", filter: "", parent: "", link_field: "" };
+                if (this.FORM_SOURCE == null) this.FORM_SOURCE = { source: "", value: "", display: [], filter: "", parent: "", link_field: "" };
                 this.isSourceOptional();
             },
             sourceChanged: function (value, object) {
@@ -323,7 +332,13 @@
                 else {
                     this.type = "source";
                     this.FORM_SOURCE = tmp;
-                    // console.log("MOUNTED", this.data, tmp.display);
+                    console.log("MOUNTED", typeof this.FORM_SOURCE.display);
+                    if (typeof this.FORM_SOURCE.display === "string") {
+                        if (this.FORM_SOURCE.display.indexOf("+' '+") > -1)
+                            this.FORM_SOURCE.display = this.FORM_SOURCE.display.split("+' '+");
+                        else
+                            this.FORM_SOURCE.display = [this.FORM_SOURCE.display];
+                    }
                     setTimeout(() => {
                         $("a[href='#source_de_donnees']").trigger("click");
                     }, 100);
@@ -401,6 +416,25 @@
             edit: (id) => {
                 vapp.$refs.fieldsForm.Get(id);
                 $("#tab-fields-form").trigger("click");
+            },
+            remove: function (id) {
+                NOTIF.confirm({
+                    title: "Supprimer champ :",
+                    text: "Sûr ?",
+                    valider: function () {
+                        api.Delete({
+                            url: "MetaField/" + id,
+                            done: function (response) {
+                                if (response.success) {
+                                    NOTIF.success("Suppression effectuée avec succès");
+                                    vapp.reloadFormMetaBo();
+                                } else {
+                                    NOTIF.error("Server error ! Suppression impossible !");
+                                }
+                            }
+                        });
+                    }
+                });
             }
         }
     });
@@ -461,13 +495,15 @@
                     title: "Business object",
                     subtitle: "Créer un nouveau business object",
                     fieldsCssClass: "disable",
-                }
+                },
+                current: {}
             },
             methods: {
                 // --------------------------------------- BO SECTION
                 success: function (response) {
                     NOTIF.success('Objet enregistré avec succès.');
                     if (this.$refs.theForm.mode() === "insert") {
+                        this.current.META_BO_ID = response.META_BO_ID;
                         editFormMetaBo(response.META_BO_ID);
                     } else $("#tab-list").trigger("click");
 
@@ -503,6 +539,9 @@
                     }
                     body.JSON_DATA = JSON.stringify(jsonData);
                 },
+                reloadFormMetaBo: function () {
+                    editFormMetaBo(this.current.META_BO_ID);
+                },
                 //----------------------------------------- FIELDS SECTION
                 getFieldsUrl: function () {
                     if (typeof this.$refs.theForm === "undefined")
@@ -535,6 +574,14 @@
                             }
                             FORM_SOURCE.detail = detail;
                         }
+                        // format display for multiple diaplay fields
+                        var display = "''";
+                        for (var index in FORM_SOURCE.display) {
+                            // if (FORM_SOURCE.detail[index].checked) detail[index] = FORM_SOURCE.detail[index];
+                            display += "+' '+" + FORM_SOURCE.display[index];
+                        }
+                        FORM_SOURCE.display = display.replace("''+' '+", "");
+
                         body.GRID_FORMAT = setFormatFromSource(FORM_SOURCE);
                         body.FORM_SOURCE = JSON.stringify(cleanObject(FORM_SOURCE));
                     }
@@ -684,7 +731,10 @@
             columnLabels: Object
         },
         methods: {
-            edit: (id) => editFormMetaBo(id)
+            edit: (id) => {
+                vapp.current.META_BO_ID = id;
+                editFormMetaBo(id);
+            }
         }
     });
 

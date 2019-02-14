@@ -91,10 +91,13 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>10/23/2017 13:15:20</publishTime>
     </File>
     <File Include="bin/FAIS.dll">
-      <publishTime>01/11/2019 18:30:42</publishTime>
+      <publishTime>01/23/2019 11:28:18</publishTime>
     </File>
     <File Include="bin/FAIS.pdb">
-      <publishTime>01/11/2019 18:30:42</publishTime>
+      <publishTime>01/23/2019 11:28:18</publishTime>
+    </File>
+    <File Include="bin/fr-FR/FAIS.resources.dll">
+      <publishTime>01/23/2019 11:28:18</publishTime>
     </File>
     <File Include="bin/fr/EntityFramework.resources.dll">
       <publishTime>10/23/2017 13:15:30</publishTime>
@@ -1038,6 +1041,9 @@ by editing this MSBuild file. In order to learn more about this please visit htt
     <File Include="Models/FAIS_MODEL.edmx.diagram">
       <publishTime>12/31/2018 13:16:25</publishTime>
     </File>
+    <File Include="Scripts/alasql.min.js">
+      <publishTime>01/14/2019 09:11:01</publishTime>
+    </File>
     <File Include="Scripts/bootstrap.js">
       <publishTime>11/05/2018 11:19:36</publishTime>
     </File>
@@ -1095,6 +1101,9 @@ by editing this MSBuild file. In order to learn more about this please visit htt
     <File Include="SQL/DB_Structure.sql">
       <publishTime>01/07/2019 16:38:19</publishTime>
     </File>
+    <File Include="SQL/DYNAMIC_SELECT.sql">
+      <publishTime>01/22/2019 11:06:50</publishTime>
+    </File>
     <File Include="SQL/InitMetaBo.sql">
       <publishTime>12/03/2018 14:34:52</publishTime>
     </File>
@@ -1104,14 +1113,242 @@ by editing this MSBuild file. In order to learn more about this please visit htt
     <File Include="SQL/SelectDataSources.sql">
       <publishTime>01/07/2019 17:12:13</publishTime>
     </File>
+    <File Include="surface/css/flexboxgrid.min.css">
+      <publishTime>01/14/2019 08:51:03</publishTime>
+    </File>
+    <File Include="surface/css/font-awesome.min.css">
+      <publishTime>01/14/2019 08:51:02</publishTime>
+    </File>
+    <File Include="surface/css/icones.css">
+      <publishTime>01/14/2019 08:51:03</publishTime>
+    </File>
+    <File Include="surface/css/icones1.css">
+      <publishTime>01/19/2019 16:47:19</publishTime>
+    </File>
+    <File Include="surface/css/icones2.css">
+      <publishTime>01/19/2019 16:47:19</publishTime>
+    </File>
+    <File Include="surface/css/icones3.css">
+      <publishTime>01/20/2019 17:00:18</publishTime>
+    </File>
+    <File Include="surface/css/icones4.css">
+      <publishTime>01/20/2019 17:00:18</publishTime>
+    </File>
+    <File Include="surface/css/images/ajax-loader.gif">
+      <publishTime>01/14/2019 08:51:05</publishTime>
+    </File>
+    <File Include="surface/css/index.css">
+      <publishTime>01/14/2019 08:51:01</publishTime>
+    </File>
+    <File Include="surface/css/jquery.mobile.min.css">
+      <publishTime>01/14/2019 08:51:01</publishTime>
+    </File>
+    <File Include="surface/css/material-design-iconic-font.min.css">
+      <publishTime>01/01/0001 00:00:00</publishTime>
+    </File>
+    <File Include="surface/css/nativedroid2.color.amber.css">
+      <publishTime>01/14/2019 08:50:59</publishTime>
+    </File>
+    <File Include="surface/css/nativedroid2.color.blue-grey.css">
+      <publishTime>01/14/2019 08:50:59</publishTime>
+    </File>
+    <File Include="surface/css/nativedroid2.color.blue.css">
+      <publishTime>01/14/2019 08:50:59</publishTime>
+    </File>
+    <File Include="surface/css/nativedroid2.color.brown.css">
+      <publishTime>01/14/2019 08:50:58</publishTime>
+    </File>
+    <File Include="surface/css/nativedroid2.color.cyan.css">
+      <publishTime>01/14/2019 08:50:58</publishTime>
+    </File>
+    <File Include="surface/css/nativedroid2.color.deep-orange.css">
+      <publishTime>01/14/2019 08:50:57</publishTime>
+    </File>
+    <File Include="surface/css/nativedroid2.color.deep-purple.css">
+      <publishTime>01/14/2019 08:50:57</publishTime>
+    </File>
+    <File Include="surface/css/nativedroid2.color.green.css">
+      <publishTime>01/14/2019 08:50:56</publishTime>
+    </File>
+    <File Include="surface/css/nativedroid2.color.grey.css">
+      <publishTime>01/14/2019 08:50:56</publishTime>
+    </File>
+    <File Include="surface/css/nativedroid2.color.indigo.css">
+      <publishTime>01/14/2019 08:50:55</publishTime>
+    </File>
+    <File Include="surface/css/nativedroid2.color.light-blue.css">
+      <publishTime>01/14/2019 08:50:55</publishTime>
+    </File>
+    <File Include="surface/css/nativedroid2.color.light-green.css">
+      <publishTime>01/14/2019 08:50:54</publishTime>
+    </File>
+    <File Include="surface/css/nativedroid2.color.lime.css">
+      <publishTime>01/14/2019 08:50:54</publishTime>
+    </File>
+    <File Include="surface/css/nativedroid2.color.mpharma.css">
+      <publishTime>01/14/2019 08:50:54</publishTime>
+    </File>
+    <File Include="surface/css/nativedroid2.color.orange.css">
+      <publishTime>01/14/2019 08:50:53</publishTime>
+    </File>
+    <File Include="surface/css/nativedroid2.color.pink.css">
+      <publishTime>01/14/2019 08:50:53</publishTime>
+    </File>
+    <File Include="surface/css/nativedroid2.color.purple.css">
+      <publishTime>01/14/2019 08:50:53</publishTime>
+    </File>
+    <File Include="surface/css/nativedroid2.color.red.css">
+      <publishTime>01/14/2019 08:50:52</publishTime>
+    </File>
+    <File Include="surface/css/nativedroid2.color.teal.css">
+      <publishTime>01/14/2019 08:50:52</publishTime>
+    </File>
+    <File Include="surface/css/nativedroid2.color.yellow.css">
+      <publishTime>01/14/2019 08:50:51</publishTime>
+    </File>
+    <File Include="surface/css/nativedroid2.css">
+      <publishTime>01/14/2019 08:50:51</publishTime>
+    </File>
+    <File Include="surface/css/simo.css">
+      <publishTime>01/16/2019 10:44:03</publishTime>
+    </File>
+    <File Include="surface/default - Copy.html">
+      <publishTime>01/20/2019 17:12:39</publishTime>
+    </File>
+    <File Include="surface/default.html">
+      <publishTime>01/21/2019 10:54:25</publishTime>
+    </File>
+    <File Include="surface/fonts/fontawesome-webfont.svg">
+      <publishTime>01/14/2019 08:51:12</publishTime>
+    </File>
+    <File Include="surface/fonts/fontawesome-webfont.ttf">
+      <publishTime>01/14/2019 08:51:10</publishTime>
+    </File>
+    <File Include="surface/fonts/fontawesome-webfont.woff">
+      <publishTime>01/14/2019 08:51:10</publishTime>
+    </File>
+    <File Include="surface/fonts/fontawesome-webfont.woff2">
+      <publishTime>01/14/2019 08:51:08</publishTime>
+    </File>
+    <File Include="surface/fonts/FontAwesome.otf">
+      <publishTime>01/14/2019 08:51:08</publishTime>
+    </File>
+    <File Include="surface/fonts/Material-Design-Iconic-Font.eot">
+      <publishTime>01/14/2019 08:51:07</publishTime>
+    </File>
+    <File Include="surface/fonts/Material-Design-Iconic-Font.svg">
+      <publishTime>01/14/2019 08:51:07</publishTime>
+    </File>
+    <File Include="surface/fonts/Material-Design-Iconic-Font.woff">
+      <publishTime>01/14/2019 08:51:05</publishTime>
+    </File>
+    <File Include="surface/img/icon.png">
+      <publishTime>01/14/2019 08:51:12</publishTime>
+    </File>
+    <File Include="surface/img/logo.png">
+      <publishTime>01/14/2019 08:51:11</publishTime>
+    </File>
+    <File Include="surface/index.html">
+      <publishTime>01/14/2019 08:50:49</publishTime>
+    </File>
+    <File Include="surface/js/angular-locale_custom.js">
+      <publishTime>01/14/2019 08:51:19</publishTime>
+    </File>
+    <File Include="surface/js/angular-locale_fr-fr.js">
+      <publishTime>01/14/2019 08:51:19</publishTime>
+    </File>
+    <File Include="surface/js/angular-route.min.js">
+      <publishTime>01/14/2019 08:51:18</publishTime>
+    </File>
+    <File Include="surface/js/angular.min.js">
+      <publishTime>01/14/2019 08:51:18</publishTime>
+    </File>
+    <File Include="surface/js/angular/app.js">
+      <publishTime>01/14/2019 08:51:21</publishTime>
+    </File>
+    <File Include="surface/js/angular/appConfig.js">
+      <publishTime>01/14/2019 08:51:20</publishTime>
+    </File>
+    <File Include="surface/js/angular/controllers/mainController.js">
+      <publishTime>01/21/2019 10:49:02</publishTime>
+    </File>
+    <File Include="surface/js/angular/directives/langues.html">
+      <publishTime>01/14/2019 08:51:22</publishTime>
+    </File>
+    <File Include="surface/js/angular/directives/langues.js">
+      <publishTime>01/14/2019 08:51:22</publishTime>
+    </File>
+    <File Include="surface/js/angular/langues.js">
+      <publishTime>01/14/2019 08:51:20</publishTime>
+    </File>
+    <File Include="surface/js/angular/services/xcalls.js">
+      <publishTime>01/14/2019 08:51:23</publishTime>
+    </File>
+    <File Include="surface/js/index.js">
+      <publishTime>01/14/2019 08:51:17</publishTime>
+    </File>
+    <File Include="surface/js/INGOMA.js">
+      <publishTime>01/14/2019 10:36:34</publishTime>
+    </File>
+    <File Include="surface/js/jquery-ui.min.js">
+      <publishTime>01/14/2019 08:51:16</publishTime>
+    </File>
+    <File Include="surface/js/jquery.min.js">
+      <publishTime>01/14/2019 08:51:15</publishTime>
+    </File>
+    <File Include="surface/js/jquery.mobile.min.js">
+      <publishTime>01/14/2019 08:51:15</publishTime>
+    </File>
+    <File Include="surface/js/nativedroid2.js">
+      <publishTime>01/14/2019 08:51:14</publishTime>
+    </File>
+    <File Include="surface/js/nd2settings.js">
+      <publishTime>01/14/2019 08:51:13</publishTime>
+    </File>
+    <File Include="surface/js/simo.js">
+      <publishTime>01/14/2019 08:51:13</publishTime>
+    </File>
+    <File Include="surface/sources/bg.png">
+      <publishTime>01/14/2019 08:51:26</publishTime>
+    </File>
+    <File Include="surface/sources/logo_coulage.png">
+      <publishTime>01/14/2019 08:51:24</publishTime>
+    </File>
+    <File Include="surface/sources/lunch.js">
+      <publishTime>01/14/2019 08:51:24</publishTime>
+    </File>
+    <File Include="surface/sources/style.css">
+      <publishTime>01/14/2019 08:51:23</publishTime>
+    </File>
+    <File Include="surface/vendor/chartist/chartist.min.js">
+      <publishTime>01/14/2019 08:51:27</publishTime>
+    </File>
+    <File Include="surface/vendor/chartist/style.css">
+      <publishTime>01/14/2019 08:51:26</publishTime>
+    </File>
+    <File Include="surface/vendor/waves/waves.min.css">
+      <publishTime>01/14/2019 08:51:28</publishTime>
+    </File>
+    <File Include="surface/vendor/waves/waves.min.js">
+      <publishTime>01/14/2019 08:51:28</publishTime>
+    </File>
+    <File Include="surface/vendor/waves/waves.min.js.map">
+      <publishTime>01/14/2019 08:51:27</publishTime>
+    </File>
+    <File Include="surface/vendor/wow/animate.css">
+      <publishTime>01/14/2019 08:51:30</publishTime>
+    </File>
+    <File Include="surface/vendor/wow/wow.min.js">
+      <publishTime>01/14/2019 08:51:29</publishTime>
+    </File>
     <File Include="Views/Admin/MetaField.cshtml">
-      <publishTime>01/06/2019 20:50:17</publishTime>
+      <publishTime>01/16/2019 11:12:55</publishTime>
     </File>
     <File Include="Views/Admin/MetaFields.cshtml">
       <publishTime>12/19/2018 17:00:54</publishTime>
     </File>
     <File Include="Views/Bo/Index.cshtml">
-      <publishTime>01/02/2019 19:41:54</publishTime>
+      <publishTime>01/01/0001 00:00:00</publishTime>
     </File>
     <File Include="Views/Bo/SubForm.cshtml">
       <publishTime>12/06/2018 14:59:47</publishTime>
@@ -1138,7 +1375,7 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>11/19/2018 17:06:43</publishTime>
     </File>
     <File Include="Views/Router/_meta_bo.cshtml">
-      <publishTime>01/11/2019 17:05:59</publishTime>
+      <publishTime>01/23/2019 11:25:59</publishTime>
     </File>
     <File Include="Views/Router/_v_vomponents.cshtml">
       <publishTime>11/15/2018 18:10:28</publishTime>
@@ -1147,22 +1384,22 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>11/05/2018 11:19:36</publishTime>
     </File>
     <File Include="Views/Shared/_Layout.cshtml">
-      <publishTime>01/04/2019 15:55:45</publishTime>
+      <publishTime>01/13/2019 17:16:04</publishTime>
     </File>
     <File Include="Views/Shared/_Layout_old.cshtml">
       <publishTime>11/05/2018 11:19:36</publishTime>
     </File>
     <File Include="Views/v_components/_FormTemplates.cshtml">
-      <publishTime>01/08/2019 17:10:48</publishTime>
+      <publishTime>01/23/2019 17:59:58</publishTime>
     </File>
     <File Include="Views/v_components/_v_form.cshtml">
-      <publishTime>01/11/2019 17:03:54</publishTime>
+      <publishTime>01/13/2019 19:23:44</publishTime>
     </File>
     <File Include="Views/v_components/_v_menu_item.cshtml">
       <publishTime>12/31/2018 13:16:25</publishTime>
     </File>
     <File Include="Views/v_components/_v_table.cshtml">
-      <publishTime>01/03/2019 17:11:07</publishTime>
+      <publishTime>01/23/2019 16:20:09</publishTime>
     </File>
     <File Include="Views/Web.config">
       <publishTime>11/05/2018 11:19:36</publishTime>
@@ -1177,25 +1414,28 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>11/05/2018 11:19:36</publishTime>
     </File>
     <File Include="Web.config">
-      <publishTime>01/09/2019 17:01:06</publishTime>
+      <publishTime>01/22/2019 17:06:01</publishTime>
     </File>
     <File Include="_front/main.js">
-      <publishTime>01/08/2019 11:02:52</publishTime>
+      <publishTime>01/16/2019 11:48:42</publishTime>
     </File>
     <File Include="_front/mixin.js">
-      <publishTime>01/08/2019 15:51:56</publishTime>
+      <publishTime>01/23/2019 17:59:09</publishTime>
     </File>
     <File Include="_front/models/BaseObject.js">
       <publishTime>11/07/2018 22:36:07</publishTime>
     </File>
     <File Include="_front/models/DataSource.js">
-      <publishTime>01/08/2019 15:23:59</publishTime>
+      <publishTime>01/21/2019 11:12:02</publishTime>
     </File>
     <File Include="_front/models/Div.js">
       <publishTime>11/05/2018 11:19:36</publishTime>
     </File>
     <File Include="_front/models/Environement.js">
-      <publishTime>12/26/2018 18:24:17</publishTime>
+      <publishTime>01/14/2019 11:08:36</publishTime>
+    </File>
+    <File Include="_front/models/lang.js">
+      <publishTime>01/16/2019 11:42:43</publishTime>
     </File>
     <File Include="_front/models/Preloader.js">
       <publishTime>11/05/2018 11:19:36</publishTime>
@@ -1207,7 +1447,7 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>11/19/2018 17:06:41</publishTime>
     </File>
     <File Include="_front/util.js">
-      <publishTime>01/08/2019 11:18:13</publishTime>
+      <publishTime>01/23/2019 17:50:43</publishTime>
     </File>
   </ItemGroup>
 </Project>

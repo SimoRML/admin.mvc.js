@@ -246,6 +246,7 @@
     <Compile Include="Controllers\ProfileManagerController.cs" />
     <Compile Include="Controllers\ReportingController.cs" />
     <Compile Include="Controllers\RouterController.cs" />
+    <Compile Include="Controllers\SharedController.cs" />
     <Compile Include="Controllers\ValuesController.cs" />
     <Compile Include="Controllers\VersionsController.cs" />
     <Compile Include="Controllers\WorkflowController.cs" />
@@ -298,7 +299,17 @@
       <DependentUpon>FAIS_MODEL.tt</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
     <Compile Include="Providers\ApplicationOAuthProvider.cs" />
+    <Compile Include="Resources\lang.fr-FR.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>lang.fr-FR.resx</DependentUpon>
+    </Compile>
     <Compile Include="Results\ChallengeResult.cs" />
     <Compile Include="Startup.cs" />
   </ItemGroup>
@@ -474,6 +485,7 @@
       <DependentUpon>FAIS_MODEL.edmx</DependentUpon>
       <LastGenOutput>FAIS_MODEL.cs</LastGenOutput>
     </Content>
+    <Content Include="Scripts\alasql.min.js" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
     <Content Include="Areas\HelpPage\Views\Web.config" />
@@ -555,9 +567,80 @@
     <Content Include="Scripts\vuex.js" />
     <Content Include="SQL\CreateTable_v1.sql" />
     <Content Include="SQL\CreateView.sql" />
+    <Content Include="SQL\DYNAMIC_SELECT.sql" />
     <Content Include="SQL\InitMetaBo.sql" />
     <Content Include="SQL\MoveBoToCurrentVersion.sql" />
     <Content Include="SQL\SelectDataSources.sql" />
+    <Content Include="surface\css\flexboxgrid.min.css" />
+    <Content Include="surface\css\font-awesome.min.css" />
+    <Content Include="surface\css\icones.css" />
+    <Content Include="surface\css\icones1.css" />
+    <Content Include="surface\css\icones2.css" />
+    <Content Include="surface\css\icones3.css" />
+    <Content Include="surface\css\icones4.css" />
+    <Content Include="surface\css\images\ajax-loader.gif" />
+    <Content Include="surface\css\index.css" />
+    <Content Include="surface\css\jquery.mobile.min.css" />
+    <Content Include="surface\css\material-design-iconic-font.min.css" />
+    <Content Include="surface\css\nativedroid2.color.amber.css" />
+    <Content Include="surface\css\nativedroid2.color.blue-grey.css" />
+    <Content Include="surface\css\nativedroid2.color.blue.css" />
+    <Content Include="surface\css\nativedroid2.color.brown.css" />
+    <Content Include="surface\css\nativedroid2.color.cyan.css" />
+    <Content Include="surface\css\nativedroid2.color.deep-orange.css" />
+    <Content Include="surface\css\nativedroid2.color.deep-purple.css" />
+    <Content Include="surface\css\nativedroid2.color.green.css" />
+    <Content Include="surface\css\nativedroid2.color.grey.css" />
+    <Content Include="surface\css\nativedroid2.color.indigo.css" />
+    <Content Include="surface\css\nativedroid2.color.light-blue.css" />
+    <Content Include="surface\css\nativedroid2.color.light-green.css" />
+    <Content Include="surface\css\nativedroid2.color.lime.css" />
+    <Content Include="surface\css\nativedroid2.color.mpharma.css" />
+    <Content Include="surface\css\nativedroid2.color.orange.css" />
+    <Content Include="surface\css\nativedroid2.color.pink.css" />
+    <Content Include="surface\css\nativedroid2.color.purple.css" />
+    <Content Include="surface\css\nativedroid2.color.red.css" />
+    <Content Include="surface\css\nativedroid2.color.teal.css" />
+    <Content Include="surface\css\nativedroid2.color.yellow.css" />
+    <Content Include="surface\css\nativedroid2.css" />
+    <Content Include="surface\css\simo.css" />
+    <Content Include="surface\default - Copy.html" />
+    <Content Include="surface\default.html" />
+    <Content Include="surface\fonts\fontawesome-webfont.svg" />
+    <Content Include="surface\fonts\Material-Design-Iconic-Font.svg" />
+    <Content Include="surface\img\icon.png" />
+    <Content Include="surface\img\logo.png" />
+    <Content Include="surface\index.html" />
+    <Content Include="surface\js\angular-locale_custom.js" />
+    <Content Include="surface\js\angular-locale_fr-fr.js" />
+    <Content Include="surface\js\angular-route.min.js" />
+    <Content Include="surface\js\angular.min.js" />
+    <Content Include="surface\js\angular\app.js" />
+    <Content Include="surface\js\angular\appConfig.js" />
+    <Content Include="surface\js\angular\controllers\mainController.js" />
+    <Content Include="surface\js\angular\directives\langues.html" />
+    <Content Include="surface\js\angular\directives\langues.js" />
+    <Content Include="surface\js\angular\langues.js" />
+    <Content Include="surface\js\angular\services\xcalls.js" />
+    <Content Include="surface\js\index.js" />
+    <Content Include="surface\js\INGOMA.js" />
+    <Content Include="surface\js\jquery-ui.min.js" />
+    <Content Include="surface\js\jquery.min.js" />
+    <Content Include="surface\js\jquery.mobile.min.js" />
+    <Content Include="surface\js\nativedroid2.js" />
+    <Content Include="surface\js\nd2settings.js" />
+    <Content Include="surface\js\simo.js" />
+    <Content Include="surface\sources\bg.png" />
+    <Content Include="surface\sources\logo_coulage.png" />
+    <Content Include="surface\sources\lunch.js" />
+    <Content Include="surface\sources\style.css" />
+    <Content Include="surface\vendor\chartist\chartist.min.js" />
+    <Content Include="surface\vendor\chartist\style.css" />
+    <Content Include="surface\vendor\waves\waves.min.css" />
+    <Content Include="surface\vendor\waves\waves.min.js" />
+    <Content Include="surface\vendor\wow\animate.css" />
+    <Content Include="surface\vendor\wow\wow.min.js" />
+    <Content Include="_front\models\lang.js" />
     <Content Include="_front\main.js" />
     <Content Include="_front\mixin.js" />
     <Content Include="_front\models\BaseObject.js" />
@@ -622,6 +705,13 @@
     <Content Include="Views\Workflow\Validation.cshtml" />
     <Content Include="Views\v_components\_v_form.cshtml" />
     <Content Include="Views\v_components\_v_table.cshtml" />
+    <Content Include="surface\fonts\fontawesome-webfont.ttf" />
+    <Content Include="surface\fonts\fontawesome-webfont.woff" />
+    <Content Include="surface\fonts\fontawesome-webfont.woff2" />
+    <Content Include="surface\fonts\FontAwesome.otf" />
+    <Content Include="surface\fonts\Material-Design-Iconic-Font.eot" />
+    <Content Include="surface\fonts\Material-Design-Iconic-Font.woff" />
+    <Content Include="surface\vendor\waves\waves.min.js.map" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -633,6 +723,16 @@
   </ItemGroup>
   <ItemGroup>
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\lang.fr-FR.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>lang.fr-FR.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

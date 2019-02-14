@@ -190,6 +190,17 @@ function sideBarFix() {
     }
 }
 
+window.URL.addParam = function (url, param) {
+    return url + (url.indexOf("?") < 0 ? "?" : "&") + param;
+};
+window.URL.addPart = function (url, part) {
+        //console.log("addPart : " + url, part);
+        if (typeof part.slice !== "undefined" && part[0] === "/") part = part.substr(1);
+        url = url + (url.slice(-1) === "/" ? "" : "/") + part;
+        //console.log("addPart -> " + url);
+        return url;
+};
+/*
 var URL = {
     addParam: function (url, param) {
         return url + (url.indexOf("?") < 0 ? "?" : "&") + param;
@@ -202,6 +213,7 @@ var URL = {
         return url;
     }
 };
+*/
 
 function GetId() {
     return '_' + Math.random().toString(36).substr(2, 9);
@@ -232,6 +244,58 @@ function FormTypeToDbType(formType) {
         case 'v-email':
             return "varchar(100)";
         default:
-            return "varchar(MAX)";
+            return "nvarchar(MAX)";
     }
+}
+
+
+function getBase64(file) {
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = error => reject(error);
+    });
+}
+
+
+function b64toBlob(b64Data, contentType, sliceSize) {
+  contentType = contentType || '';
+  sliceSize = sliceSize || 512;
+
+  var byteCharacters = atob(b64Data);
+  var byteArrays = [];
+
+  for (var offset = 0; offset < byteCharacters.length; offset += sliceSize) {
+    var slice = byteCharacters.slice(offset, offset + sliceSize);
+
+    var byteNumbers = new Array(slice.length);
+    for (var i = 0; i < slice.length; i++) {
+      byteNumbers[i] = slice.charCodeAt(i);
+    }
+
+    var byteArray = new Uint8Array(byteNumbers);
+
+    byteArrays.push(byteArray);
+  }
+
+  var blob = new Blob(byteArrays, {type: contentType});
+  return blob;
+}
+
+function resizeImg(img, width, height) {
+
+    // create an off-screen canvas
+    var canvas = document.createElement('canvas'),
+        ctx = canvas.getContext('2d');
+
+    // set its dimension to target size
+    canvas.width = width;
+    canvas.height = height;
+
+    // draw source image into the off-screen canvas:
+    ctx.drawImage(img, 0, 0, width, height);
+
+    // encode image to data-uri with base64 version of compressed image
+    return canvas.toDataURL();
 }

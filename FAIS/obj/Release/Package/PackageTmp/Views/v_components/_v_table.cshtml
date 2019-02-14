@@ -1,6 +1,14 @@
-﻿<script id="TableComponentTemplate" type="text/template">
+﻿<style>
+    .table .imageContainer {
+        display: inline-block;
+        border: 1px dashed #aaa;
+        padding: 2px;
+        width: 100px;
+    }
+</style>
+<script id="TableComponentTemplate" type="text/template">
     <div :id="elementId">
-        <div class="alert alert-with-icon" data-notify="container"  v-show="list.length <= 0">
+        <div class="alert alert-with-icon" data-notify="container" v-show="list.length <= 0">
             <i class="material-icons" data-notify="icon">border_clear</i>
             <span data-notify="message">Aucune donnée à afficher !</span>
         </div>
@@ -32,9 +40,30 @@
 
                         @*TABLE COLUMNS*@
                         <template v-for="h in getHeaders">
-                            <td v-if="show(h)" v-format="{value:item[h], format:getFormat(h)}">
-                                {{ item[h] }}
-                            </td>
+                            <template v-if="show(h)">
+                                <template v-if="listConfig[index].columns[h].isFile">
+                                    <td>
+                                        @*<a :href="'data:'+item[h].type+';charset=utf-16le;base64,' + item[h].base64">*@
+                                        <a href="javascropt:;" v-on:click="downloadFile(item[h].base64, item[h].type, item[h].name)">
+                                            <template v-if="item[h].type.match('image') !== null">
+                                                <div class="imageContainer">
+                                                    <img :src="item[h].base64" />
+                                                </div>
+                                            </template>
+                                            <template v-else>
+                                                <div class="fileContainer">
+                                                    <i class="material-icons">attachment</i> : {{ item[h].name }}
+                                                </div>
+                                            </template>
+                                        </a>
+                                    </td>
+                                </template>
+                                <template v-else>
+                                    <td v-format="{value:item[h], format:getFormat(h)}">
+                                        {{ item[h] }}
+                                    </td>
+                                </template>
+                            </template>                                
                         </template>
 
                         @*ACTION COMPONENET*@
@@ -61,7 +90,7 @@
                     @*DETAIL ROW*@
                     <tr class="detailRow" v-if="detailRowDefined" v-show="showDetailRow[index] != null && showDetailRow[index]">
                         <td v-bind:colspan="columnCount">
-                            <component v-bind:is="detailRow" v-bind="{row:item, columnLabels: columnLabels}"></component>
+                            <component v-bind:is="detailRow" v-bind="{row:item,metafield:meta_field}"></component>
                         </td>
                     </tr>
                 </template>
@@ -78,16 +107,28 @@
             columnIgnore: Array,
             columnShow: Array,
             columnLabels: Object,
+            columns: Object,
             detailRow: String,
             actionComponent: String,
-            metaName: String
+            metaName: String,
+            editable: {
+                type: Boolean,
+                default: false
+            },
+            pk: String,
+            preventFirstLoad: {
+                type: Boolean,
+                default: false
+            },
         },
         data: function () {
             return {
                 list: [],
+                listConfig: [],
                 showDetailRow: [],
                 dataSourceUrl: "",
                 meta: null,
+                meta_field: {},
                 additionalColumns: []
             }
         },
@@ -122,7 +163,7 @@
                         try { a[e.DB_NAME].FORM_SOURCE = JSON.parse(e.FORM_SOURCE) } catch{ }
 
                     if (e.GRID_FORMAT !== null) {
-                        try { 
+                        try {
                             a[e.DB_NAME].GRID_FORMAT = JSON.parse(e.GRID_FORMAT);
                             if (e.DB_NAME === "additional.column")
                                 this.additionalColumns.push(e);
@@ -135,31 +176,62 @@
             }
         },
         methods: {
+            setList: function (data) {
+                this.list = data;
+
+                this.listConfig = [];
+                for (var i in this.list) {
+                    var config = { rowClass: "", state: "old", changed: false, columns: {} };
+
+                    for (var colIdx in this.list[i]) {
+                        config.columns[colIdx] = { isFile: false };
+                        try {
+                            var json =JSON.parse(this.list[i][colIdx]);
+                            config.columns[colIdx].isFile = typeof json.base64 !== "undefined";
+                            this.list[i][colIdx] = json;
+                        } catch (e) {
+
+                        }
+                    }
+
+                    this.listConfig.push(config);
+                }
+                if (this.editable) this.newLine();
+
+                //setTimeout(() => {
+                //    /*
+                //    $("#" + this.elementId + " table").DataTable().destroy();
+                //    $("#" + this.elementId + " table").DataTable({
+                //        "paging": true,
+                //        "ordering": true,
+                //        "info": true
+                //    });
+                //    */
+                //}, 500);
+            },
             load: function (url, done) {
                 var me = this;
                 if (typeof me.dataSourceUrl === "undefined" && typeof url === "undefined") return;
                 if (typeof url !== "undefined") me.dataSourceUrl = url;
                 else url = me.dataSourceUrl;
+
+                if (this.preventFirstLoad) return;
                 var data = EV.getComponent("data");
-                me.loadingShow();
                 data.ExecuteSource({
                     url: url,
                     loadComplete: function (obj, response) {
-                        me.loadingHide();
-                        me.list = response;
+                        // console.log("loadComplete", response);
+                        me.setList(response);
 
                         if (typeof done === "function") done(response);
-                    },
-                    fail: function () {
-                        me.loadingError();
                     }
                 });
             },
-            clear: function () { 
+            clear: function () {
                 this.list = [];
             },
             loadObject: function (obj) {
-                this.list = obj;
+                this.setList(obj);
             },
             show: function (colName) {
                 if (typeof this.columnShow !== "undefined") {
@@ -193,16 +265,19 @@
                         break;
                     default:
                 }
-            }
+            },
         },
         mounted: function () {
             this.dataSourceUrl = this.datasource;
             this.load();
-
+            me = this;
             // BIND TO BUS META
             if (typeof this.metaName === "undefined") return "";
             if (typeof bus.$data[this.metaName] === "undefined") return "";
             this.meta = bus.$data[this.metaName];
+            this.meta.META_FIELD.forEach((e) => {
+                me.meta_field[e.DB_NAME] = e;
+            });
         }
     });
 </script>

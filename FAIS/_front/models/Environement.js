@@ -28,6 +28,14 @@ function Environement(id){
 			}
 		}
 		
+		//Handle events
+		if(typeof EV.Events["T" + EV.T] !== "undefined"){
+			var evActions = EV.Events["T" + EV.T].actions;
+			for(var i = 0; i < evActions.length; i++){
+                evActions[i].event();
+			}
+			delete EV.Events["T" + EV.T];
+		}
 	}, this.FPS);
 }
 Environement.prototype = Object.create(BaseObject.prototype);
@@ -46,9 +54,10 @@ Environement.prototype.Action = function(id, fct){
 		fct : fct
 	});	
 };
-Environement.prototype.Event = function(e){
-	if(typeof this.Events["T" + (this.T + this.TimeLineInterval)] === "undefined"){
-		this.Events["T" + (this.T + this.TimeLineInterval)] = { actions: [
+Environement.prototype.Event = function(e, interval){
+    interval = typeof interval !== "undefined" ? interval : this.TimeLineInterval;
+	if(typeof this.Events["T" + (this.T + interval)] === "undefined"){
+		this.Events["T" + (this.T + interval)] = { actions: [
 			{
 				//id : id,
 				event : e
@@ -56,7 +65,7 @@ Environement.prototype.Event = function(e){
 		] }
 		return;
 	};
-	this.Events["T" + (this.T + this.TimeLineInterval)].actions.push({
+	this.Events["T" + (this.T + interval)].actions.push({
 		event : e
 	});	
 };

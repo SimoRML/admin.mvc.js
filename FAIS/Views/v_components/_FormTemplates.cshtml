@@ -1,7 +1,7 @@
 ﻿<script type="text/javascript">
     var FormMixin = {
         mixins: [MixinBase],
-        props: ['label', 'optional', 'datasource', 'value', 'cssClass', 'fieldName'],
+        props: ['label', 'optional', 'datasource', 'value', 'cssClass', 'fieldName', 'line', 'column', 'disabled'],
         data: function () {
             return {
                 data: null,
@@ -20,14 +20,21 @@
         },
         methods: {
             bindBack: function (e) {
-                if (e.target.type === "checkbox")
-                    this.$emit('input', e.target.checked ? 1 : 0);
-                else
-                    this.$emit('input', e.target.value, this.data);
+                // console.log("bindBack", e.target.type, e.target.value, this.selected);
+                if (e.target.type === "checkbox") {
+                    this.$emit('input', e.target.checked ? 1 : 0, { line: this.line, column: this.column });
+                }
+                else if (e.target.type === "select-multiple") {
+                    this.$emit('input', this.selected, { line: this.line, column: this.column });
+                }
+                else {
+                    //console.log("bindBack else", 'input', e.target.value, { line: this.line, column: this.column }, this.data);
+                    this.$emit('input', e.target.value, { line: this.line, column: this.column }, this.data);
+                }
 
                 // bus.$emit(this.elementId + "-changed", e.target);
                 if (e.target.type == "select-one") {
-                    this.emitChanged(e.target.value);
+                    this.emitChanged(this.selected, "bindBack");
                 }
             }
         }
@@ -36,9 +43,9 @@
 
 @*-----------------------------------------------------------------------------------------------------LABEL-----------------------*@
 <script id="v-label-template" type="text/template">
-    <div :id="elementId" :class="cssClass + ' form-group label-floating'">
-        <label class="control-label">{{ label }}<i v-show="isOptional"> - optionnel</i></label>
-        <input type="text" class="form-control"
+    <div :id="elementId" :class="cssClass + ' form-group label-floating is-focused'">
+        <label class="control-label">{{ label }}</label>
+        <input type="text" class="form-control" style="background-size: 100% 0px, 100% 1px;"
                :value="value" readonly>
     </div>
 </script>
@@ -56,7 +63,7 @@
         <input type="email" class="form-control"
                :value="value"
                v-on:input="bindBack($event)"
-               :required="!isOptional">
+               :required="!isOptional" :disabled="disabled">
     </div>
 </script>
 <script type="text/javascript">
@@ -74,7 +81,7 @@
         <input type="text" class="form-control"
                :value="value"
                v-on:input="bindBack($event)"
-               :required="!isOptional">
+               :required="!isOptional" :disabled="disabled">
     </div>
 </script>
 <script type="text/javascript">
@@ -84,6 +91,117 @@
     });
 </script>
 
+@*-----------------------------------------------------------------------------------------------------FILE-----------------------*@
+<script id="v-file-template" type="text/template">
+    <div :id="elementId">
+        <div :class="cssClass + ' form-group'">
+            <label class="control-label">{{ label }}<i v-show="isOptional"> - optionnel</i></label>
+            <div class="file-upload">
+                <template v-if="fileType.match('image') !== null">
+                    <div class="imageContainer">
+                        <img :src="base64" />
+                    </div>
+                </template>
+                <template v-else>
+                    <div class="fileContainer">
+                        {{ name }}
+                    </div>
+                </template>
+            </div>
+            <input type="file" class="form-control"
+                   v-on:input="bindFileBack($event)"
+                   :required="!isOptional && false" :disabled="disabled">
+        </div>
+        <button v-if="name != ''" type="button" class="btn btn-xs btn-danger" v-on:click="removeFile"><i class="material-icons">close</i> Supprimer le fichier</button>
+    </div>
+</script>
+<style>
+    .file-upload {
+        min-height: 30px;
+    }
+
+        .file-upload .fileContainer {
+            min-height: 30px;
+            border: 1px dashed #aaa;
+            border-top: none;
+            border-left: none;
+            border-right: none;
+        }
+
+        .file-upload .imageContainer {
+            display: inline-block;
+            border: 1px dashed #aaa;
+            padding: 5px;
+        }
+
+        .file-upload img {
+            width: 200px;
+        }
+</style>
+<script type="text/javascript">
+    Vue.component('v-file', {
+        template: $("#v-file-template").html(),
+        mixins: [FormMixin],
+        data: function () {
+            return {
+                fileType: "",
+                base64: "",
+                name: ""
+            };
+        },
+        methods: {
+            removeFile: function () {
+                this.fileType = "";
+                this.base64 = "";
+                this.name = "";
+                this.$emit('input', "", { me: this.line, me: this.column });
+            },
+            bindFileBack: function (e) {
+                var maxWidth = 1000;
+                var me = this;
+                var file = document.querySelector('#' + this.elementId + ' input[type="file"]').files[0];
+
+                getBase64(file).then(
+                    data => {
+                        me.fileType = file.type.match("/") === null ? "application/octet-stream" : file.type;
+                        me.name = file.name;
+
+                        if (me.fileType.match('image') === null) {
+                            me.base64 = data;
+                            me.$emit('input', JSON.stringify({ name: me.name, type: me.fileType, base64: me.base64 }), { me: this.line, me: this.column });
+                        } else {
+                            $("#tmpImg").remove();
+                            $("body").append($("<img id='tmpImg' src='" + data + "' style='position:absolute; letf:-30000px; top:-30000px' />"));
+                            var $img = $("#tmpImg");
+                            $img.on("load", function () {
+                                if ($(this).width() > maxWidth) { // resize the img
+                                    $(this).width(maxWidth);
+                                    data = resizeImg(this, $(this).width(), $(this).height());
+                                    me.fileType = "image/png";
+                                    $("#tmpImg").remove();
+                                }
+                                me.base64 = data;
+                                me.$emit('input', JSON.stringify({ name: me.name, type: me.fileType, base64: me.base64 }), { me: this.line, me: this.column });
+                            });
+                        }
+
+
+                    }
+                );
+            }
+        },
+        mounted: function () {
+            try {
+                var json = JSON.parse(this.value);
+                this.name = json.name;
+                this.fileType = json.type;
+                this.base64 = json.base64;
+            } catch (e) {
+
+            }
+        }
+    });
+</script>
 
 @*-----------------------------------------------------------------------------------------------------TEXT AREA-----------------------*@
 <script id="v-textarea-template" type="text/template">
@@ -92,7 +210,7 @@
         <textarea type="text" class="form-control" style="min-height: 100px;"
                   :value="value"
                   v-on:input="bindBack($event)"
-                  :required="!isOptional"></textarea>
+                  :required="!isOptional" :disabled="disabled"></textarea>
     </div>
 </script>
 <script type="text/javascript">
@@ -109,7 +227,7 @@
         <input type="number" class="form-control"
                :value="value"
                v-on:input="bindBack($event)"
-               :required="!isOptional">
+               :required="!isOptional" :disabled="disabled">
     </div>
 </script>
 <script type="text/javascript">
@@ -136,10 +254,12 @@
 <script id="v-select-template" type="text/template">
     <div :id="elementId" :class="cssClass + ' form-group label-floating'">
         <label class="control-label">{{ label }}<i v-show="isOptional"> - optionnel</i></label>
-        <select ref="selectpicker" class="selectpicker" data-style="select-with-transition" title="Choisir"
+        <select ref="selectpicker" class="selectpicker" data-style="select-with-transition" title="Choisir" data-size="10"
                 v-model="selected"
                 v-on:change="bindBack($event)"
-                :required="!isOptional">
+                :required="!isOptional"
+                :disabled="disabled"
+                :multiple="multiple">
             <option value=""> Choisir </option>
             <template v-if="isConditional">
                 <option v-for="item in filteredData"
@@ -155,11 +275,13 @@
             </template>
         </select>
         <div class="category form-category" v-if="hasDetailFields && selectedObject != null">
-            <div v-for="(value,index) in detailFields" :class="value.class">
-                <b>{{ value.label }} : </b>
-                <span v-format="{value:selectedObject.Attributes[index], format: value.format}">
-                    {{ selectedObject.Attributes[index] }}
-                </span>
+            <div class="row">
+                <div v-for="(value,index) in detailFields" :class="value.class">
+                    <b v-show="value.label != ''">{{ value.label }} : </b>
+                    <span v-format="{value:selectedObject.Attributes[index], format: value.format}">
+                        {{ selectedObject.Attributes[index] }}
+                    </span>
+                </div>
             </div>
         </div>
     </div>
@@ -168,6 +290,12 @@
     Vue.component('v-select', {
         template: $("#v-select-template").html(),
         mixins: [FormMixin],
+        props: {
+            multiple: {
+                type: Boolean,
+                default: false
+            }
+        },
         data: function () {
             return {
                 selected: this.value,
@@ -209,16 +337,17 @@
         },
         watch: {
             value: function (newVal, oldVal) {
-                this.setValue(newVal);
+                //console.log("watch value", newVal);
+                this.setValue(newVal, "watch");
             }
         },
         methods: {
-            setValue: function (value) {
+            setValue: function (value, emitter) {
                 var me = this;
                 if (me.data === null) return;
 
-                // console.log("setValue : (" + me.id +")", me.value, me.data);
-                if (typeof value !== "undefined") me.selected = value;
+                if (typeof value !== "undefined" && value !== "") me.selected = value;
+                // console.log(emitter + ".setValue : (" + me.id + ")", me.selected, "data", me.data);
                 // console.log("setValue me.selected : " + me.id, "'" + me.selected + "'");
                 // var time = me.selected == '' ? 1000 : 100;
                 setTimeout(function () {
@@ -226,12 +355,14 @@
                     $("#" + me.elementId + " select").val(me.selected);
                     $("#" + me.elementId + " select").selectpicker('refresh');
                     // bus.$emit(me.elementId + "-changed", me.$refs.selectpicker);
-                    me.emitChanged(me.selected);
+                    me.emitChanged(me.selected, emitter);
                 }, 100);
             },
-            emitChanged: function (value) {
+            emitChanged: function (value, emitter) {
+                // console.log("EMIT CHANGED", this.elementId);
                 if (value == "") return;
                 if (this.data == null) return;
+                if (typeof firstLoad === "undefined") firstLoad = false;
                 var me = this;
 
                 me.selectedObject = null;
@@ -242,7 +373,8 @@
                 });
 
                 if (value == null && me.selectedObject == null) return;
-                this.$emit('changed', value, me.selectedObject);
+                // this.$emit('changed', value, me.selectedObject);
+                this.$emit("changed", { value: value, line: this.line, column: this.column, emitter: emitter }, me.selectedObject);
                 bus.$emit(this.elementId + "-changed", value, me.selectedObject);
             },
             populateData: function (data) {
@@ -254,19 +386,27 @@
         mounted: function () {
             var me = this;
             bus.loadList(this.fieldName, me.datasource, (response) => { me.populateData(response) });
-            this.setValue();
 
             if (this.isConditional) {
-                bus.$on(me.parent + "-changed", (value, obj) => {
+                var parentId = typeof me.line === "undefined" ? me.parent : me.parent + "_" + me.line;
+                bus.$on(parentId + "-changed", (value, obj) => {
+                    console.log(parentId + "-changed", value);
                     var filteredData = [];
                     me.data.forEach((e) => {
                         if (e.Attributes[me.linkField] == value) filteredData.push(clone(e));
                     });
-                    // console.log(filteredData);
                     me.filteredData = filteredData;
-                    me.setValue();
+                    me.setValue(me.selected, "mounted bus event");
                 });
-            }
+            } else
+                this.setValue(me.selected, "mounted");
+
+            /*
+            var setValueFix = function () {
+                console.log("SELECT fix ", me.elementId, "selected", me.selected, "value", me.value, "JQ", $("#" + me.elementId + " select").val());
+            };
+            EV.Event(setValueFix,1);
+            */
         },
         beforeDestroy() {
             bus.$off(this.parent + "-changed");
@@ -285,11 +425,15 @@
         <input type="date" class="form-control"
                :value="value && value.split('T')[0]"
                v-on:input="bindBack($event)"
-               :required="!isOptional" />
+               :required="!isOptional" :disabled="disabled" />
     </div>
 </script>
 <script type="text/javascript">
     Vue.component('v-datepicker', {
+        template: $("#FormDatePickerTemplate").html(),
+        mixins: [FormMixin]
+    });
+    Vue.component('v-date', {
         template: $("#FormDatePickerTemplate").html(),
         mixins: [FormMixin]
     });
@@ -303,7 +447,7 @@
                 <input type="checkbox" name="optionsCheckboxes"
                        v-model="isChecked"
                        v-on:change="bindBack($event)"
-                       :required="!isOptional">{{ label }}<i v-show="isOptional"> - optionnel</i>
+                       :required="!isOptional" :disabled="disabled">{{ label }}<i v-show="isOptional"> - optionnel</i>
             </label>
         </div>
     </div>
