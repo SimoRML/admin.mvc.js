@@ -79,6 +79,8 @@
                 }
             },
             formatBody: function (entity) {
+                var me = this;
+
                 for (var i in this.meta) {
                     // PUT WITH DEFAULT VALUE
                     if (typeof this.meta[i].STATUS === "undefined") this.meta[i].STATUS = "ACTIVE";
@@ -193,7 +195,6 @@
             updateMode: function (entity) {
                 var me = this;
                 me.verb = "PUT";
-
                 // PARSE JSON_DATA
                 try {
                     var jsonData = JSON.parse(entity.JSON_DATA);
@@ -201,7 +202,7 @@
                     for (var i in jsonData) {
                         entity["JSON_DATA." + i] = jsonData[i];
                     }
-                    // console.log("JSON_DATA", entity);
+                    //console.log("JSON_DATA", entity);
                 } catch { }
 
                 for (var i in me.body) {
@@ -239,6 +240,12 @@
             // SET FORM META
             if (typeof me.metaDatasource === "undefined") {
                 me.meta = me.metaDefinition;
+
+                // CONCAT ADDITIONAL FIELDS
+                if (me.additionalFields != null && me.additionalFields.length > 0) {
+                    me.meta = me.meta.concat(me.additionalFields);
+                }
+
                 me.formatBody();
             } else {
                 me.GetDefinition();
