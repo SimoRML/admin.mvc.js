@@ -1,0 +1,303 @@
+﻿<style>
+    .props {
+        right: 0 !important;
+        left: unset;
+        width: 300px !important;
+        z-index: 9999 !important;
+        padding: 0 !important;
+    }
+
+        .props h4 {
+            background: #666;
+            color: #eee;
+            margin: 0;
+            padding: 10px 20px;
+        }
+
+        .props .content {
+            padding: 10px 20px;
+        }
+
+    .layoutContainer {
+        margin-right: 290px;
+    }
+
+    .addSection {
+        height: 0px;
+        border-top: 1px solid #0072c6;
+        position: relative;
+        margin-top: 14px;
+    }
+
+        .addSection .addSectionBtn {
+            position: absolute;
+            left: 0px;
+            top: -14px;
+        }
+
+        .addSection.addComponent .addSectionBtn {
+            left: calc(50% - 14px);
+        }
+
+        .addSection .addSectionBtn button {
+            background: #0072c6;
+        }
+
+    .componentContainer {
+        padding: 10px;
+        margin-bottom: 10px;
+        border: 1px dashed #bbb;
+    }
+
+        .componentContainer:hover {
+            border: 1px solid #bbb;
+        }
+
+        .componentContainer.selected {
+            border-color: #0072c6;
+        }
+
+            .componentContainer.selected:hover {
+                border-color: #025da0;
+            }
+
+        .componentContainer > div {
+            background-color: #f5f5f5;
+            min-height: 50px;
+        }
+
+    .column.selected > .card {
+        box-shadow: 0 0 5px 1px #0072c6;
+    }
+
+    #layout {
+        overflow-y: auto;
+        overflow-x: hidden;
+        padding-right: 15px;
+        padding-left: 5px;
+    }
+</style>
+<div id="vapp" class="row">
+
+    <div id="layout" class="layoutContainer" @*v-include="{url:'admin/pagelayout/@ViewBag.layout'}"*@>
+        <template v-for="(section, sectionIndex) in layout.sections">
+
+            @*@*----------------------SECTION*@
+            <div class="section row">
+
+                @*@*----------------------COLUMN*@
+                <div v-for="(col, colIndex) in section.columns"
+                     :class="col.class + ' column ' + selectedClass(sectionIndex, colIndex)"
+                     v-on:click="setSelected(sectionIndex, colIndex)">
+                    <div class="card"
+                         :style="'height:'+col.height">
+                        <div class="card-header">
+                            <h4 class="card-title">
+                                {{ col.title }}
+                            </h4>
+                        </div>
+                        <div class="card-content">
+
+                            @*@*----------------------COMPONENT*@
+                            <div v-for="(component, compIndex) in col.components"
+                                 :class="'row componentContainer ' + selectedClass(sectionIndex, colIndex, compIndex)"
+                                 v-on:click="setSelected(sectionIndex, colIndex, compIndex)">
+                                <div :id="'componentPlaceHolder_' + sectionIndex +'_'+ colIndex +'_'+ compIndex">
+
+                                </div>
+                            </div>
+                            @*@*----------------------FIN COMPONENT*@
+
+
+                            @*@*----------------------ADD COMPONENET*@
+                            <div class="addSection addComponent">
+                                <div class="dropdown addSectionBtn">
+                                    <button href="#" class="dropdown-toggle btn btn-round btn-fab btn-fab-mini btn-fab-x-mini" data-toggle="dropdown">
+                                        <i class="material-icons">add</i>
+                                    </button>
+                                    <ul class="dropdown-menu dropdown-menu-left">
+                                        <template v-for="(c, key) in componentsTypes">
+                                            <li>
+                                                <a href="javascript:;" v-on:click="addComponent(sectionIndex, colIndex, key)">
+                                                    <i class="material-icons">{{ c.icone }}</i> {{ c.name }}
+                                                </a>
+                                            </li>
+                                        </template>
+                                    </ul>
+                                </div>
+                            </div>
+                            @*@*----------------------FIN ADD COMPONENET*@
+
+                        </div>
+                    </div>
+                </div>
+                @*@*----------------------FIN COLUMN*@
+            </div>
+            @*@*----------------------FIN SECTION*@
+
+        </template>
+
+        @*@*----------------------ADD SECTION*@
+        <div class="addSection">
+            <div class="dropdown addSectionBtn">
+                <button href="#" class="dropdown-toggle btn btn-round btn-fab btn-fab-mini btn-fab-x-mini" data-toggle="dropdown">
+                    <i class="material-icons">add</i>
+                </button>
+                <ul class="dropdown-menu dropdown-menu-left">
+                    <template v-for="(st, key) in sectionTypes">
+                        <li>
+                            <a href="javascript:;" v-on:click="addSection(key)">
+                                <img :src="st.img" style="width:35px" /> {{ st.name }}
+                            </a>
+                        </li>
+                    </template>
+                </ul>
+            </div>
+        </div>
+        @*----------------------FIN ADD SECTION*@
+    </div>
+    <div class="sidebar props">
+        <h4 class="">Page</h4>
+        <div class="content">
+            <div>
+                <v-text label="Titre" v-model="layout.page.title" optional="1"></v-text>
+            </div>
+        </div>
+
+        <template v-if="currentColumn.line>-1">
+            <h4 class="">Bloc : </h4>
+            <div class="content">
+                <div>
+                    <v-text label="Titre" v-model="selectedColumn.title" optional="1"></v-text>
+                    <v-text label="Hauteur" v-model="selectedColumn.height" optional="1" detail="Laisser vide pour une hauteur automatique."></v-text>
+                </div>
+            </div>
+        </template>
+
+
+        <template v-if="currentColumn.component>-1">
+            <h4 class="">Composant : </h4>
+            <div class="content">
+                <div>
+                    <template v-for="(propa, key) in componentsTypes[selectedComponent.type].props">
+                        <component :id="'prop_' + propa.type + '_' + currentColumn.line + '_' + currentColumn.column + '_' + currentColumn.component"
+                                   :is="propa.type"
+                                   v-model="selectedComponent.props[key]"
+                                   v-bind='{label:propa.label,line:currentColumn.line, column: currentColumn.column, datasource:propa.datasource}'
+                                   @*v-bind="{id:field.DB_NAME,label:field.FORM_NAME,optional:field.FORM_OPTIONAL,datasource:field.FORM_SOURCE,fieldName:field.DB_NAME}"*@></component>
+                    </template>
+                    <div>
+                        <button type="button" class="btn btn-fill btn-primary pull-right" v-on:click="appliquer">Appliquer</button>
+                    </div>
+                </div>
+            </div>
+        </template>
+    </div>
+</div>
+<script type="text/javascript">
+    var vapp = new Vue({
+        el: "#vapp",
+        data: {
+            sectionTypes: {
+                _1: { name: "Une colonne", img: "Content/img/layouts/_1.png", cols: ["col-sm-12 col-md-12"] },
+                _2: { name: "Deux colonnes", img: "Content/img/layouts/_2.png", cols: ["col-sm-12 col-md-6", "col-sm-12 col-md-6"] },
+                _3: { name: "Trois colonne", img: "Content/img/layouts/_3.png", cols: ["col-sm-12 col-md-4", "col-sm-12 col-md-4", "col-sm-12 col-md-4"] },
+                _2_left: { name: "Colonne de gauche d'un tiers", img: "Content/img/layouts/_2_left.png", cols: ["col-sm-12 col-md-4", "col-sm-12 col-md-8"] },
+                _2_right: { name: "Colonne de droite d'un tiers", img: "Content/img/layouts/_2_right.png", cols: ["col-sm-12 col-md-8", "col-sm-12 col-md-4"] },
+            },
+            componentsTypes: {
+                FORM: {
+                    name: "Formulaire",
+                    icone: "layers",
+                    props: {
+                        source: { label: "Source de données", type: "v-select", datasource: JSON.stringify({ source: "meta_bo", value: "BO_DB_NAME", display: "BO_NAME", filter: "[STATUS]<>'-1'" }) }
+                    }
+                },
+                TABLE: { name: "Table", icone: "table_chart" },
+                LIST: { name: "Liste", icone: "format_list_bulleted" },
+                TXT: { name: "Text", icone: "text_format" },
+                IMG: { name: "Image", icone: "image" },
+                SHORTCUT: { name: "Racourcis", icone: "keyboard_tab" },
+                LINK: { name: "Lien", icone: "link" },
+            },
+            layout: {
+                page: {
+                    title: ""
+                },
+                sections: []
+            },
+            props: {
+                current: "page",
+                selectedItem: "Page",
+            },
+            currentColumn: { line: -1, column: -1, component: -1 },
+        },
+        computed: {
+            pageTitle: function () {
+                return this.layout.page.title;
+            },
+            selectedColumn: function () {
+                return this.layout.sections[this.currentColumn.line].columns[this.currentColumn.column];
+            },
+            selectedComponent: function () {
+                return this.layout.sections[this.currentColumn.line].columns[this.currentColumn.column].components[this.currentColumn.component];
+            },
+        },
+        watch: {
+            pageTitle: function (newVal, oldVal) {
+                $("#pageTitle").html(newVal);
+            }
+        },
+        methods: {
+            selectedClass: function (line, column, component) {
+                if (typeof component !== "undefined") {
+                    if (line == this.currentColumn.line && column == this.currentColumn.column && component == this.currentColumn.component) return "selected";
+                } else if (line == this.currentColumn.line && column == this.currentColumn.column) return "selected";
+                return "";
+            },
+            setSelected: function (line, column, component) {
+                this.currentColumn.line = line;
+                this.currentColumn.column = column;
+                if (typeof component !== "undefined")
+                    this.currentColumn.component = component;
+            },
+            addSection: function (sectionKey) {
+                var section = {
+                    type: sectionKey,
+                    columns: []
+                };
+
+                for (var i in this.sectionTypes[sectionKey].cols) {
+                    section.columns.push({
+                        title: "Titre",
+                        class: this.sectionTypes[sectionKey].cols[i],
+                        components: [],
+                        height: "auto",
+                    });
+                }
+
+                this.layout.sections.push(section);
+            },
+            addComponent: function (sectionIndex, colIndex, key) {
+                var component = { type: key, props: {} };
+
+                for (var i in this.componentsTypes[key].props) {
+                    component.props[i] = null;
+                }
+
+                this.layout.sections[sectionIndex].columns[colIndex].components.push(component);
+            },
+            appliquer: function () {
+                var $compDiv = $("#componentPlaceHolder_" + this.currentColumn.line + '_' + this.currentColumn.column + '_' + this.currentColumn.component);
+                INCLUDE($compDiv, "bo/formulaire/" + this.selectedComponent.props.source);
+                $compDiv.css({
+                    background: "#fff"
+                });
+            }
+        },
+        mounted: function () {
+            $("#layout").height($("#v-content").height());
+            // bus.loadList("metaList", { url: "metabo", method: "GET" }, (response) => {  });
+        }
+    });
+</script>

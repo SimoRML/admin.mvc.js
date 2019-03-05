@@ -30,7 +30,7 @@
             this.preLoaderTarget.removeClass("preLoader");
             this.preLoaderTarget.addClass("preLoaderError");
         },
-        downloadFile: function (base64,type,fileName){
+        downloadFile: function (base64, type, fileName) {
             if (base64.match("base64,") !== null) base64 = base64.split('base64,')[1];
             var blob = b64toBlob(base64, type);
             var newBlob = new Blob([blob], { type: type });
@@ -38,12 +38,12 @@
             if (window.navigator && window.navigator.msSaveOrOpenBlob) {
                 window.navigator.msSaveOrOpenBlob(newBlob);
                 return;
-            } 
+            }
 
             const data = window.URL.createObjectURL(newBlob);
             var link = document.createElement('a');
             link.href = data;
-            link.download= fileName;
+            link.download = fileName;
             link.click();
 
             setTimeout(function () {
@@ -62,6 +62,14 @@
     }
 };
 
+var MixinStore = {
+    store,
+    methods: {
+        getList: function (key) {
+            return this.$store.getters.get(key);
+        }
+    }
+};
 
 function v_format_directive(e1, binding, vnode) {
     if (binding.value.format === null) return;
@@ -71,23 +79,30 @@ function v_format_directive(e1, binding, vnode) {
             binding.value.format = JSON.parse(binding.value.format);
         } catch { }
     }
-    //console.log("FORMAT", binding.value.format);
-    if (binding.value.format.fct === 'Display') {
-        var display = "";
-        var list = bus.getList(binding.value.format.source);
-        // console.log("FORMAT 2 ",e1, "list", list);
-        for (var i in list) {
-            var e = list[i];
-            //console.log("FORMAT e.Value", e.Value);
-            // console.log("FORMAT ", e.Value, " === ", binding.value.value, e.Value == binding.value.value);
-            if (e.Value == binding.value.value) {
-                display = e.Display;
-                break;
+    console.log("FORMAT", binding.value.format);
+    switch (binding.value.format.fct.toLowerCase()) {
+        case 'display':
+            var display = "";
+            var list = bus.getList(binding.value.format.source);
+            console.log("FORMAT 2 ", e1, "list", list);
+            for (var i in list) {
+                var e = list[i];
+                //console.log("FORMAT e.Value", e.Value);
+                // console.log("FORMAT ", e.Value, " === ", binding.value.value, e.Value == binding.value.value);
+                if (e.Value == binding.value.value) {
+                    display = e.Display;
+                    break;
+                }
             }
-        }
-        //console.log("FORMAT display", display);
-
-        $(e1).html(display === "" ? binding.value.value : display);
+            $(e1).html(display === "" ? binding.value.value : display);
+            break;
+        case 'store-display':
+            console.log('store-display', store.getters.getFilter({ key: binding.value.format.source, filter: binding.value.format.filter(binding.value.value) })[0][binding.value.format.display]);
+            $(e1).html(store.getters.getFilter({ key: binding.value.format.source, filter: binding.value.format.filter(binding.value.value) })[0][binding.value.format.display]); // x => x.ItemType == "Nature d'activité" && x.ItemListID == binding.value.value ));
+            break;
+        case 'date':
+            $(e1).html(binding.value.value && binding.value.value.split('T')[0]);
+            break;
     }
 }
 Vue.directive("format", {
@@ -95,10 +110,25 @@ Vue.directive("format", {
     update: v_format_directive
 });
 
+function INCLUDE($element, url) {
+    var $preloaderElement = $element.parent(".card").length > 0 ? $element.parent(".card") : $element;
+    $preloaderElement.addClass("preLoader");
+    $element.load(url, function (response, status, xhr) {
+        $preloaderElement.removeClass("preLoader");
+        if (status === "success") {
+
+            updateDom();
+        } else {
+            $preloaderElement.addClass("preLoaderError");
+        }
+    });
+}
 Vue.directive("include", {
     bind(e1, binding, vnode) {
         // console.log("include", binding);
         var url = binding.value.url;
+        INCLUDE($(e1), url);
+        /*
         var $element = $(e1);
         var $preloaderElement = $element.parent(".card").length > 0 ? $element.parent(".card") : $element;
         $preloaderElement.addClass("preLoader");
@@ -110,11 +140,12 @@ Vue.directive("include", {
             } else {
                 $preloaderElement.addClass("preLoaderError");
             }
-        });
+        });*/
     }
 });
 
 var bus = new Vue({
+    store,
     data: {
         lists: {},
         listsConfig: {},
@@ -143,7 +174,7 @@ var bus = new Vue({
 
             // LOAD LIST IF NOT LOADED
             if (typeof this.lists[key] === "undefined") {
-                this.loadList(source, source, (a) => {  }, false);
+                this.loadList(source, source, (a) => { }, false);
             }
             return this.lists[key];
         },
@@ -163,7 +194,7 @@ var bus = new Vue({
                             jsonSource = { url: datasource, method: "GET" };
                     }
                 }
-
+                //console.log("jsonSource",jsonSource);
                 //Fill from bus lists by key
                 if (jsonSource !== null && typeof jsonSource.key !== "undefined") {
                     done(this.lists[jsonSource.key]);
@@ -251,7 +282,7 @@ var bus = new Vue({
         setScope: function (id, value) {
             this.$set(this.scope, id, value);
             //this.$data[id] = value;
-        }
+        },
     }
 });
 

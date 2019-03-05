@@ -1,7 +1,7 @@
 ﻿<script type="text/javascript">
     var FormMixin = {
         mixins: [MixinBase],
-        props: ['label', 'optional', 'datasource', 'value', 'cssClass', 'fieldName', 'line', 'column', 'disabled'],
+        props: ['label', 'optional', 'datasource', 'value', 'cssClass', 'fieldName', 'line', 'column', 'disabled', 'detail'],
         data: function () {
             return {
                 data: null,
@@ -47,6 +47,13 @@
         <label class="control-label">{{ label }}</label>
         <input type="text" class="form-control" style="background-size: 100% 0px, 100% 1px;"
                :value="value" readonly>
+        <div class="category form-category" v-if="detail != null">
+            <div class="row">
+                <div class="col-md-12">
+                    <small>{{ detail }}</small>
+                </div>
+            </div>
+        </div>
     </div>
 </script>
 <script type="text/javascript">
@@ -64,6 +71,13 @@
                :value="value"
                v-on:input="bindBack($event)"
                :required="!isOptional" :disabled="disabled">
+        <div class="category form-category" v-if="detail != null">
+            <div class="row">
+                <div class="col-md-12">
+                    <small>{{ detail }}</small>
+                </div>
+            </div>
+        </div>
     </div>
 </script>
 <script type="text/javascript">
@@ -82,6 +96,13 @@
                :value="value"
                v-on:input="bindBack($event)"
                :required="!isOptional" :disabled="disabled">
+        <div class="category form-category" v-if="detail != null">
+            <div class="row">
+                <div class="col-md-12">
+                    <small>{{ detail }}</small>
+                </div>
+            </div>
+        </div>
     </div>
 </script>
 <script type="text/javascript">
@@ -111,6 +132,13 @@
             <input type="file" class="form-control"
                    v-on:input="bindFileBack($event)"
                    :required="!isOptional && false" :disabled="disabled">
+            <div class="category form-category" v-if="detail != null">
+                <div class="row">
+                    <div class="col-md-12">
+                        <small>{{ detail }}</small>
+                    </div>
+                </div>
+            </div>
         </div>
         <button v-if="name != ''" type="button" class="btn btn-xs btn-danger" v-on:click="removeFile"><i class="material-icons">close</i> Supprimer le fichier</button>
     </div>
@@ -196,6 +224,8 @@
                 this.name = json.name;
                 this.fileType = json.type;
                 this.base64 = json.base64;
+
+                console.log("file name",this.name);
             } catch (e) {
 
             }
@@ -211,6 +241,13 @@
                   :value="value"
                   v-on:input="bindBack($event)"
                   :required="!isOptional" :disabled="disabled"></textarea>
+        <div class="category form-category" v-if="detail != null">
+            <div class="row">
+                <div class="col-md-12">
+                    <small>{{ detail }}</small>
+                </div>
+            </div>
+        </div>
     </div>
 </script>
 <script type="text/javascript">
@@ -224,10 +261,17 @@
 <script id="v-number-template" type="text/template">
     <div :id="elementId" :class="cssClass + ' form-group label-floating'">
         <label class="control-label">{{ label }}<i v-show="isOptional"> - optionnel</i></label>
-        <input type="number" class="form-control"
+        <input type="number" class="form-control" step=".01"
                :value="value"
                v-on:input="bindBack($event)"
                :required="!isOptional" :disabled="disabled">
+        <div class="category form-category" v-if="detail != null">
+            <div class="row">
+                <div class="col-md-12">
+                    <small>{{ detail }}</small>
+                </div>
+            </div>
+        </div>
     </div>
 </script>
 <script type="text/javascript">
@@ -263,14 +307,14 @@
             <option value=""> Choisir </option>
             <template v-if="isConditional">
                 <option v-for="item in filteredData"
-                        :value="item.Value">
-                    {{ item.Display }}
+                        :value="item[sourceValue]">
+                    {{ item[sourceDisplay] }}
                 </option>
             </template>
             <template v-else>
                 <option v-for="item in data"
-                        :value="item.Value">
-                    {{ item.Display }}
+                        :value="item[sourceValue]">
+                    {{ item[sourceDisplay] }}
                 </option>
             </template>
         </select>
@@ -294,6 +338,22 @@
             multiple: {
                 type: Boolean,
                 default: false
+            },
+            source: {
+                type: String,
+                default: null
+            },
+            sourceDisplay: {
+                type: String,
+                default: 'Display'
+            },
+            sourceValue: {
+                type: String,
+                default: 'Value'
+            },
+            sourceFilter: {
+                type: Function,
+                default: null,
             }
         },
         data: function () {
@@ -333,13 +393,26 @@
                     }
                 } catch { }
                 return false;
+            },
+            list: function () {
+                if (this.source === null) return null;
+                else {
+                    if(this.sourceFilter == null)
+                        return this.$store.getters.get(this.source);
+                    else
+                        return this.$store.getters.getFilter({ key: this.source, filter: this.sourceFilter });
+                }
             }
         },
         watch: {
             value: function (newVal, oldVal) {
                 //console.log("watch value", newVal);
                 this.setValue(newVal, "watch");
-            }
+            },
+            list: function (newVal, oldVal) {
+                //console.log("watch list", newVal);
+                this.populateData(newVal);
+            },
         },
         methods: {
             setValue: function (value, emitter) {
@@ -368,12 +441,12 @@
                 me.selectedObject = null;
                 // console.log("EMIT CHAGED " + this.elementId, this.data);
                 this.data.forEach((item) => {
-                    if (item.Value == value)
+                    if (item[this.sourceValue] == value)
                         me.selectedObject = item;
                 });
 
                 if (value == null && me.selectedObject == null) return;
-                // this.$emit('changed', value, me.selectedObject);
+                
                 this.$emit("changed", { value: value, line: this.line, column: this.column, emitter: emitter }, me.selectedObject);
                 bus.$emit(this.elementId + "-changed", value, me.selectedObject);
             },
@@ -385,12 +458,16 @@
         },
         mounted: function () {
             var me = this;
-            bus.loadList(this.fieldName, me.datasource, (response) => { me.populateData(response) });
-
+            if (this.source === null){
+                bus.loadList(this.fieldName, me.datasource, (response) => { me.populateData(response) });
+            } else {
+                me.populateData(this.list);
+            }
+            // console.log("mounted", this.elementId, " cond: ", this.isConditional);
             if (this.isConditional) {
                 var parentId = typeof me.line === "undefined" ? me.parent : me.parent + "_" + me.line;
                 bus.$on(parentId + "-changed", (value, obj) => {
-                    console.log(parentId + "-changed", value);
+                    console.log(parentId + "-changed, value:", value, "obj :", obj);
                     var filteredData = [];
                     me.data.forEach((e) => {
                         if (e.Attributes[me.linkField] == value) filteredData.push(clone(e));
@@ -426,6 +503,13 @@
                :value="value && value.split('T')[0]"
                v-on:input="bindBack($event)"
                :required="!isOptional" :disabled="disabled" />
+        <div class="category form-category" v-if="detail != null">
+            <div class="row">
+                <div class="col-md-12">
+                    <small>{{ detail }}</small>
+                </div>
+            </div>
+        </div>
     </div>
 </script>
 <script type="text/javascript">
@@ -448,6 +532,13 @@
                        v-model="isChecked"
                        v-on:change="bindBack($event)"
                        :required="!isOptional" :disabled="disabled">{{ label }}<i v-show="isOptional"> - optionnel</i>
+                <div class="category form-category" v-if="detail != null">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <small>{{ detail }}</small>
+                        </div>
+                    </div>
+                </div>
             </label>
         </div>
     </div>

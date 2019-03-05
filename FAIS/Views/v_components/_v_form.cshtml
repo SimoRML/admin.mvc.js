@@ -13,7 +13,7 @@
                 <component :name="field.FORM_TYPE + '-' + elementId"
                            :is="field.FORM_TYPE"
                            v-model="body[field.DB_NAME]"
-                           v-bind="{id:field.DB_NAME,label:field.FORM_NAME,optional:field.FORM_OPTIONAL,datasource:field.FORM_SOURCE,fieldName:field.DB_NAME}"></component>
+                           v-bind="getBind(field)"></component>
                 @*AFTER*@
                 <component v-if="typeof field.after_component !== 'undefined'"
                            :name="field.FORM_TYPE + '-after-' + elementId"
@@ -50,6 +50,21 @@
             }
         },
         methods: {
+            getBind: function (field) {
+                // console.log("v-form bind field", field);
+                var bind = { id: field.DB_NAME, label: field.FORM_NAME, optional: field.FORM_OPTIONAL, fieldName: field.DB_NAME };
+                if (typeof field.source === "undefined")
+                    bind.datasource = field.FORM_SOURCE;
+                else {
+                    bind.source = field.source;
+                    bind.sourceValue = field.sourceValue;
+                    bind.sourceDisplay = field.sourceDisplay;
+                    if (typeof field.sourceFilter !== "undefined")
+                        bind.sourceFilter = field.sourceFilter;
+                }
+                // console.log("v-form bind", bind);
+                return bind;
+            },
             mode: function () {
                 switch (this.verb) {
                     case 'POST':
@@ -65,8 +80,14 @@
             },
             formatBody: function (entity) {
                 for (var i in this.meta) {
+                    // PUT WITH DEFAULT VALUE
+                    if (typeof this.meta[i].STATUS === "undefined") this.meta[i].STATUS = "ACTIVE";
+                    if (typeof this.meta[i].FORM_SHOW === "undefined") this.meta[i].FORM_SHOW = 1;
+                    if (typeof this.meta[i].FORM_OPTIONAL === "undefined") this.meta[i].FORM_OPTIONAL = 0;
+
+
                     // push subform
-                    if (this.meta[i].FORM_TYPE.match('subform-') !== null) {
+                    if (typeof this.meta[i].FORM_TYPE !== "undefined" && this.meta[i].FORM_TYPE.match('subform-') !== null) {
                         this.subFroms.push(this.meta[i]);
                         continue;
                     }

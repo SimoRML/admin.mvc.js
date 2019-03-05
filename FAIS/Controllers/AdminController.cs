@@ -25,5 +25,20 @@ namespace FAIS.Controllers
 
             return PartialView();
         }
+        
+        public PartialViewResult Page(string id)
+        {
+            ViewBag.layout = id;
+
+            return PartialView();
+        }
+        public PartialViewResult PageList()
+        {
+            return PartialView();
+        }
+        public PartialViewResult PageLayout(string id)
+        {
+            return PartialView("layouts/" + id);
+        }
     }
 }

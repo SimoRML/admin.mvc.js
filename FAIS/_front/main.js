@@ -1,7 +1,10 @@
 $(function () {
     // LOAD VUE COMPONENTS
     $("#v-components").load(URL.addPart(baseUrl,"router/vcomponents"), function (response, status, xhr) {
-        if (status === "success") LOAD();
+        if (status === "success") {
+            LOAD();
+            LoadStoreData();
+        }
     });
     
     $("#minimizeSidebar").trigger("click");

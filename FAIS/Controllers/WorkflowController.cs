@@ -3,6 +3,7 @@ using System.Web.Mvc;
 
 namespace FAIS.Controllers
 {
+    [Authorize]
     public class WorkflowController : Controller
     {
         private FAISEntities db = new FAISEntities();

@@ -1,24 +1,41 @@
 ﻿const store = new Vuex.Store({
-    state: {
-        //from: null
-    },
+    state: { lists: { } },
     getters: {
-        // test: state => state.test,
-        // form: state => state.form.a,
-        // form: state => x => typeof state.from[x] === "undefined" ? null : state.from[x],
-        // formValue: state => x => typeof state.from[x.id][x.key] === "undefined" ? null : state.from[x.id][x.key],
-        // formValue: state => x => typeof state.from[x.id],
+        get: (state) => (key) => {
+            if (typeof state.lists[key] === "undefined") return null;
+            return state.lists[key]["data"] || null;
+        },
+        getFilter: (state) => (payload) => {
+            if (typeof state.lists[payload.key] === "undefined") return null;
+            return state.lists[payload.key]["data"].filter(payload.filter) || null;
+        },
     },
     mutations: {
-        fromBody(state, { formId, body }) {
-
-            if (typeof state.form === "undefined") state.form = {};
-            state.form[formId] = body;
-            // Vue.set(state.form, formId, body);
-            console.log("mutations:fromBody", state.form);
+        set(state, payload) {
+            Vue.set(state.lists, payload.key, {
+                key: payload.key,
+                source: typeof payload.source === "undefined" ? null : payload.source,
+                data: payload.data,
+                expires: payload.frequence === "day" ? new Date(new Date().setDate(new Date().getDate() + 1)) : 
+                        payload.frequence === "week" ? new Date(new Date().setDate(new Date().getDate() + 7)) :
+                        payload.frequence === "month" ? new Date(new Date().setDate(new Date().getDate() + 30)) : payload.frequence
+            });
+        }
+    },
+    actions: {
+        async load(context, payload) {
+            var api = EV.getComponent("data");
+            payload.data = await api.SendAsync({url:payload.source});
+            if (typeof payload.data === "string") {
+                try {
+                    payload.data = JSON.parse(payload.data);
+                } catch {}
+            }
+            context.commit('set', payload); //{ key: payload.key, data: payload.data, frequence: payload.frequence });
         },
-        fromValue(state, { formId, key, value }) {
-            state.form[formId][key] = value;
+        async set(context, payload) {
+            // console.log("actions", payload);
+            context.commit('set', payload); //{ key: payload.key, data: payload.data, frequence: payload.frequence });
         }
     }
 });

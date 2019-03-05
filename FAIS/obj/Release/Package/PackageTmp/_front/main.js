@@ -5,6 +5,7 @@ $(function () {
     });
     
     $("#minimizeSidebar").trigger("click");
+    
 });
 
 function LOAD() {

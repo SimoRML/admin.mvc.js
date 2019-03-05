@@ -167,7 +167,7 @@
             <div id="v-content" class="content">
                 @RenderBody()
             </div>
-            <footer class="footer">
+            <footer class="footer" style="padding-top:0; padding-bottom:0;">
                 <div class="container-fluid">
                     <nav class="pull-left">
                         <ul>
@@ -205,7 +205,7 @@
 <!--   Core JS Files   -->
 <script src="~/Content/js/jquery-3.1.1.min.js" type="text/javascript"></script>
 <script src="~/Content/js/jquery-ui.min.js" type="text/javascript"></script>
-<script src="//cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js" type="text/javascript"></script>
+@*<script src="//cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js" type="text/javascript"></script>*@
 <script src="~/Content/js/bootstrap.min.js" type="text/javascript"></script>
 <script src="~/Content/js/material.min.js" type="text/javascript"></script>
 <script src="~/Content/js/perfect-scrollbar.jquery.min.js" type="text/javascript"></script>
@@ -245,8 +245,9 @@
 
 <script src="~/Scripts/vue.js"></script>
 <script src="~/Scripts/vuex.js"></script>
-<script src="~/_front/mixin.js"></script>
 <script src="~/_front/store.js"></script>
+<script src="~/_front/storedata.js"></script>
+<script src="~/_front/mixin.js"></script>
 
 @Scripts.Render("~/bundles/_front-before")
 @Scripts.Render("~/bundles/_front")

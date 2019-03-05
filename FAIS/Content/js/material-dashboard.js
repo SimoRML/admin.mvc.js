@@ -31,13 +31,13 @@
  *               Buddha Bless:  "No Bugs"
  *
  * ========================================================= */
-
+var PSCROLL=null;
 (function () {
     isWindows = navigator.platform.indexOf('Win') > -1 ? true : false;
 
     if (isWindows && !$('body').hasClass('sidebar-mini')) {
         // if we are on windows OS we activate the perfectScrollbar function
-        $('.sidebar .sidebar-wrapper, .main-panel').perfectScrollbar();
+        PSCROLL = $('.sidebar .sidebar-wrapper, .main-panel').perfectScrollbar();
 
         $('html').addClass('perfect-scrollbar-on');
     } else {

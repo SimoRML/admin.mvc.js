@@ -267,7 +267,7 @@ namespace FAIS.Controllers
 
             model.MetaBO = meta;
             model.BO_ID = id_;
-            model.Items.Add("BO_ID", id_);
+            model.Items.Add("BO_ID", model.BO_ID);
             //return Ok(model.FormatInsert());
             bool insert = model.Insert();
             if (insert)

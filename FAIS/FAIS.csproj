@@ -243,6 +243,7 @@
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\MetaBoController.cs" />
     <Compile Include="Controllers\MetaFieldController.cs" />
+    <Compile Include="Controllers\PageAPIController.cs" />
     <Compile Include="Controllers\ProfileManagerController.cs" />
     <Compile Include="Controllers\ReportingController.cs" />
     <Compile Include="Controllers\RouterController.cs" />
@@ -284,6 +285,9 @@
       <DependentUpon>FAIS_MODEL.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\META_FIELD.cs">
+      <DependentUpon>FAIS_MODEL.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\PAGE.cs">
       <DependentUpon>FAIS_MODEL.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\Repository\MetaBoRepo.cs" />
@@ -436,6 +440,9 @@
     <Content Include="Content\img\flags\YE.png" />
     <Content Include="Content\img\header-doc.jpeg" />
     <Content Include="Content\img\image_placeholder.jpg" />
+    <Content Include="Content\img\layouts\list.png" />
+    <Content Include="Content\img\layouts\form.png" />
+    <Content Include="Content\img\layouts\table.png" />
     <Content Include="Content\img\loading.jpg" />
     <Content Include="Content\img\lock.jpeg" />
     <Content Include="Content\img\login.jpeg" />
@@ -450,6 +457,11 @@
     <Content Include="Content\img\sidebar-2.jpg" />
     <Content Include="Content\img\sidebar-3.jpg" />
     <Content Include="Content\img\sidebar-4.jpg" />
+    <Content Include="Content\img\layouts\_1.png" />
+    <Content Include="Content\img\layouts\_2.png" />
+    <Content Include="Content\img\layouts\_2_left.png" />
+    <Content Include="Content\img\layouts\_2_right.png" />
+    <Content Include="Content\img\layouts\_3.png" />
     <Content Include="Content\js\bootstrap-datetimepicker.js" />
     <Content Include="Content\js\bootstrap-notify.js" />
     <Content Include="Content\js\bootstrap-treeview.min.js" />
@@ -640,6 +652,7 @@
     <Content Include="surface\vendor\waves\waves.min.js" />
     <Content Include="surface\vendor\wow\animate.css" />
     <Content Include="surface\vendor\wow\wow.min.js" />
+    <Content Include="_front\mixins\pager.js" />
     <Content Include="_front\models\lang.js" />
     <Content Include="_front\main.js" />
     <Content Include="_front\mixin.js" />
@@ -650,6 +663,7 @@
     <Content Include="_front\models\Router.js" />
     <Content Include="_front\models\Preloader.js" />
     <Content Include="_front\store.js" />
+    <Content Include="_front\storedata.js" />
     <Content Include="_front\util.js" />
     <EntityDeploy Include="Models\FAIS_MODEL.edmx">
       <Generator>EntityModelCodeGenerator</Generator>
@@ -712,6 +726,14 @@
     <Content Include="surface\fonts\Material-Design-Iconic-Font.eot" />
     <Content Include="surface\fonts\Material-Design-Iconic-Font.woff" />
     <Content Include="surface\vendor\waves\waves.min.js.map" />
+    <Content Include="Views\Admin\Page.cshtml" />
+    <Content Include="Views\Admin\PageList.cshtml" />
+    <Content Include="Views\Admin\layouts\bo.cshtml" />
+    <Content Include="Views\v_components\_v_layout.cshtml" />
+    <Content Include="Views\Admin\layouts\l_2_1.cshtml" />
+    <Content Include="Views\Bo\Formulaire.cshtml" />
+    <Content Include="Views\Bo\Table.cshtml" />
+    <Content Include="Views\Bo\TableEditable.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
