@@ -105,6 +105,7 @@ namespace FAIS.Controllers
             metafeldDB.UPDATED_BY = User.Identity.Name;
             metafeldDB.UPDATED_DATE = DateTime.Now;
 
+            if(! string.IsNullOrEmpty(model.JSON_DATA)) metafeldDB.JSON_DATA = model.JSON_DATA;
 
             db.Entry(metafeldDB).State = EntityState.Modified;
 
