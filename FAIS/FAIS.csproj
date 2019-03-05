@@ -590,6 +590,7 @@
     <Content Include="SQL\InitMetaBo.sql" />
     <Content Include="SQL\MoveBoToCurrentVersion.sql" />
     <Content Include="SQL\SelectDataSources.sql" />
+    <Content Include="SQL\workflowtables.sql" />
     <Content Include="surface\css\flexboxgrid.min.css" />
     <Content Include="surface\css\font-awesome.min.css" />
     <Content Include="surface\css\icones.css" />
