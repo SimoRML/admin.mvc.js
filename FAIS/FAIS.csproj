@@ -287,6 +287,9 @@
     <Compile Include="Models\META_FIELD.cs">
       <DependentUpon>FAIS_MODEL.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\NOTIF.cs">
+      <DependentUpon>FAIS_MODEL.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\PAGE.cs">
       <DependentUpon>FAIS_MODEL.tt</DependentUpon>
     </Compile>
@@ -294,6 +297,9 @@
     <Compile Include="Models\Repository\MetaFieldRepo.cs" />
     <Compile Include="Models\Repository\VersionsRepo.cs" />
     <Compile Include="Models\SGBD.cs" />
+    <Compile Include="Models\TASK.cs">
+      <DependentUpon>FAIS_MODEL.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\VERSIONS.cs">
       <DependentUpon>FAIS_MODEL.tt</DependentUpon>
     </Compile>
@@ -302,6 +308,7 @@
     <Compile Include="Models\WORKFLOW.cs">
       <DependentUpon>FAIS_MODEL.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\WorkflowModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -687,7 +694,9 @@
     <Content Include="Scripts\modernizr-2.8.3.js" />
     <Content Include="SQL\DB_Structure.sql" />
     <Content Include="SQL\CreateTable.sql" />
-    <Content Include="Web.config" />
+    <Content Include="Web.config">
+      <SubType>Designer</SubType>
+    </Content>
     <Content Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </Content>
@@ -734,6 +743,8 @@
     <Content Include="Views\Bo\Formulaire.cshtml" />
     <Content Include="Views\Bo\Table.cshtml" />
     <Content Include="Views\Bo\TableEditable.cshtml" />
+    <Content Include="Views\Workflow\Mapping.cshtml" />
+    <Content Include="Views\v_components\_v_workflow_executer.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

@@ -16,7 +16,7 @@ namespace FAIS.Controllers
         [Route("Index/{id}")]
         public PartialViewResult Index(string id)
         {
-            id += "_BO_";
+            if(id!= "workflow") id += "_BO_";
             var meta = new MetaBoRepo().GetMETA(id);
 
             return PartialView(meta);

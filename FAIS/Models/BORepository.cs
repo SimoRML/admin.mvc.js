@@ -56,8 +56,14 @@ namespace FAIS.Models
         {
             // TODO : Filter 
             string select = "";
-            select = "select * from  " + Tname + " ";
-
+            //select = "select * from  " + Tname + " ";
+            select = @"select c.*, BO.CREATED_BY,BO.CREATED_DATE,BO.UPDATED_BY,BO.UPDATED_DATE,
+                        case when convert(varchar,bo.STATUS) = '1'  
+                        then 'Nouveau'
+                        else bo.STATUS
+                        end 'BO_STATUS'
+                        from " + Tname + " c " +
+                        "inner join BO on BO.BO_ID = c.BO_ID";
             return select;
         }
 
@@ -65,7 +71,7 @@ namespace FAIS.Models
         {
             // TODO : Filter 
             string select = "";
-            select = "select * from  " + Tname + " where BO_ID in (select BO_CHILD_ID from BO_CHILDS where BO_PARENT_ID = "+parentId+")";
+            select = "select * from  " + Tname + " where BO_ID in (select BO_CHILD_ID from BO_CHILDS where BO_PARENT_ID = " + parentId + ")";
 
             return select;
         }

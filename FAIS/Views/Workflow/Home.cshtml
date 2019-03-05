@@ -32,7 +32,11 @@
     var flowItemBase = {
         props: {
             index: Number,
-            value: Object
+            value: Object,
+            locked: {
+                type: Boolean,
+                default: false
+            }
         },
         data: function () {
             return {
@@ -60,7 +64,7 @@
 <script id="bo-template" type="text/template">
     <div class="dropdown wf-item col-xs-2 col-sm-2 col-md-2">
         <div class="dropdown">
-            <button href="#" :class="{'dropdown-toggle btn btn-round btn-block button':true, 'btn-info':selectedMeta.value !== -1}" data-toggle="dropdown">
+            <button href="#" :class="{'dropdown-toggle btn btn-round btn-block button':true, 'btn-info':selectedMeta.value !== -1, 'disabled':locked}" :data-toggle="locked?'' : 'dropdown'">
                 <i class="material-icons top-icone">
                     memory
                 </i>
@@ -75,6 +79,12 @@
                             <a href="javascript:;" v-on:click="val({ value: meta.META_BO_ID, display: meta.BO_NAME })">{{ meta.BO_NAME }}</a>
                         </li>
                     </ul>
+                </li>
+                <li :class="{'disabled':selectedMeta.value === -1}">
+                    <a href="javascript:;" v-on:click="$emit('configurer-mapping',index)">
+                        <i class="material-icons">link</i>
+                        Mapping
+                    </a>
                 </li>
                 <li class="divider"></li>
                 <li>
@@ -110,6 +120,7 @@
 
 <script type="text/javascript">
     var workflowId = @ViewBag.id;
+
     Vue.component('bo', {
         template: $("#bo-template").html(),
         mixins: [flowItemBase],
@@ -136,6 +147,7 @@
             if (me.value!==null) me.selectedMeta = me.value;
         }
     });
+
 </script>
 
 @* ---------------------------------------------- VALIDATION COMPONENET              *@
@@ -198,6 +210,7 @@
             };
         }
     });
+
 </script>
 
 @* ---------------------------------------------- VUE              *@
@@ -223,10 +236,12 @@
                         <bo :ref="'node_' + index"
                             :index="index"
                             :value="item.value"
+                            :locked="item.locked"
                             v-on:value-changed="setItemValue"
                             v-on:add-bo="addBo"
                             v-on:add-validation="addValidation"
-                            v-on:remove-node="removeNode"></bo>
+                            v-on:remove-node="removeNode"
+                            v-on:configurer-mapping="configurerMapping"></bo>
                     </template>
                     <template v-if="item.type === 'validation'">
                         <validation :ref="'node_' + index"
@@ -251,12 +266,13 @@
 </div>
 
 <script type="text/javascript">
+
     bus.setScope("flowLastIndex", 0);
     var Workflow_items = '@Html.Raw(Model.ITEMS)';
     try {
         Workflow_items = JSON.parse(Workflow_items);
     } catch (e) {
-        Workflow_items = [{ type: "bo", status: "new", next: null, precedent: null }/*, { type: "validation", status: "new", precedent: 0, next: null }*/];
+        Workflow_items = [{ type: "bo", status: "new", precedent: null, next: null, "value": null, locked: false }/*, { type: "validation", status: "new", precedent: 0, next: null }*/];
     }
     var vapp = new Vue({
         el: "#my-vue-app",
@@ -286,7 +302,7 @@
                         if (item.next != null) {
                             item.next = item.next.index;
                         }
-                        console.log(item);
+
                     }
 
                     // SUBMIT
@@ -338,10 +354,12 @@
             configurerValidation: function (index) {
                 var me = this;
                 var item = me.flowItems[index];
-                //Boucla get precedent item 
+
+                //Boucla get precedent item
                 // if is bo stop and get
                 // else get precedent of precedent till you get the nearest bo
-                var metaBoId = me.$refs["node_" + item.precedent][0].selectedMeta.value;
+                var metaBoId = me.closestItem(index, 'bo').value.value;
+
                 if (metaBoId === -1) {
                     NOTIF.warning("Vous devez dabord définir le BO du noeud précédent !");
                     return;
@@ -357,9 +375,69 @@
                     valider: () => {
                         me.setItemValue({ index: index, value: validationVapp.val() });
                         //item.value = validationVapp.val(); // { metaBoId: metaBoId, rules: validationVapp.$data.rules, validators: validationVapp.$data.validators };
-                        me.$refs["node_" + index][0].$data.configured = item.value.rules.length > 0 && item.value.validators.length;
+                        me.$refs["node_" + index][0].$data.configured = item.value.rules.length > 0 && item.value.validators.length > 0;
+
+                        //Lock closest BO
+                        if (item.value.rules.length > 0) {
+                            me.closestItem(index, 'bo').locked = true;
+                        } else {
+
+                            me.closestItem(index, 'bo').locked = false;
+                        }
+
                     }
                 });
+            },
+            configurerMapping: function (index) {
+                var me = this;
+                var item = me.flowItems[index];
+
+                //Boucla get precedent item
+                // if is bo stop and get
+                // else get precedent of precedent till you get the nearest bo
+                var metaBoId_child = item.value.value;
+                var metaBoId_parent = me.closestItem(index, 'bo').value.value;
+
+                if (metaBoId_parent === -1) {
+                    NOTIF.warning("Vous devez dabord définir le BO du noeud précédent !");
+                    return;
+                }
+                if (metaBoId_child === -1) {
+                    NOTIF.warning("Vous devez dabord définir le BO du noeud en cours !");
+                    return;
+                }
+
+                NOTIF.modal({
+                    width: "40%",
+                    height: "80vh",
+                    url: "workflow/mapping/" + metaBoId_parent + "?id2="+metaBoId_child,
+                    load: function () {
+                        mappingVapp.val(item.value.mapping);
+                    },
+                    valider: () => {
+
+                        me.flowItems[index].value.mapping = mappingVapp.val();
+                        //item.value = validationVapp.val(); // { metaBoId: metaBoId, rules: validationVapp.$data.rules, validators: validationVapp.$data.validators };
+                       // me.$refs["node_" + index][0].$data.configured = item.value.rules.length > 0 && item.value.validators.length > 0;
+
+
+                    }
+                });
+            },
+            closestItem: function (index, type) {
+                var precedentIndex = index;
+                var continue_ = true;
+
+                while (continue_) {
+
+                    precedentIndex--;
+                    if (precedentIndex == 0) {
+                        continue_ = false;
+                    }
+                    if (this.flowItems[precedentIndex].type == type) {
+                        return this.flowItems[precedentIndex];
+                    }
+                }
             }
         },
         mounted: function () {

@@ -4,15 +4,18 @@
   <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
     <!-- Diagram content (shape and connector positions) -->
     <edmx:Diagrams>
-      <Diagram DiagramId="c6cb2c50014e4e2d8f4f3daee53529df" Name="Diagram1">
-        <EntityTypeShape EntityType="FAIS_Model.BO" Width="1.5" PointX="5.75" PointY="0.75" IsExpanded="true" />
-        <EntityTypeShape EntityType="FAIS_Model.BO_CHILDS" Width="1.5" PointX="5.75" PointY="4.75" IsExpanded="true" />
-        <EntityTypeShape EntityType="FAIS_Model.META_BO" Width="1.5" PointX="0.75" PointY="4.125" IsExpanded="true" />
-        <EntityTypeShape EntityType="FAIS_Model.META_FIELD" Width="1.5" PointX="3" PointY="1.25" IsExpanded="true" />
-        <EntityTypeShape EntityType="FAIS_Model.VERSIONS" Width="1.5" PointX="3" PointY="7.5" IsExpanded="true" />
-        <AssociationConnector Association="FAIS_Model.FK__META_FIEL__META___33D4B598" ManuallyRouted="false" />
-        <AssociationConnector Association="FAIS_Model.FK__VERSIONS__META_B__4BAC3F29" ManuallyRouted="false" />
-        <EntityTypeShape EntityType="FAIS_Model.WORKFLOW" Width="1.5" PointX="5.375" PointY="7.75" />
+      <Diagram DiagramId="fec0250b5a8040cc8e3cc0cb9cc2e238" Name="Diagram1">
+        <EntityTypeShape EntityType="FAISModel.BO" Width="1.5" PointX="5.75" PointY="0.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="FAISModel.BO_CHILDS" Width="1.5" PointX="5.75" PointY="4.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="FAISModel.META_BO" Width="1.5" PointX="0.75" PointY="4.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="FAISModel.META_FIELD" Width="1.5" PointX="3" PointY="1.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="FAISModel.PAGE" Width="1.5" PointX="7.75" PointY="0.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="FAISModel.VERSIONS" Width="1.5" PointX="3" PointY="7.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="FAISModel.WORKFLOW" Width="1.5" PointX="7.75" PointY="4.75" IsExpanded="true" />
+        <AssociationConnector Association="FAISModel.FK__META_FIEL__META___33D4B598" ManuallyRouted="false" />
+        <AssociationConnector Association="FAISModel.FK__VERSIONS__META_B__4BAC3F29" ManuallyRouted="false" />
+        <EntityTypeShape EntityType="FAISModel.NOTIF" Width="1.5" PointX="5.375" PointY="7.75" />
+        <EntityTypeShape EntityType="FAISModel.TASK" Width="1.5" PointX="7.375" PointY="7.75" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

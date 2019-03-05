@@ -189,6 +189,8 @@ else
                     v-on:click="edit(row.BO_ID)">
                 <i class="material-icons">create</i>
             </button>
+
+            <v-workflow-v :boid="row.BO_ID"></v-workflow-v>
         </div>
     </script>
     <script type="text/javascript">
@@ -211,7 +213,8 @@ else
             if (e.GRID_SHOW == 1) window["@boDbName("columnShow")"].push(e.DB_NAME);
             window["@boDbName("columnLabels")"][e.DB_NAME] = e.GRID_NAME;
         });
-
+        window["@boDbName("columnShow")"].push('BO_STATUS');
+        window["@boDbName("columnLabels")"]['BO_STATUS'] = 'Statut';
         bus.setMeta("@Model.BO_DB_NAME", @boDbName("META_BO"));
     </script>
 

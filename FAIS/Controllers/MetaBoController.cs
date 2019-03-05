@@ -270,10 +270,133 @@ namespace FAIS.Controllers
             model.Items.Add("BO_ID", model.BO_ID);
             //return Ok(model.FormatInsert());
             bool insert = model.Insert();
+
+            // Workflow executer begin 
+            var s = new SGBD();
+
+            var db_workflow = s.Cmd(" select * from WORKFLOW CROSS APPLY OPENJSON(ITEMS) with(type varchar(50) '$.type',   " +
+                "  precedent varchar(50) '$.precedent',     [index] int '$.index',    val nvarchar(500) '$.value.value') as jsonValues where ACTIVE = 1 and jsonValues.val = " + id +
+                "and jsonValues.type = 'bo'");
+            dynamic _JSON;
+            var where = "";
+            foreach (DataRow item in db_workflow.Rows)
+            {
+                _JSON = System.Web.Helpers.Json.Decode(item["ITEMS"].ToString());
+                int level = 0;
+
+                for (var i = (int)item["index"] + 1; i < _JSON.Length; i++)
+                {
+
+                    var elm = _JSON[i];
+                    where = "";
+                    level++;
+                    if (elm["type"] == "validation")
+                    {
+
+                        foreach (var rule in elm.value.rules)
+                        {
+                            var value = rule["value"];
+                            if (!"int,float,decimal".Contains(rule["field"]["DB_TYPE"]))
+                            {
+                                value = "'" + value + "'";
+                            }
+                            where += " " + rule["logic"] + " " + rule["field"]["DB_NAME"] + " " + rule["condition"] + " " + value;
+                        }
+
+                        var check_validation = s.Cmd("select * from " + meta.BO_DB_NAME + " where BO_ID=" + model.BO_ID + "  " + where);
+
+
+                        if (check_validation.Rows.Count > 0)
+                        {
+                            TASK valid = new TASK()
+                            {
+                                BO_ID = id_,
+                                JSON_DATA = System.Web.Helpers.Json.Encode(elm.value.validators),
+                                CREATED_BY = User.Identity.Name,
+                                CREATED_DATE = DateTime.Now,
+                                STATUS = elm.value.status,
+                                ETAT = 0,
+                                TASK_LEVEL = level,
+                                TASK_TYPE = "VALIDATION"
+                            };
+
+                            db.TASK.Add(valid);
+
+                            foreach (var _validator in elm.value.validators)
+                            {
+                                NOTIF notification = new NOTIF()
+                                {
+                                    VALIDATOR = _validator["email"],
+                                    CREATED_DATE = DateTime.Now,
+                                    ETAT = 0
+                                };
+                                db.NOTIF.Add(notification);
+                            }
+
+                            db.SaveChanges();
+
+                        }
+
+                    }
+                    else if (elm["type"] == "bo")
+                    {
+                        TASK valid = new TASK()
+                        {
+                            BO_ID = id_,
+                            JSON_DATA = System.Web.Helpers.Json.Encode(elm.value),
+                            CREATED_BY = User.Identity.Name,
+                            CREATED_DATE = DateTime.Now,
+                            ETAT = 0,
+                            TASK_LEVEL = level,
+                            TASK_TYPE = "BO"
+                        };
+                        db.TASK.Add(valid);
+
+                        db.SaveChanges();
+                        var task_id = (int)valid.TASK_ID;
+                        await Insert_Bo_Using_Mapping(id, meta.BO_DB_NAME, model.BO_ID, task_id);
+
+                    }
+
+                }
+
+
+            }
+
             if (insert)
                 return Ok(model);
             else
                 return InternalServerError();
+        }
+
+
+        public async Task<IHttpActionResult> Insert_Bo_Using_Mapping(int id, string BO_DB_NAME, int bo_id, int taks_id)
+        {
+            var s = new SGBD();
+
+            dynamic _JSON_MAPP;
+
+            var mapping = s.Cmd("select * from TASK t where TASK_TYPE='BO' and TASK_ID=" + taks_id + " and bo_id not in (select bo_id from task where  TASK_TYPE='VALIDATION' and etat=0 and BO_ID=t.BO_ID)");
+            if (mapping.Rows.Count == 0) return NotFound();
+
+            _JSON_MAPP = System.Web.Helpers.Json.Decode(mapping.Rows[0]["JSON_DATA"].ToString());
+            Dictionary<string, object> JSONA_STRING = new Dictionary<string, object>();
+            foreach (var item in _JSON_MAPP["mapping"])
+            {
+                var originalField = s.Cmd("select DB_NAME from META_FIELD where FORM_NAME='" + item["parent"].ToString() + "' and META_BO_ID=" + id);
+
+                var value = s.Cmd("select " + originalField.Rows[0][0].ToString() + " from " + BO_DB_NAME + " where BO_ID =" + bo_id);
+
+
+                JSONA_STRING.Add(item.child.ToString(), value.Rows[0][0].ToString());
+
+
+            }
+
+            await Insert((int)_JSON_MAPP["value"], JSONA_STRING);
+
+            s.Cmd("update task  set ETAT=1 where task_id=" + taks_id);
+            return Ok();
         }
 
         [HttpPost]
@@ -328,7 +451,8 @@ namespace FAIS.Controllers
 
             List<object> result = new List<object>();
             bool insert = false, deleted = false;
-            foreach (var ligne in Items) {
+            foreach (var ligne in Items)
+            {
 
                 BO bo_model = new BO()
                 {
@@ -470,6 +594,59 @@ namespace FAIS.Controllers
 
             return Ok("CREATED");
         }
+
+        [HttpGet]
+        [Route("validateWorkflow/{id}")]
+
+        public async Task<IHttpActionResult> ValidateWokflow(int id)
+        {
+
+
+            var s = new SGBD();
+            var tasks = s.Cmd("select top 1 * from Task where bo_id=" + id + " and etat=0 order by task_id  ");
+
+            if (tasks.Rows.Count > 0)
+            {
+                if (tasks.Rows[0]["task_type"].ToString() == "VALIDATION")
+                {
+                    bool mine = false;
+                    var listV = System.Web.Helpers.Json.Decode(tasks.Rows[0]["JSON_DATA"].ToString());
+                    foreach (var v in listV)
+                    {
+                        if (v.email == User.Identity.Name)
+                        {
+                            mine = true;
+                        }
+                    }
+                    if (mine) return Ok(new { success = true, task_id = tasks.Rows[0]["task_id"], type = tasks.Rows[0]["task_type"], status = tasks.Rows[0]["STATUS"] });
+                    else return Ok(new { success = false });
+                }
+                else
+                {
+                    var dt = s.Cmd("select * from META_BO where META_BO_ID = (select bo_type from BO where BO_ID = " + id + ")");
+
+                    await Insert_Bo_Using_Mapping(int.Parse(dt.Rows[0]["META_BO_ID"].ToString()), dt.Rows[0]["BO_DB_NAME"].ToString(), id, int.Parse(tasks.Rows[0]["task_id"].ToString()));
+                    return Ok(new { success = true });
+                }
+            }
+
+
+            return Ok(new { success = false });
+        }
+
+        [HttpGet]
+        [Route("valider/{id}")]
+        public async Task<IHttpActionResult> valider(int id, string status, int boid)
+        {
+
+
+            var s = new SGBD();
+            s.Cmd("update Task set etat = 1 where task_id=" + id);
+            s.Cmd("update bo set status='" + status + "' where BO_ID=" + boid);
+
+            return await ValidateWokflow(boid);
+        }
+
 
     }
 }

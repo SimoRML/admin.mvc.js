@@ -15,6 +15,7 @@
         .column h5 {
             border-bottom: 1px dotted #aaa;
         }
+
             .column h5 .dropdown {
                 margin-top: -5px;
             }
@@ -36,7 +37,9 @@
         <h4 class="card-title">Configurer validation</h4>
     </div>
     <div class="card-content">
+      
         <div class="row form-group">
+            <v-text id="status" label="Statut" v-model="status"></v-text>
             <div class="col-md-3">
                 <div class="column">
                     <h5>BO > {{ meta.BO_NAME }} :</h5>
@@ -103,7 +106,9 @@
                             </div>
                             <div class="col-md-1">
                                 <button class="btn btn-sm btn-danger btn-simple"
-                                        v-on:click="rule.status = 'deleted'"><i class="material-icons">delete</i></button>
+                                        v-on:click="rule.status = 'deleted'">
+                                    <i class="material-icons">delete</i>
+                                </button>
                             </div>
                         </div>
                         <hr />
@@ -153,7 +158,8 @@
             rules: [],
             validators: [],
             validatorsList:[],
-            conditions: ["=", "<", "<=", ">", ">=", "<>"]
+            conditions: ["=", "<", "<=", ">", ">=", "<>"],
+            status:"valide"
         },
         methods: {
             addCondition: function(field){
@@ -172,8 +178,9 @@
                 if (typeof data !== "undefined") {
                     this.rules = data.rules;
                     this.validators = data.validators;
+                    this.status = data.status;
                 }
-                else return { metaBoId: this.meta.META_BO_ID, rules: this.rules, validators: this.validators };
+                else return { metaBoId: this.meta.META_BO_ID, rules: this.rules, validators: this.validators, status: this.status };
             }
         },
         mounted: function () {

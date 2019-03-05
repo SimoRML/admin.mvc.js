@@ -1,9 +1,10 @@
 ﻿using FAIS.Models;
+using FAIS.Models.Authorize;
 using System.Web.Mvc;
 
 namespace FAIS.Controllers
 {
-    [Authorize]
+    [ViewAuthorize]
     public class WorkflowController : Controller
     {
         private FAISEntities db = new FAISEntities();
@@ -19,6 +20,13 @@ namespace FAIS.Controllers
         public PartialViewResult Validation(long id)
         {
             ViewBag.id = id;
+            return PartialView();
+        }
+        [Route("Workflow/Mapping/{id}")]
+        public PartialViewResult Mapping(long id, long id2)
+        {
+            ViewBag.id_parent = id;
+            ViewBag.id_child = id2;
             return PartialView();
         }
 
