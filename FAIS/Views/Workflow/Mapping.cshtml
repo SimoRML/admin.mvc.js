@@ -1,0 +1,178 @@
+﻿
+<style>
+    .swal2-content {
+        font-size: 100% !important;
+    }
+
+    .column {
+        height: 68vh;
+        border: 1px #aaa dotted;
+        border-radius: 5px;
+        padding: 0px 10px;
+        overflow-x: hidden;
+        overflow-y: hidden;
+    }
+
+        .column h5 {
+            border-bottom: 1px dotted #aaa;
+        }
+
+            .column h5 .dropdown {
+                margin-top: -5px;
+            }
+
+    .field {
+        margin: 3px 10px 5px 0px;
+    }
+
+        .field button {
+            width: 100%;
+        }
+
+    .validator {
+        text-transform: lowercase;
+    }
+
+    .row {
+        margin-bottom: 10px;
+    }
+
+    #modal {
+        overflow-y: hidden !important
+    }
+</style>
+<div id="mapping-vue-app" style="text-align:left">
+    <div class="card-header">
+        <h4 class="card-title">Mapping</h4>
+    </div>
+    <div class="card-content">
+
+        <div class="form-group col-md-12">
+            <div class="row" v-for="mapping in mappings">
+                <div class="dropdown col-md-4">
+                    <button href="#" :class="{ 'dropdown-toggle btn btn-sm btn-success btn-block ' : mapping.parent !=='Choix du parent', 'dropdown-toggle btn btn-sm btn-default ' : mapping.parent ==='Choix du parent' }" data-toggle="dropdown">
+                        {{ mapping.parent }}
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-left">
+                        <li v-for="item_p in meta_parent">
+                            <a href="javascript:;" v-on:click="mapping.parent=item_p.FORM_NAME">
+                                {{ item_p.FORM_NAME }}
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+                <div class="dropdown col-md-4">
+                    <button href="#" :class="{ 'dropdown-toggle btn btn-sm btn-success btn-block ' : mapping.child !=='Choix du fils', 'dropdown-toggle btn btn-sm btn-default button' : mapping.child ==='Choix du fils' }" data-toggle="dropdown">
+                        {{mapping.child }}
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-left">
+                        <li v-for="item_c in meta_child">
+                            <a href="javascript:;" v-on:click="mapping.child=item_c.FORM_NAME">
+                                {{ item_c.FORM_NAME }}
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+                <div class="dropdown col-md-4">
+                    <button class="btn btn-sm btn-default button btn-info" v-on:click="addMapping(mapping)">
+                        <i class="material-icons">add</i>
+                    </button>
+                    <button class="btn btn-sm btn-default button btn-danger" v-on:click="removeMapping(mapping)">
+                        <i class="material-icons">remove</i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- <div class="row" v-for="item in meta_parent">
+
+                <div class="dropdown col-md-3">
+                    <button href="#" class="dropdown-toggle btn btn-success btn-simple" data-toggle="dropdown">
+                        -- {{ mapping.parent }}
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-left">
+                        <li v-for="item_p in meta_parent">
+                            <a href="javascript:;" v-on:click="mapping.parent=item_p.FORM_NAME">
+                                {{ item_p.FORM_NAME }}
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+                <div class="dropdown col-md-4">
+                    <button href="#" class="dropdown-toggle btn btn-success btn-simple" data-toggle="dropdown">
+                        Choix fils
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-left">
+                        <li v-for="item_c in meta_child">
+                            <a href="javascript:;" v-on:click="mapping.child=item_c.FORM_NAME">
+                                {{ item_c.FORM_NAME }}
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+                <div class="col-md-2">
+                    <a href="javascript:;" v-on:click="addMapping()">
+                        <i class="material-icons">add</i>
+                    </a>
+                </div>
+
+            </div>-->
+
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    var api=EV.getComponent('data')
+    var metaBoId_parent = @ViewBag.id_parent;
+    var metaBoId_child = @ViewBag.id_child;
+
+    var mappingVapp = new Vue({
+        el: "#mapping-vue-app",
+        data: {
+            meta_parent: {},
+            meta_child: {},
+            mappings: [
+                {
+                    parent: 'Choix du parent',
+                    link: "=",
+                    child: 'Choix du fils'
+                }
+            ]
+
+        },
+        methods: {
+            addMapping: function () {
+                this.mappings.push({
+                    parent: 'Choix du parent',
+                    link: "=",
+                    child: 'Choix du fils'
+                })
+            },
+            val: function (data) {
+                console.log(data, 1);
+               if (typeof data !== "undefined") {
+                    this.mappings = data;
+
+                }
+               else return this.mappings ;
+
+            }
+        },
+        mounted: function () {
+            var me = this;
+            api.Get({
+                url: "MetaField/metabo/" + metaBoId_parent,
+                done: function (response) {
+                    me.meta_parent= response;
+                }
+            });
+            console.log(this.meta_parent.META_FIELD);
+            api.Get({
+                url: "MetaField/metabo/" + metaBoId_child,
+                done: function (response) {
+                     me.meta_child = response;
+                }
+            });
+
+        }
+    });
+</script>

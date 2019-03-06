@@ -1,0 +1,65 @@
+﻿<script id="v-workflow_validation" type="text/template">
+    <div class="pull-right">
+        <button class="btn btn-round btn-success btn-fab btn-fab-mini btn-fab-x-mini" style="margin-left:5px"
+                v-if="type=='validation'"
+                v-on:click="valider">
+            <i class="material-icons">check</i>
+        </button>
+    </div>
+</script>
+<script type="text/javascript">
+
+    Vue.component('v-workflow-v', {
+        template: $("#v-workflow_validation").html(),
+        props: {
+            boid: { type: Number, default: 0 },
+        },
+        data: function () {
+            return {
+                task_id: null,
+                type: null,
+                status: null,
+                api: EV.getComponent("data")
+            };
+        },
+        methods: {
+            valider: function () {
+                this.api.Get({
+                    url: "/metabo/valider/" + this.task_id + "?status=" + this.status + "&boid=" + this.boid,
+
+                    done: function (response) {
+                        console.log("Return Validat", response);
+                        if (response.success) {
+                            me.task_id = response.task_id;
+                            me.type = response.type.toLowerCase();
+
+                        }
+                    }
+                });
+            }
+        },
+        watch: {
+            boid: function (newval) {
+                var me = this;
+                this.api.Get({
+                    url: "/metabo/validateWorkflow/" + newval,
+                    done: function (response) {
+                        console.log(response, me.boid);
+
+                        if (response.success) {
+                            me.task_id = response.task_id;
+                            me.type = response.type.toLowerCase();
+                            me.status = response.status;
+                        }
+                    }
+                });
+            }
+        },
+        mounted: function () {
+
+        }
+    });
+
+
+</script>
+
