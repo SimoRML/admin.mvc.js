@@ -101,5 +101,18 @@
         </MappingFragment>
       </EntityTypeMapping>
     </EntitySetMapping>
+    <EntitySetMapping Name="PlusSequence">
+      <EntityTypeMapping TypeName="FAIS_Model.PlusSequence">
+        <MappingFragment StoreEntitySet="PlusSequence">
+          <ScalarProperty Name="CurrentValue" ColumnName="CurrentValue" />
+          <ScalarProperty Name="StepBy" ColumnName="StepBy" />
+          <ScalarProperty Name="StartValue" ColumnName="StartValue" />
+          <ScalarProperty Name="TableName" ColumnName="TableName" />
+          <ScalarProperty Name="cle" ColumnName="cle" />
+          <ScalarProperty Name="SequenceID" ColumnName="SequenceID" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <FunctionImportMapping FunctionImportName="PlusSequenceNextID" FunctionName="FAIS_Model.Store.PlusSequenceNextID" />
   </EntityContainerMapping>
 </Mapping>

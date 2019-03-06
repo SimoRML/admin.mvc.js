@@ -23,6 +23,7 @@
     <v-form ref="theForm"
             meta-datasource="metabo/GetDefinition/@Model.BO_DB_NAME"
             api="metabo/Crud/@Model.META_BO_ID"
+            bo-name="@Model.BO_DB_NAME"
             v-on:submit-success="success"
             v-on:submit-fail="error"
             v-on:get-definition-done="getDefinitionDone"

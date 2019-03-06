@@ -13,6 +13,7 @@
         <AssociationConnector Association="FAIS_Model.FK__META_FIEL__META___33D4B598" ManuallyRouted="false" />
         <AssociationConnector Association="FAIS_Model.FK__VERSIONS__META_B__4BAC3F29" ManuallyRouted="false" />
         <EntityTypeShape EntityType="FAIS_Model.PAGE" Width="1.5" PointX="5.375" PointY="7.75" />
+        <EntityTypeShape EntityType="FAIS_Model.PlusSequence" Width="1.5" PointX="7.375" PointY="7.75" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

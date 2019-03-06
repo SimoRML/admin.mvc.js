@@ -290,6 +290,9 @@
     <Compile Include="Models\PAGE.cs">
       <DependentUpon>FAIS_MODEL.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\PlusSequence.cs">
+      <DependentUpon>FAIS_MODEL.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\Repository\MetaBoRepo.cs" />
     <Compile Include="Models\Repository\MetaFieldRepo.cs" />
     <Compile Include="Models\Repository\VersionsRepo.cs" />
@@ -579,6 +582,8 @@
     <Content Include="SQL\DYNAMIC_SELECT.sql" />
     <Content Include="SQL\InitMetaBo.sql" />
     <Content Include="SQL\MoveBoToCurrentVersion.sql" />
+    <Content Include="SQL\MoveFromTmp.sql" />
+    <Content Include="SQL\PlusSequence.sql" />
     <Content Include="SQL\SelectDataSources.sql" />
     <Content Include="surface\css\flexboxgrid.min.css" />
     <Content Include="surface\css\font-awesome.min.css" />

@@ -124,6 +124,12 @@
       <Parameter Name="BO_ID" Mode="In" Type="Int64" />
     </FunctionImport>
     <EntitySet Name="PAGE" EntityType="FAIS_Model.PAGE" />
+    <EntitySet Name="PlusSequence" EntityType="FAIS_Model.PlusSequence" />
+    <FunctionImport Name="PlusSequenceNextID" ReturnType="Collection(String)">
+      <Parameter Name="cle" Mode="In" Type="String" />
+      <Parameter Name="TableName" Mode="In" Type="String" />
+      <Parameter Name="stepBy" Mode="In" Type="Int32" />
+    </FunctionImport>
   </EntityContainer>
   <EntityType Name="PAGE">
     <Key>
@@ -138,5 +144,16 @@
     <Property Name="CREATED_BY" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
     <Property Name="UPDATED_DATE" Type="DateTime" Precision="3" />
     <Property Name="UPDATED_BY" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+  </EntityType>
+  <EntityType Name="PlusSequence">
+    <Key>
+      <PropertyRef Name="SequenceID" />
+    </Key>
+    <Property Name="SequenceID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="cle" Type="String" MaxLength="500" FixedLength="false" Unicode="false" />
+    <Property Name="TableName" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+    <Property Name="StartValue" Type="Int32" />
+    <Property Name="StepBy" Type="Int32" />
+    <Property Name="CurrentValue" Type="Int32" />
   </EntityType>
 </Schema>

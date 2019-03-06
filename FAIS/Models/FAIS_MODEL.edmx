@@ -85,6 +85,17 @@
           <Property Name="UPDATED_DATE" Type="datetime" />
           <Property Name="UPDATED_BY" Type="varchar" MaxLength="100" />
         </EntityType>
+        <EntityType Name="PlusSequence">
+          <Key>
+            <PropertyRef Name="SequenceID" />
+          </Key>
+          <Property Name="SequenceID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="cle" Type="varchar" MaxLength="500" />
+          <Property Name="TableName" Type="varchar" MaxLength="50" />
+          <Property Name="StartValue" Type="int" />
+          <Property Name="StepBy" Type="int" />
+          <Property Name="CurrentValue" Type="int" />
+        </EntityType>
         <EntityType Name="VERSIONS">
           <Key>
             <PropertyRef Name="VERSIONS_ID" />
@@ -126,12 +137,18 @@
         <Function Name="MoveBoToCurrentVersion" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="BO_ID" Type="bigint" Mode="In" />
         </Function>
+        <Function Name="PlusSequenceNextID" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="cle" Type="varchar" Mode="In" />
+          <Parameter Name="TableName" Type="varchar" Mode="In" />
+          <Parameter Name="stepBy" Type="int" Mode="In" />
+        </Function>
         <EntityContainer Name="FAIS_ModelStoreContainer">
           <EntitySet Name="BO" EntityType="Self.BO" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="BO_CHILDS" EntityType="Self.BO_CHILDS" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="META_BO" EntityType="Self.META_BO" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="META_FIELD" EntityType="Self.META_FIELD" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="PAGE" EntityType="Self.PAGE" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="PlusSequence" EntityType="Self.PlusSequence" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="VERSIONS" EntityType="Self.VERSIONS" Schema="dbo" store:Type="Tables" />
           <AssociationSet Name="FK__META_FIEL__META___33D4B598" Association="Self.FK__META_FIEL__META___33D4B598">
             <End Role="META_BO" EntitySet="META_BO" />
@@ -270,6 +287,12 @@
           <Parameter Name="BO_ID" Mode="In" Type="Int64" />
           </FunctionImport>
           <EntitySet Name="PAGE" EntityType="FAIS_Model.PAGE" />
+          <EntitySet Name="PlusSequence" EntityType="FAIS_Model.PlusSequence" />
+          <FunctionImport Name="PlusSequenceNextID" ReturnType="Collection(String)">
+            <Parameter Name="cle" Mode="In" Type="String" />
+            <Parameter Name="TableName" Mode="In" Type="String" />
+            <Parameter Name="stepBy" Mode="In" Type="Int32" />
+          </FunctionImport>
         </EntityContainer>
         <EntityType Name="PAGE">
           <Key>
@@ -284,6 +307,17 @@
           <Property Name="CREATED_BY" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
           <Property Name="UPDATED_DATE" Type="DateTime" Precision="3" />
           <Property Name="UPDATED_BY" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+        </EntityType>
+        <EntityType Name="PlusSequence">
+          <Key>
+            <PropertyRef Name="SequenceID" />
+          </Key>
+          <Property Name="SequenceID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="cle" Type="String" MaxLength="500" FixedLength="false" Unicode="false" />
+          <Property Name="TableName" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="StartValue" Type="Int32" />
+          <Property Name="StepBy" Type="Int32" />
+          <Property Name="CurrentValue" Type="Int32" />
         </EntityType>
       </Schema>
     </edmx:ConceptualModels>
@@ -391,6 +425,19 @@
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
+          <EntitySetMapping Name="PlusSequence">
+            <EntityTypeMapping TypeName="FAIS_Model.PlusSequence">
+              <MappingFragment StoreEntitySet="PlusSequence">
+                <ScalarProperty Name="CurrentValue" ColumnName="CurrentValue" />
+                <ScalarProperty Name="StepBy" ColumnName="StepBy" />
+                <ScalarProperty Name="StartValue" ColumnName="StartValue" />
+                <ScalarProperty Name="TableName" ColumnName="TableName" />
+                <ScalarProperty Name="cle" ColumnName="cle" />
+                <ScalarProperty Name="SequenceID" ColumnName="SequenceID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <FunctionImportMapping FunctionImportName="PlusSequenceNextID" FunctionName="FAIS_Model.Store.PlusSequenceNextID" />
         </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>

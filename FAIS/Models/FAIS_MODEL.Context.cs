@@ -33,6 +33,7 @@ namespace FAIS.Models
         public virtual DbSet<META_FIELD> META_FIELD { get; set; }
         public virtual DbSet<VERSIONS> VERSIONS { get; set; }
         public virtual DbSet<PAGE> PAGE { get; set; }
+        public virtual DbSet<PlusSequence> PlusSequence { get; set; }
     
         public virtual int MoveBoToCurrentVersion(Nullable<long> bO_ID)
         {
@@ -41,6 +42,23 @@ namespace FAIS.Models
                 new ObjectParameter("BO_ID", typeof(long));
     
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("MoveBoToCurrentVersion", bO_IDParameter);
+        }
+    
+        public virtual ObjectResult<string> PlusSequenceNextID(string cle, string tableName, Nullable<int> stepBy)
+        {
+            var cleParameter = cle != null ?
+                new ObjectParameter("cle", cle) :
+                new ObjectParameter("cle", typeof(string));
+    
+            var tableNameParameter = tableName != null ?
+                new ObjectParameter("TableName", tableName) :
+                new ObjectParameter("TableName", typeof(string));
+    
+            var stepByParameter = stepBy.HasValue ?
+                new ObjectParameter("stepBy", stepBy) :
+                new ObjectParameter("stepBy", typeof(int));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<string>("PlusSequenceNextID", cleParameter, tableNameParameter, stepByParameter);
         }
     }
 }

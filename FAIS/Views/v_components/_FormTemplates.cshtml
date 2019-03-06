@@ -1,7 +1,7 @@
 ﻿<script type="text/javascript">
     var FormMixin = {
         mixins: [MixinBase],
-        props: ['label', 'optional', 'datasource', 'value', 'cssClass', 'fieldName', 'line', 'column', 'disabled', 'detail'],
+        props: ['label', 'optional', 'datasource', 'value', 'cssClass', 'fieldName', 'line', 'column', 'disabled', 'detail', 'default', 'mode', 'boName'],
         data: function () {
             return {
                 data: null,
@@ -37,6 +37,30 @@
                     this.emitChanged(this.selected, "bindBack");
                 }
             }
+        },
+        mounted: function () {
+            this.model = this.value;
+            if (typeof this.default !== "undefined") {
+                // get calculated default from erver
+                if (this.mode === "insert") {
+                    if (this.default.indexOf('\[') > -1 && this.default.indexOf('\]') > -1) {
+                        var me = this;
+                        EV.getComponent("data").Get({
+                            url: "MetaField/GetDefaultValue/?format=" + encodeURIComponent(this.default) + "&boName=" + this.boName,
+                            done: function (response) {
+                                me.model = response;
+                                me.bindBack({ target: { value: me.model } });
+                            },
+                            fail: function (response) {
+                                NOTIF.warning("Champ : " + me.elementId + "<br>" + response);
+                            }
+                        });
+                    } else {
+                        this.model = this.default;
+                        me.bindBack({ target: { value: me.model } });
+                    }
+                }
+            }
         }
     }
 </script>
@@ -46,7 +70,7 @@
     <div :id="elementId" :class="cssClass + ' form-group label-floating is-focused'">
         <label class="control-label">{{ label }}</label>
         <input type="text" class="form-control" style="background-size: 100% 0px, 100% 1px;"
-               :value="value" readonly>
+               :value="model" readonly>
         <div class="category form-category" v-if="detail != null">
             <div class="row">
                 <div class="col-md-12">
@@ -68,7 +92,7 @@
     <div :id="elementId" :class="cssClass + ' form-group label-floating'">
         <label class="control-label">{{ label }}<i v-show="isOptional"> - optionnel</i></label>
         <input type="email" class="form-control"
-               :value="value"
+               :value="model"
                v-on:input="bindBack($event)"
                :required="!isOptional" :disabled="disabled">
         <div class="category form-category" v-if="detail != null">
@@ -93,7 +117,7 @@
     <div :id="elementId" :class="cssClass + ' form-group label-floating'">
         <label class="control-label">{{ label }}<i v-show="isOptional"> - optionnel</i></label>
         <input type="text" class="form-control"
-               :value="value"
+               :value="model"
                v-on:input="bindBack($event)"
                :required="!isOptional" :disabled="disabled">
         <div class="category form-category" v-if="detail != null">
@@ -238,7 +262,7 @@
     <div :id="elementId" :class="cssClass + ' form-group label-floating'">
         <label class="control-label">{{ label }}<i v-show="isOptional"> - optionnel</i></label>
         <textarea type="text" class="form-control" style="min-height: 100px;"
-                  :value="value"
+                  :value="model"
                   v-on:input="bindBack($event)"
                   :required="!isOptional" :disabled="disabled"></textarea>
         <div class="category form-category" v-if="detail != null">
@@ -262,7 +286,7 @@
     <div :id="elementId" :class="cssClass + ' form-group label-floating'">
         <label class="control-label">{{ label }}<i v-show="isOptional"> - optionnel</i></label>
         <input type="number" class="form-control" step=".01"
-               :value="value"
+               :value="model"
                v-on:input="bindBack($event)"
                :required="!isOptional" :disabled="disabled">
         <div class="category form-category" v-if="detail != null">
@@ -285,7 +309,7 @@
 <script id="v-hidden-template" type="text/template">
     <div :id="elementId">
         <input type="hidden"
-               :value="value">
+               :value="model">
     </div>
 </script>
 <script type="text/javascript">
@@ -500,7 +524,7 @@
             {{ label }}<i v-show="isOptional"> - optionnel</i>
         </label>
         <input type="date" class="form-control"
-               :value="value && value.split('T')[0]"
+               :value="model && model.split('T')[0]"
                v-on:input="bindBack($event)"
                :required="!isOptional" :disabled="disabled" />
         <div class="category form-category" v-if="detail != null">

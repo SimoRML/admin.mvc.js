@@ -79,7 +79,9 @@ function v_format_directive(e1, binding, vnode) {
             binding.value.format = JSON.parse(binding.value.format);
         } catch { }
     }
-    console.log("FORMAT", binding.value.format);
+    if (typeof binding.value.format.fct === "undefined") return;
+    //console.log("FORMAT", binding);
+    
     switch (binding.value.format.fct.toLowerCase()) {
         case 'display':
             var display = "";

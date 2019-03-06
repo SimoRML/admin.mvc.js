@@ -47,7 +47,7 @@ namespace FAIS.Controllers
 
             return Ok(mETA_FIELDs);
         }
-        
+
         [HttpPost]
         [Route("formtype")]
         public async Task<IHttpActionResult> FormType()
@@ -57,6 +57,7 @@ namespace FAIS.Controllers
                 new { Value= "v-datepicker" , Display= "Date" },
                 new { Value= "v-email"      , Display= "Email" },
                 new { Value= "v-file"       , Display= "Fichier" },
+                new { Value= "v-label"      , Display= "Etiquette" },
                 new { Value= "v-number"     , Display= "Numeric" },
                 new { Value= "v-select"     , Display= "Liste de choix" },
                 new { Value= "v-text"       , Display= "Text" },
@@ -66,7 +67,7 @@ namespace FAIS.Controllers
             var subForms = await db.META_BO.Where(x => x.TYPE == "subform" && x.STATUS != "PENDING").ToListAsync();
             foreach (var oneSubForm in subForms)
             {
-                formTypes.Add(new { Value = "subform-" + oneSubForm.BO_DB_NAME, Display = "@" + oneSubForm.BO_NAME});
+                formTypes.Add(new { Value = "subform-" + oneSubForm.BO_DB_NAME, Display = "@" + oneSubForm.BO_NAME });
             }
 
             return Ok(formTypes);
@@ -92,7 +93,7 @@ namespace FAIS.Controllers
                 metafeldDB.DB_NAME = model.DB_NAME;
                 metafeldDB.DB_NULL = 1;//model.DB_NULL;
             }
-            if(metafeldDB.STATUS.Trim() == "NEW" || (metafeldDB.FORM_TYPE != "v-datepicker" & metafeldDB.FORM_TYPE != "v-checkbox"))
+            if (metafeldDB.STATUS.Trim() == "NEW" || (metafeldDB.FORM_TYPE != "v-datepicker" & metafeldDB.FORM_TYPE != "v-checkbox"))
                 metafeldDB.FORM_TYPE = model.FORM_TYPE;
 
             metafeldDB.GRID_NAME = model.GRID_NAME;
@@ -105,7 +106,7 @@ namespace FAIS.Controllers
             metafeldDB.UPDATED_BY = User.Identity.Name;
             metafeldDB.UPDATED_DATE = DateTime.Now;
 
-            if(! string.IsNullOrEmpty(model.JSON_DATA)) metafeldDB.JSON_DATA = model.JSON_DATA;
+            if (!string.IsNullOrEmpty(model.JSON_DATA)) metafeldDB.JSON_DATA = model.JSON_DATA;
 
             db.Entry(metafeldDB).State = EntityState.Modified;
 
@@ -123,7 +124,8 @@ namespace FAIS.Controllers
                 {
                     throw;
                 }
-            }catch (DbEntityValidationException ex)
+            }
+            catch (DbEntityValidationException ex)
             {
 
             }
@@ -164,8 +166,74 @@ namespace FAIS.Controllers
             catch (DbEntityValidationException ex)
             {
                 return Ok(new { success = false });
-            }            
+            }
         }
+
+
+        // DELETE: api/MetaField/GetDefaultValue/
+        [ResponseType(typeof(META_FIELD))]
+        [Route("GetDefaultValue")]
+        [HttpGet]
+        public async Task<IHttpActionResult> GetDefaultValue(string format, string boName)
+        {
+            string cle = "", formule = "", step="", type = "";
+            bool inFomule = false;
+            int count = 0;
+
+            foreach (char car in format)
+            {
+                if (car == '[')
+                {
+                    formule += car;
+                    inFomule = true;
+                    continue;
+                }
+                if (car == ']')
+                {
+                    formule += car;
+                    inFomule = false;
+                    continue;
+                }
+
+                if (inFomule)
+                {
+                    formule += car;
+                    count++;
+                    if (count == 1)
+                    {
+                        switch (car)
+                        {
+                            case '+':
+                                type = "plus";
+                                break;
+                            case 'd':
+                                type = "date";
+                                break;
+                        }
+                    }
+                    else
+                    {
+                        step += car;
+                    }
+                }
+                else
+                {
+                    cle += car;
+                }
+            }
+
+            switch (type)
+            {
+                case "plus":
+                    var rst = db.PlusSequenceNextID(cle, boName, int.Parse(step)).ToList()[0];
+                    return Ok(format.Replace(formule, rst.ToString()));
+                case "date":
+                    return Ok(step == "" ? DateTime.Now: DateTime.Now.AddDays(int.Parse(step)));
+                default:
+                    return BadRequest("Formule non prise en charge !");
+            }
+        }
+
 
         protected override void Dispose(bool disposing)
         {

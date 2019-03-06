@@ -34,7 +34,8 @@
             metaDatasource: String,
             metaDefinition: Array,
             api: String,
-            additionalFields: Array
+            additionalFields: Array,
+            boName: String,
         },
         data: function () {
             return {
@@ -52,7 +53,7 @@
         methods: {
             getBind: function (field) {
                 // console.log("v-form bind field", field);
-                var bind = { id: field.DB_NAME, label: field.FORM_NAME, optional: field.FORM_OPTIONAL, fieldName: field.DB_NAME };
+                var bind = { id: field.DB_NAME, label: field.FORM_NAME, optional: field.FORM_OPTIONAL, fieldName: field.DB_NAME, mode: this.mode(), boName: this.boName };
                 if (typeof field.source === "undefined")
                     bind.datasource = field.FORM_SOURCE;
                 else {
@@ -62,7 +63,17 @@
                     if (typeof field.sourceFilter !== "undefined")
                         bind.sourceFilter = field.sourceFilter;
                 }
-                // console.log("v-form bind", bind);
+                
+                // JSON_DATA
+                try {
+                    var json_data = JSON.parse(field.JSON_DATA);
+                    console.log('%c DEFAULT', 'color:red',  json_data.DEFAULT, "mode", this.mode());
+
+                    if (typeof json_data.DEFAULT !== "undefined")
+                        bind.default = json_data.DEFAULT;
+                } catch (e) { }
+
+
                 return bind;
             },
             mode: function () {

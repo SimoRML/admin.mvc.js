@@ -80,6 +80,17 @@
     <Property Name="UPDATED_DATE" Type="datetime" />
     <Property Name="UPDATED_BY" Type="varchar" MaxLength="100" />
   </EntityType>
+  <EntityType Name="PlusSequence">
+    <Key>
+      <PropertyRef Name="SequenceID" />
+    </Key>
+    <Property Name="SequenceID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="cle" Type="varchar" MaxLength="500" />
+    <Property Name="TableName" Type="varchar" MaxLength="50" />
+    <Property Name="StartValue" Type="int" />
+    <Property Name="StepBy" Type="int" />
+    <Property Name="CurrentValue" Type="int" />
+  </EntityType>
   <EntityType Name="VERSIONS">
     <Key>
       <PropertyRef Name="VERSIONS_ID" />
@@ -121,12 +132,18 @@
   <Function Name="MoveBoToCurrentVersion" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
     <Parameter Name="BO_ID" Type="bigint" Mode="In" />
   </Function>
+  <Function Name="PlusSequenceNextID" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+    <Parameter Name="cle" Type="varchar" Mode="In" />
+    <Parameter Name="TableName" Type="varchar" Mode="In" />
+    <Parameter Name="stepBy" Type="int" Mode="In" />
+  </Function>
   <EntityContainer Name="FAIS_ModelStoreContainer">
     <EntitySet Name="BO" EntityType="Self.BO" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="BO_CHILDS" EntityType="Self.BO_CHILDS" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="META_BO" EntityType="Self.META_BO" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="META_FIELD" EntityType="Self.META_FIELD" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="PAGE" EntityType="Self.PAGE" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="PlusSequence" EntityType="Self.PlusSequence" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="VERSIONS" EntityType="Self.VERSIONS" Schema="dbo" store:Type="Tables" />
     <AssociationSet Name="FK__META_FIEL__META___33D4B598" Association="Self.FK__META_FIEL__META___33D4B598">
       <End Role="META_BO" EntitySet="META_BO" />
