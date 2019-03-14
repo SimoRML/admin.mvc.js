@@ -114,5 +114,40 @@
       </EntityTypeMapping>
     </EntitySetMapping>
     <FunctionImportMapping FunctionImportName="PlusSequenceNextID" FunctionName="FAIS_Model.Store.PlusSequenceNextID" />
+    <EntitySetMapping Name="NOTIF">
+      <EntityTypeMapping TypeName="FAIS_Model.NOTIF">
+        <MappingFragment StoreEntitySet="NOTIF">
+          <ScalarProperty Name="CREATED_DATE" ColumnName="CREATED_DATE" />
+          <ScalarProperty Name="ETAT" ColumnName="ETAT" />
+          <ScalarProperty Name="VALIDATOR" ColumnName="VALIDATOR" />
+          <ScalarProperty Name="ID_NOTIF" ColumnName="ID_NOTIF" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="TASK">
+      <EntityTypeMapping TypeName="FAIS_Model.TASK">
+        <MappingFragment StoreEntitySet="TASK">
+          <ScalarProperty Name="CREATED_BY" ColumnName="CREATED_BY" />
+          <ScalarProperty Name="CREATED_DATE" ColumnName="CREATED_DATE" />
+          <ScalarProperty Name="TASK_TYPE" ColumnName="TASK_TYPE" />
+          <ScalarProperty Name="TASK_LEVEL" ColumnName="TASK_LEVEL" />
+          <ScalarProperty Name="ETAT" ColumnName="ETAT" />
+          <ScalarProperty Name="STATUS" ColumnName="STATUS" />
+          <ScalarProperty Name="JSON_DATA" ColumnName="JSON_DATA" />
+          <ScalarProperty Name="BO_ID" ColumnName="BO_ID" />
+          <ScalarProperty Name="TASK_ID" ColumnName="TASK_ID" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="WORKFLOW">
+      <EntityTypeMapping TypeName="FAIS_Model.WORKFLOW">
+        <MappingFragment StoreEntitySet="WORKFLOW">
+          <ScalarProperty Name="ITEMS" ColumnName="ITEMS" />
+          <ScalarProperty Name="ACTIVE" ColumnName="ACTIVE" />
+          <ScalarProperty Name="LIBELLE" ColumnName="LIBELLE" />
+          <ScalarProperty Name="BO_ID" ColumnName="BO_ID" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
   </EntityContainerMapping>
 </Mapping>

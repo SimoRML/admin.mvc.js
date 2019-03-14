@@ -86,7 +86,7 @@ function v_format_directive(e1, binding, vnode) {
         case 'display':
             var display = "";
             var list = bus.getList(binding.value.format.source);
-            console.log("FORMAT 2 ", e1, "list", list);
+            //console.log("FORMAT 2 ", e1, "list", list);
             for (var i in list) {
                 var e = list[i];
                 //console.log("FORMAT e.Value", e.Value);

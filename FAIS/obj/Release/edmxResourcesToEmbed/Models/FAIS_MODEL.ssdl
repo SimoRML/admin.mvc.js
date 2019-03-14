@@ -66,6 +66,15 @@
     <Property Name="VERSION" Type="int" />
     <Property Name="JSON_DATA" Type="nvarchar(max)" />
   </EntityType>
+  <EntityType Name="NOTIF">
+    <Key>
+      <PropertyRef Name="ID_NOTIF" />
+    </Key>
+    <Property Name="ID_NOTIF" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="VALIDATOR" Type="varchar" MaxLength="50" />
+    <Property Name="ETAT" Type="int" />
+    <Property Name="CREATED_DATE" Type="datetime" />
+  </EntityType>
   <EntityType Name="PAGE">
     <Key>
       <PropertyRef Name="PAGE_ID" />
@@ -91,6 +100,20 @@
     <Property Name="StepBy" Type="int" />
     <Property Name="CurrentValue" Type="int" />
   </EntityType>
+  <EntityType Name="TASK">
+    <Key>
+      <PropertyRef Name="TASK_ID" />
+    </Key>
+    <Property Name="TASK_ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="BO_ID" Type="int" />
+    <Property Name="JSON_DATA" Type="nvarchar(max)" />
+    <Property Name="STATUS" Type="varchar" MaxLength="50" />
+    <Property Name="ETAT" Type="int" />
+    <Property Name="TASK_LEVEL" Type="int" />
+    <Property Name="TASK_TYPE" Type="varchar" MaxLength="50" />
+    <Property Name="CREATED_DATE" Type="datetime" />
+    <Property Name="CREATED_BY" Type="varchar" MaxLength="50" />
+  </EntityType>
   <EntityType Name="VERSIONS">
     <Key>
       <PropertyRef Name="VERSIONS_ID" />
@@ -104,6 +127,15 @@
     <Property Name="UPDATED_BY" Type="varchar" MaxLength="100" />
     <Property Name="UPDATED_DATE" Type="datetime" />
     <Property Name="STATUS" Type="varchar" MaxLength="10" />
+  </EntityType>
+  <EntityType Name="WORKFLOW">
+    <Key>
+      <PropertyRef Name="BO_ID" />
+    </Key>
+    <Property Name="BO_ID" Type="bigint" Nullable="false" />
+    <Property Name="LIBELLE" Type="varchar" MaxLength="50" />
+    <Property Name="ACTIVE" Type="int" />
+    <Property Name="ITEMS" Type="nvarchar(max)" />
   </EntityType>
   <Association Name="FK__META_FIEL__META___33D4B598">
     <End Role="META_BO" Type="Self.META_BO" Multiplicity="1" />
@@ -142,9 +174,12 @@
     <EntitySet Name="BO_CHILDS" EntityType="Self.BO_CHILDS" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="META_BO" EntityType="Self.META_BO" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="META_FIELD" EntityType="Self.META_FIELD" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="NOTIF" EntityType="Self.NOTIF" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="PAGE" EntityType="Self.PAGE" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="PlusSequence" EntityType="Self.PlusSequence" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="TASK" EntityType="Self.TASK" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="VERSIONS" EntityType="Self.VERSIONS" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="WORKFLOW" EntityType="Self.WORKFLOW" Schema="dbo" store:Type="Tables" />
     <AssociationSet Name="FK__META_FIEL__META___33D4B598" Association="Self.FK__META_FIEL__META___33D4B598">
       <End Role="META_BO" EntitySet="META_BO" />
       <End Role="META_FIELD" EntitySet="META_FIELD" />

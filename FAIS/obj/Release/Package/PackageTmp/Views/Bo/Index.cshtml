@@ -23,6 +23,7 @@
     <v-form ref="theForm"
             meta-datasource="metabo/GetDefinition/@Model.BO_DB_NAME"
             api="metabo/Crud/@Model.META_BO_ID"
+            bo-name="@Model.BO_DB_NAME"
             v-on:submit-success="success"
             v-on:submit-fail="error"
             v-on:get-definition-done="getDefinitionDone"
@@ -138,7 +139,7 @@ else
                                 </div>
                                 <div class="row">
                                     <div class="col-md-12">
-                                        <button type="submit" class="btn btn-fill btn-primary pull-right" v-on:click="filtrer">Filtrer<div class="ripple-container"></div></button>
+                                        <button id="@boDbName("btnFilter")" type="submit" class="btn btn-fill btn-primary pull-right" v-on:click="filtrer">Filtrer<div class="ripple-container"></div></button>
                                     </div>
                                 </div>
 
@@ -185,10 +186,13 @@ else
 
     <script id="@boDbName("-action-template")" type="vue/template">
         <div class="pull-right">
+            <v-workflow-v :boid="row.BO_ID" :index="index" vapp="@boDbName("vapp")"></v-workflow-v>
+
             <button class="btn btn-primary btn-round btn-fab btn-fab-mini btn-fab-x-mini"
                     v-on:click="edit(row.BO_ID)">
                 <i class="material-icons">create</i>
             </button>
+
         </div>
     </script>
     <script type="text/javascript">
@@ -211,7 +215,8 @@ else
             if (e.GRID_SHOW == 1) window["@boDbName("columnShow")"].push(e.DB_NAME);
             window["@boDbName("columnLabels")"][e.DB_NAME] = e.GRID_NAME;
         });
-
+        window["@boDbName("columnShow")"].push('BO_STATUS');
+        window["@boDbName("columnLabels")"]['BO_STATUS'] = 'Statut';
         bus.setMeta("@Model.BO_DB_NAME", @boDbName("META_BO"));
     </script>
 
@@ -269,7 +274,8 @@ else
                         this.$refs.theForm.Get(response.BO_ID);
                     } else $("#@boDbName("tab-list")").trigger("click");
 
-                    this.$refs.theTable.load();
+                    if (this.filterExists) $("#@boDbName("btnFilter")").trigger("click");
+                    else this.$refs.theTable.load();
                 },
                 error: function (Response) {
                     console.log('Impossible d\'enregistré l\'objet !<br>', Response);
@@ -344,7 +350,8 @@ else
         Vue.component('@boDbName("-action")', {
             template: $("#@boDbName("-action-template")").html(),
             props: {
-                row: Object
+                row: Object,
+                index: Number,
             },
             methods: {
                 edit: (id) => {
@@ -358,7 +365,7 @@ else
     <script id="@boDbName("-detail-row-template")" type="text/template">
         <div>
             <div v-for="field in metafield" class="col-md-3">
-                <b>{{field.GRID_NAME}} : </b><span v-format="{value:row[field.DB_NAME], format:field.GRID_FORMAT}">{{row[field.DB_NAME]}}</span>
+                <b>{{field.GRID_NAME}} : {{field.TYPE}} </b><span v-format="{value:row[field.DB_NAME], format:field.GRID_FORMAT}">{{row[field.DB_NAME]}}</span>
             </div>
         </div>
     </script>

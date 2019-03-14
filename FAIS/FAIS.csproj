@@ -673,6 +673,7 @@
     <Content Include="_front\models\DataSource.js" />
     <Content Include="_front\models\Div.js" />
     <Content Include="_front\models\Environement.js" />
+    <Content Include="_front\models\Logger.js" />
     <Content Include="_front\models\Router.js" />
     <Content Include="_front\models\Preloader.js" />
     <Content Include="_front\store.js" />

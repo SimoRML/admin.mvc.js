@@ -194,7 +194,7 @@ window.URL.addParam = function (url, param) {
     return url + (url.indexOf("?") < 0 ? "?" : "&") + param;
 };
 window.URL.addPart = function (url, part) {
-        //console.log("addPart : " + url, part);
+        // console.log("addPart : ", url, " part : ", part);
         if (typeof part.slice !== "undefined" && part[0] === "/") part = part.substr(1);
         url = url + (url.slice(-1) === "/" ? "" : "/") + part;
         //console.log("addPart -> " + url);

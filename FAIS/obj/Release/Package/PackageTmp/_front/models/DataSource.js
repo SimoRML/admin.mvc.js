@@ -59,7 +59,7 @@ DataSource.prototype.ExecuteSource = function (source) {
 
     if (settings.method === "POST" || settings.method === "PUT")
         me.Trigger("show", "PagePreloader");
-    // console.log("ExecuteSource call ." + source.method + "::" + source.url + ".", settings);
+    console.log("ExecuteSource call ." + source.method + "::" + source.url + ".", settings);
     $.ajax(settings)
         .done(function (response) {
             me.Trigger("hide", "PagePreloader");
@@ -110,4 +110,29 @@ DataSource.prototype.Put = function (source) {
 DataSource.prototype.Delete = function (source) {
     source.method = "DELETE";
     this.ExecuteSource(source);
+};
+
+
+DataSource.prototype.SendAsync = async function (source) {
+    var me = this;
+    if (source.url === "") return;
+    var settings = {
+        "crossDomain": false,
+        "url": this.config.baseUrl + source.url,
+        "method": typeof source.method === "undefined" ? "GET" : source.method,
+        "headers": {
+            "Cache-Control": "no-cache",
+            "content-type": typeof source["content-type"] === "undefined" ? "application/json" : source["content-type"],
+            "authorization": "Bearer " + me.config.token
+        }
+    };
+    if (typeof source["data"] !== "undefined") {
+        settings["data"] = source["data"];
+    }
+
+    if (settings.method === "POST" || settings.method === "PUT")
+        me.Trigger("show", "PagePreloader");
+
+    const result = await $.ajax(settings);
+    return result;
 };

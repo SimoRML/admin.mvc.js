@@ -34,6 +34,9 @@ namespace FAIS.Models
         public virtual DbSet<VERSIONS> VERSIONS { get; set; }
         public virtual DbSet<PAGE> PAGE { get; set; }
         public virtual DbSet<PlusSequence> PlusSequence { get; set; }
+        public virtual DbSet<NOTIF> NOTIF { get; set; }
+        public virtual DbSet<TASK> TASK { get; set; }
+        public virtual DbSet<WORKFLOW> WORKFLOW { get; set; }
     
         public virtual int MoveBoToCurrentVersion(Nullable<long> bO_ID)
         {

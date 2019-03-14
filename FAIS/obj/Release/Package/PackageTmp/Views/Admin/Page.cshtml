@@ -55,6 +55,7 @@
 
         .componentContainer.selected {
             border-color: #0072c6;
+            box-shadow: 0 0 5px 0px #0072c6;
         }
 
             .componentContainer.selected:hover {
@@ -75,6 +76,11 @@
         overflow-x: hidden;
         padding-right: 15px;
         padding-left: 5px;
+    }
+
+    ifarme {
+        width: 100%;
+        border: none;
     }
 </style>
 <div id="vapp" class="row">
@@ -101,7 +107,7 @@
                             @*@*----------------------COMPONENT*@
                             <div v-for="(component, compIndex) in col.components"
                                  :class="'row componentContainer ' + selectedClass(sectionIndex, colIndex, compIndex)"
-                                 v-on:click="setSelected(sectionIndex, colIndex, compIndex)">
+                                 v-on:click="setSelectedComponenet(compIndex)">
                                 <div :id="'componentPlaceHolder_' + sectionIndex +'_'+ colIndex +'_'+ compIndex">
 
                                 </div>
@@ -117,7 +123,7 @@
                                     </button>
                                     <ul class="dropdown-menu dropdown-menu-left">
                                         <template v-for="(c, key) in componentsTypes">
-                                            <li>
+                                            <li :class="c.class">
                                                 <a href="javascript:;" v-on:click="addComponent(sectionIndex, colIndex, key)">
                                                     <i class="material-icons">{{ c.icone }}</i> {{ c.name }}
                                                 </a>
@@ -156,11 +162,19 @@
         </div>
         @*----------------------FIN ADD SECTION*@
     </div>
+
+    @*PROPS*@
     <div class="sidebar props">
         <h4 class="">Page</h4>
         <div class="content">
             <div>
                 <v-text label="Titre" v-model="layout.page.title" optional="1"></v-text>
+                <v-text label="Groupe" v-model="layout.page.groupe" optional="1"></v-text>
+
+                <div>
+                    <button type="button" class="btn btn-fill btn-sm btn-success pull-right" v-on:click="previewPage"><i class="material-icons">save</i></button>
+                    <button type="button" class="btn btn-fill btn-sm btn-primary pull-right" v-on:click="savePage"><i class="material-icons">remove_red_eye</i></button>
+                </div>
             </div>
         </div>
 
@@ -175,7 +189,7 @@
         </template>
 
 
-        <template v-if="currentColumn.component>-1">
+        <template v-if="selectedComponent != null">
             <h4 class="">Composant : </h4>
             <div class="content">
                 <div>
@@ -183,8 +197,7 @@
                         <component :id="'prop_' + propa.type + '_' + currentColumn.line + '_' + currentColumn.column + '_' + currentColumn.component"
                                    :is="propa.type"
                                    v-model="selectedComponent.props[key]"
-                                   v-bind='{label:propa.label,line:currentColumn.line, column: currentColumn.column, datasource:propa.datasource}'
-                                   @*v-bind="{id:field.DB_NAME,label:field.FORM_NAME,optional:field.FORM_OPTIONAL,datasource:field.FORM_SOURCE,fieldName:field.DB_NAME}"*@></component>
+                                   v-bind='{label:propa.label,line:currentColumn.line, column: currentColumn.column, datasource:propa.datasource}'></component>
                     </template>
                     <div>
                         <button type="button" class="btn btn-fill btn-primary pull-right" v-on:click="appliquer">Appliquer</button>
@@ -208,21 +221,73 @@
             componentsTypes: {
                 FORM: {
                     name: "Formulaire",
-                    icone: "layers",
+                    icone: "tab",
+                    class: "",
                     props: {
                         source: { label: "Source de données", type: "v-select", datasource: JSON.stringify({ source: "meta_bo", value: "BO_DB_NAME", display: "BO_NAME", filter: "[STATUS]<>'-1'" }) }
                     }
                 },
-                TABLE: { name: "Table", icone: "table_chart" },
-                LIST: { name: "Liste", icone: "format_list_bulleted" },
-                TXT: { name: "Text", icone: "text_format" },
-                IMG: { name: "Image", icone: "image" },
-                SHORTCUT: { name: "Racourcis", icone: "keyboard_tab" },
-                LINK: { name: "Lien", icone: "link" },
+                TABLE: {
+                    name: "Table",
+                    icone: "table_chart",
+                    class: "",
+                    props: {
+                        source: { label: "Source de données", type: "v-select", datasource: JSON.stringify({ source: "meta_bo", value: "BO_DB_NAME", display: "BO_NAME", filter: "[STATUS]<>'-1'" }) }
+                    }
+                },
+                TABLE_EDITABLE: {
+                    name: "Table editable",
+                    icone: "storage",
+                    class: "",
+                    props: {
+                        source: { label: "Source de données", type: "v-select", datasource: JSON.stringify({ source: "meta_bo", value: "BO_DB_NAME", display: "BO_NAME", filter: "[STATUS]<>'-1'" }) }
+                    }
+                },
+                LIST: {
+                    name: "Liste",
+                    icone: "format_list_bulleted",
+                    class: "disabled",
+                },
+                TXT: {
+                    name: "Text",
+                    icone: "text_format",
+                    class: "",
+                    props: {
+                        title: { label: "Titre", type: "v-text" },
+                        body: { label: "Paragraphe", type: "v-textarea" }
+                    }
+                },
+                IMG: {
+                    name: "Image",
+                    icone: "image",
+                    class: "",
+                    props: {
+                        image: { label: "Télécharger", type: "v-file" }
+                    }
+                },
+                SHORTCUT: {
+                    name: "Racourcis",
+                    icone: "keyboard_tab",
+                    class: "",
+                    props: {
+                        display: { label: "Texte", type: "v-text" },
+                        link: { label: "Lien", type: "v-text" }
+                    }
+                },
+                LINK: {
+                    name: "Lien",
+                    icone: "link",
+                    class: "",
+                    props: {
+                        link: { label: "Lien", type: "v-text" },
+                        height: { label:"Hauteur", type: "v-text" }
+                    }
+                },
             },
             layout: {
                 page: {
-                    title: ""
+                    title: "",
+                    groupe: ""
                 },
                 sections: []
             },
@@ -231,6 +296,7 @@
                 selectedItem: "Page",
             },
             currentColumn: { line: -1, column: -1, component: -1 },
+            selectedComponent: null,
         },
         computed: {
             pageTitle: function () {
@@ -239,9 +305,10 @@
             selectedColumn: function () {
                 return this.layout.sections[this.currentColumn.line].columns[this.currentColumn.column];
             },
-            selectedComponent: function () {
-                return this.layout.sections[this.currentColumn.line].columns[this.currentColumn.column].components[this.currentColumn.component];
-            },
+            //selectedComponent: function () {
+            //    if (this.currentColumn.component < 0) return null;
+            //    return this.layout.sections[this.currentColumn.line].columns[this.currentColumn.column].components[this.currentColumn.component];
+            //},
         },
         watch: {
             pageTitle: function (newVal, oldVal) {
@@ -249,17 +316,28 @@
             }
         },
         methods: {
+            previewPage: function () { 
+            }, 
+            savePage: function () {
+
+            },
             selectedClass: function (line, column, component) {
                 if (typeof component !== "undefined") {
                     if (line == this.currentColumn.line && column == this.currentColumn.column && component == this.currentColumn.component) return "selected";
                 } else if (line == this.currentColumn.line && column == this.currentColumn.column) return "selected";
                 return "";
             },
-            setSelected: function (line, column, component) {
+            setSelected: function (line, column) {
                 this.currentColumn.line = line;
                 this.currentColumn.column = column;
-                if (typeof component !== "undefined")
-                    this.currentColumn.component = component;
+            },
+            setSelectedComponenet: function (component) {
+                this.currentColumn.component = component;
+                this.selectedComponent = null;
+                var me = this;
+                setTimeout(() => {
+                    me.selectedComponent = me.layout.sections[me.currentColumn.line].columns[me.currentColumn.column].components[me.currentColumn.component];
+                },100);
             },
             addSection: function (sectionKey) {
                 var section = {
@@ -289,10 +367,39 @@
             },
             appliquer: function () {
                 var $compDiv = $("#componentPlaceHolder_" + this.currentColumn.line + '_' + this.currentColumn.column + '_' + this.currentColumn.component);
-                INCLUDE($compDiv, "bo/formulaire/" + this.selectedComponent.props.source);
                 $compDiv.css({
-                    background: "#fff"
+                    background: "#fff",
+                    "min-height": "0px",
                 });
+
+                switch (this.selectedComponent.type) {
+                    case "FORM":
+                        INCLUDE($compDiv, "bo/formulaire/" + this.selectedComponent.props.source);
+                        break;
+                    case "TABLE":
+                        INCLUDE($compDiv, "bo/table/" + this.selectedComponent.props.source);
+                        break;
+                    case "TABLE_EDITABLE":
+                        INCLUDE($compDiv, "bo/tableeditable/" + this.selectedComponent.props.source);
+                        break;
+                    case "IMG":
+                        var img = JSON.parse(this.selectedComponent.props.image);
+                        $compDiv.html("<img src='" + img.base64 + "' style='width:100%'>");
+                        break;
+                    case "TXT":
+                        var args = this.selectedComponent.props;
+                        $compDiv.html("<h4>" + args.title + "</h4><p>" + args.body + "</p>");
+                        break;
+                    case "SHORTCUT":
+                        var args = this.selectedComponent.props;
+                        $compDiv.html("<a href='" + args.link + "'>" + args.display + "</a>");
+                        break;
+                    case "LINK":
+                        var args = this.selectedComponent.props;
+                        $compDiv.html("<iframe src='" + args.link + "' height='" + args.height + "' width='100%' frameborder='0' ></iframe>");
+                        break;
+                    default:
+                }
             }
         },
         mounted: function () {

@@ -1,29 +1,84 @@
 ﻿<div id="vapp">
-    <v-select label="Layouts"
-              :datasource="{key:'pageLayouts'}"
-              v-on:changed="redirect"
-              ></v-select>
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                <h4 class="card-title">
+                    Page manager
+                </h4>
+            </div>
+            <div class="card-content">
+                <v-table
+                         datasource="pageapi"
+                         :editable="true"
+                         :columns="columns"
+                         pk="PAGE_ID"
+                         :column-ignore="['PAGE_ID','LAYOUT']"
+                         ></v-table>
+            </div>
+        </div>
+    </div>
 </div>
 <script type="text/javascript">
-
-    bus.setList("pageLayouts", [
-        { Value: "BO", Display: "Une carte" },
-        { Value: "l_2_1", Display: "Deux colonnes" },
-        { Value: "l_1_2", Display: "Deux lignes" },
-    ]);
-
+    
     var vapp = new Vue({
         el: "#vapp",
-        data: {
-
-        },
-        methods: {
-            redirect: function(layout){
-                console.log(layout);
-                window.location = "#admin.page." + layout.value;
+        computed: {
+            columns: function () {
+                return {
+                    TITLE: {
+                        header: "Titre",
+                        form: {
+                            type: 'v-text',
+                        }
+                    },
+                    GROUPE: {
+                        header: "Groupe",
+                        form: {
+                            type: 'v-text',
+                        }
+                    },
+      //              STATUS: {
+      //                  header: "Statut",
+      //                  form: {
+      //                      type: "v-label"
+      //                      /*[CREATED_DATE]
+      //,[CREATED_BY]
+      //,[UPDATED_DATE]
+      //,[UPDATED_BY]*/
+      //                  }
+      //              },
+      //              CREATED_DATE: {
+      //                  header: "Crée le",
+      //                  form: {
+      //                      type: "v-label"
+      //                  }
+      //              },
+      //              CREATED_BY: {
+      //                  header: "Par",
+      //                  form: {
+      //                      type: "v-label"
+      //                  }
+      //              },
+      //              UPDATED_DATE: {
+      //                  header: "Modifiée le",
+      //                  form: {
+      //                      type: "v-label"
+      //                  }
+      //              },
+      //              UPDATED_BY: {
+      //                  header: "Par",
+      //                  form: {
+      //                      type: "v-label"
+      //                  }
+      //              }
+                };
             }
         },
-        mounted: ()=>{ 
+        methods: {
+            
+        },
+        mounted: () => {
+            
         }
     });
 </script>

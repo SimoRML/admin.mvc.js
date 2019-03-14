@@ -354,7 +354,7 @@ namespace FAIS.Controllers
 
                         db.SaveChanges();
                         var task_id = (int)valid.TASK_ID;
-                        await Insert_Bo_Using_Mapping(id, meta.BO_DB_NAME, model.BO_ID, task_id);
+                        // await Insert_Bo_Using_Mapping(id, meta.BO_DB_NAME, model.BO_ID, task_id);
 
                     }
 
@@ -396,7 +396,7 @@ namespace FAIS.Controllers
             await Insert((int)_JSON_MAPP["value"], JSONA_STRING);
 
             s.Cmd("update task  set ETAT=1 where task_id=" + taks_id);
-            return Ok();
+            return Ok(BO_DB_NAME);
         }
 
         [HttpPost]
@@ -626,7 +626,7 @@ namespace FAIS.Controllers
                     var dt = s.Cmd("select * from META_BO where META_BO_ID = (select bo_type from BO where BO_ID = " + id + ")");
 
                     await Insert_Bo_Using_Mapping(int.Parse(dt.Rows[0]["META_BO_ID"].ToString()), dt.Rows[0]["BO_DB_NAME"].ToString(), id, int.Parse(tasks.Rows[0]["task_id"].ToString()));
-                    return Ok(new { success = true });
+                    return Ok(new { success = true, type = "BO", bo = dt.Rows[0]["BO_NAME"].ToString() });
                 }
             }
 
@@ -644,7 +644,7 @@ namespace FAIS.Controllers
             s.Cmd("update Task set etat = 1 where task_id=" + id);
             s.Cmd("update bo set status='" + status + "' where BO_ID=" + boid);
 
-            return await ValidateWokflow(boid);
+            return Ok(new { success = true, status });
         }
 
 

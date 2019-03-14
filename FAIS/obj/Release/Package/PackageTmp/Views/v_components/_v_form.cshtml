@@ -13,7 +13,7 @@
                 <component :name="field.FORM_TYPE + '-' + elementId"
                            :is="field.FORM_TYPE"
                            v-model="body[field.DB_NAME]"
-                           v-bind="{id:field.DB_NAME,label:field.FORM_NAME,optional:field.FORM_OPTIONAL,datasource:field.FORM_SOURCE,fieldName:field.DB_NAME}"></component>
+                           v-bind="getBind(field)"></component>
                 @*AFTER*@
                 <component v-if="typeof field.after_component !== 'undefined'"
                            :name="field.FORM_TYPE + '-after-' + elementId"
@@ -34,7 +34,8 @@
             metaDatasource: String,
             metaDefinition: Array,
             api: String,
-            additionalFields: Array
+            additionalFields: Array,
+            boName: String,
         },
         data: function () {
             return {
@@ -50,6 +51,31 @@
             }
         },
         methods: {
+            getBind: function (field) {
+                // console.log("v-form bind field", field);
+                var bind = { id: field.DB_NAME, label: field.FORM_NAME, optional: field.FORM_OPTIONAL, fieldName: field.DB_NAME, mode: this.mode(), boName: this.boName };
+                if (typeof field.source === "undefined")
+                    bind.datasource = field.FORM_SOURCE;
+                else {
+                    bind.source = field.source;
+                    bind.sourceValue = field.sourceValue;
+                    bind.sourceDisplay = field.sourceDisplay;
+                    if (typeof field.sourceFilter !== "undefined")
+                        bind.sourceFilter = field.sourceFilter;
+                }
+                
+                // JSON_DATA
+                try {
+                    var json_data = JSON.parse(field.JSON_DATA);
+                    console.log('%c DEFAULT', 'color:red',  json_data.DEFAULT, "mode", this.mode());
+
+                    if (typeof json_data.DEFAULT !== "undefined")
+                        bind.default = json_data.DEFAULT;
+                } catch (e) { }
+
+
+                return bind;
+            },
             mode: function () {
                 switch (this.verb) {
                     case 'POST':
@@ -64,9 +90,17 @@
                 }
             },
             formatBody: function (entity) {
+                var me = this;
+
                 for (var i in this.meta) {
+                    // PUT WITH DEFAULT VALUE
+                    if (typeof this.meta[i].STATUS === "undefined") this.meta[i].STATUS = "ACTIVE";
+                    if (typeof this.meta[i].FORM_SHOW === "undefined") this.meta[i].FORM_SHOW = 1;
+                    if (typeof this.meta[i].FORM_OPTIONAL === "undefined") this.meta[i].FORM_OPTIONAL = 0;
+
+
                     // push subform
-                    if (this.meta[i].FORM_TYPE.match('subform-') !== null) {
+                    if (typeof this.meta[i].FORM_TYPE !== "undefined" && this.meta[i].FORM_TYPE.match('subform-') !== null) {
                         this.subFroms.push(this.meta[i]);
                         continue;
                     }
@@ -172,7 +206,6 @@
             updateMode: function (entity) {
                 var me = this;
                 me.verb = "PUT";
-
                 // PARSE JSON_DATA
                 try {
                     var jsonData = JSON.parse(entity.JSON_DATA);
@@ -180,7 +213,7 @@
                     for (var i in jsonData) {
                         entity["JSON_DATA." + i] = jsonData[i];
                     }
-                    // console.log("JSON_DATA", entity);
+                    //console.log("JSON_DATA", entity);
                 } catch { }
 
                 for (var i in me.body) {
@@ -218,6 +251,12 @@
             // SET FORM META
             if (typeof me.metaDatasource === "undefined") {
                 me.meta = me.metaDefinition;
+
+                // CONCAT ADDITIONAL FIELDS
+                if (me.additionalFields != null && me.additionalFields.length > 0) {
+                    me.meta = me.meta.concat(me.additionalFields);
+                }
+
                 me.formatBody();
             } else {
                 me.GetDefinition();

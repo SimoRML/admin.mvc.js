@@ -71,6 +71,15 @@
           <Property Name="VERSION" Type="int" />
           <Property Name="JSON_DATA" Type="nvarchar(max)" />
         </EntityType>
+        <EntityType Name="NOTIF">
+          <Key>
+            <PropertyRef Name="ID_NOTIF" />
+          </Key>
+          <Property Name="ID_NOTIF" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="VALIDATOR" Type="varchar" MaxLength="50" />
+          <Property Name="ETAT" Type="int" />
+          <Property Name="CREATED_DATE" Type="datetime" />
+        </EntityType>
         <EntityType Name="PAGE">
           <Key>
             <PropertyRef Name="PAGE_ID" />
@@ -96,6 +105,20 @@
           <Property Name="StepBy" Type="int" />
           <Property Name="CurrentValue" Type="int" />
         </EntityType>
+        <EntityType Name="TASK">
+          <Key>
+            <PropertyRef Name="TASK_ID" />
+          </Key>
+          <Property Name="TASK_ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="BO_ID" Type="int" />
+          <Property Name="JSON_DATA" Type="nvarchar(max)" />
+          <Property Name="STATUS" Type="varchar" MaxLength="50" />
+          <Property Name="ETAT" Type="int" />
+          <Property Name="TASK_LEVEL" Type="int" />
+          <Property Name="TASK_TYPE" Type="varchar" MaxLength="50" />
+          <Property Name="CREATED_DATE" Type="datetime" />
+          <Property Name="CREATED_BY" Type="varchar" MaxLength="50" />
+        </EntityType>
         <EntityType Name="VERSIONS">
           <Key>
             <PropertyRef Name="VERSIONS_ID" />
@@ -109,6 +132,15 @@
           <Property Name="UPDATED_BY" Type="varchar" MaxLength="100" />
           <Property Name="UPDATED_DATE" Type="datetime" />
           <Property Name="STATUS" Type="varchar" MaxLength="10" />
+        </EntityType>
+        <EntityType Name="WORKFLOW">
+          <Key>
+            <PropertyRef Name="BO_ID" />
+          </Key>
+          <Property Name="BO_ID" Type="bigint" Nullable="false" />
+          <Property Name="LIBELLE" Type="varchar" MaxLength="50" />
+          <Property Name="ACTIVE" Type="int" />
+          <Property Name="ITEMS" Type="nvarchar(max)" />
         </EntityType>
         <Association Name="FK__META_FIEL__META___33D4B598">
           <End Role="META_BO" Type="Self.META_BO" Multiplicity="1" />
@@ -147,9 +179,12 @@
           <EntitySet Name="BO_CHILDS" EntityType="Self.BO_CHILDS" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="META_BO" EntityType="Self.META_BO" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="META_FIELD" EntityType="Self.META_FIELD" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="NOTIF" EntityType="Self.NOTIF" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="PAGE" EntityType="Self.PAGE" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="PlusSequence" EntityType="Self.PlusSequence" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="TASK" EntityType="Self.TASK" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="VERSIONS" EntityType="Self.VERSIONS" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="WORKFLOW" EntityType="Self.WORKFLOW" Schema="dbo" store:Type="Tables" />
           <AssociationSet Name="FK__META_FIEL__META___33D4B598" Association="Self.FK__META_FIEL__META___33D4B598">
             <End Role="META_BO" EntitySet="META_BO" />
             <End Role="META_FIELD" EntitySet="META_FIELD" />
@@ -293,6 +328,9 @@
             <Parameter Name="TableName" Mode="In" Type="String" />
             <Parameter Name="stepBy" Mode="In" Type="Int32" />
           </FunctionImport>
+          <EntitySet Name="NOTIF" EntityType="FAIS_Model.NOTIF" />
+          <EntitySet Name="TASK" EntityType="FAIS_Model.TASK" />
+          <EntitySet Name="WORKFLOW" EntityType="FAIS_Model.WORKFLOW" />
         </EntityContainer>
         <EntityType Name="PAGE">
           <Key>
@@ -318,6 +356,38 @@
           <Property Name="StartValue" Type="Int32" />
           <Property Name="StepBy" Type="Int32" />
           <Property Name="CurrentValue" Type="Int32" />
+        </EntityType>
+        <EntityType Name="NOTIF">
+          <Key>
+            <PropertyRef Name="ID_NOTIF" />
+          </Key>
+          <Property Name="ID_NOTIF" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="VALIDATOR" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="ETAT" Type="Int32" />
+          <Property Name="CREATED_DATE" Type="DateTime" Precision="3" />
+        </EntityType>
+        <EntityType Name="TASK">
+          <Key>
+            <PropertyRef Name="TASK_ID" />
+          </Key>
+          <Property Name="TASK_ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="BO_ID" Type="Int32" />
+          <Property Name="JSON_DATA" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="STATUS" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="ETAT" Type="Int32" />
+          <Property Name="TASK_LEVEL" Type="Int32" />
+          <Property Name="TASK_TYPE" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="CREATED_DATE" Type="DateTime" Precision="3" />
+          <Property Name="CREATED_BY" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+        </EntityType>
+        <EntityType Name="WORKFLOW">
+          <Key>
+            <PropertyRef Name="BO_ID" />
+          </Key>
+          <Property Name="BO_ID" Type="Int64" Nullable="false" />
+          <Property Name="LIBELLE" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="ACTIVE" Type="Int32" />
+          <Property Name="ITEMS" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
         </EntityType>
       </Schema>
     </edmx:ConceptualModels>
@@ -438,6 +508,41 @@
             </EntityTypeMapping>
           </EntitySetMapping>
           <FunctionImportMapping FunctionImportName="PlusSequenceNextID" FunctionName="FAIS_Model.Store.PlusSequenceNextID" />
+          <EntitySetMapping Name="NOTIF">
+            <EntityTypeMapping TypeName="FAIS_Model.NOTIF">
+              <MappingFragment StoreEntitySet="NOTIF">
+                <ScalarProperty Name="CREATED_DATE" ColumnName="CREATED_DATE" />
+                <ScalarProperty Name="ETAT" ColumnName="ETAT" />
+                <ScalarProperty Name="VALIDATOR" ColumnName="VALIDATOR" />
+                <ScalarProperty Name="ID_NOTIF" ColumnName="ID_NOTIF" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="TASK">
+            <EntityTypeMapping TypeName="FAIS_Model.TASK">
+              <MappingFragment StoreEntitySet="TASK">
+                <ScalarProperty Name="CREATED_BY" ColumnName="CREATED_BY" />
+                <ScalarProperty Name="CREATED_DATE" ColumnName="CREATED_DATE" />
+                <ScalarProperty Name="TASK_TYPE" ColumnName="TASK_TYPE" />
+                <ScalarProperty Name="TASK_LEVEL" ColumnName="TASK_LEVEL" />
+                <ScalarProperty Name="ETAT" ColumnName="ETAT" />
+                <ScalarProperty Name="STATUS" ColumnName="STATUS" />
+                <ScalarProperty Name="JSON_DATA" ColumnName="JSON_DATA" />
+                <ScalarProperty Name="BO_ID" ColumnName="BO_ID" />
+                <ScalarProperty Name="TASK_ID" ColumnName="TASK_ID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="WORKFLOW">
+            <EntityTypeMapping TypeName="FAIS_Model.WORKFLOW">
+              <MappingFragment StoreEntitySet="WORKFLOW">
+                <ScalarProperty Name="ITEMS" ColumnName="ITEMS" />
+                <ScalarProperty Name="ACTIVE" ColumnName="ACTIVE" />
+                <ScalarProperty Name="LIBELLE" ColumnName="LIBELLE" />
+                <ScalarProperty Name="BO_ID" ColumnName="BO_ID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
         </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>

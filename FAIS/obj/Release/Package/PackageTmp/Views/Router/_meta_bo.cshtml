@@ -553,6 +553,12 @@
                     }
                 },
                 fieldsFormbeforeSubmit: function (body) {
+                    var jsonData = {};
+                    for (var i in body) {
+                        if (i.match("JSON_DATA.")) jsonData[i.split(".")[1]] = body[i];
+                    }
+                    body.JSON_DATA = JSON.stringify(jsonData);
+
                     if (body.FORM_OPTIONAL === null) body.FORM_OPTIONAL = 0;
                     if (body.IS_FILTER === null) body.IS_FILTER = 0;
                     body.META_BO_ID = this.$refs.theForm.pk.value;
@@ -613,6 +619,18 @@
                             DB_NAME: 'JSON_DATA.GROUPE',
                             STATUS: 'ACTIVE',
                             FORM_NAME: "Groupe",
+                            FORM_TYPE: "v-text",
+                            FORM_SHOW: 1,
+                            FORM_OPTIONAL: 1,
+                        }
+                    ];
+                },
+                metaFieldAdditionalFields: function () {
+                    return [
+                        {
+                            DB_NAME: 'JSON_DATA.DEFAULT',
+                            STATUS: 'ACTIVE',
+                            FORM_NAME: "Valeur par defaut",
                             FORM_TYPE: "v-text",
                             FORM_SHOW: 1,
                             FORM_OPTIONAL: 1,

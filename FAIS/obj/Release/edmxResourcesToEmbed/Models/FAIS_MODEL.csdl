@@ -130,6 +130,9 @@
       <Parameter Name="TableName" Mode="In" Type="String" />
       <Parameter Name="stepBy" Mode="In" Type="Int32" />
     </FunctionImport>
+    <EntitySet Name="NOTIF" EntityType="FAIS_Model.NOTIF" />
+    <EntitySet Name="TASK" EntityType="FAIS_Model.TASK" />
+    <EntitySet Name="WORKFLOW" EntityType="FAIS_Model.WORKFLOW" />
   </EntityContainer>
   <EntityType Name="PAGE">
     <Key>
@@ -155,5 +158,37 @@
     <Property Name="StartValue" Type="Int32" />
     <Property Name="StepBy" Type="Int32" />
     <Property Name="CurrentValue" Type="Int32" />
+  </EntityType>
+  <EntityType Name="NOTIF">
+    <Key>
+      <PropertyRef Name="ID_NOTIF" />
+    </Key>
+    <Property Name="ID_NOTIF" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="VALIDATOR" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+    <Property Name="ETAT" Type="Int32" />
+    <Property Name="CREATED_DATE" Type="DateTime" Precision="3" />
+  </EntityType>
+  <EntityType Name="TASK">
+    <Key>
+      <PropertyRef Name="TASK_ID" />
+    </Key>
+    <Property Name="TASK_ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="BO_ID" Type="Int32" />
+    <Property Name="JSON_DATA" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <Property Name="STATUS" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+    <Property Name="ETAT" Type="Int32" />
+    <Property Name="TASK_LEVEL" Type="Int32" />
+    <Property Name="TASK_TYPE" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+    <Property Name="CREATED_DATE" Type="DateTime" Precision="3" />
+    <Property Name="CREATED_BY" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+  </EntityType>
+  <EntityType Name="WORKFLOW">
+    <Key>
+      <PropertyRef Name="BO_ID" />
+    </Key>
+    <Property Name="BO_ID" Type="Int64" Nullable="false" />
+    <Property Name="LIBELLE" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+    <Property Name="ACTIVE" Type="Int32" />
+    <Property Name="ITEMS" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
   </EntityType>
 </Schema>

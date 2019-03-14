@@ -186,12 +186,13 @@ else
 
     <script id="@boDbName("-action-template")" type="vue/template">
         <div class="pull-right">
+            <v-workflow-v :boid="row.BO_ID" :index="index" vapp="@boDbName("vapp")"></v-workflow-v>
+
             <button class="btn btn-primary btn-round btn-fab btn-fab-mini btn-fab-x-mini"
                     v-on:click="edit(row.BO_ID)">
                 <i class="material-icons">create</i>
             </button>
 
-            <v-workflow-v :boid="row.BO_ID"></v-workflow-v>
         </div>
     </script>
     <script type="text/javascript">
@@ -349,7 +350,8 @@ else
         Vue.component('@boDbName("-action")', {
             template: $("#@boDbName("-action-template")").html(),
             props: {
-                row: Object
+                row: Object,
+                index: Number,
             },
             methods: {
                 edit: (id) => {

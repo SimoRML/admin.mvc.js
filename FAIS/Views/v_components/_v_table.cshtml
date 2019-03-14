@@ -117,7 +117,7 @@
 
                                 @*ACTION COMPONENET*@
                                 <td v-if="actionComponentDefined">
-                                    <component v-bind:is="actionComponent" v-bind="{row:item}"></component>
+                                    <component v-bind:is="actionComponent" v-bind="{row:item, index: getLineIndex(index)}"></component>
                                 </td>
 
                                 @*ADDITIONA COLUMN*@
