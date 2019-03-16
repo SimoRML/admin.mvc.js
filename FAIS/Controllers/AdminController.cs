@@ -1,4 +1,5 @@
-﻿using System;
+﻿using FAIS.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
@@ -8,6 +9,7 @@ namespace FAIS.Controllers
 {
     public class AdminController : Controller
     {
+        private FAISEntities db = new FAISEntities();
         // GET: Admin
         public ActionResult Index()
         {
@@ -26,10 +28,13 @@ namespace FAIS.Controllers
             return PartialView();
         }
         
-        public PartialViewResult Page(string id)
+        public PartialViewResult Page(int id)
         {
-            ViewBag.layout = id;
+            ViewBag.pageId = id;
 
+            var data = db.PAGE.Where(p => p.BO_ID == id).FirstOrDefault();
+
+            ViewBag.dataLayout = data.LAYOUT;
             return PartialView();
         }
         public PartialViewResult PageList()
