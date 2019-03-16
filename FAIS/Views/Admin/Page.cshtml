@@ -283,6 +283,20 @@
                         height: { label:"Hauteur", type: "v-text" }
                     }
                 },
+                USER_WIDGET: {
+                    name: "User widget",
+                    icone: "person",
+                    class: "",
+                    props: {
+                        userId: { label: "ID Utilisateur", type: "v-text" }
+                    },
+                    apply: function ($compDiv) {
+                        var me = this;
+                        INCLUDE($compDiv, "admin/widgets/userwidget", function () {
+                            vappUserWidget.val(me.props);
+                        });
+                    }
+                },
             },
             layout: {
                 page: {
@@ -357,7 +371,7 @@
                 this.layout.sections.push(section);
             },
             addComponent: function (sectionIndex, colIndex, key) {
-                var component = { type: key, props: {} };
+                var component = { type: key, props: {}, apply: this.componentsTypes[key].apply };
 
                 for (var i in this.componentsTypes[key].props) {
                     component.props[i] = null;
@@ -399,6 +413,8 @@
                         $compDiv.html("<iframe src='" + args.link + "' height='" + args.height + "' width='100%' frameborder='0' ></iframe>");
                         break;
                     default:
+                        this.selectedComponent.apply($compDiv);
+                        break;
                 }
             }
         },

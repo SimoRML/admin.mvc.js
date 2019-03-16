@@ -129,13 +129,15 @@ Vue.directive("format", {
     update: v_format_directive
 });
 
-function INCLUDE($element, url) {
+function INCLUDE($element, url, done) {
     var $preloaderElement = $element.parent(".card").length > 0 ? $element.parent(".card") : $element;
     $preloaderElement.addClass("preLoader");
+
+    log.red("INCLUDE", url, $element);
     $element.load(url, function (response, status, xhr) {
         $preloaderElement.removeClass("preLoader");
         if (status === "success") {
-
+            if(typeof done === "function" ) done();
             updateDom();
         } else {
             $preloaderElement.addClass("preLoaderError");
