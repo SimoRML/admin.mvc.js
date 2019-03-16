@@ -40,5 +40,31 @@ namespace FAIS.Controllers
         {
             return PartialView("layouts/" + id);
         }
+
+
+        public PartialViewResult Roles()
+        {
+            return PartialView();
+        }
+
+        public PartialViewResult RolesAdd()
+        {
+            return PartialView();
+        }
+
+        public PartialViewResult UserAdd()
+        {
+            return PartialView();
+        }
+
+        public PartialViewResult boRoles()
+        {
+            return PartialView();
+        }
+
+        public PartialViewResult RolesUsers()
+        {
+            return PartialView();
+        }
     }
 }

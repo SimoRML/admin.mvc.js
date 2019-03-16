@@ -1,4 +1,5 @@
 ﻿using FAIS.Models;
+using FAIS.Models.Authorize;
 using FAIS.Models.Repository;
 using System;
 using System.Collections.Generic;
@@ -17,6 +18,8 @@ namespace FAIS.Controllers
     public class ProfileManagerController : ApiController
     {
         FAISEntities db = new FAISEntities();
+        private BoRoleModel boRoleModel = new BoRoleModel();
+
         // GET: api/ProfileManager
         [HttpGet]
         [Route("Menu")]
@@ -37,6 +40,7 @@ namespace FAIS.Controllers
                         new MenuFields { icon = "dashboard", text = "Workflow", href = "bo.admin.workflow" },
                         new MenuFields { icon = "web", text = "Page", href = "admin.pagelist" },
                         new MenuFields { icon = "pie_chart", text = "Reporting", href = "home.reporting" },
+                        new MenuFields { icon = "pie_chart", text = "Rôles", href = "admin.roles" },
                     },
                 open = false,
             });
@@ -80,5 +84,44 @@ namespace FAIS.Controllers
             return Ok(validators);
         }
 
+
+        [HttpGet]
+        [Route("roles")]
+        public async Task<IHttpActionResult> GetRoles()
+        {
+            return Ok(boRoleModel.GetRoles().ToList());
+        }
+
+        [HttpGet]
+        [Route("users")]
+        public async Task<IHttpActionResult> GetUsers()
+        {
+            return Ok(boRoleModel.GetUsers().ToList());
+        }
+        [HttpGet]
+        [Route("users/{roleId}")]
+        public async Task<IHttpActionResult> GetUsers(string roleId)
+        {
+            return Ok(boRoleModel.GetUsers(roleId).ToList());
+        }
+        [HttpPost]
+        [Route("addRole/{roleName}")]
+        public async Task<IHttpActionResult> AddRole(string roleName)
+        {
+            return Ok(await boRoleModel.AddRoleAsync(roleName));
+        }
+        [HttpPut]
+        [Route("usersRoles/{roleName}")]
+        public async Task<IHttpActionResult> SetUsersRoles(string roleName, List<UserModel> users)
+        {
+            return Ok(await boRoleModel.SetUsersRolesAsync(roleName, users));
+        }
+
+        [HttpGet]
+        [Route("boRoles/{roleId}")]
+        public async Task<IHttpActionResult> GetBoRoles(string roleId)
+        {
+            return Ok(boRoleModel.GetBoRoles(roleId));
+        }
     }
 }

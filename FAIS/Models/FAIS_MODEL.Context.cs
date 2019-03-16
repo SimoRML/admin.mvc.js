@@ -37,6 +37,7 @@ namespace FAIS.Models
         public virtual DbSet<NOTIF> NOTIF { get; set; }
         public virtual DbSet<TASK> TASK { get; set; }
         public virtual DbSet<WORKFLOW> WORKFLOW { get; set; }
+        public virtual DbSet<BO_ROLE> BO_ROLE { get; set; }
     
         public virtual int MoveBoToCurrentVersion(Nullable<long> bO_ID)
         {

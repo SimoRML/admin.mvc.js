@@ -1,0 +1,59 @@
+﻿<div id="vappBoRoles">
+    <h4><i class="material-icons">verified_user</i> Droits d'accèss</h4>
+    <div class="col-md-12">
+        <table class="table table-striped v-table">
+            <thead>
+                <tr>
+                    <th>BO</th>
+                    <th>Lecture</th>
+                    <th>Ecriture</th>
+                </tr>
+                <tr>
+                    <th></th>
+                    <th>
+                        <a href="javascript:;" class="btn btn-simple btn-xs"><i class="material-icons">done_all</i></a>
+                    </th>
+                    <th>
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr v-for="(borole, idx) in boRoles" v-bind:key="borole.META_BO_ID">
+                    <td>
+                        {{ borole.BO_NAME }}
+                    </td>
+                    <td align="center" style="padding: 5px;">
+                        <v-checkbox class="tableForm" v-model="borole.CAN_READ"></v-checkbox>
+                    </td>
+                    <td align="center" style="padding: 5px;">
+                        <v-checkbox class="tableForm" v-model="borole.CAN_WRITE"></v-checkbox>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+<script type="text/javascript">
+    var vappBoRoles = new Vue({
+        el: "#vappBoRoles",
+        data: {
+            boRoles: [],
+            role: "",
+        },
+        methods: {
+            val: function (data) {
+                if (typeof data !== "undefined") {
+                    var me = this;
+                    this.role = data;
+                    EV.getComponent('data').Get({
+                        url: "profile/boroles/" + me.role.Id,
+                        done: function (response) {
+                            me.boRoles = response;
+                        },
+                    });
+                }
+                return this.boRoles;
+            },
+        }
+    });
+</script>

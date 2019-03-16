@@ -133,6 +133,7 @@
     <EntitySet Name="NOTIF" EntityType="FAIS_Model.NOTIF" />
     <EntitySet Name="TASK" EntityType="FAIS_Model.TASK" />
     <EntitySet Name="WORKFLOW" EntityType="FAIS_Model.WORKFLOW" />
+    <EntitySet Name="BO_ROLE" EntityType="FAIS_Model.BO_ROLE" />
   </EntityContainer>
   <EntityType Name="PAGE">
     <Key>
@@ -190,5 +191,20 @@
     <Property Name="LIBELLE" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
     <Property Name="ACTIVE" Type="Int32" />
     <Property Name="ITEMS" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+  </EntityType>
+  <EntityType Name="BO_ROLE">
+    <Key>
+      <PropertyRef Name="BO_ROLE_ID" />
+    </Key>
+    <Property Name="BO_ROLE_ID" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="META_BO_ID" Type="Int64" Nullable="false" />
+    <Property Name="ROLE_ID" Type="String" Nullable="false" MaxLength="128" FixedLength="false" Unicode="true" />
+    <Property Name="CAN_READ" Type="Boolean" />
+    <Property Name="CAN_WRITE" Type="Boolean" />
+    <Property Name="CREATED_BY" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+    <Property Name="CREATED_DATE" Type="DateTime" Precision="3" />
+    <Property Name="UPDATED_BY" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+    <Property Name="UPDATED_DATE" Type="DateTime" Precision="3" />
+    <Property Name="STATUS" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
   </EntityType>
 </Schema>

@@ -240,6 +240,7 @@
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\AdminController.cs" />
     <Compile Include="Controllers\BoController.cs" />
+    <Compile Include="Controllers\BoRoleController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\MetaBoController.cs" />
     <Compile Include="Controllers\MetaFieldController.cs" />
@@ -256,12 +257,16 @@
     </Compile>
     <Compile Include="Models\AccountBindingModels.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
+    <Compile Include="Models\Authorize\BoRoleModel.cs" />
     <Compile Include="Models\Authorize\ViewAuthorize.cs" />
     <Compile Include="Models\BO.cs">
       <DependentUpon>FAIS_MODEL.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\BORepository.cs" />
     <Compile Include="Models\BO_CHILDS.cs">
+      <DependentUpon>FAIS_MODEL.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\BO_ROLE.cs">
       <DependentUpon>FAIS_MODEL.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\FAIS_MODEL.Context.cs">
@@ -587,6 +592,7 @@
     <Content Include="Content\sass\material-dashboard\_variables.scss" />
     <Content Include="Scripts\vue.js" />
     <Content Include="Scripts\vuex.js" />
+    <Content Include="SQL\BO_ROLE.sql" />
     <Content Include="SQL\CreateTable_v1.sql" />
     <Content Include="SQL\CreateView.sql" />
     <Content Include="SQL\DYNAMIC_SELECT.sql" />
@@ -752,6 +758,11 @@
     <Content Include="Views\Bo\TableEditable.cshtml" />
     <Content Include="Views\Workflow\Mapping.cshtml" />
     <Content Include="Views\v_components\_v_workflow_executer.cshtml" />
+    <Content Include="Views\Admin\Roles.cshtml" />
+    <Content Include="Views\Admin\RolesAdd.cshtml" />
+    <Content Include="Views\Admin\RolesUsers.cshtml" />
+    <Content Include="Views\Admin\UserAdd.cshtml" />
+    <Content Include="Views\Admin\boRoles.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

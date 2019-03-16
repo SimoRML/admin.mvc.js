@@ -49,12 +49,29 @@
             setTimeout(function () {
                 window.URL.revokeObjectURL(data);
             }, 100);
-        }
+        },
+        OrderBy: function (property, sortOrder) {
+            if (typeof sortOrder == "undefined") sortOrder = 1;
+
+            if (property[0] === "-") {
+                sortOrder = -1;
+                property = property.substr(1);
+            }
+            return function (a, b) {
+                if (sortOrder == -1) {
+                    // log.red("dynamicSort", b[property]);
+                    return (b[property] === null ? " " : b[property].toString()).localeCompare(a[property] === null ? " " : a[property].toString());
+                } else {
+                    //log.blue("dynamicSort", a[property], a[property]===null);
+                    return (a[property] === null ? " " : a[property].toString()).localeCompare(b[property] === null ? " " : b[property].toString());
+                }
+            };
+        },
     },
     filters: {
         Display: function (value, source) {
-            console.log("filters Display", value);
-            console.log("filters Display", source);
+            //             console.log("filters Display", value);
+            //            console.log("filters Display", source);
             if (typeof bus.$data.A === "undefined") return "DISPLAY=>" + value;
 
             return bus.$data.A;

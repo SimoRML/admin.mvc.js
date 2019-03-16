@@ -27,6 +27,21 @@
           <Property Name="BO_CHILD_ID" Type="bigint" Nullable="false" />
           <Property Name="RELATION" Type="varchar" MaxLength="50" />
         </EntityType>
+        <EntityType Name="BO_ROLE">
+          <Key>
+            <PropertyRef Name="BO_ROLE_ID" />
+          </Key>
+          <Property Name="BO_ROLE_ID" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="META_BO_ID" Type="bigint" Nullable="false" />
+          <Property Name="ROLE_ID" Type="nvarchar" MaxLength="128" Nullable="false" />
+          <Property Name="CAN_READ" Type="bit" />
+          <Property Name="CAN_WRITE" Type="bit" />
+          <Property Name="CREATED_BY" Type="varchar" MaxLength="100" />
+          <Property Name="CREATED_DATE" Type="datetime" />
+          <Property Name="UPDATED_BY" Type="varchar" MaxLength="100" />
+          <Property Name="UPDATED_DATE" Type="datetime" />
+          <Property Name="STATUS" Type="varchar" MaxLength="10" />
+        </EntityType>
         <EntityType Name="META_BO">
           <Key>
             <PropertyRef Name="META_BO_ID" />
@@ -177,6 +192,7 @@
         <EntityContainer Name="FAIS_ModelStoreContainer">
           <EntitySet Name="BO" EntityType="Self.BO" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="BO_CHILDS" EntityType="Self.BO_CHILDS" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="BO_ROLE" EntityType="Self.BO_ROLE" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="META_BO" EntityType="Self.META_BO" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="META_FIELD" EntityType="Self.META_FIELD" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="NOTIF" EntityType="Self.NOTIF" Schema="dbo" store:Type="Tables" />
@@ -331,6 +347,7 @@
           <EntitySet Name="NOTIF" EntityType="FAIS_Model.NOTIF" />
           <EntitySet Name="TASK" EntityType="FAIS_Model.TASK" />
           <EntitySet Name="WORKFLOW" EntityType="FAIS_Model.WORKFLOW" />
+          <EntitySet Name="BO_ROLE" EntityType="FAIS_Model.BO_ROLE" />
         </EntityContainer>
         <EntityType Name="PAGE">
           <Key>
@@ -388,6 +405,21 @@
           <Property Name="LIBELLE" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
           <Property Name="ACTIVE" Type="Int32" />
           <Property Name="ITEMS" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        </EntityType>
+        <EntityType Name="BO_ROLE">
+          <Key>
+            <PropertyRef Name="BO_ROLE_ID" />
+          </Key>
+          <Property Name="BO_ROLE_ID" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="META_BO_ID" Type="Int64" Nullable="false" />
+          <Property Name="ROLE_ID" Type="String" Nullable="false" MaxLength="128" FixedLength="false" Unicode="true" />
+          <Property Name="CAN_READ" Type="Boolean" />
+          <Property Name="CAN_WRITE" Type="Boolean" />
+          <Property Name="CREATED_BY" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="CREATED_DATE" Type="DateTime" Precision="3" />
+          <Property Name="UPDATED_BY" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="UPDATED_DATE" Type="DateTime" Precision="3" />
+          <Property Name="STATUS" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
         </EntityType>
       </Schema>
     </edmx:ConceptualModels>
@@ -540,6 +572,22 @@
                 <ScalarProperty Name="ACTIVE" ColumnName="ACTIVE" />
                 <ScalarProperty Name="LIBELLE" ColumnName="LIBELLE" />
                 <ScalarProperty Name="BO_ID" ColumnName="BO_ID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="BO_ROLE">
+            <EntityTypeMapping TypeName="FAIS_Model.BO_ROLE">
+              <MappingFragment StoreEntitySet="BO_ROLE">
+                <ScalarProperty Name="STATUS" ColumnName="STATUS" />
+                <ScalarProperty Name="UPDATED_DATE" ColumnName="UPDATED_DATE" />
+                <ScalarProperty Name="UPDATED_BY" ColumnName="UPDATED_BY" />
+                <ScalarProperty Name="CREATED_DATE" ColumnName="CREATED_DATE" />
+                <ScalarProperty Name="CREATED_BY" ColumnName="CREATED_BY" />
+                <ScalarProperty Name="CAN_WRITE" ColumnName="CAN_WRITE" />
+                <ScalarProperty Name="CAN_READ" ColumnName="CAN_READ" />
+                <ScalarProperty Name="ROLE_ID" ColumnName="ROLE_ID" />
+                <ScalarProperty Name="META_BO_ID" ColumnName="META_BO_ID" />
+                <ScalarProperty Name="BO_ROLE_ID" ColumnName="BO_ROLE_ID" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
