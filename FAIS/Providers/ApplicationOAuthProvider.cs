@@ -10,6 +10,7 @@ using Microsoft.Owin.Security;
 using Microsoft.Owin.Security.Cookies;
 using Microsoft.Owin.Security.OAuth;
 using FAIS.Models;
+using FAIS.Models.Authorize;
 
 namespace FAIS.Providers
 {
@@ -48,6 +49,7 @@ namespace FAIS.Providers
             AuthenticationTicket ticket = new AuthenticationTicket(oAuthIdentity, properties);
             context.Validated(ticket);
             context.Request.Context.Authentication.SignIn(cookiesIdentity);
+            UserRoleManager.Clear();
         }
 
         public override Task TokenEndpoint(OAuthTokenEndpointContext context)

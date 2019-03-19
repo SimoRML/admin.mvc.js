@@ -10,6 +10,7 @@ namespace FAIS.Controllers
     [Authorize]
     public class RouterController : Controller
     {
+        [Authorize(Roles = "admin")]
         public PartialViewResult MetaBo()
         {
             return PartialView("_meta_bo");

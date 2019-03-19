@@ -6,6 +6,7 @@ using System.Web.Mvc;
 
 namespace FAIS.Controllers
 {
+    [Authorize(Roles = "admin")]
     public class AdminController : Controller
     {
         // GET: Admin

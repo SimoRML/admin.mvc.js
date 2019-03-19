@@ -133,7 +133,7 @@ var NOTIF = {
         this.show(text, 'warning');
     },
     error: function success(text) {
-        this.show(text, 'danger');
+        this.show(text, 'danger', "error");
     },
     confirm: function (params) {
         swal({

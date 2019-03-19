@@ -7,7 +7,7 @@ function DataSource(id, config){
         localStorage.removeItem("_tkn_");
         var loginUrl = this.config.loginPath + "?returnUrl=";
         console.log("logout", loginUrl);
-        //if(window.location.href !== loginUrl) window.location = loginUrl;
+        if(window.location.href !== loginUrl) window.location = loginUrl;
     };
     this.getToken = function () {
         if (localStorage.getItem("_tkn_") === null) {
@@ -86,8 +86,12 @@ DataSource.prototype.ExecuteSource = function (source) {
         })
         .fail(function (response) {
             me.Trigger("hide", "PagePreloader");
+            log.red("Data AJX ", response);
             if (response.status === 401) {
                 me.logout();
+            }
+            else if (response.status === 403) {
+                NOTIF.error(response.statusText + " > " + response.responseText);
             }
             // CALL FAIL
             if (typeof source.fail === "function")

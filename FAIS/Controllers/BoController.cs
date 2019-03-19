@@ -15,9 +15,20 @@ namespace FAIS.Controllers
         // GET: Bo
         [Route("Index/{id}")]
         public PartialViewResult Index(string id)
-        {
+        {            
             if(id!= "workflow") id += "_BO_";
             var meta = new MetaBoRepo().GetMETA(id);
+
+            try
+            {
+                UserRoleManager.Instance.VerifyAccess(meta.BO_NAME);
+            }
+            catch (System.UnauthorizedAccessException ex)
+            {
+                ViewBag.Message = ex.Message;
+                return PartialView("Unauthorized");
+            }
+            
 
             return PartialView(meta);
         }
@@ -29,10 +40,21 @@ namespace FAIS.Controllers
             id += "_BO_";
             var meta = new MetaBoRepo().GetMETA(id);
 
+            try
+            {
+                UserRoleManager.Instance.VerifyAccess(meta.BO_NAME);
+            }
+            catch (System.UnauthorizedAccessException ex)
+            {
+                ViewBag.Message = ex.Message;
+                return PartialView("Unauthorized");
+            }
+
             return PartialView("Index",meta);
         }
 
         // GET: Bo
+        [Authorize(Roles = "admin")]
         [Route("admin/{id}")]
         public PartialViewResult Admin(string id)
         {

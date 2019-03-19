@@ -22,7 +22,7 @@
             bindBack: function (e) {
                 // console.log("bindBack", e.target.type, e.target.value, this.selected);
                 if (e.target.type === "checkbox") {
-                    this.$emit('input', e.target.checked ? 1 : 0, { line: this.line, column: this.column });
+                    this.$emit('input', this.returnBool ? e.target.checked : (e.target.checked ? 1 : 0), { line: this.line, column: this.column });
                 }
                 else if (e.target.type === "select-multiple") {
                     this.$emit('input', this.selected, { line: this.line, column: this.column });
@@ -571,6 +571,12 @@
     Vue.component('v-checkbox', {
         template: $("#v-checkbox-template").html(),
         mixins: [FormMixin],
+        props: {
+            returnBool: {
+                type:Boolean,
+                default: false,
+            },
+        },
         computed: {
             isChecked: function () {
                 return this.value == 1;
