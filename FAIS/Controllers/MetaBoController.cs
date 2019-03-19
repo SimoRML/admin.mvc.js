@@ -1,4 +1,5 @@
 ﻿using FAIS.Models;
+using FAIS.Models.Authorize;
 using FAIS.Models.Repository;
 using FAIS.Models.VForm;
 using System;
@@ -170,11 +171,24 @@ namespace FAIS.Controllers
             return db.META_BO.Count(e => e.META_BO_ID == id) > 0;
         }
 
+
         [HttpPost]
         [Route("Filter")]
         public async Task<IHttpActionResult> Filter(FilterModel model)
         {
             var meta = await db.META_BO.FindAsync(model.MetaBoID);
+
+            /* ACCESS RIGHTS */ 
+            try
+            {
+                UserRoleManager.Instance.VerifyRead(meta.BO_NAME);
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                return Content(HttpStatusCode.Forbidden, ex.Message);
+            }
+            /* FIN ACCESS RIGHTS */
+
             if (meta == null)
             {
                 return BadRequest();
@@ -190,13 +204,32 @@ namespace FAIS.Controllers
             return Ok(dt);
             //return Ok();
         }
+        [AllowAnonymous]
+        [HttpGet]
+        [Route("test/{key}")]
+        public async Task<IHttpActionResult> test(string key)
+        {
+            return Ok(SessionVar.Get<object>(key));
+        }
 
+        // INSERT BO multi
         [HttpPost]
         [Route("CrudMultiple/{id}")]
         public async Task<IHttpActionResult> InsertMultiple(int id, List<Dictionary<string, object>> Items)
         {
             var meta = await db.META_BO.FindAsync(id);
             if (meta == null) return NotFound();
+
+            /* ACCESS RIGHTS */
+            try
+            {
+                UserRoleManager.Instance.VerifyWrite(meta.BO_NAME);
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                return Content(HttpStatusCode.Forbidden, ex.Message);
+            }
+            /* FIN ACCESS RIGHTS */
 
             List<object> result = new List<object>();
             bool insert = false, deleted = false;
@@ -239,6 +272,7 @@ namespace FAIS.Controllers
             return Ok(result);
         }
 
+        // INSERT BO
         [HttpPost]
         [Route("Crud/{id}")]
         public async Task<IHttpActionResult> Insert(int id, Dictionary<string, object> Items)
@@ -249,6 +283,17 @@ namespace FAIS.Controllers
                 Items = Items
             };
             var meta = await db.META_BO.FindAsync(model.MetaBoID);
+
+            /* ACCESS RIGHTS */
+            try
+            {
+                UserRoleManager.Instance.VerifyWrite(meta.BO_NAME);
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                return Content(HttpStatusCode.Forbidden, ex.Message);
+            }
+            /* FIN ACCESS RIGHTS */
 
             BO bo_model = new BO()
             {
@@ -399,6 +444,7 @@ namespace FAIS.Controllers
             return Ok(BO_DB_NAME);
         }
 
+        // INSERT BO CHILDS
         [HttpPost]
         [Route("Crud/{id}/{parentId}")]
         public async Task<IHttpActionResult> InsertChilds(int id, long parentId, Dictionary<string, object> Items)
@@ -409,6 +455,17 @@ namespace FAIS.Controllers
                 Items = Items
             };
             var meta = await db.META_BO.FindAsync(model.MetaBoID);
+            
+            /* ACCESS RIGHTS */
+            try
+            {
+                UserRoleManager.Instance.VerifyWrite(meta.BO_NAME);
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                return Content(HttpStatusCode.Forbidden, ex.Message);
+            }
+            /* FIN ACCESS RIGHTS */
 
             BO bo_model = new BO()
             {
@@ -442,6 +499,7 @@ namespace FAIS.Controllers
                 return InternalServerError();
         }
 
+        // INSERT BO CHILDS multi
         [HttpPost]
         [Route("CrudMultipleChilds/{id}")]
         public async Task<IHttpActionResult> InsertMultipleChilds(int id, List<Dictionary<string, object>> Items)
@@ -449,11 +507,21 @@ namespace FAIS.Controllers
             var meta = await db.META_BO.FindAsync(id);
             if (meta == null) return NotFound();
 
+            /* ACCESS RIGHTS */
+            try
+            {
+                UserRoleManager.Instance.VerifyWrite(meta.BO_NAME);
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                return Content(HttpStatusCode.Forbidden, ex.Message);
+            }
+            /* FIN ACCESS RIGHTS */
+
             List<object> result = new List<object>();
             bool insert = false, deleted = false;
             foreach (var ligne in Items)
             {
-
                 BO bo_model = new BO()
                 {
                     CREATED_BY = User.Identity.Name,
@@ -498,6 +566,7 @@ namespace FAIS.Controllers
             return Ok(result);
         }
 
+        // UPDATE BO
         [HttpPut]
         [Route("Crud/{id}/{bo_id}")]
         public async Task<IHttpActionResult> Update(long id, long bo_id, Dictionary<string, object> Items)
@@ -508,6 +577,17 @@ namespace FAIS.Controllers
                 Items = Items
             };
             var meta = await db.META_BO.FindAsync(id);
+
+            /* ACCESS RIGHTS */
+            try
+            {
+                UserRoleManager.Instance.VerifyWrite(meta.BO_NAME);
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                return Content(HttpStatusCode.Forbidden, ex.Message);
+            }
+            /* FIN ACCESS RIGHTS */
 
             var BO_ToUpdate = db.BO.SingleOrDefault(bo => bo.BO_ID == bo_id);
 
@@ -524,6 +604,8 @@ namespace FAIS.Controllers
             else
                 return InternalServerError(new Exception(update_));
         }
+
+        // UPDATE BO CHILDS
         [HttpPut]
         [Route("Crud/{id}/{parentId}/{bo_id}")]
         public async Task<IHttpActionResult> UpdateChilds(long id, long parentId, long bo_id, Dictionary<string, object> Items)
@@ -531,15 +613,28 @@ namespace FAIS.Controllers
             return await Update(id, bo_id, Items);
         }
 
+        // SELECT FROM BO
         [HttpGet]
         [Route("Select/{Tname}")]
         public async Task<IHttpActionResult> Select(string Tname)
         {
             var meta = await db.META_BO.Where(x => x.BO_DB_NAME == Tname).FirstOrDefaultAsync();
+            
             if (meta == null)
             {
                 return BadRequest();
             }
+
+            /* ACCESS RIGHTS */
+            try
+            {
+                UserRoleManager.Instance.VerifyRead(meta.BO_NAME);
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                return Content(HttpStatusCode.Forbidden, ex.Message);
+            }
+            /* FIN ACCESS RIGHTS */
 
             var s = new SGBD();
             var Gen = new BORepositoryGenerator();
@@ -548,6 +643,7 @@ namespace FAIS.Controllers
             return Ok(dt);
         }
 
+        // SELECT FROM BO CHILDS
         [HttpGet]
         [Route("SelectChilds/{Tname}/{parentId}")]
         public async Task<IHttpActionResult> SelectChilds(string Tname, long parentId)
@@ -557,6 +653,16 @@ namespace FAIS.Controllers
             {
                 return BadRequest();
             }
+            /* ACCESS RIGHTS */
+            try
+            {
+                UserRoleManager.Instance.VerifyRead(meta.BO_NAME);
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                return Content(HttpStatusCode.Forbidden, ex.Message);
+            }
+            /* FIN ACCESS RIGHTS */
 
             var s = new SGBD();
             var Gen = new BORepositoryGenerator();
@@ -565,15 +671,26 @@ namespace FAIS.Controllers
             return Ok(dt);
         }
 
+        // SELECT ONE FROM BO
         [HttpGet]
         [Route("Crud/{id}/{param}")]
         public async Task<IHttpActionResult> GetOne(long id, long param)
         {
-
+            var meta = await db.META_BO.FindAsync(id);
+         
+            /* ACCESS RIGHTS */
+            try
+            {
+                UserRoleManager.Instance.VerifyRead(meta.BO_NAME);
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                return Content(HttpStatusCode.Forbidden, ex.Message);
+            }
+            /* FIN ACCESS RIGHTS */
 
             var s = new SGBD();
             var Gen = new BORepositoryGenerator();
-            var meta = await db.META_BO.FindAsync(id);
             Dictionary<string, object> bind = new Dictionary<string, object>();
             bind.Add("BO_ID", param);
             var dt = s.Cmd(Gen.GenSelectOne(meta.BO_DB_NAME), bind);
@@ -582,7 +699,8 @@ namespace FAIS.Controllers
             return Ok(dt);
         }
 
-
+        // INSERT MASS META_BO
+        [Authorize(Roles = "admin")]
         [HttpPost]
         [Route("Mass")]
         public IHttpActionResult Mass(List<BoBulk> models)
@@ -595,9 +713,9 @@ namespace FAIS.Controllers
             return Ok("CREATED");
         }
 
+        // RUN WORKFLOW
         [HttpGet]
         [Route("validateWorkflow/{id}")]
-
         public async Task<IHttpActionResult> ValidateWokflow(int id)
         {
 
@@ -634,19 +752,16 @@ namespace FAIS.Controllers
             return Ok(new { success = false });
         }
 
+        // VALIDATE WORKFLOW TASK
         [HttpGet]
         [Route("valider/{id}")]
         public async Task<IHttpActionResult> valider(int id, string status, int boid)
         {
-
-
             var s = new SGBD();
             s.Cmd("update Task set etat = 1 where task_id=" + id);
             s.Cmd("update bo set status='" + status + "' where BO_ID=" + boid);
 
             return Ok(new { success = true, status });
         }
-
-
     }
 }

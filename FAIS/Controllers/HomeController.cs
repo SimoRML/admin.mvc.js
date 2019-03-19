@@ -1,4 +1,5 @@
-﻿using FAIS.Models.Authorize;
+﻿using FAIS.Models;
+using FAIS.Models.Authorize;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -22,6 +23,7 @@ namespace FAIS.Controllers
         [AllowAnonymous]
         public ActionResult Login()
         {
+            SessionVar.Clear();
             return View();
         }
 

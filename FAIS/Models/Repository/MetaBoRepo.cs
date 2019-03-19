@@ -142,7 +142,7 @@ namespace FAIS.Models.Repository
 
         public async Task<List<META_BO_EX>> GetMetaBoExAsync(string where)
         {
-            return await db.Database.SqlQuery<META_BO_EX>("select JSON_VALUE(JSON_DATA, '$.TITLE') TITLE, JSON_VALUE(JSON_DATA, '$.GROUPE') GROUPE, * from META_BO " + where).ToListAsync();
+            return await db.Database.SqlQuery<META_BO_EX>("select JSON_VALUE(JSON_DATA, '$.TITLE') TITLE, JSON_VALUE(JSON_DATA, '$.GROUPE') GROUPE, * from META_BO  " + where).ToListAsync();
         }
 
         //public async Task<META_BO_EX> FindMetaBoExAsync(long id)

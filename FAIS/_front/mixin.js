@@ -88,6 +88,33 @@ var MixinStore = {
     }
 };
 
+var MixinAuthorize = {
+    mixins:[MixinStore],
+    methods: {
+        can: function (boName, accessType) {
+            if (typeof boName === "undefined") boName = this.boName;
+            var bo = this.$store.getters.get("access")[boName];
+            if (typeof bo === "undefined") return false;
+            switch (accessType) {
+                case 'r':
+                    if (!bo.CAN_READ) return false;
+                    break;
+                case 'w':
+                    if (!bo.CAN_WRITE) return false;
+                    break;
+                case 'a':
+                    if (!bo.CAN_ACCESS) return false;
+                    break;
+            }
+            return true;
+        },
+        canRead:   function (boName) { return this.can(boName, 'r'); },
+        canWrite:  function (boName) { return this.can(boName, 'w'); },
+        canAccess: function (boName) { return this.can(boName, 'a'); },
+    }
+};
+
+
 function v_format_directive(e1, binding, vnode) {
     if (binding.value.format === null) return;
 
