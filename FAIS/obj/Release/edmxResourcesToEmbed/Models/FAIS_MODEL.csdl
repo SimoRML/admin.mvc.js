@@ -123,7 +123,6 @@
     <FunctionImport Name="MoveBoToCurrentVersion">
       <Parameter Name="BO_ID" Mode="In" Type="Int64" />
     </FunctionImport>
-    <EntitySet Name="PAGE" EntityType="FAIS_Model.PAGE" />
     <EntitySet Name="PlusSequence" EntityType="FAIS_Model.PlusSequence" />
     <FunctionImport Name="PlusSequenceNextID" ReturnType="Collection(String)">
       <Parameter Name="cle" Mode="In" Type="String" />
@@ -134,21 +133,8 @@
     <EntitySet Name="TASK" EntityType="FAIS_Model.TASK" />
     <EntitySet Name="WORKFLOW" EntityType="FAIS_Model.WORKFLOW" />
     <EntitySet Name="BO_ROLE" EntityType="FAIS_Model.BO_ROLE" />
+    <EntitySet Name="PAGE" EntityType="FAIS_Model.PAGE" />
   </EntityContainer>
-  <EntityType Name="PAGE">
-    <Key>
-      <PropertyRef Name="PAGE_ID" />
-    </Key>
-    <Property Name="PAGE_ID" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-    <Property Name="TITLE" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-    <Property Name="GROUPE" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-    <Property Name="STATUS" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
-    <Property Name="LAYOUT" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
-    <Property Name="CREATED_DATE" Type="DateTime" Precision="3" />
-    <Property Name="CREATED_BY" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
-    <Property Name="UPDATED_DATE" Type="DateTime" Precision="3" />
-    <Property Name="UPDATED_BY" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
-  </EntityType>
   <EntityType Name="PlusSequence">
     <Key>
       <PropertyRef Name="SequenceID" />
@@ -206,5 +192,19 @@
     <Property Name="UPDATED_BY" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
     <Property Name="UPDATED_DATE" Type="DateTime" Precision="3" />
     <Property Name="STATUS" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+  </EntityType>
+  <EntityType Name="PAGE">
+    <Key>
+      <PropertyRef Name="BO_ID" />
+    </Key>
+    <Property Name="BO_ID" Type="Int64" Nullable="false" />
+    <Property Name="TITLE" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+    <Property Name="GROUPE" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+    <Property Name="STATUS" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+    <Property Name="LAYOUT" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <Property Name="CREATED_DATE" Type="DateTime" Precision="3" />
+    <Property Name="CREATED_BY" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+    <Property Name="UPDATED_DATE" Type="DateTime" Precision="3" />
+    <Property Name="UPDATED_BY" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
   </EntityType>
 </Schema>
