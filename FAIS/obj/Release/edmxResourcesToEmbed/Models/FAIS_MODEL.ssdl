@@ -92,9 +92,9 @@
   </EntityType>
   <EntityType Name="PAGE">
     <Key>
-      <PropertyRef Name="PAGE_ID" />
+      <PropertyRef Name="BO_ID" />
     </Key>
-    <Property Name="PAGE_ID" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="BO_ID" Type="bigint" Nullable="false" />
     <Property Name="TITLE" Type="varchar" MaxLength="50" />
     <Property Name="GROUPE" Type="varchar" MaxLength="50" />
     <Property Name="STATUS" Type="varchar" MaxLength="10" />
