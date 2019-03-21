@@ -227,3 +227,7 @@ ul.dropdown-menu.inner {
     max-height: 190px;
     overflow-y: auto;
 }
+
+.deleted-wavy {
+    text-decoration: line-through wavy red;
+}

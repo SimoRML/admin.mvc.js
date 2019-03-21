@@ -2,6 +2,7 @@ C:\www\_.net\NB\admin.mvc.js\FAIS\bin\ApplicationInsights.config
 C:\www\_.net\NB\admin.mvc.js\FAIS\bin\FAIS.dll.config
 C:\www\_.net\NB\admin.mvc.js\FAIS\bin\FAIS.dll
 C:\www\_.net\NB\admin.mvc.js\FAIS\bin\FAIS.pdb
+C:\www\_.net\NB\admin.mvc.js\FAIS\bin\fr-FR\FAIS.resources.dll
 C:\www\_.net\NB\admin.mvc.js\FAIS\bin\roslyn\csc.exe
 C:\www\_.net\NB\admin.mvc.js\FAIS\bin\roslyn\csc.exe.config
 C:\www\_.net\NB\admin.mvc.js\FAIS\bin\roslyn\csc.rsp
@@ -138,13 +139,12 @@ C:\www\_.net\NB\admin.mvc.js\FAIS\bin\fr\Microsoft.AspNet.Identity.Core.resource
 C:\www\_.net\NB\admin.mvc.js\FAIS\bin\fr\Microsoft.AspNet.Identity.Owin.resources.dll
 C:\www\_.net\NB\admin.mvc.js\FAIS\bin\fr\Microsoft.AspNet.Identity.EntityFramework.resources.dll
 C:\www\_.net\NB\admin.mvc.js\FAIS\bin\fr\System.Web.Http.Owin.resources.dll
-C:\www\_.net\NB\admin.mvc.js\FAIS\obj\Release\FAIS.csprojAssemblyReference.cache
+C:\www\_.net\NB\admin.mvc.js\FAIS\obj\Release\FAIS.Properties.Resources.resources
+C:\www\_.net\NB\admin.mvc.js\FAIS\obj\Release\FAIS.Resources.lang.fr-FR.resources
+C:\www\_.net\NB\admin.mvc.js\FAIS\obj\Release\FAIS.csproj.GenerateResource.cache
 C:\www\_.net\NB\admin.mvc.js\FAIS\obj\Release\FAIS.csproj.CoreCompileInputs.cache
+C:\www\_.net\NB\admin.mvc.js\FAIS\obj\Release\fr-FR\FAIS.resources.dll
 C:\www\_.net\NB\admin.mvc.js\FAIS\obj\Release\FAIS.csproj.CopyComplete
 C:\www\_.net\NB\admin.mvc.js\FAIS\obj\Release\FAIS.dll
 C:\www\_.net\NB\admin.mvc.js\FAIS\obj\Release\FAIS.pdb
-C:\www\_.net\NB\admin.mvc.js\FAIS\obj\Release\FAIS.Properties.Resources.resources
-C:\www\_.net\NB\admin.mvc.js\FAIS\obj\Release\FAIS.csproj.GenerateResource.cache
-C:\www\_.net\NB\admin.mvc.js\FAIS\bin\fr-FR\FAIS.resources.dll
-C:\www\_.net\NB\admin.mvc.js\FAIS\obj\Release\FAIS.Resources.lang.fr-FR.resources
-C:\www\_.net\NB\admin.mvc.js\FAIS\obj\Release\fr-FR\FAIS.resources.dll
+C:\www\_.net\NB\admin.mvc.js\FAIS\obj\Release\FAIS.csprojAssemblyReference.cache

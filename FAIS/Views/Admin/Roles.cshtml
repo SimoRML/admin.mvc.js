@@ -1,0 +1,147 @@
+﻿<div id="vapp">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                <h4 class="card-title">
+                    Rôles
+                    <div class="pull-right">
+                        <button class="btn btn-success btn-sm"
+                                v-on:click="addRole()">
+                            <i class="material-icons">add</i> Rôle
+                        </button>
+
+                        <button class="btn btn-success btn-sm"
+                                v-on:click="addUser()">
+                            <i class="material-icons">add</i> Utilisateur
+                        </button>
+                    </div>
+                </h4>
+            </div>
+            <div class="card-content">
+                <v-table ref="tableRoles" :column-ignore="['Users','Id']">
+
+                    <div slot="action" slot-scope="props">
+                        <button class="btn btn-primary btn-round btn-fab btn-fab-mini btn-fab-x-mini"
+                                v-on:click="editUsers(props.line)">
+                            <i class="material-icons">supervisor_account</i>
+                        </button>
+                        <button class="btn btn-info btn-round btn-fab btn-fab-mini btn-fab-x-mini" v-show="props.line.Name!='admin'"
+                                v-on:click="boRoles(props.line)">
+                            <i class="material-icons">verified_user</i>
+                        </button>
+                    </div>
+
+                </v-table>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    var vapp = new Vue({
+        el: "#vapp",
+        data: {
+            roles: [],
+            api: EV.getComponent('data'),
+        },
+        computed: {
+        },
+        methods: {
+            loadRoles: function () {
+                var me = this;
+                this.api.Get({
+                    url: "profile/roles",
+                    done: (response) => {
+                        // log.table(response);
+                        me.roles = response;
+                        me.$refs.tableRoles.loadObject(me.roles);
+                    }
+                });
+            },
+            editUsers: function (role) {
+                var me = this;
+                NOTIF.modal({
+                    url: "admin/rolesusers",
+                    height: "70vh",
+                    load: function () {
+                        vappRolesUsers.val({ role });
+                    },
+                    valider: function () {
+                        var users = vappRolesUsers.val();
+                        log.table(users);
+                        
+                        me.api.Put({
+                            url: "profile/usersRoles/" + role.Name,
+                            data: JSON.stringify(users),
+                            done: (response) => {
+                                if (response) NOTIF.success("Enregistré avec succès !");
+                            }
+                        });
+                        
+                    }
+                });
+            },
+            boRoles: function (role) {
+                var me = this;
+                NOTIF.modal({
+                    url: "admin/boRoles",
+                    height: "80vh",
+                    load: function () {
+                        vappBoRoles.val(role);
+                    },
+                    valider: function () {
+                        log.table(vappBoRoles.val());
+                        me.api.Post({
+                            url: "profile/saveBoRoles/" + role.Id,
+                            data: JSON.stringify(vappBoRoles.val()),
+                            done: (response) => {
+                                log.table(response);
+                                if (response) NOTIF.success("Enregistré avec succès !");
+                            }
+                        });
+                    }
+                });
+            },
+            addUser: function () {
+                var me = this;
+                NOTIF.modal({
+                    url: "admin/useradd",
+                    valider: function () {
+                        me.api.Post({
+                            url: "account/register/",
+                            data: JSON.stringify(vappUserAdd.val()),
+                            done: (response) => {
+                                NOTIF.success("Utilisateur enregistré avec succèss !");
+                            },
+                            fail: (response) => {
+                                for (var i in response.responseJSON.ModelState) {
+                                    if (Array.isArray(response.responseJSON.ModelState[i])) {
+                                        NOTIF.error(response.responseJSON.ModelState[i][0]);
+                                    } else {
+                                        NOTIF.error(response.responseJSON.ModelState[i]);
+                                    }
+                                }
+                            },
+                        });
+                    }
+                });
+            },
+            addRole: function () {
+                var me = this;
+                NOTIF.modal({
+                    url: "admin/rolesadd",
+                    valider: function () {
+                        me.api.Post({
+                            url: "profile/addrole/" + vappRolesAdd.val(),
+                            done: (response) => {
+                                if (response) me.loadRoles();
+                            }
+                        });
+                    }
+                });
+            },
+        },
+        mounted: function () {
+            this.loadRoles();
+        }
+    });
+</script>

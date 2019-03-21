@@ -49,12 +49,29 @@
             setTimeout(function () {
                 window.URL.revokeObjectURL(data);
             }, 100);
-        }
+        },
+        OrderBy: function (property, sortOrder) {
+            if (typeof sortOrder == "undefined") sortOrder = 1;
+
+            if (property[0] === "-") {
+                sortOrder = -1;
+                property = property.substr(1);
+            }
+            return function (a, b) {
+                if (sortOrder == -1) {
+                    // log.red("dynamicSort", b[property]);
+                    return (b[property] === null ? " " : b[property].toString()).localeCompare(a[property] === null ? " " : a[property].toString());
+                } else {
+                    //log.blue("dynamicSort", a[property], a[property]===null);
+                    return (a[property] === null ? " " : a[property].toString()).localeCompare(b[property] === null ? " " : b[property].toString());
+                }
+            };
+        },
     },
     filters: {
         Display: function (value, source) {
-            console.log("filters Display", value);
-            console.log("filters Display", source);
+            //             console.log("filters Display", value);
+            //            console.log("filters Display", source);
             if (typeof bus.$data.A === "undefined") return "DISPLAY=>" + value;
 
             return bus.$data.A;
@@ -70,6 +87,33 @@ var MixinStore = {
         }
     }
 };
+
+var MixinAuthorize = {
+    mixins:[MixinStore],
+    methods: {
+        can: function (boName, accessType) {
+            if (typeof boName === "undefined") boName = this.boName;
+            var bo = this.$store.getters.get("access")[boName];
+            if (typeof bo === "undefined") return false;
+            switch (accessType) {
+                case 'r':
+                    if (!bo.CAN_READ) return false;
+                    break;
+                case 'w':
+                    if (!bo.CAN_WRITE) return false;
+                    break;
+                case 'a':
+                    if (!bo.CAN_ACCESS) return false;
+                    break;
+            }
+            return true;
+        },
+        canRead:   function (boName) { return this.can(boName, 'r'); },
+        canWrite:  function (boName) { return this.can(boName, 'w'); },
+        canAccess: function (boName) { return this.can(boName, 'a'); },
+    }
+};
+
 
 function v_format_directive(e1, binding, vnode) {
     if (binding.value.format === null) return;
@@ -112,13 +156,15 @@ Vue.directive("format", {
     update: v_format_directive
 });
 
-function INCLUDE($element, url) {
+function INCLUDE($element, url, done) {
     var $preloaderElement = $element.parent(".card").length > 0 ? $element.parent(".card") : $element;
     $preloaderElement.addClass("preLoader");
+
+    log.red("INCLUDE", url, $element);
     $element.load(url, function (response, status, xhr) {
         $preloaderElement.removeClass("preLoader");
         if (status === "success") {
-
+            if(typeof done === "function" ) done();
             updateDom();
         } else {
             $preloaderElement.addClass("preLoaderError");

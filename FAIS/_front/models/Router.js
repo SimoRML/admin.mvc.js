@@ -31,6 +31,8 @@ Router.prototype.Load = function (page) {
     me.Trigger("show", "PagePreloader");
     me.$element.load(URL.addPart(baseUrl,url), function (response, status, xhr) {
         me.Trigger("hide", "PagePreloader");
+
+        log.red("ROUTER LOAD ", status, xhr);
         if (status === "success") {
             /*
             if ($(".vue-app").length > 0 && me.vueApp === null) {
@@ -44,6 +46,8 @@ Router.prototype.Load = function (page) {
             updateDom();
             $("#menu a.selected").removeClass("selected");
             $("#menu a[href='" + page + "']").addClass("selected");
+        } else if (status == "error") {
+            if(xhr.status == 401) NOTIF.error("Accès refusé !");
         }
     });
 };

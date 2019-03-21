@@ -1,4 +1,5 @@
-﻿using System;
+﻿using FAIS.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
@@ -6,8 +7,10 @@ using System.Web.Mvc;
 
 namespace FAIS.Controllers
 {
+    [Authorize(Roles = "admin")]
     public class AdminController : Controller
     {
+        private FAISEntities db = new FAISEntities();
         // GET: Admin
         public ActionResult Index()
         {
@@ -26,10 +29,13 @@ namespace FAIS.Controllers
             return PartialView();
         }
         
-        public PartialViewResult Page(string id)
+        public PartialViewResult Page(int id)
         {
-            ViewBag.layout = id;
+            ViewBag.pageId = id;
 
+            var data = db.PAGE.Where(p => p.BO_ID == id).FirstOrDefault();
+
+            ViewBag.dataLayout = data.LAYOUT;
             return PartialView();
         }
         public PartialViewResult PageList()
@@ -39,6 +45,36 @@ namespace FAIS.Controllers
         public PartialViewResult PageLayout(string id)
         {
             return PartialView("layouts/" + id);
+        }
+
+        public PartialViewResult Widgets(string id)
+        {
+            return PartialView("widgets/" + id);
+        }
+
+        public PartialViewResult Roles()
+        {
+            return PartialView();
+        }
+
+        public PartialViewResult RolesAdd()
+        {
+            return PartialView();
+        }
+
+        public PartialViewResult UserAdd()
+        {
+            return PartialView();
+        }
+
+        public PartialViewResult boRoles()
+        {
+            return PartialView();
+        }
+
+        public PartialViewResult RolesUsers()
+        {
+            return PartialView();
         }
     }
 }

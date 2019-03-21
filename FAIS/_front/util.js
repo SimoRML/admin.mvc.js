@@ -133,7 +133,7 @@ var NOTIF = {
         this.show(text, 'warning');
     },
     error: function success(text) {
-        this.show(text, 'danger');
+        this.show(text, 'danger', "error");
     },
     confirm: function (params) {
         swal({
@@ -157,7 +157,7 @@ var NOTIF = {
     modal: function (params) {
         swal({
             width: params.width,
-            html: "<div id='modal' style='height:" + params.height + "; overflow-y:auto'></div>",
+            html: "<div id='modal' style='height:" + params.height + "; overflow-y:auto; text-align:left'></div>",
             showCancelButton: true,
             confirmButtonClass: 'btn btn-success',
             cancelButtonClass: 'btn',

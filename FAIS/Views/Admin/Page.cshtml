@@ -172,8 +172,8 @@
                 <v-text label="Groupe" v-model="layout.page.groupe" optional="1"></v-text>
 
                 <div>
-                    <button type="button" class="btn btn-fill btn-sm btn-success pull-right" v-on:click="previewPage"><i class="material-icons">save</i></button>
-                    <button type="button" class="btn btn-fill btn-sm btn-primary pull-right" v-on:click="savePage"><i class="material-icons">remove_red_eye</i></button>
+                    <button type="button" class="btn btn-fill btn-sm btn-success pull-right" v-on:click="savePage"><i class="material-icons">save</i></button>
+                    <button type="button" class="btn btn-fill btn-sm btn-primary pull-right" v-on:click="previewPage"><i class="material-icons">remove_red_eye</i></button>
                 </div>
             </div>
         </div>
@@ -208,9 +208,17 @@
     </div>
 </div>
 <script type="text/javascript">
+    var layout = null;
+    try {
+        layout = JSON.parse('@Html.Raw(ViewBag.dataLayout)');
+    } catch (e) {
+
+    }
     var vapp = new Vue({
         el: "#vapp",
         data: {
+
+            api:EV.getComponent("data"),
             sectionTypes: {
                 _1: { name: "Une colonne", img: "Content/img/layouts/_1.png", cols: ["col-sm-12 col-md-12"] },
                 _2: { name: "Deux colonnes", img: "Content/img/layouts/_2.png", cols: ["col-sm-12 col-md-6", "col-sm-12 col-md-6"] },
@@ -283,11 +291,26 @@
                         height: { label:"Hauteur", type: "v-text" }
                     }
                 },
+                USER_WIDGET: {
+                    name: "User widget",
+                    icone: "person",
+                    class: "",
+                    props: {
+                        userId: { label: "ID Utilisateur", type: "v-text" }
+                    },
+                    apply: function ($compDiv, props) {
+                        log.green("props", props);
+                        INCLUDE($compDiv, "admin/widgets/userwidget", function () {
+                            vappUserWidget.val(props);
+                        });
+                    }
+                },
             },
             layout: {
                 page: {
                     title: "",
-                    groupe: ""
+                    groupe: "",
+                    boId:"@ViewBag.pageId",
                 },
                 sections: []
             },
@@ -316,10 +339,17 @@
             }
         },
         methods: {
-            previewPage: function () { 
-            }, 
-            savePage: function () {
+            previewPage: function () {
 
+            },
+            savePage: function () {
+                this.api.Put({
+                    url: "metabo/Crud/3/" + this.layout.page.boId,
+                    data: JSON.stringify({ LAYOUT: JSON.stringify(this.layout) }),
+                    done: function (response) {
+                        NOTIF.success("Page enregistrée avec succès.");
+                    },
+                });
             },
             selectedClass: function (line, column, component) {
                 if (typeof component !== "undefined") {
@@ -328,16 +358,22 @@
                 return "";
             },
             setSelected: function (line, column) {
+                
                 this.currentColumn.line = line;
                 this.currentColumn.column = column;
             },
-            setSelectedComponenet: function (component) {
+            setSelectedComponenet: function (component, noTimout  = false) {
+                
                 this.currentColumn.component = component;
                 this.selectedComponent = null;
                 var me = this;
-                setTimeout(() => {
-                    me.selectedComponent = me.layout.sections[me.currentColumn.line].columns[me.currentColumn.column].components[me.currentColumn.component];
-                },100);
+                if (noTimout) me.selectedComponent = me.layout.sections[me.currentColumn.line].columns[me.currentColumn.column].components[me.currentColumn.component];
+                else {
+                    setTimeout(() => {
+                        me.selectedComponent = me.layout.sections[me.currentColumn.line].columns[me.currentColumn.column].components[me.currentColumn.component];
+                    }, 100);
+                }
+                
             },
             addSection: function (sectionKey) {
                 var section = {
@@ -365,7 +401,19 @@
 
                 this.layout.sections[sectionIndex].columns[colIndex].components.push(component);
             },
+            applyAll: function () {
+                for (var i in this.layout.sections) {
+                    for (var j in this.layout.sections[i].columns) {
+                        this.setSelected(i, j);
+                        for (var k in this.layout.sections[i].columns[j].components) {
+                            this.setSelectedComponenet(k, true);
+                            this.appliquer();
+                        }
+                    }
+                }
+            },
             appliquer: function () {
+                
                 var $compDiv = $("#componentPlaceHolder_" + this.currentColumn.line + '_' + this.currentColumn.column + '_' + this.currentColumn.component);
                 $compDiv.css({
                     background: "#fff",
@@ -399,12 +447,21 @@
                         $compDiv.html("<iframe src='" + args.link + "' height='" + args.height + "' width='100%' frameborder='0' ></iframe>");
                         break;
                     default:
+                        this.componentsTypes[this.selectedComponent.type].apply($compDiv, this.selectedComponent.props);
+                        break;
                 }
             }
         },
         mounted: function () {
             $("#layout").height($("#v-content").height());
             // bus.loadList("metaList", { url: "metabo", method: "GET" }, (response) => {  });
+            if (layout != null) {
+                var me = this;
+                this.layout = layout;
+                setTimeout(() => {
+                    this.applyAll();
+                }, 100);
+            }
         }
     });
 </script>

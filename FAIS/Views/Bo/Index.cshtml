@@ -1,5 +1,9 @@
 ﻿@model FAIS.Models.META_BO
 @{
+    string boName()
+    {
+        return Model.BO_NAME;
+    }
     string boDbName(string txt)
     {
         return Model.BO_DB_NAME + txt;
@@ -8,27 +12,49 @@
 }
 @helper renderTable(bool includeDatasource)
 {
-    <v-table ref="theTable"
-             meta-name="@Model.BO_DB_NAME"
-             :column-show="columnShow"
-             :column-labels="columnLabels"
-             @if (includeDatasource) { @: datasource="metabo/select/@Model.BO_DB_NAME"
-             }
-             action-component="@Model.BO_DB_NAME-action"
-             detail-row="default"
-             :prevent-first-load="filterExists"></v-table>
+    <template v-if="canRead()">
+        <v-table ref="theTable"
+                 meta-name="@Model.BO_DB_NAME"
+                 :column-show="columnShow"
+                 :column-labels="columnLabels"
+                 @if (includeDatasource) { @: datasource="metabo/select/@Model.BO_DB_NAME"
+                 }
+                 :action-component="canWrite() ? '@Model.BO_DB_NAME-action' : ''"
+                 detail-row="default"
+                 :prevent-first-load="filterExists"></v-table>
+    </template>
+    <template v-else>
+        <div class="alert alert-danger alert-with-icon" data-notify="container">
+            <i class="material-icons" data-notify="icon">error</i>
+            <button type="button" aria-hidden="true" class="close">
+                <i class="material-icons">close</i>
+            </button>
+            <span data-notify="message">Unauthorized Read Access On @Model.BO_NAME</span>
+        </div>
+    </template>
 }
 @helper renderForm()
 {
-    <v-form ref="theForm"
-            meta-datasource="metabo/GetDefinition/@Model.BO_DB_NAME"
-            api="metabo/Crud/@Model.META_BO_ID"
-            bo-name="@Model.BO_DB_NAME"
-            v-on:submit-success="success"
-            v-on:submit-fail="error"
-            v-on:get-definition-done="getDefinitionDone"
-            v-on:update-mode="updateMode"
-            v-on:insert-mode="insertMode"></v-form>
+    <template v-if="canWrite()">
+        <v-form ref="theForm"
+                meta-datasource="metabo/GetDefinition/@Model.BO_DB_NAME"
+                api="metabo/Crud/@Model.META_BO_ID"
+                bo-name="@Model.BO_DB_NAME"
+                v-on:submit-success="success"
+                v-on:submit-fail="error"
+                v-on:get-definition-done="getDefinitionDone"
+                v-on:update-mode="updateMode"
+                v-on:insert-mode="insertMode"></v-form>
+    </template>
+    <template v-else>
+        <div class="alert alert-danger alert-with-icon" data-notify="container">
+            <i class="material-icons" data-notify="icon">error</i>
+            <button type="button" aria-hidden="true" class="close">
+                <i class="material-icons">close</i>
+            </button>
+            <span data-notify="message">Unauthorized Write Access On @Model.BO_NAME</span>
+        </div>
+    </template>
 }
 
 @if (Model.STATUS == "PENDING")
@@ -108,7 +134,7 @@ else
                             Modifier
                         </a>
                     </li>
-                    <li>
+                    <li v-if="canWrite()">
                         <a id="@boDbName("tab-form-add")" href="#@boDbName("form")" role="tab" data-toggle="tab" v-on:click="$refs.theForm.reset()">
                             @if (!isSubForm)
                             {
@@ -121,7 +147,7 @@ else
             </div>
             <div class="tab-content">
                 <div class="tab-pane active" id="@boDbName("list")">
-                    <div v-show="filterExists" class="card">
+                    <div v-show="filterExists" class="card" v-if="canRead()">
                         <div class="card-header">
                             Filtre
                         </div>
@@ -224,7 +250,9 @@ else
         var @boDbName("vapp") = new Vue(
         {
             el: '#@boDbName("-vue-app")',
+            mixins: [MixinAuthorize],
             data: {
+                boName: "@boName()",
                 hasSubForm: false,
                 subForms: [],
                 FormModes: {
@@ -375,7 +403,7 @@ else
             template: $("#@boDbName("-detail-row-template")").html(),
             props: {
                 row: Object,
-                metafield:Object,
+                metafield: Object,
             },
             methods: {
                 edit: (id) => editFormMetaBo(id)
