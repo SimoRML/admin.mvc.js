@@ -231,3 +231,12 @@ ul.dropdown-menu.inner {
 .deleted-wavy {
     text-decoration: line-through wavy red;
 }
+
+@media print {
+    .no-print, .no-print * {
+        display: none !important;
+    }
+    .print-container{
+        margin-top:0;
+    }
+}

@@ -593,6 +593,7 @@
     <Content Include="Scripts\vue.js" />
     <Content Include="Scripts\vuex.js" />
     <Content Include="SQL\BO_ROLE.sql" />
+    <Content Include="SQL\changes_pending.sql" />
     <Content Include="SQL\CreateTable_v1.sql" />
     <Content Include="SQL\CreateView.sql" />
     <Content Include="SQL\DYNAMIC_SELECT.sql" />
@@ -763,8 +764,10 @@
     <Content Include="Views\Admin\RolesUsers.cshtml" />
     <Content Include="Views\Admin\UserAdd.cshtml" />
     <Content Include="Views\Admin\boRoles.cshtml" />
-    <Content Include="Views\Admin\widgets\userWidget.cshtml" />
+    <Content Include="Views\Router\widgets\userWidget.cshtml" />
     <Content Include="Views\Bo\Unauthorized.cshtml" />
+    <Content Include="Views\Router\widgets\editionWidget.cshtml" />
+    <Content Include="Views\Router\widgets\baseWidget.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

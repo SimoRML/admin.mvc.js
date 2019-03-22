@@ -26,7 +26,9 @@ namespace FAIS.Controllers
         [Route("Menu")]
         public async Task<IHttpActionResult> Menu()
         {
-            var metas = await new MetaBoRepo().GetMetaBoExAsync(" WHERE CREATED_BY <> 'admin' AND TYPE='form' AND META_BO_ID in (select META_BO_ID from BO_ROLE WHERE (CAN_READ = 1 OR CAN_WRITE = 1) AND ROLE_ID in (select roles.Id from AspNetRoles roles where Name in ('" + string.Join("','", boRoleModel.GetUserRoles(User)) + "')))");
+            var metas = await new MetaBoRepo().GetMetaBoExAsync(@" WHERE CREATED_BY <> 'admin' AND TYPE='form' 
+            AND (
+META_BO_ID in (select META_BO_ID from BO_ROLE WHERE (CAN_READ = 1 OR CAN_WRITE = 1) AND ROLE_ID in (select roles.Id from AspNetRoles roles where Name in ('" + string.Join("','", boRoleModel.GetUserRoles(User)) + "'))) or 'admin' in ('" + string.Join("','", boRoleModel.GetUserRoles(User)) + "') )");
 
             Dictionary<string, object> menu = new Dictionary<string, object>();
             if (User.IsInRole("admin"))
@@ -41,7 +43,7 @@ namespace FAIS.Controllers
                     childs = new[] {
                         new MenuFields { icon = "dashboard", text = "Meta Bo", href = "router.metabo" },
                         new MenuFields { icon = "dashboard", text = "Workflow", href = "bo.admin.workflow" },
-                        new MenuFields { icon = "web", text = "Page", href = "admin.pagelist" },
+                        new MenuFields { icon = "web", text = "Page", href = "bo.admin.page" },
                         new MenuFields { icon = "pie_chart", text = "Reporting", href = "home.reporting" },
                         new MenuFields { icon = "pie_chart", text = "Rôles", href = "admin.roles" },
                     },

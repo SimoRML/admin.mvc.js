@@ -1,0 +1,22 @@
+﻿<div id="vappBaseWidget_@ViewBag.compKey">
+    test : {{ props }}
+</div>
+<script type="text/javascript">
+    window["vappBaseWidget"+ "@ViewBag.compKey"] = new Vue({
+        el: "#vappBaseWidget_@ViewBag.compKey",
+        data: {
+            props: null
+        },
+        methods: {
+            val: function (props) {
+                this.props = props;
+                this.load();
+
+                return this.props;
+            },
+            load: function () {
+
+            },
+        }
+    });
+</script>

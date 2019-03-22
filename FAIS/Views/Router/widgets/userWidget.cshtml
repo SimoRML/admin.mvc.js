@@ -1,9 +1,9 @@
-﻿<div id="vappUserWidget">
-    test {{props.userId}}
+﻿<div id="vappUserWidget_@ViewBag.compKey">
+    test : {{ props }}
 </div>
 <script type="text/javascript">
-    var vappUserWidget = new Vue({
-        el: "#vappUserWidget",
+    window["vappUserWidget"+ "@ViewBag.compKey"] = new Vue({
+        el: "#vappUserWidget_@ViewBag.compKey",
         data: {
             props: null
         },
