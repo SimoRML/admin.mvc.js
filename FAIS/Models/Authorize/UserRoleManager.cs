@@ -55,9 +55,9 @@ namespace FAIS.Models.Authorize
                 {
                     currentBoRole = this.boRoles[row["BO_NAME"].ToString()];
 
-                    currentBoRole.CAN_READ = currentBoRole.CAN_READ || (row["CAN_READ"].ToString() == "" ? false : (bool)row["CAN_READ"]);
-                    currentBoRole.CAN_WRITE = currentBoRole.CAN_WRITE || (row["CAN_WRITE"].ToString() == "" ? false : (bool)row["CAN_WRITE"]);
-                    currentBoRole.CAN_ACCESS = currentBoRole.CAN_WRITE || currentBoRole.CAN_READ;
+                    currentBoRole.CAN_READ = user.IsInRole("admin") || currentBoRole.CAN_READ || (row["CAN_READ"].ToString() == "" ? false : (bool)row["CAN_READ"]);
+                    currentBoRole.CAN_WRITE = user.IsInRole("admin") || currentBoRole.CAN_WRITE || (row["CAN_WRITE"].ToString() == "" ? false : (bool)row["CAN_WRITE"]);
+                    currentBoRole.CAN_ACCESS = user.IsInRole("admin") || currentBoRole.CAN_WRITE || currentBoRole.CAN_READ;
                 }
                 else
                 {
@@ -67,10 +67,10 @@ namespace FAIS.Models.Authorize
                         BO_NAME = row["BO_NAME"].ToString(),
                         BO_ROLE_ID = row["BO_ROLE_ID"].ToString() == "" ? -1 : int.Parse(row["BO_ROLE_ID"].ToString()),
                         ROLE_ID = row["ROLE_ID"].ToString(),
-                        CAN_READ = row["CAN_READ"].ToString() == "" ? false : (bool)row["CAN_READ"],
-                        CAN_WRITE = row["CAN_WRITE"].ToString() == "" ? false : (bool)row["CAN_WRITE"],
+                        CAN_READ = user.IsInRole("admin") || (row["CAN_READ"].ToString() == "" ? false : (bool)row["CAN_READ"]),
+                        CAN_WRITE = user.IsInRole("admin") || (row["CAN_WRITE"].ToString() == "" ? false : (bool)row["CAN_WRITE"]),
                     };
-                    currentBoRole.CAN_ACCESS = currentBoRole.CAN_WRITE || currentBoRole.CAN_READ;
+                    currentBoRole.CAN_ACCESS = user.IsInRole("admin") || currentBoRole.CAN_WRITE || currentBoRole.CAN_READ;
                     this.boRoles.Add(row["BO_NAME"].ToString(), currentBoRole);
                 }
             }

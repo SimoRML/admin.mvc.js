@@ -578,8 +578,9 @@
             },
         },
         computed: {
-            isChecked: function () {
-                return this.value == 1;
+            isChecked: {
+                get: function () { return this.value == 1; },
+                set: function() {}
             }
         }
     });
