@@ -47,10 +47,6 @@ namespace FAIS.Controllers
             return PartialView("layouts/" + id);
         }
 
-        public PartialViewResult Widgets(string id)
-        {
-            return PartialView("widgets/" + id);
-        }
 
         public PartialViewResult Roles()
         {

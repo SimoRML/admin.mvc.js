@@ -72,8 +72,7 @@ where bo.STATUS != '-1'
             return new SGBD().Cmd(@"
                         select bo.META_BO_ID, bo.META_BO_ID, bo.BO_NAME, borole.*
                         from META_BO bo
-                        left outer join BO_ROLE borole  on bo.META_BO_ID = borole.META_BO_ID AND borole.ROLE_ID in (select roles.Id from AspNetRoles roles where Name in ('"+ string.Join("','", roleNames) +"'))"
-                        + " where bo.STATUS != '-1'");  
+                        left outer join BO_ROLE borole  on bo.META_BO_ID = borole.META_BO_ID AND borole.ROLE_ID in (select roles.Id from AspNetRoles roles where Name in ('"+ string.Join("','", roleNames) +"'))");  
         }
 
         public async System.Threading.Tasks.Task<bool> SetUsersRolesAsync(string roleName, List<UserModel> users)

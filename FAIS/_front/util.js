@@ -200,6 +200,30 @@ window.URL.addPart = function (url, part) {
         //console.log("addPart -> " + url);
         return url;
 };
+window.URL.queryString = function (param) {
+    var vars = window.location.href.split("?")[1];
+    if (typeof vars === "undefined") return null;
+    vars = vars.split("&");
+    var query_string = {};
+    for (var i = 0; i < vars.length; i++) {
+        var pair = vars[i].split("=");
+        var key = decodeURIComponent(pair[0]);
+        var value = decodeURIComponent(pair[1]);
+        // If first entry with this name
+        if (typeof query_string[key] === "undefined") {
+            query_string[key] = decodeURIComponent(value);
+            // If second entry with this name
+        } else if (typeof query_string[key] === "string") {
+            var arr = [query_string[key], decodeURIComponent(value)];
+            query_string[key] = arr;
+            // If third or later entry with this name
+        } else {
+            query_string[key].push(decodeURIComponent(value));
+        }
+    }
+    if (typeof query_string[param] === "undefined") return null;
+    return query_string[param];
+};
 /*
 var URL = {
     addParam: function (url, param) {

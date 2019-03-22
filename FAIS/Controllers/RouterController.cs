@@ -30,5 +30,12 @@ namespace FAIS.Controllers
             ViewBag.Views = a;
             return PartialView("_v_vomponents");
         }
+
+
+        public PartialViewResult Widgets(string id, string compKey)
+        {
+            ViewBag.compKey = compKey;
+            return PartialView("widgets/" + id);
+        }
     }
 }
