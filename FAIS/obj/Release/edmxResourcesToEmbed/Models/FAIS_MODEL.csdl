@@ -134,6 +134,9 @@
     <EntitySet Name="WORKFLOW" EntityType="FAIS_Model.WORKFLOW" />
     <EntitySet Name="BO_ROLE" EntityType="FAIS_Model.BO_ROLE" />
     <EntitySet Name="PAGE" EntityType="FAIS_Model.PAGE" />
+    <FunctionImport Name="GetSubForm" ReturnType="Collection(String)">
+      <Parameter Name="meta_bo_id" Mode="In" Type="Int32" />
+    </FunctionImport>
   </EntityContainer>
   <EntityType Name="PlusSequence">
     <Key>

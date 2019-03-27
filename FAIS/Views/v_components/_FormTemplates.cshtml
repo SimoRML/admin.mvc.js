@@ -249,7 +249,7 @@
                 this.fileType = json.type;
                 this.base64 = json.base64;
 
-                console.log("file name",this.name);
+                console.log("file name", this.name);
             } catch (e) {
 
             }
@@ -421,7 +421,7 @@
             list: function () {
                 if (this.source === null) return null;
                 else {
-                    if(this.sourceFilter == null)
+                    if (this.sourceFilter == null)
                         return this.$store.getters.get(this.source);
                     else
                         return this.$store.getters.getFilter({ key: this.source, filter: this.sourceFilter });
@@ -442,6 +442,12 @@
             setValue: function (value, emitter) {
                 var me = this;
                 if (me.data === null) return;
+
+                if (!Array.isArray(me.data)) {
+                    var a = [];
+                    for (var i in me.data) a.push(me.data[i]);
+                    me.data = a;
+                }
 
                 if (typeof value !== "undefined" && value !== "") me.selected = value;
                 // console.log(emitter + ".setValue : (" + me.id + ")", me.selected, "data", me.data);
@@ -470,7 +476,7 @@
                 });
 
                 if (value == null && me.selectedObject == null) return;
-                
+
                 this.$emit("changed", { value: value, line: this.line, column: this.column, emitter: emitter }, me.selectedObject);
                 bus.$emit(this.elementId + "-changed", value, me.selectedObject);
             },
@@ -482,7 +488,7 @@
         },
         mounted: function () {
             var me = this;
-            if (this.source === null){
+            if (this.source === null) {
                 bus.loadList(this.fieldName, me.datasource, (response) => { me.populateData(response) });
             } else {
                 me.populateData(this.list);
@@ -516,6 +522,146 @@
 
 </script>
 
+
+@*-----------------------------------------------------------------------------------------------------SELECT-----------------------*@
+<script id="v-select2-template" type="text/template">
+    <div :id="elementId" class="dropdown"
+         :disabled="disabled">
+        <button href="#" class="dropdown-toggle btn btn-xs btn-primary btn-simple" data-toggle="dropdown" 
+                style="text-align:left; width:100%; height:46px;border-bottom: solid 1px #ddd;" v-html="selected[sourceDisplay]">
+        </button>
+        <ul class="dropdown-menu dropdown-menu-left">
+            <li v-for="item in data">
+                <a href="javascript:;" v-on:click="selected = item" v-html="item[sourceDisplay]">
+                </a>
+            </li>
+        </ul>
+    </div>
+</script>
+<script type="text/javascript">
+    Vue.component('v-select2', {
+        template: $("#v-select2-template").html(),
+        mixins: [FormMixin],
+        props: {
+            multiple: {
+                type: Boolean,
+                default: false
+            },
+            source: {
+                type: String,
+                default: null
+            },
+            sourceDisplay: {
+                type: String,
+                default: 'Display'
+            },
+            sourceValue: {
+                type: String,
+                default: 'Value'
+            },
+            sourceFilter: {
+                type: Function,
+                default: null,
+            }
+        },
+        data: function () {
+            return {
+                selected: JSON.parse("{\"" + this.sourceDisplay + "\":\" Choisir \", \"" + this.sourceValue + "\":\"\"}"),
+                selectedObject: null,
+                detailFields: null,
+                parentValue: null,
+                linkField: null,
+                parent: null,
+                filteredData: []
+            }
+        },
+        computed: {
+            isConditional: function () {
+                try {
+                    var jsona = JSON.parse(this.datasource);
+                    if (typeof jsona.parent !== "undefined" && jsona.parent !== "" && jsona.link_field !== "") {
+                        this.linkField = jsona.link_field;
+                        this.parent = jsona.parent;
+                        return true;
+                    }
+                } catch { }
+                return false;
+            },
+            hasDetailFields: function () {
+                try {
+                    var jsona = JSON.parse(this.datasource);
+                    if (typeof jsona.detail !== "undefined") {
+                        this.detailFields = jsona.detail;
+                        for (var prop in jsona.detail) {
+                            if (jsona.detail.hasOwnProperty(prop)) {
+                                return true;
+                            }
+                        }
+                        return false;
+                    }
+                } catch { }
+                return false;
+            },
+            list: function () {
+                if (this.source === null) return null;
+                else {
+                    if (this.sourceFilter == null)
+                        return this.$store.getters.get(this.source);
+                    else
+                        return this.$store.getters.getFilter({ key: this.source, filter: this.sourceFilter });
+                }
+            }
+        },
+        watch: {
+            value: function (newVal, oldVal) {
+                //console.log("watch value", newVal);
+                this.setValue(newVal, "watch");
+            },
+            list: function (newVal, oldVal) {
+                //console.log("watch list", newVal);
+                this.populateData(newVal);
+            },
+            selected: function (newVal, oldVal) {
+                if (typeof newVal[this.sourceValue] === "undefined") return;
+                //log.red("selected", newVal, newVal[this.sourceValue]);
+                this.$emit('input', newVal[this.sourceValue], { line: this.line, column: this.column }, this.data);
+            }
+        },
+        methods: {
+            setValue: function (value, emitter) {
+                var me = this;
+                if (me.data === null) return;
+                // if (typeof me.data === "object") me.data = Object.keys(me.data).map(i => me.data[i]);
+                if (!Array.isArray(me.data)) {
+                    var a = [];
+                    for (var i in me.data) a.push(me.data[i]);
+                    me.data = a;
+                }
+                //log.green("data select 2", me.value, me.data.filter(x => x[me.sourceValue] == me.value)[0]);
+
+                me.selected = me.data.filter(x => x[me.sourceValue] == me.value)[0];
+                //log.green("data select 2 .selected ==", me.selected);
+            },
+            populateData: function (data) {
+                var me = this;
+                me.data = data;
+                me.setValue();
+            }
+        },
+        mounted: function () {
+            var me = this;
+            if (this.source === null) {
+                bus.loadList(this.fieldName, me.datasource, (response) => { me.populateData(response) });
+            } else {
+                me.populateData(this.list);
+            }
+        },
+        beforeDestroy() {
+            bus.$off(this.parent + "-changed");
+        }
+    });
+
+</script>
 
 @*-----------------------------------------------------------------------------------------------------DatePicker-----------------------*@
 <script id="FormDatePickerTemplate" type="text/template">
@@ -573,14 +719,14 @@
         mixins: [FormMixin],
         props: {
             returnBool: {
-                type:Boolean,
+                type: Boolean,
                 default: false,
             },
         },
         computed: {
             isChecked: {
                 get: function () { return this.value == 1; },
-                set: function() {}
+                set: function () { }
             }
         }
     });

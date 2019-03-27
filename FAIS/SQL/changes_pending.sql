@@ -1,4 +1,23 @@
-﻿/****** Object:  Table [dbo].[BO_ROLE]    Script Date: 14-Mar-19 11:23:51 ******/
+﻿SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+-- =============================================
+-- Author:		<SimoRML>
+-- Create date: <25/03/2019>
+-- =============================================
+CREATE PROCEDURE dbo.GetSubForm
+	@meta_bo_id int
+AS
+BEGIN
+
+	select replace(FORM_TYPE,'subform-', '') as subform from META_FIELD 
+	where META_BO_ID = @meta_bo_id AND FORM_TYPE like 'subform-%'
+
+END
+GO
+
+/****** Object:  Table [dbo].[BO_ROLE]    Script Date: 14-Mar-19 11:23:51 ******/
 SET ANSI_NULLS ON
 GO
 
