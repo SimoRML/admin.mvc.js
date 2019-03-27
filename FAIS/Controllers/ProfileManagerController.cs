@@ -77,6 +77,33 @@ META_BO_ID in (select META_BO_ID from BO_ROLE WHERE (CAN_READ = 1 OR CAN_WRITE =
                     childs = ""
                 });
             }
+            var pages = await new MetaBoRepo().GetPagesAsync();
+            foreach (var page in pages)
+            {
+                if (!menu.ContainsKey(page.GROUPE))
+                {
+                    menu.Add(page.GROUPE, new Dictionary<string, object>()
+                        {
+                            { "icon", "web" },
+                            { "text", page.GROUPE },
+                            { "href", "home" },
+                            { "User", User.Identity.Name },
+                            { "parent", true },
+                            { "childs", new List<object>() },
+                            { "open", false }
+                        });
+                }
+                ((List<object>)((Dictionary<string, object>)menu[page.GROUPE])["childs"]).Add(new
+                {
+                    icon = "",
+                    text = page.TITLE,
+                    href = "bo.page." + page.META_BO_ID,
+                    User = "",
+                    parent = false,
+                    childs = ""
+                });
+            }
+
             return Ok(menu);
         }
 

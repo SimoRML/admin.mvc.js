@@ -70,11 +70,11 @@ namespace FAIS.Controllers
         }
 
         [Route("Formulaire/{id}")]
-        public PartialViewResult Formulaire(string id)
+        public PartialViewResult Formulaire(string id, string compKey)
         {
             if(! id.Contains("_BO_")) id += "_BO_";
             var meta = new MetaBoRepo().GetMETA(id);
-
+            ViewBag.compKey = compKey;
             return PartialView(meta);
         }
         [Route("Table/{id}")]
@@ -92,6 +92,19 @@ namespace FAIS.Controllers
             var meta = new MetaBoRepo().GetMETA(id);
 
             return PartialView(meta);
+        }
+
+        // GET: Bo
+        [Route("page/{id}")]
+        public PartialViewResult Page(int id)
+        {
+            ViewBag.pageId = id;
+            ViewBag.PageStatus = "PUBLIC";
+
+            var data = db.PAGE.Where(p => p.BO_ID == id && p.STATUS == "public").FirstOrDefault();
+
+            ViewBag.dataLayout = data.LAYOUT == null ? "" : data.LAYOUT;
+            return PartialView("~/Views/Admin/Page.cshtml");
         }
     }
 }

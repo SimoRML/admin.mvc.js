@@ -76,7 +76,7 @@ namespace FAIS.Models.VForm
                 Dictionary<string, object> mapp = new Dictionary<string, object>();
                 foreach (var item in Items)
                 {
-                    mapp.Add(item.Field, item.Value);
+                    mapp.Add(key: item.Field.Replace(".", ""), value: item.Value);
                 }
                 return mapp;
             }
@@ -102,7 +102,7 @@ namespace FAIS.Models.VForm
 
         public string Format()
         {
-            return string.Format(" {0} {1} {2} @{3} ", Logic, Field, Condition, Field);
+            return string.Format(" {0} {1} {2} @{3} ", Logic, Field, Condition, Field.Replace(".",""));
         }
 
     }
