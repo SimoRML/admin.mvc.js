@@ -76,7 +76,7 @@
                     <a tabindex="-1" href="javascript:;">Définir le busiess object</a>
                     <ul class="dropdown-menu">
                         <li v-for="meta in metaList">
-                            <a href="javascript:;" v-on:click="val({ value: meta.META_BO_ID, display: meta.BO_NAME })">{{ meta.BO_NAME }}</a>
+                            <a v-if="meta.TYPE!='subform'" href="javascript:;" v-on:click="val({ value: meta.META_BO_ID, display: meta.BO_NAME })">{{ meta.BO_NAME }}</a>
                         </li>
                     </ul>
                 </li>
@@ -269,15 +269,17 @@
 
     bus.setScope("flowLastIndex", 0);
     var Workflow_items = '@Html.Raw(Model.ITEMS)';
+   
     try {
         Workflow_items = JSON.parse(Workflow_items);
     } catch (e) {
         Workflow_items = [{ type: "bo", status: "new", precedent: null, next: null, "value": null, locked: false }/*, { type: "validation", status: "new", precedent: 0, next: null }*/];
     }
+
     var vapp = new Vue({
         el: "#my-vue-app",
         data: {
-            flowItems: Workflow_items,
+            flowItems: Workflow_items
             //flowItems: [{ "type": "bo", "status": "new", "next": null, "precedent": null, "index": 0, "value": { "value": 3, "display": "article" } }],
         },
         methods: {
@@ -391,7 +393,7 @@
             configurerMapping: function (index) {
                 var me = this;
                 var item = me.flowItems[index];
-
+               
                 //Boucla get precedent item
                 // if is bo stop and get
                 // else get precedent of precedent till you get the nearest bo
@@ -408,15 +410,16 @@
                 }
 
                 NOTIF.modal({
-                    width: "40%",
+                    width: "50%",
                     height: "80vh",
                     url: "workflow/mapping/" + metaBoId_parent + "?id2="+metaBoId_child,
                     load: function () {
-                        mappingVapp.val(item.value.mapping);
+                        mappingVapp.val(item.value.MyMapping);
                     },
                     valider: () => {
 
-                        me.flowItems[index].value.mapping = mappingVapp.val();
+                        me.flowItems[index].value.MyMapping = mappingVapp.val();
+                       
                         //item.value = validationVapp.val(); // { metaBoId: metaBoId, rules: validationVapp.$data.rules, validators: validationVapp.$data.validators };
                        // me.$refs["node_" + index][0].$data.configured = item.value.rules.length > 0 && item.value.validators.length > 0;
 

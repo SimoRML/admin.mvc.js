@@ -19,6 +19,7 @@ namespace FAIS.Controllers
     [RoutePrefix("api/MetaBo")]
     public class MetaBoController : ApiController
     {
+        int BO_Insert_return = 0;
         private FAISEntities db = new FAISEntities();
 
         // GET: api/MetaBo
@@ -178,7 +179,7 @@ namespace FAIS.Controllers
         {
             var meta = await db.META_BO.FindAsync(model.MetaBoID);
 
-            /* ACCESS RIGHTS */ 
+            /* ACCESS RIGHTS */
             try
             {
                 UserRoleManager.Instance.VerifyRead(meta.BO_NAME);
@@ -309,7 +310,7 @@ namespace FAIS.Controllers
             db.BO.Add(bo_model);
             await db.SaveChangesAsync();
             int id_ = (int)bo_model.BO_ID;
-
+            BO_Insert_return = id_;
             model.MetaBO = meta;
             model.BO_ID = id_;
             model.Items.Add("BO_ID", model.BO_ID);
@@ -333,100 +334,106 @@ namespace FAIS.Controllers
                 {
 
                     var elm = _JSON[i];
-                    where = "";
-                    level++;
-                    if (elm["type"] == "validation")
+                    if (elm["status"] != "deleted")
                     {
-
-                        foreach (var rule in elm.value.rules)
+                        where = "";
+                        level++;
+                        if (elm["type"] == "validation")
                         {
-                            var value = rule["value"];
-                            if (!"int,float,decimal".Contains(rule["field"]["DB_TYPE"]))
+
+                            foreach (var rule in elm.value.rules)
                             {
-                                value = "'" + value + "'";
+                                var value = rule["value"];
+                                if (!"int,float,decimal,nvarchar(MAX)".Contains(rule["field"]["DB_TYPE"]))
+                                {
+                                    value = "'" + value + "'";
+                                }
+                                where += " " + rule["logic"] + " " + rule["field"]["DB_NAME"] + " " + rule["condition"] + " " + value;
                             }
-                            where += " " + rule["logic"] + " " + rule["field"]["DB_NAME"] + " " + rule["condition"] + " " + value;
+
+                            var check_validation = s.Cmd("select * from " + meta.BO_DB_NAME + " where BO_ID=" + model.BO_ID + "  " + where);
+
+
+                            if (check_validation.Rows.Count > 0)
+                            {
+                                TASK valid = new TASK()
+                                {
+                                    BO_ID = id_,
+                                    JSON_DATA = System.Web.Helpers.Json.Encode(elm.value.validators),
+                                    CREATED_BY = User.Identity.Name,
+                                    CREATED_DATE = DateTime.Now,
+                                    STATUS = elm.value.status,
+                                    ETAT = 0,
+                                    TASK_LEVEL = level,
+                                    TASK_TYPE = "VALIDATION"
+                                };
+
+                                db.TASK.Add(valid);
+
+                                foreach (var _validator in elm.value.validators)
+                                {
+                                    NOTIF notification = new NOTIF()
+                                    {
+                                        VALIDATOR = _validator["email"],
+                                        CREATED_DATE = DateTime.Now,
+                                        ETAT = 0
+                                    };
+                                    db.NOTIF.Add(notification);
+                                }
+
+                                db.SaveChanges();
+
+                            }
+
                         }
-
-                        var check_validation = s.Cmd("select * from " + meta.BO_DB_NAME + " where BO_ID=" + model.BO_ID + "  " + where);
-
-
-                        if (check_validation.Rows.Count > 0)
+                        else if (elm["type"] == "bo")
                         {
                             TASK valid = new TASK()
                             {
                                 BO_ID = id_,
-                                JSON_DATA = System.Web.Helpers.Json.Encode(elm.value.validators),
+                                JSON_DATA = System.Web.Helpers.Json.Encode(elm.value),
                                 CREATED_BY = User.Identity.Name,
                                 CREATED_DATE = DateTime.Now,
-                                STATUS = elm.value.status,
                                 ETAT = 0,
                                 TASK_LEVEL = level,
-                                TASK_TYPE = "VALIDATION"
+                                TASK_TYPE = "BO"
                             };
-
                             db.TASK.Add(valid);
 
-                            foreach (var _validator in elm.value.validators)
-                            {
-                                NOTIF notification = new NOTIF()
-                                {
-                                    VALIDATOR = _validator["email"],
-                                    CREATED_DATE = DateTime.Now,
-                                    ETAT = 0
-                                };
-                                db.NOTIF.Add(notification);
-                            }
-
                             db.SaveChanges();
+                            var task_id = (int)valid.TASK_ID;
+                            // await Insert_Bo_Using_Mapping(id, meta.BO_DB_NAME, model.BO_ID, task_id);
 
                         }
-
                     }
-                    else if (elm["type"] == "bo")
-                    {
-                        TASK valid = new TASK()
-                        {
-                            BO_ID = id_,
-                            JSON_DATA = System.Web.Helpers.Json.Encode(elm.value),
-                            CREATED_BY = User.Identity.Name,
-                            CREATED_DATE = DateTime.Now,
-                            ETAT = 0,
-                            TASK_LEVEL = level,
-                            TASK_TYPE = "BO"
-                        };
-                        db.TASK.Add(valid);
-
-                        db.SaveChanges();
-                        var task_id = (int)valid.TASK_ID;
-                        // await Insert_Bo_Using_Mapping(id, meta.BO_DB_NAME, model.BO_ID, task_id);
-
-                    }
-
                 }
 
 
             }
 
             if (insert)
+            {
+                BO_Insert_return = id_;
                 return Ok(model);
+            }
             else
                 return InternalServerError();
         }
 
-
+        //Insert data automaticly using the Mapping on the WORKFLOWs
         public async Task<IHttpActionResult> Insert_Bo_Using_Mapping(int id, string BO_DB_NAME, int bo_id, int taks_id)
         {
             var s = new SGBD();
 
             dynamic _JSON_MAPP;
-
+            // DATA 
             var mapping = s.Cmd("select * from TASK t where TASK_TYPE='BO' and TASK_ID=" + taks_id + " and bo_id not in (select bo_id from task where  TASK_TYPE='VALIDATION' and etat=0 and BO_ID=t.BO_ID)");
             if (mapping.Rows.Count == 0) return NotFound();
 
             _JSON_MAPP = System.Web.Helpers.Json.Decode(mapping.Rows[0]["JSON_DATA"].ToString());
             Dictionary<string, object> JSONA_STRING = new Dictionary<string, object>();
-            foreach (var item in _JSON_MAPP["mapping"])
+            Dictionary<string, object> JSONA_STRING_SUBFORM = new Dictionary<string, object>();
+            foreach (var item in _JSON_MAPP["MyMapping"]["mapping"])
             {
                 var originalField = s.Cmd("select DB_NAME from META_FIELD where FORM_NAME='" + item["parent"].ToString() + "' and META_BO_ID=" + id);
 
@@ -438,7 +445,27 @@ namespace FAIS.Controllers
 
             }
 
-            await Insert((int)_JSON_MAPP["value"], JSONA_STRING);
+
+
+            // DAT SUB-FORM
+            var parentData = await Insert((int)_JSON_MAPP["value"], JSONA_STRING);
+            foreach (var item_sub_form in _JSON_MAPP["MyMapping"]["mapping_sub_form"])
+            {
+                var originalField = s.Cmd("select DB_NAME from META_FIELD where FORM_NAME='" + item_sub_form["parent"].ToString() + "' and META_BO_ID=" + item_sub_form["id_subform"]);
+                var tableName = s.Cmd("select BO_DB_NAME from META_bo where META_BO_ID=" + item_sub_form["id_subform"]);
+
+
+                var value_s = s.Cmd("select  " + originalField.Rows[0][0].ToString() + " from " + tableName.Rows[0][0].ToString() + "  where BO_ID in (select BO_CHILD_ID from BO_CHILDS where BO_PARENT_ID = " + bo_id + ")");
+
+
+                foreach (var v in value_s.Rows)
+                {
+                    JSONA_STRING_SUBFORM.Add(item_sub_form.child.ToString(), ((System.Data.DataRow)v).ItemArray[0].ToString());
+                    await InsertChilds((int)item_sub_form["id_subform"], (long)BO_Insert_return, JSONA_STRING_SUBFORM);
+                }
+
+
+            }
 
             s.Cmd("update task  set ETAT=1 where task_id=" + taks_id);
             return Ok(BO_DB_NAME);
@@ -455,7 +482,7 @@ namespace FAIS.Controllers
                 Items = Items
             };
             var meta = await db.META_BO.FindAsync(model.MetaBoID);
-            
+
             /* ACCESS RIGHTS */
             try
             {
@@ -619,7 +646,7 @@ namespace FAIS.Controllers
         public async Task<IHttpActionResult> Select(string Tname)
         {
             var meta = await db.META_BO.Where(x => x.BO_DB_NAME == Tname).FirstOrDefaultAsync();
-            
+
             if (meta == null)
             {
                 return BadRequest();
@@ -677,7 +704,7 @@ namespace FAIS.Controllers
         public async Task<IHttpActionResult> GetOne(long id, long param)
         {
             var meta = await db.META_BO.FindAsync(id);
-         
+
             /* ACCESS RIGHTS */
             try
             {

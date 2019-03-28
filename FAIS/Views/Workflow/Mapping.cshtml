@@ -48,36 +48,75 @@
     <div class="card-content">
 
         <div class="form-group col-md-12">
+            <h4>Mapping Form</h4>
             <div class="row" v-for="mapping in mappings">
-                <div class="dropdown col-md-4">
+                <div class="dropdown col-md-5 text-center">
                     <button href="#" :class="{ 'dropdown-toggle btn btn-sm btn-success btn-block ' : mapping.parent !=='Choix du parent', 'dropdown-toggle btn btn-sm btn-default ' : mapping.parent ==='Choix du parent' }" data-toggle="dropdown">
                         {{ mapping.parent }}
                     </button>
                     <ul class="dropdown-menu dropdown-menu-left">
                         <li v-for="item_p in meta_parent">
-                            <a href="javascript:;" v-on:click="mapping.parent=item_p.FORM_NAME">
+                            <a v-if="item_p.FORM_TYPE.indexOf('subform-')==-1" href="javascript:;" v-on:click="mapping.parent=item_p.FORM_NAME">
                                 {{ item_p.FORM_NAME }}
                             </a>
                         </li>
                     </ul>
                 </div>
-                <div class="dropdown col-md-4">
+                <div class="dropdown col-md-5 text-center">
                     <button href="#" :class="{ 'dropdown-toggle btn btn-sm btn-success btn-block ' : mapping.child !=='Choix du fils', 'dropdown-toggle btn btn-sm btn-default button' : mapping.child ==='Choix du fils' }" data-toggle="dropdown">
                         {{mapping.child }}
                     </button>
                     <ul class="dropdown-menu dropdown-menu-left">
                         <li v-for="item_c in meta_child">
-                            <a href="javascript:;" v-on:click="mapping.child=item_c.FORM_NAME">
+                            <a v-if="item_c.FORM_TYPE.indexOf('subform-')==-1" href="javascript:;" v-on:click="mapping.child=item_c.FORM_NAME">
                                 {{ item_c.FORM_NAME }}
                             </a>
                         </li>
                     </ul>
                 </div>
-                <div class="dropdown col-md-4">
-                    <button class="btn btn-sm btn-default button btn-info" v-on:click="addMapping(mapping)">
+                <div class="dropdown col-md-2">
+                    <button class="btn btn-xs btn-default button btn-info" v-on:click="addMapping(mapping)">
                         <i class="material-icons">add</i>
                     </button>
-                    <button class="btn btn-sm btn-default button btn-danger" v-on:click="removeMapping(mapping)">
+                    <button class="btn btn-xs btn-default button btn-danger" v-on:click="removeMapping(mapping)">
+                        <i class="material-icons">remove</i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group col-md-12" v-if="Object.keys(meta_sub_parent).length>0 && Object.keys(meta_sub_child).length>0 ">
+            <h4>Mapping SUB FORM</h4>
+            <div class="row" v-for="mapping_sub_form in mappings_sub_form">
+                <div class="dropdown col-md-5 text-center">
+                    <button href="#" :class="{ 'dropdown-toggle btn btn-sm btn-success btn-block ' : mapping_sub_form.parent !=='Choix du parent (SUB-FORM)', 'dropdown-toggle btn btn-sm btn-default ' : mapping_sub_form.parent ==='Choix du parent (SUB-FORM)' }" data-toggle="dropdown">
+                        {{ mapping_sub_form.parent }}
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-left">
+                        <li v-for="item_s_p in meta_sub_parent">
+                            <a v-if="item_s_p.FORM_TYPE.indexOf('subform-')==-1" href="javascript:;" v-on:click="mapping_sub_form.parent=item_s_p.FORM_NAME,mapping_sub_form.id_subform=item_s_p.META_BO_ID">
+                                {{ item_s_p.FORM_NAME }}
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+                <div class="dropdown col-md-5 text-center">
+                    <button href="#" :class="{ 'dropdown-toggle btn btn-sm btn-success btn-block ' : mapping_sub_form.child !=='Choix du fils (SUB-FORM)', 'dropdown-toggle btn btn-sm btn-default button' : mapping_sub_form.child ==='Choix du fils (SUB-FORM)' }" data-toggle="dropdown">
+                        {{mapping_sub_form.child }}
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-left">
+                        <li v-for="item_s_c in meta_sub_child">
+                            <a v-if="item_s_c.FORM_TYPE.indexOf('subform-')==-1" href="javascript:;" v-on:click="mapping_sub_form.child=item_s_c.FORM_NAME,mapping_sub_form.id_subform=item_s_c.META_BO_ID">
+                                {{ item_s_c.FORM_NAME }}
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+                <div class="dropdown col-md-2">
+                    <button class="btn btn-xs btn-default button btn-info" v-on:click="addMapping_sub_form(mapping_sub_form)">
+                        <i class="material-icons">add</i>
+                    </button>
+                    <button class="btn btn-xs btn-default button btn-danger" v-on:click="removeMapping(mapping_sub_form)">
                         <i class="material-icons">remove</i>
                     </button>
                 </div>
@@ -95,11 +134,22 @@
         data: {
             meta_parent: {},
             meta_child: {},
+            meta_sub_parent: {},
+            meta_sub_child: {},
             mappings: [
                 {
                     parent: 'Choix du parent',
                     link: "=",
                     child: 'Choix du fils'
+                }
+            ],
+            mappings_sub_form: [
+                {
+                    parent: 'Choix du parent (SUB-FORM)',
+                    link: "=",
+                    child: 'Choix du fils (SUB-FORM)',
+                    id_subform: ''
+
                 }
             ]
 
@@ -112,13 +162,21 @@
                     child: 'Choix du fils'
                 })
             },
+            addMapping_sub_form: function () {
+                this.mappings_sub_form.push({
+                    parent: 'Choix du parent (SUB-FORM)',
+                    link: "=",
+                    child: 'Choix du fils (SUB-FORM)',
+                    id_subform:''
+                })
+            },
             val: function (data) {
-                console.log(data, 1);
-               if (typeof data !== "undefined") {
-                    this.mappings = data;
+               if (typeof data !== "undefined" ) {
+                   this.mappings = data.mapping;
+                   this.mappings_sub_form = data.mapping_sub_form;
 
-                }
-               else return this.mappings ;
+                }else return { mapping: this.mappings, mapping_sub_form: this.mappings_sub_form};
+
 
             }
         },
@@ -127,14 +185,36 @@
             api.Get({
                 url: "MetaField/metabo/" + metaBoId_parent,
                 done: function (response) {
-                    me.meta_parent= response;
+                    $.each(response, function (key, value) {
+                        if (value.FORM_TYPE.indexOf('subform-') > -1) {
+                            api.Get({
+                                url: "MetaField/metabo/40052",
+                                done: function (response_s) {
+                                    me.meta_sub_parent = response_s;
+                                }
+                            });
+                        }
+                        me.meta_parent = response;
+                    });
+
                 }
             });
-            console.log(this.meta_parent.META_FIELD);
             api.Get({
                 url: "MetaField/metabo/" + metaBoId_child,
                 done: function (response) {
-                     me.meta_child = response;
+                    $.each(response, function (key, value) {
+                        if (value.FORM_TYPE.indexOf('subform-') > -1) {
+                            api.Get({
+                                url: "MetaField/metabo/40052",
+                                done: function (response_s) {
+
+                                    me.meta_sub_child = response_s;
+
+                                }
+                            });
+                        }
+                        me.meta_child = response;
+                    });
                 }
             });
 

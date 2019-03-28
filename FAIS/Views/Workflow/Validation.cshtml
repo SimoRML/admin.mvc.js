@@ -45,7 +45,7 @@
                     <h5>BO > {{ meta.BO_NAME }} :</h5>
                     <div class="field"
                          v-for="item in meta.META_FIELD">
-                        <button class="btn btn-sm btn-info"
+                        <button  v-if="item.FORM_TYPE.indexOf('subform')==-1" class="btn btn-sm btn-info"
                                 v-on:click="addCondition(item)">
                             {{ item.FORM_NAME }}
                             <span class="btn-label pull-right">

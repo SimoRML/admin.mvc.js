@@ -71,12 +71,12 @@
         },
         watch: {
             boid: function (newval) {
-                log.whiteTitle("watch boid", newval);
+                //log.whiteTitle("watch boid", newval);
                 this.checkWorkflow(newval);
             }
         },
         mounted: function () {
-            log.blueTitle("mounted", this.boid);
+            //log.blueTitle("mounted", this.boid);
             this.checkWorkflow(this.boid);
         }
     });
