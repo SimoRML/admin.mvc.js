@@ -460,6 +460,7 @@ namespace FAIS.Controllers
 
                 foreach (var v in value_s.Rows)
                 {
+                    JSONA_STRING_SUBFORM = new Dictionary<string, object>();
                     JSONA_STRING_SUBFORM.Add(item_sub_form.child.ToString(), ((System.Data.DataRow)v).ItemArray[0].ToString());
                     await InsertChilds((int)item_sub_form["id_subform"], (long)BO_Insert_return, JSONA_STRING_SUBFORM);
                 }
