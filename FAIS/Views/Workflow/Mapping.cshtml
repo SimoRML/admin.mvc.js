@@ -185,16 +185,21 @@
             api.Get({
                 url: "MetaField/metabo/" + metaBoId_parent,
                 done: function (response) {
-                    $.each(response, function (key, value) {
-                        if (value.FORM_TYPE.indexOf('subform-') > -1) {
-                            api.Get({
-                                url: "MetaField/metabo/40052",
-                                done: function (response_s) {
-                                    me.meta_sub_parent = response_s;
+                    api.Get({
+                        url: "metafield/GetSubFormID/" + metaBoId_parent, done: function (subId) {
+
+                            $.each(response, function (key, value) {
+                                if (value.FORM_TYPE.indexOf('subform-') > -1) {
+                                    api.Get({
+                                        url: "MetaField/metabo/" + subId,
+                                        done: function (response_s) {
+                                            me.meta_sub_parent = response_s;
+                                        }
+                                    });
                                 }
+                                me.meta_parent = response;
                             });
                         }
-                        me.meta_parent = response;
                     });
 
                 }
@@ -202,19 +207,24 @@
             api.Get({
                 url: "MetaField/metabo/" + metaBoId_child,
                 done: function (response) {
-                    $.each(response, function (key, value) {
-                        if (value.FORM_TYPE.indexOf('subform-') > -1) {
-                            api.Get({
-                                url: "MetaField/metabo/40052",
-                                done: function (response_s) {
+                    api.Get({
+                        url: "metafield/GetSubFormID/" + metaBoId_child, done: function (subId) {
+                            $.each(response, function (key, value) {
+                                if (value.FORM_TYPE.indexOf('subform-') > -1) {
+                                    api.Get({
+                                        url: "MetaField/metabo/" + subId,
+                                        done: function (response_s) {
 
-                                    me.meta_sub_child = response_s;
+                                            me.meta_sub_child = response_s;
 
+                                        }
+                                    });
                                 }
+                                me.meta_child = response;
                             });
                         }
-                        me.meta_child = response;
                     });
+                    
                 }
             });
 

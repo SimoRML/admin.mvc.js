@@ -234,6 +234,15 @@ namespace FAIS.Controllers
             }
         }
 
+        // DELETE: api/MetaField/GetDefaultValue/
+        [ResponseType(typeof(META_FIELD))]
+        [Route("GetSubFormID/{id}")]
+        [HttpGet]
+        public async Task<IHttpActionResult> GetSubFormID(int id)
+        {
+            return Ok(db.GetSubFormId(id));
+        }
+
 
         protected override void Dispose(bool disposing)
         {

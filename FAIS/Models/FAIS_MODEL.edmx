@@ -184,6 +184,9 @@
         <Function Name="GetSubForm" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="meta_bo_id" Type="int" Mode="In" />
         </Function>
+        <Function Name="GetSubFormId" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="meta_bo_id" Type="int" Mode="In" />
+        </Function>
         <Function Name="MoveBoToCurrentVersion" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="BO_ID" Type="bigint" Mode="In" />
         </Function>
@@ -352,6 +355,9 @@
           <EntitySet Name="BO_ROLE" EntityType="FAIS_Model.BO_ROLE" />
           <EntitySet Name="PAGE" EntityType="FAIS_Model.PAGE" />
           <FunctionImport Name="GetSubForm" ReturnType="Collection(String)">
+          <Parameter Name="meta_bo_id" Mode="In" Type="Int32" />
+          </FunctionImport>
+          <FunctionImport Name="GetSubFormId" ReturnType="Collection(Int64)">
             <Parameter Name="meta_bo_id" Mode="In" Type="Int32" />
           </FunctionImport>
         </EntityContainer>
@@ -598,6 +604,7 @@
             </EntityTypeMapping>
           </EntitySetMapping>
           <FunctionImportMapping FunctionImportName="GetSubForm" FunctionName="FAIS_Model.Store.GetSubForm" />
+          <FunctionImportMapping FunctionImportName="GetSubFormId" FunctionName="FAIS_Model.Store.GetSubFormId" />
         </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>

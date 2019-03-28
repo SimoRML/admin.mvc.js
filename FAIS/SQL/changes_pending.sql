@@ -17,6 +17,19 @@ BEGIN
 END
 GO
 
+CREATE PROCEDURE dbo.GetSubFormId
+	@meta_bo_id int
+AS
+BEGIN
+	DECLARE @sub varchar(50);
+	select @sub = replace(FORM_TYPE,'subform-', '') from META_FIELD 
+	where META_BO_ID = @meta_bo_id AND FORM_TYPE like 'subform-%'
+
+	SELECT META_BO_ID FROM META_BO WHERE BO_DB_NAME = @sub;
+END
+
+GO
+
 /****** Object:  Table [dbo].[BO_ROLE]    Script Date: 14-Mar-19 11:23:51 ******/
 SET ANSI_NULLS ON
 GO
@@ -162,4 +175,21 @@ CLOSE _bo_cursor
 DEALLOCATE _bo_cursor 
 
 END
+GO
+
+
+GO
+
+SET IDENTITY_INSERT [dbo].[META_BO] ON ;
+/*PAGE */
+INSERT [dbo].[META_BO] ([META_BO_ID], [BO_NAME], [VERSION], [CREATED_BY], [CREATED_DATE], [UPDATED_BY], [UPDATED_DATE], [STATUS], [BO_DB_NAME], [TYPE], [JSON_DATA]) VALUES (3, N'Page', 1, N'admin', CAST(N'2019-03-16T17:53:01.400' AS DateTime), N'admin', CAST(N'2019-03-16T17:53:01.400' AS DateTime), N'-1', N'PAGE', N'form', N'{"TITLE":"","GROUPE":null}')
+SET IDENTITY_INSERT [dbo].[META_BO] OFF;
+SET IDENTITY_INSERT [dbo].[META_FIELD] ON ;
+INSERT [dbo].[META_FIELD] ([META_FIELD_ID], [META_BO_ID], [DB_NAME], [DB_TYPE], [DB_NULL], [GRID_NAME], [GRID_FORMAT], [GRID_SHOW], [FORM_NAME], [FORM_FORMAT], [FORM_TYPE], [FORM_SOURCE], [FORM_SHOW], [FORM_OPTIONAL], [IS_FILTER], [FORM_DEFAULT], [CREATED_BY], [CREATED_DATE], [UPDATED_BY], [UPDATED_DATE], [STATUS], [VERSION], [JSON_DATA]) 
+VALUES (8, 3, N'TITLE', N'varchar(100)', 1, N'TITLE', NULL, 1, N'TITLE', NULL, N'v-text', N'', 1, 0, 0, NULL, N'admin', NULL, N'admin', NULL, N'LOCKED', NULL, N'')
+INSERT [dbo].[META_FIELD] ([META_FIELD_ID], [META_BO_ID], [DB_NAME], [DB_TYPE], [DB_NULL], [GRID_NAME], [GRID_FORMAT], [GRID_SHOW], [FORM_NAME], [FORM_FORMAT], [FORM_TYPE], [FORM_SOURCE], [FORM_SHOW], [FORM_OPTIONAL], [IS_FILTER], [FORM_DEFAULT], [CREATED_BY], [CREATED_DATE], [UPDATED_BY], [UPDATED_DATE], [STATUS], [VERSION]) 
+VALUES (9, 3, N'additional.column', '', 1, N'', '{"type":"button", "color":"btn-success","icon":"settings","action":"redirect", "data":"#admin.page"}', 1, N'', NULL, N'', '', 0, 0, NULL, N'form', N'admin', CAST(N'2018-12-18T13:10:28.673' AS DateTime), N'admin', CAST(N'2018-12-18T13:10:28.673' AS DateTime), N'LOCKED', NULL);
+
+SET IDENTITY_INSERT [dbo].[META_FIELD] OFF;
+
 GO
