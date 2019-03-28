@@ -205,6 +205,39 @@ namespace FAIS.Controllers
             return Ok(dt);
             //return Ok();
         }
+        [HttpPost]
+        [Route("Filter/includesubform")]
+        public async Task<IHttpActionResult> FilterIncludeSubForm(FilterModel model)
+        {
+            var meta = await db.META_BO.FindAsync(model.MetaBoID);
+
+            /* ACCESS RIGHTS */
+            try
+            {
+                UserRoleManager.Instance.VerifyRead(meta.BO_NAME);
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                return Content(HttpStatusCode.Forbidden, ex.Message);
+            }
+            /* FIN ACCESS RIGHTS */
+
+            if (meta == null)
+            {
+                return BadRequest();
+            }
+
+
+            var s = new SGBD();
+            var Gen = new BORepositoryGenerator();
+            string reqSelect = Gen.GenSelectIncludeSubForm(meta, db.GetSubForm((int)meta.META_BO_ID).FirstOrDefault()) + " where 1=1 " + model.Format();
+            var dt = s.Cmd(reqSelect, model.mapping);
+
+
+            return Ok(dt);
+            //return Ok();
+        }
+
         [AllowAnonymous]
         [HttpGet]
         [Route("test/{key}")]

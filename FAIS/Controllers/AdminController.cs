@@ -35,7 +35,8 @@ namespace FAIS.Controllers
 
             var data = db.PAGE.Where(p => p.BO_ID == id).FirstOrDefault();
 
-            ViewBag.dataLayout = data.LAYOUT;
+            ViewBag.STATUS = data.STATUS;
+            ViewBag.dataLayout = data.LAYOUT == null ? "" : data.LAYOUT;
             return PartialView();
         }
         public PartialViewResult PageList()

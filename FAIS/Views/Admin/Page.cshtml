@@ -52,6 +52,7 @@
         margin-bottom: 10px;
         border: none;
     }
+
     .edit-mode .componentContainer {
         border: 1px dashed #bbb;
     }
@@ -69,10 +70,10 @@
                 border-color: #025da0;
             }
 
-        .componentContainer > div {
-            background-color: #f5f5f5;
-            min-height: 50px;
-        }
+    .componentContainer > div {
+        background-color: #f5f5f5;
+        min-height: 50px;
+    }
 
     .column.selected > .card {
         box-shadow: 0 0 5px 1px #0072c6;
@@ -89,10 +90,31 @@
         width: 100%;
         border: none;
     }
+
+    .devider {
+        position: relative;
+        background: #fff;
+        text-align: center;
+    }
+
+        .devider .txt {
+            background: #fff;
+            display: initial;
+            padding: 2px 10px;
+            z-index: 1;
+            position: relative;
+        }
+
+        .devider .line {
+            border-top: 1px solid;
+            position: absolute;
+            top: 48%;
+            width: 100%;
+        }
 </style>
 <div id="vapp" class="row">
 
-    <div id="layout" :class="{'layoutContainer':true, 'edit-mode': editMode}">
+    <div id="layout" :class="{'layoutContainer scroll-this':true, 'edit-mode': editMode}">
         <template v-for="(section, sectionIndex) in layout.sections">
 
             @*@*----------------------SECTION*@
@@ -171,17 +193,27 @@
     </div>
 
     @*PROPS*@
-    <button type="button" class="btn btn-fill btn-sm btn-warning pull-right" v-on:click="editPage" v-if="previewMode" style="position: fixed;right: 10px;top: 64px;"><i class="material-icons">remove_red_eye</i></button>
+    <button type="button" class="btn btn-fill btn-sm btn-warning pull-right no-print" v-on:click="editPage" v-if="previewMode" style="position: fixed;right: 10px;top: 64px;"><i class="material-icons">remove_red_eye</i></button>
     <div class="sidebar props scroll-this" v-if="editMode">
         <h4 class="">Page</h4>
         <div class="content">
             <div>
-                <v-text label="Titre" v-model="layout.page.title" optional="1"></v-text>
-                <v-text label="Groupe" v-model="layout.page.groupe" optional="1"></v-text>
-
+                <div class="form-group label-floating">
+                    <label class="control-label">Titre<i> - optionnel</i></label>
+                    <input type="text" class="form-control"
+                           v-model="layout.page.title">
+                </div>
+                <div class="form-group label-floating">
+                    <label class="control-label">Groupe<i> - optionnel</i></label>
+                    <input type="text" class="form-control"
+                           v-model="layout.page.groupe">
+                </div>
                 <div>
+                    <button type="button" class="btn btn-fill btn-sm btn-danger pull-right" v-on:click="unPublishPage" v-if="pageStatus == 'public'"><i class="material-icons">cancel</i> Retirer</button>
+                    <button type="button" class="btn btn-fill btn-sm btn-primary pull-right" v-on:click="publishPage" v-else>Publier</button>
+
                     <button type="button" class="btn btn-fill btn-sm btn-success pull-right" v-on:click="savePage"><i class="material-icons">save</i></button>
-                    <button type="button" class="btn btn-fill btn-sm btn-primary pull-right" v-on:click="previewPage"><i class="material-icons">remove_red_eye</i></button>
+                    <button type="button" class="btn btn-fill btn-sm btn-warning pull-right" v-on:click="previewPage"><i class="material-icons">remove_red_eye</i></button>
                 </div>
             </div>
             <div style="clear:both"></div>
@@ -208,6 +240,7 @@
             <div class="content">
                 <div>
                     <template v-for="(propa, key) in componentsTypes[selectedComponent.type].props">
+                        <div class="devider" v-if="typeof propa.devider != 'undefined'"><div class="txt">{{propa.devider}}</div><div class="line"></div></div>
                         <component :id="'prop_' + propa.type + '_' + currentColumn.line + '_' + currentColumn.column + '_' + currentColumn.component"
                                    :is="propa.type"
                                    v-model="selectedComponent.props[key]"
@@ -222,15 +255,17 @@
     </div>
 </div>
 <script type="text/javascript">
-    var layout = null;
+    var layout = null, layoutStr = "";
     try {
-        layout = JSON.parse('@Html.Raw(ViewBag.dataLayout)');
+        layoutStr = '@Html.Raw(ViewBag.dataLayout.ToString().Replace("\\\"","\\\\\"").Replace("\\n", "\\\\n"))';
+        layout = JSON.parse(layoutStr);
     } catch (e) {
-
+        log.red("ERROR", e);
     }
     var vapp = new Vue({
         el: "#vapp",
         data: {
+            pageStatus: "@ViewBag.STATUS",
             mode: "edit",
             api:EV.getComponent("data"),
             sectionTypes: {
@@ -246,7 +281,28 @@
                     icone: "tab",
                     class: "",
                     props: {
-                        source: { label: "Source de données", type: "v-select", datasource: JSON.stringify({ source: "meta_bo", value: "BO_DB_NAME", display: "BO_NAME", filter: "[STATUS]<>'-1'" }) }
+                        source: { label: "Source de données", type: "v-select", datasource: JSON.stringify({ source: "meta_bo", value: "BO_DB_NAME", display: "BO_NAME", filter: "[STATUS]<>'-1'" }) },
+                        actionIcone: { //{"type":"button", "color":"btn-success","icon":"settings","action":"redirect", "data":"#admin.page"}
+                            devider: "Boutton action",
+                            label: "icone",
+                            type: "v-select2",
+                            datasource: [{ Value: "print", Display:'<i class="material-icons">print</i> PRINT'}]
+                        },
+                        actionColor: {
+                            label: "Couleur",
+                            type: "v-select2",
+                            datasource: [
+                                { Value: "btn-success", Display: '<button type="button" class="btn btn-success btn-round btn-fab btn-fab-mini btn-fab-x-mini"></button> Vert' },
+                                { Value: "btn-info", Display: '<button type="button" class="btn btn-info btn-round btn-fab btn-fab-mini btn-fab-x-mini"></button> Bleue' },
+                                { Value: "btn-primary", Display: '<button type="button" class="btn btn-primary btn-round btn-fab btn-fab-mini btn-fab-x-mini"></button> Bleue' },
+                                { Value: "btn-warning", Display: '<button type="button" class="btn btn-warning btn-round btn-fab btn-fab-mini btn-fab-x-mini"></button> Orange' },
+                                { Value: "btn-danger", Display: '<button type="button" class="btn btn-danger btn-round btn-fab btn-fab-mini btn-fab-x-mini"></button> Rouge' },
+                                ]
+                        },
+                        actionHref: {
+                            label: "Lien",
+                            type: "v-text",
+                        },
                     }
                 },
                 TABLE: {
@@ -324,8 +380,22 @@
                     icone: "print",
                     class: "",
                     props: {
-                        source: { label: "Source de données", type: "v-select", datasource: JSON.stringify({ source: "meta_bo", value: "BO_DB_NAME", display: "BO_NAME", filter: "[STATUS]<>'-1'" }) },
-                        filter: {label: "Filtre", type: "v-text", detail:"ex: id=[uri:id]"}
+                        source: {label: "Source de données", type: "v-select", datasource: JSON.stringify({ source: "meta_bo", value: "META_BO_ID", display: "BO_NAME", filter: "[STATUS]<>'-1'" }) },
+                        filter: {label: "Filtre", type: "v-text", detail:"ex: id=[uri.id]"},
+
+                        logo: { devider: "En-tête", label: "Logo", type: "v-file" },
+                        societe: { label: "Société", type: "v-textarea" },
+                        societeFacture: { label: "Société facturée", type: "v-textarea" },
+
+                        num: { label: "Champ N°", type: "v-text" },
+                        ref: { label: "Champ Référence", type: "v-text" },
+
+                        productName: { devider: "Détail: Sub-form", label: "Champ designation", type: "v-text" },
+                        unite: { label: "Champ unité", type: "v-text" },
+                        qte: { label: "Champ quantité", type: "v-text" },
+                        prix: {  label: "Champ prix unitaire", type: "v-text" },
+
+                        footer: { devider: "Pied", label: "Pied de page", type: "v-textarea" },
                     },
                     apply: function ($compDiv, props, compKey) {
                         log.green("props", props);
@@ -363,6 +433,9 @@
             previewMode: function () {
                 return this.mode == "preview";
             },
+            publicMode: function () {
+                return this.mode == "public";
+            },
         },
         watch: {
             pageTitle: function (newVal, oldVal) {
@@ -375,9 +448,17 @@
                 this.currentColumn.column = -1;
                 this.selectedComponent = null;
                 this.mode = "preview";
+                //$("#layout").height("auto");
             },
             editPage: function () {
                 this.mode = "edit";
+                //$("#layout").height($("#v-content").height());
+            },
+            publicPage: function () {
+                this.currentColumn.line = -1;
+                this.currentColumn.column = -1;
+                this.selectedComponent = null;
+                this.mode = "public";
             },
             savePage: function () {
                 this.api.Put({
@@ -385,6 +466,28 @@
                     data: JSON.stringify({ LAYOUT: JSON.stringify(this.layout) }),
                     done: function (response) {
                         NOTIF.success("Page enregistrée avec succès.");
+                    },
+                });
+            },
+            publishPage: function () {
+                var me = this;
+                this.api.Put({
+                    url: "metabo/Crud/3/" + this.layout.page.boId,
+                    data: JSON.stringify({ STATUS: 'public', LAYOUT: JSON.stringify(this.layout) }),
+                    done: function (response) {
+                        NOTIF.success("Page publiée avec succès.");
+                        me.pageStatus = "public";
+                    },
+                });
+            },
+            unPublishPage: function () {
+                var me = this;
+                this.api.Put({
+                    url: "metabo/Crud/3/" + this.layout.page.boId,
+                    data: JSON.stringify({ STATUS: 'draft', LAYOUT: JSON.stringify(this.layout) }),
+                    done: function (response) {
+                        NOTIF.success("Page mise en mode brouillon avec succès.");
+                        me.pageStatus = "draft";
                     },
                 });
             },
@@ -461,7 +564,9 @@
 
                 switch (this.selectedComponent.type) {
                     case "FORM":
-                        INCLUDE($compDiv, "bo/formulaire/" + this.selectedComponent.props.source);
+                        INCLUDE($compDiv, "bo/formulaire/" + this.selectedComponent.props.source + "?compKey=" + compKey, null,
+                            "var props" + compKey + " = " + JSON.stringify(this.selectedComponent.props) + ";"
+                            );
                         break;
                     case "TABLE":
                         INCLUDE($compDiv, "bo/table/" + this.selectedComponent.props.source);
@@ -492,15 +597,19 @@
             }
         },
         mounted: function () {
-            $("#layout").height($("#v-content").height());
+            //this.mode = "publie";
+            if (this.editMode) $("#layout").height($("#v-content").height());
             // bus.loadList("metaList", { url: "metabo", method: "GET" }, (response) => {  });
             if (layout != null) {
                 var me = this;
                 this.layout = layout;
                 setTimeout(() => {
-                    this.applyAll();
+                    me.applyAll();
+                    if("@ViewBag.PageStatus" == "PUBLIC" )me.publicPage();
                 }, 100);
             }
+
+            //setTimeout(() => { $('.scroll-this').each(function () { $(this).perfectScrollbar(); }) }, 500);
         }
     });
 </script>

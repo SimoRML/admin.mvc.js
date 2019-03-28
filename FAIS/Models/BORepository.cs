@@ -67,6 +67,22 @@ namespace FAIS.Models
             return select;
         }
 
+        public string GenSelectIncludeSubForm(META_BO meta, string subform)
+        {
+            // TODO : Filter 
+            string select = "";
+            //select = "select * from  " + Tname + " ";
+            select = @"select c.*, BO.CREATED_BY,BO.CREATED_DATE,BO.UPDATED_BY,BO.UPDATED_DATE,
+                        case when convert(varchar,bo.STATUS) = '1'  
+                        then 'Nouveau'
+                        else bo.STATUS
+                        end 'BO_STATUS' " +
+                        (subform == null ? "" : ", (SELECT * FROM " + subform + @"  where BO_ID in (select BO_CHILD_ID from BO_CHILDS where BO_PARENT_ID = c.BO_ID) FOR JSON PATH) as sub")
+                         + " from " + meta.BO_DB_NAME + @" c 
+                         inner join BO on BO.BO_ID = c.BO_ID";
+            return select;
+        }
+
         public string GenSelectChilds(string Tname, long parentId)
         {
             // TODO : Filter 

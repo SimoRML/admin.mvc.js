@@ -147,3 +147,4 @@ C:\www\_.net\NB\admin.mvc.js\FAIS\obj\Release\fr-FR\FAIS.resources.dll
 C:\www\_.net\NB\admin.mvc.js\FAIS\obj\Release\FAIS.csproj.CopyComplete
 C:\www\_.net\NB\admin.mvc.js\FAIS\obj\Release\FAIS.dll
 C:\www\_.net\NB\admin.mvc.js\FAIS\obj\Release\FAIS.pdb
+C:\www\_.net\NB\admin.mvc.js\FAIS\obj\Release\FAIS.csprojAssemblyReference.cache
