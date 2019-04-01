@@ -1,0 +1,23 @@
+﻿<div id="vappUserAdd">
+    <h4>Créer un utilisateur</h4>
+    <div class="col-md-12">
+        <v-email label="Email" v-model="Email" :optional="0"></v-email>
+        <v-text label="Mot de passe"  v-model="Password" :optional="0"></v-text>
+        <v-text label="Confirmer mot de passe"  v-model="ConfirmPassword" :optional="0"></v-text>
+    </div>
+</div>
+<script type="text/javascript">
+    var vappUserAdd = new Vue({
+        el: "#vappUserAdd",
+        data: {
+            Email: "",
+            Password: "",
+            ConfirmPassword: "",
+        },
+        methods: {
+            val: function () {
+                return { Email: this.Email, Password: this.Password, ConfirmPassword: this.ConfirmPassword };
+            },
+        },
+    });
+</script>

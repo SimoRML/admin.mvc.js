@@ -7,7 +7,7 @@ using System.Security.Principal;
 using System.Web;
 
 namespace FAIS.Models.Authorize
-{    
+{
     public sealed class UserRoleManager
     {
         private static readonly object padlock = new object();
@@ -51,9 +51,9 @@ namespace FAIS.Models.Authorize
             foreach (DataRow row in userBoRoles.Rows)
             {
                 UserBoRole currentBoRole;
-                if (this.boRoles.ContainsKey(row["BO_NAME"].ToString()))
+                if (this.boRoles.ContainsKey(row["BO_DB_NAME"].ToString()))
                 {
-                    currentBoRole = this.boRoles[row["BO_NAME"].ToString()];
+                    currentBoRole = this.boRoles[row["BO_DB_NAME"].ToString()];
 
                     currentBoRole.CAN_READ = user.IsInRole("admin") || currentBoRole.CAN_READ || (row["CAN_READ"].ToString() == "" ? false : (bool)row["CAN_READ"]);
                     currentBoRole.CAN_WRITE = user.IsInRole("admin") || currentBoRole.CAN_WRITE || (row["CAN_WRITE"].ToString() == "" ? false : (bool)row["CAN_WRITE"]);
@@ -65,13 +65,14 @@ namespace FAIS.Models.Authorize
                     {
                         META_BO_ID = int.Parse(row["META_BO_ID"].ToString()),
                         BO_NAME = row["BO_NAME"].ToString(),
+                        BO_DB_NAME = row["BO_DB_NAME"].ToString(),
                         BO_ROLE_ID = row["BO_ROLE_ID"].ToString() == "" ? -1 : int.Parse(row["BO_ROLE_ID"].ToString()),
                         ROLE_ID = row["ROLE_ID"].ToString(),
                         CAN_READ = user.IsInRole("admin") || (row["CAN_READ"].ToString() == "" ? false : (bool)row["CAN_READ"]),
                         CAN_WRITE = user.IsInRole("admin") || (row["CAN_WRITE"].ToString() == "" ? false : (bool)row["CAN_WRITE"]),
                     };
                     currentBoRole.CAN_ACCESS = user.IsInRole("admin") || currentBoRole.CAN_WRITE || currentBoRole.CAN_READ;
-                    this.boRoles.Add(row["BO_NAME"].ToString(), currentBoRole);
+                    this.boRoles.Add(row["BO_DB_NAME"].ToString(), currentBoRole);
                 }
             }
         }
@@ -79,7 +80,7 @@ namespace FAIS.Models.Authorize
 
         public void Verify(string boName, char accessType)
         {
-            if(!this.boRoles.ContainsKey(boName)) throw new UnauthorizedAccessException("Unauthorized Access To " + boName);
+            if (!this.boRoles.ContainsKey(boName)) throw new UnauthorizedAccessException("Unauthorized Access To " + boName);
             switch (accessType)
             {
                 case 'r':
@@ -92,7 +93,6 @@ namespace FAIS.Models.Authorize
                     if (!this.boRoles[boName].CAN_ACCESS) throw new UnauthorizedAccessException("Unauthorized Access To " + boName);
                     break;
             }
-            
         }
         public void VerifyRead(string boName)
         {
@@ -113,6 +113,7 @@ namespace FAIS.Models.Authorize
     {
         public int META_BO_ID { get; set; }
         public string BO_NAME { get; set; }
+        public string BO_DB_NAME { get; set; }
         public int BO_ROLE_ID { get; set; }
         public string ROLE_ID { get; set; }
         public bool CAN_READ { get; set; }

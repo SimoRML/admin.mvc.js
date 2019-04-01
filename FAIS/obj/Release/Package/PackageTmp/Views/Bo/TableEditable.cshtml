@@ -1,0 +1,187 @@
+﻿@model FAIS.Models.META_BO
+@{
+    string boDbName(string txt)
+    {
+        return "table_" + Model.BO_DB_NAME + txt;
+    }
+    bool isSubForm = ViewBag.isSubForm != null;
+}
+@helper renderTable(bool includeDatasource)
+{
+    <v-table ref="theTable"
+             meta-name="@Model.BO_DB_NAME"
+             :column-show="columnShow"
+             :column-labels="columnLabels"
+             @if (includeDatasource) { @: datasource="metabo/select/@Model.BO_DB_NAME"
+             }
+             detail-row="default"
+             :prevent-first-load="filterExists"
+             :editable="true"></v-table>
+}
+
+@if (Model.STATUS == "PENDING")
+{
+    <div class="col-md-12" id="@boDbName("-vue-app")">
+        <div class="alert alert-warning">
+            <span>
+                <b> Warning - </b>
+                THE BUSINESS OBJECT IS PENDING SETUP !
+                <br />
+                YOU MUST COMMIT A VERSION TO START PRODUCTION.
+            </span>
+        </div>
+    </div>
+}
+else
+{
+    <div class="col-md-12" id="@boDbName("-vue-app")">
+        <div class="tab-content">
+            <div class="tab-pane active" id="@boDbName("list")">
+                <div v-show="filterExists" class="card">
+                    <div class="card-header">
+                        Filtre
+                    </div>
+                    <div class="card-content">
+
+                        <form onsubmit="return false;">
+                            @*THE COMPONENET*@
+                            <div class="row">
+                                <template v-for="field in getFiltre">
+                                    <component :name="field.FORM_TYPE"
+                                               :is="field.FORM_TYPE"
+                                               v-model="filterBody[field.DB_NAME].value"
+                                               v-bind="{id:field.DB_NAME+'_filter',label:field.FORM_NAME,optional:1,datasource:field.FORM_SOURCE,fieldName:field.DB_NAME,cssClass:'col-md-3'}"></component>
+                                </template>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <button type="submit" class="btn btn-fill btn-primary pull-right" v-on:click="filtrer">Filtrer<div class="ripple-container"></div></button>
+                                </div>
+                            </div>
+
+                        </form>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-content scroll-x">
+                        @renderTable(true)
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <script id="@boDbName("-action-template")" type="vue/template">
+        <div class="pull-right">
+            <button class="btn btn-primary btn-round btn-fab btn-fab-mini btn-fab-x-mini"
+                    v-on:click="edit(row.BO_ID)">
+                <i class="material-icons">create</i>
+            </button>
+        </div>
+    </script>
+    <script type="text/javascript">
+        var @boDbName("META_BO") = @Html.Raw(Json.Encode(Model));
+
+        // parse json data
+        try {
+            window["@boDbName("META_BO")"].JSON_DATA = JSON.parse(window["@boDbName("META_BO")"].JSON_DATA);
+        } catch {}
+
+        // build table props from meta_fields
+        var @boDbName("columnShow") = [];
+        var @boDbName("columnLabels") = { };
+        window["@boDbName("META_BO")"].META_FIELD.forEach((e) => {
+            if (e.GRID_SHOW == 1) window["@boDbName("columnShow")"].push(e.DB_NAME);
+            window["@boDbName("columnLabels")"][e.DB_NAME] = e.GRID_NAME;
+        });
+
+        bus.setMeta("@Model.BO_DB_NAME", @boDbName("META_BO"));
+    </script>
+
+    <script type="text/javascript">
+        var @boDbName("vapp") = new Vue(
+        {
+            el: '#@boDbName("-vue-app")',
+            data: {
+                filterExists: false,
+                filterBody: {},
+                columnShow: @boDbName("columnShow"),
+                columnLabels: @boDbName("columnLabels"),
+            },
+            computed: {
+                getFiltre: function () {
+                    var arrFields = [];
+                    var META_FIELDS = bus.$data.@Model.BO_DB_NAME;
+
+                    META_FIELDS.META_FIELD.forEach((e) => {
+                        if (e.IS_FILTER === 1 && e.FORM_TYPE.match('subform-') === null) {
+                            arrFields.push(e);
+                            this.filterBody[e.DB_NAME] = {type : e.FORM_TYPE,value : null};
+                            this.filterExists = true;
+                        }
+                    });
+
+                    return arrFields;
+                }
+            },
+            methods: {
+                filtrer: function () {
+                    var me = this;
+                    var filterModel = {
+                        MetaBoID: @Model.META_BO_ID,
+                        Items: []
+                    };
+                    for (var key in this.filterBody) {
+                        var e = this.filterBody[key];
+                        if (e.value === null || e.value.trim()=='') continue;
+                        filterModel.Items.push(
+                            {
+                                "Logic": " and ",
+                                "Field": key,
+                                "Condition": e.type === "v-text" ? " like " : " = ",
+                                "Value": e.type === "v-text" ? "%"+e.value+"%" : e.value
+                            }
+                        );
+                    }
+
+                    var data = EV.getComponent("data");
+                    data.ExecuteSource({
+                        url: "metabo/filter",
+                        data: JSON.stringify(filterModel),
+                        method: "POST",
+                        loadComplete: function (obj, response) {
+                            me.$refs.theTable.loadObject(response);
+                        },
+                        fail: function (response) {
+                            console.log("fail : ",response);
+                        }
+                    });
+                }
+            },
+            mounted: function(){
+            }
+        });
+    </script>
+
+    <script id="@boDbName("-detail-row-template")" type="text/template">
+        <div>
+            <div v-for="field in metafield" class="col-md-3">
+                <b>{{field.GRID_NAME}} : </b><span v-format="{value:row[field.DB_NAME], format:field.GRID_FORMAT}">{{row[field.DB_NAME]}}</span>
+            </div>
+        </div>
+    </script>
+    <script>
+
+        Vue.component('@boDbName("-detail-row")', {
+            template: $("#@boDbName("-detail-row-template")").html(),
+            props: {
+                row: Object,
+                metafield:Object,
+            },
+            methods: {
+                edit: (id) => editFormMetaBo(id)
+            }
+        });
+    </script>
+}

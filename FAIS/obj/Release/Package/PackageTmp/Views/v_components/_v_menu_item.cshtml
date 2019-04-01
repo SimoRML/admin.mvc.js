@@ -1,0 +1,97 @@
+﻿<script id="v-menu-item-template" type="text/template">
+    <!-- <li>
+        <a data-toggle="collapse" class="collapsed" aria-expanded="false">
+            <i class="material-icons">image</i>
+            <p>
+                Pages
+                <b class="caret"></b>
+            </p>
+        </a>
+        <div class="collapse" aria-expanded="false" style="height: auto;">
+            <ul class="nav">
+                <li>
+                    <a href="./pages/pricing.html">Pricing</a>
+                </li>
+                <li>
+                    <a href="./pages/timeline.html">Timeline</a>
+                </li>
+                <li>
+                    <a href="./pages/login.html">Login Page</a>
+                </li>
+                <li>
+                    <a href="./pages/register.html">Register Page</a>
+                </li>
+                <li>
+                    <a href="./pages/lock.html">Lock Screen Page</a>
+                </li>
+                <li>
+                    <a href="./pages/user.html">User Profile</a>
+                </li>
+            </ul>
+        </div>
+    </li>-->
+    <li v-if="parent">
+        <a  aria-expanded="false" data-toggle="collapse" class="v-collapse-a" v-on:click="isOpen = !isOpen">
+            <i class="material-icons">{{ icon }}</i>
+            <p>
+                {{ text }}
+                <b class="caret"></b>
+            </p>
+        </a>
+        <div aria-expanded="false" :class="'v-collapse ' + getOpenClass()">
+            <ul class="nav">
+                <li v-for="item in childs">
+                    <a :href="'#' + item.href">
+                        {{ item.text }}
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </li>
+    <li v-else>
+        <a :href="href">
+            <i class="material-icons">{{ icon }}</i>
+            <p>{{ text }}</p>
+        </a>
+    </li>
+</script>
+<script type="text/javascript">
+    Vue.component('v-menu-item', {
+        template: $("#v-menu-item-template").html(),
+        props: {
+            parent: {
+                type: Boolean,
+                default: false
+            },
+            href: String,
+            icon: String,
+            text: String,
+            cle: undefined,
+            childs: Array
+        },
+        data: function () {
+            return {
+                isOpen: false
+            };
+        },
+        methods: {
+            getOpenClass: function (v) {
+                return this.isOpen ? "open" : " collapse";
+            }
+        }
+    });
+   /* var Sidebar_isOpen = ($(".sidebar-wrapper.ps-active-x")[0]) ? "true" : "false";
+    $("#minimizeSidebar").click(function () {
+        if (Sidebar_isOpen == true) {
+            $(".v-collapse.open").addClass("hide");
+            $(".v-collapse.open").removeClass("open");
+        } else {
+            $(".v-collapse.hide").addClass("open");
+            $(".v-collapse.hide").removeClass("open");
+        }
+    })*/
+    $(".v-collapse").each(function () {
+        console.log(0);
+        $(this).addClass("collapse");
+    })
+</script>
