@@ -182,7 +182,7 @@ namespace FAIS.Controllers
             /* ACCESS RIGHTS */
             try
             {
-                UserRoleManager.Instance.VerifyRead(meta.BO_NAME);
+                UserRoleManager.Instance.VerifyRead(meta.BO_DB_NAME);
             }
             catch (UnauthorizedAccessException ex)
             {
@@ -214,7 +214,7 @@ namespace FAIS.Controllers
             /* ACCESS RIGHTS */
             try
             {
-                UserRoleManager.Instance.VerifyRead(meta.BO_NAME);
+                UserRoleManager.Instance.VerifyRead(meta.BO_DB_NAME);
             }
             catch (UnauthorizedAccessException ex)
             {
@@ -257,7 +257,7 @@ namespace FAIS.Controllers
             /* ACCESS RIGHTS */
             try
             {
-                UserRoleManager.Instance.VerifyWrite(meta.BO_NAME);
+                UserRoleManager.Instance.VerifyWrite(meta.BO_DB_NAME);
             }
             catch (UnauthorizedAccessException ex)
             {
@@ -321,7 +321,7 @@ namespace FAIS.Controllers
             /* ACCESS RIGHTS */
             try
             {
-                UserRoleManager.Instance.VerifyWrite(meta.BO_NAME);
+                UserRoleManager.Instance.VerifyWrite(meta.BO_DB_NAME);
             }
             catch (UnauthorizedAccessException ex)
             {
@@ -520,7 +520,7 @@ namespace FAIS.Controllers
             /* ACCESS RIGHTS */
             try
             {
-                UserRoleManager.Instance.VerifyWrite(meta.BO_NAME);
+                UserRoleManager.Instance.VerifyWrite(meta.BO_DB_NAME);
             }
             catch (UnauthorizedAccessException ex)
             {
@@ -571,7 +571,7 @@ namespace FAIS.Controllers
             /* ACCESS RIGHTS */
             try
             {
-                UserRoleManager.Instance.VerifyWrite(meta.BO_NAME);
+                UserRoleManager.Instance.VerifyWrite(meta.BO_DB_NAME);
             }
             catch (UnauthorizedAccessException ex)
             {
@@ -642,7 +642,7 @@ namespace FAIS.Controllers
             /* ACCESS RIGHTS */
             try
             {
-                UserRoleManager.Instance.VerifyWrite(meta.BO_NAME);
+                UserRoleManager.Instance.VerifyWrite(meta.BO_DB_NAME);
             }
             catch (UnauthorizedAccessException ex)
             {
@@ -689,7 +689,7 @@ namespace FAIS.Controllers
             /* ACCESS RIGHTS */
             try
             {
-                UserRoleManager.Instance.VerifyRead(meta.BO_NAME);
+                UserRoleManager.Instance.VerifyRead(meta.BO_DB_NAME);
             }
             catch (UnauthorizedAccessException ex)
             {
@@ -717,7 +717,7 @@ namespace FAIS.Controllers
             /* ACCESS RIGHTS */
             try
             {
-                UserRoleManager.Instance.VerifyRead(meta.BO_NAME);
+                UserRoleManager.Instance.VerifyRead(meta.BO_DB_NAME);
             }
             catch (UnauthorizedAccessException ex)
             {
@@ -742,7 +742,7 @@ namespace FAIS.Controllers
             /* ACCESS RIGHTS */
             try
             {
-                UserRoleManager.Instance.VerifyRead(meta.BO_NAME);
+                UserRoleManager.Instance.VerifyRead(meta.BO_DB_NAME);
             }
             catch (UnauthorizedAccessException ex)
             {

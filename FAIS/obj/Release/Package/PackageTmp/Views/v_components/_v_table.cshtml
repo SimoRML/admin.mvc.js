@@ -1,0 +1,745 @@
+﻿<style>
+    .table .imageContainer {
+        display: inline-block;
+        border: 1px dashed #aaa;
+        padding: 2px;
+        width: 100px;
+    }
+
+    table.v-table tbody td:first-child, table.v-table tbody td:not(:first-child), table.v-table tbody th:first-child, table.v-table tbody th:not(:first-child), table.v-table thead td:first-child, table.v-table thead td:not(:first-child), table.v-table thead th:first-child, table.v-table thead th:not(:first-child) {
+        padding: 0 15px;
+    }
+
+    .v-table .tableForm {
+        margin: 0;
+        padding: 0;
+    }
+
+    .v-table.table-mini .tableForm.form-group {
+        margin: 0;
+        padding: 0;
+    }
+
+    .v-table .not-persisted {
+        background: #fff8e5 !important;
+    }
+
+    .v-table .persisted {
+        background: #e5ffec !important;
+    }
+
+    .v-table .selected {
+        background: #aad5ff !important;
+    }
+
+    .v-table .deleted {
+        background: #db4747 !important;
+    }
+
+    .icone-sort {
+        float: right;
+        vertical-align: sub;
+        color: #999;
+        font-size: 60%;
+        margin-top: 5px;
+    }
+</style>
+<script id="TableComponentTemplate" type="text/template">
+    <div :id="elementId">
+        <template v-if="list.length <= 0">
+            <div :class="{'alert alert-with-icon': true, 'preLoader':!loaded && !preventFirstLoad}" data-notify="container">
+                <i class="material-icons" data-notify="icon">border_clear</i>
+                <span v-if="loaded || preventFirstLoad" data-notify="message">Aucune donnée à afficher !</span>
+                <span v-else>Chargement ...</span>
+            </div>
+        </template>
+        <template v-else>
+
+            <div class="row">
+                <div class="col-sm-6">
+                    <div class="dataTables_length">
+                        Affiche
+                        <select name="datatables_length" v-model="pager.size">
+                            <option value="10">10</option>
+                            <option value="25">25</option>
+                            <option value="50">50</option>
+                        </select> entrées
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-sm-12">
+                    <table :class="'table table-striped table-no-bordered table-hover ' + tableClass" cellspacing="0" style="width:100%">
+                        <thead>
+                            <tr>
+                                <th v-if="detailRowDefined || hasSlot('detail')"></th>
+                                <template v-for="h in getHeaders">
+                                    <th v-if="show(h)" v-on:click="sort(h)" style="cursor: pointer;">
+                                        {{ getLabel(h) }}
+                                        <template v-if="sortConfig.key == h">
+                                            <template v-if="sortConfig.direction == -1">
+                                                <i class="fa fa-caret-down icone-sort"></i>
+                                            </template>
+                                            <template v-else>
+                                                <i class="fa fa-caret-up icone-sort"></i>
+                                            </template>
+                                        </template>
+                                        <template v-else>
+                                            <i class="fa fa-sort icone-sort"></i>
+                                        </template>
+
+                                    </th>
+                                </template>
+                                <th v-if="actionComponentDefined || hasSlot('action')"></th>
+                                <th v-for="addColumn in additionalColumns">
+                                    {{ addColumn.GRID_NAME }}
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <template v-for="(item, index) in list.slice(pager.sliceFrom, pager.sliceTo)">
+                                <tr :class="listConfig[index].rowClass" v-show="(!editable || (editable && listConfig[index].state !== 'deleted')) && !listConfig[index].hide">
+                                    @*DETAIL ROW BTN*@
+                                    <td v-if="detailRowDefined || hasSlot('detail')"
+                                        v-on:click="toggleDetailRow(getLineIndex(index))">
+                                        <i class="material-icons i-btn-round" v-show="showDetailRow[getLineIndex(index)] != null && showDetailRow[getLineIndex(index)]">expand_less</i>
+                                        <i class="material-icons i-btn-round" v-show="showDetailRow[getLineIndex(index)] == null || !showDetailRow[getLineIndex(index)]">expand_more</i>
+                                    </td>
+
+                                    @*TABLE COLUMNS*@
+                                    <template v-for="(h,colIndex) in getHeaders">
+                                        <template v-if="show(h)">
+                                            <template v-if="isForm(h)">
+                                                <td>
+                                                    @*FOMR COLUMN*@
+                                                    <component :name="columns[h].form.type + '-' + index + '-' + colIndex"
+                                                               :id="elementId + '¤' + h + '_' + index"
+                                                               :is="columns[h].form.type"
+                                                               v-model="item[h]"
+                                                               v-bind='{cssClass:"tableForm " + columns[h].form.cssClass,line:index, column: colIndex, datasource:columns[h].form.datasource, disabled:columns[h].form.disabled, source: columns[h].form.source, sourceDisplay:columns[h].form.display, sourceValue: columns[h].form.value, sourceFilter: columns[h].form.filter, step: columns[h].form.step, optional:columns[h].form.optional}'
+                                                               v-on:input="lineChanged"
+                                                               @*v-bind="{id:field.DB_NAME,label:field.FORM_NAME,optional:field.FORM_OPTIONAL,datasource:field.FORM_SOURCE,fieldName:field.DB_NAME}"*@></component>
+                                                </td>
+                                            </template>
+                                            <template v-else>
+                                                @*FILE COLUMN*@
+                                                <template v-if="typeof listConfig[getLineIndex(index)].columns != 'undefined' && listConfig[getLineIndex(index)].columns[h].isFile">
+                                                    <td>
+                                                        <a href="javascript:;" v-on:click="downloadFile(item[h].base64, item[h].type, item[h].name)">
+                                                            <template v-if="item[h].type.match('image') !== null">
+                                                                <div class="imageContainer">
+                                                                    <img :src="item[h].base64" />
+                                                                </div>
+                                                            </template>
+                                                            <template v-else>
+                                                                <div class="fileContainer">
+                                                                    <i class="material-icons">attachment</i> : {{ item[h].name }}
+                                                                </div>
+                                                            </template>
+                                                        </a>
+                                                    </td>
+                                                </template>
+                                                @*NORMAL COLUMN*@
+                                                <template v-else>
+                                                    <td v-format="{value:item[h], format:getFormat(h)}" v-html="item[h]" :class="getColumnClass(h)" :style="getColumnStyle(h)">
+                                                        {{ item[h] }}
+                                                    </td>
+                                                </template>
+                                            </template>
+                                        </template>
+                                    </template>
+
+                                    @*ACTION COMPONENET*@
+                                    <td style="text-align:right" v-if="actionComponentDefined || hasSlot('action')">
+                                        <slot name="action" :index="index" :line="item"></slot>
+                                        <component v-bind:is="actionComponent" v-bind="{row:item, index:index}"></component>
+                                    </td>
+
+                                    @*ADDITIONA COLUMN*@
+                                    <td v-for="addColumn in additionalColumns">
+                                        <template v-if="addColumn.GRID_FORMAT.type == 'button'">
+                                            <div class="pull-right">
+                                                <button :class="addColumn.GRID_FORMAT.color + ' btn btn-round btn-fab btn-fab-mini btn-fab-x-mini'"
+                                                        v-on:click="additionalColumnAction(addColumn.GRID_FORMAT.action, addColumn.GRID_FORMAT.data, item.BO_ID)">
+                                                    <i class="material-icons">{{ addColumn.GRID_FORMAT.icon }}</i>
+                                                </button>
+                                            </div>
+                                        </template>
+                                        <template v-else>
+                                            {{ addColumn.GRID_FORMAT }}
+                                        </template>
+                                    </td>
+
+                                    @*EDITABLE ACTIONS*@
+                                    <td v-if="editable" style="white-space: nowrap;">
+                                        <button class="btn btn-success btn-round btn-fab btn-fab-mini btn-fab-x-mini"
+                                                v-show="listConfig[index].changed"
+                                                v-on:click="submitLine(index)">
+                                            <i class="material-icons">save</i>
+                                        </button>
+                                        <button class="btn btn-danger btn-round btn-fab btn-fab-mini btn-fab-x-mini"
+                                                v-show="index < list.length-1"
+                                                v-on:click="deleteLine(index)">
+                                            <i class="material-icons">delete</i>
+                                        </button>
+                                    </td>
+                                </tr>
+
+                                @*DETAIL ROW SLOT *@
+                                <tr class="detailRow" v-if="hasSlot('detail')" v-show="showDetailRow[getLineIndex(index)] != null && showDetailRow[getLineIndex(index)]">
+                                    <slot name="detail" v-bind='{line:item, columnCount: columnCount, index:index}' v-if="showDetailRow[getLineIndex(index)] != null && showDetailRow[getLineIndex(index)]"></slot>
+                                </tr>
+
+                                @*DETAIL ROW*@
+                                <tr class="detailRow" v-if="detailRowDefined" v-show="showDetailRow[getLineIndex(index)] != null && showDetailRow[getLineIndex(index)]">
+                                    <td v-bind:colspan="columnCount">
+                                        <template v-if="isDefaultDetailRow">
+                                            @*DRAW DEFAULT DETAIL ROW*@
+                                            <div v-for="h in getHeaders" class="col-md-3">
+                                                <b>{{ getLabel(h) }} : </b>
+                                                <template v-if="listConfig[getLineIndex(index)].columns[h].isFile">
+                                                    <span>
+                                                        <a href="javascript:;" v-on:click="downloadFile(item[h].base64, item[h].type, item[h].name)">
+                                                            <template v-if="item[h].type.match('image') !== null">
+                                                                <div class="imageContainer" style="vertical-align: top;">
+                                                                    <img :src="item[h].base64" />
+                                                                </div>
+                                                            </template>
+                                                            <template v-else>
+                                                                <div class="fileContainer">
+                                                                    <i class="material-icons">attachment</i> : {{ item[h].name }}
+                                                                </div>
+                                                            </template>
+                                                        </a>
+                                                    </span>
+                                                </template>
+                                                <template v-else>
+                                                    <span v-format="{value:item[h], format:getFormat(h)}">
+                                                        {{ item[h] }}
+                                                    </span>
+                                                </template>
+                                            </div>
+                                        </template>
+                                        <template v-else>
+                                            @*DRAW CUSTOM ONE*@
+                                            <component v-bind:is="detailRow" v-bind="{row:item,metafield:meta_field}"></component>
+                                        </template>
+                                    </td>
+                                </tr>
+                            </template>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-4" style="padding-top: 25px;">
+                    <div class="dataTables_info">
+                        Affiche {{ (pager.current*pager.size)+1 }}
+                        à
+                        <template v-if="pager.current+1 == pager.count">
+                            {{ pager.countEntries }}
+                        </template>
+                        <template v-else>
+                            {{ ((pager.current+1)*pager.size) }}
+                        </template>
+                        de {{ pager.countEntries }} entrées
+                    </div>
+                </div>
+                <div class="col-md-8">
+                    <div class="paging_full_numbers pull-right">
+                        <ul class="pagination">
+                            <li v-on:click="pager.current = 0"
+                                :class="'paginate_button ' + (pager.current==0 ?  'disabled':'')">
+                                <a href="javascript:;" tabindex="0">Début</a>
+                            </li>
+                            <li v-on:click="pager.current += pager.current>0 ? -1 : 0"
+                                :class="'paginate_button ' + (pager.current==0 ?  'disabled':'')">
+                                <a href="javascript:;" tabindex="0">Précédent</a>
+                            </li>
+                            <template>
+                                <li v-for="index in pager.pages"
+                                    v-on:click="pager.current=index"
+                                    :class="'paginate_button ' + (pager.current==index ? 'active' : '')">
+                                    <a href="javascript:;" :tabindex="index">{{ index+1 }}</a>
+                                </li>
+                            </template>
+                            <li v-on:click="pager.current += pager.current<(pager.count-1) ? 1 : 0"
+                                :class="'paginate_button ' + (pager.current+1 == pager.count ?  'disabled':'')">
+                                <a href="javascript:;" tabindex="0">Suivant</a>
+                            </li>
+                            <li v-on:click="pager.current = pager.count-1"
+                                :class="'paginate_button ' + (pager.current+1 == pager.count ?  'disabled':'')">
+                                <a href="javascript:;" tabindex="0">Dernier</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </template>
+
+    </div>
+</script>
+<script type="text/javascript">
+    Vue.component('v-table', {
+        template: $("#TableComponentTemplate").html(),
+        mixins: [MixinBase, PagerMixin],
+        props: {
+            tableData: {
+                type: Array,
+                default: null
+            },
+            tableClass: String,
+            datasource: String,
+            columnIgnore: Array,
+            columnShow: Array,
+            columnLabels: Object,
+            columns: Object,
+            headersFromColumns: {
+                type: Boolean,
+                default: false
+            },
+            detailRow: String,
+            actionComponent: String,
+            metaName: String,
+            editable: {
+                type: Boolean,
+                default: false
+            },
+            pk: String,
+            preventFirstLoad: {
+                type: Boolean,
+                default: false
+            },
+            showDeleted: {
+                type: Boolean,
+                default: false
+            },
+        },
+        data: function () {
+            return {
+                loaded: false,
+                list: [],
+                listConfig: [],
+                showDetailRow: [],
+                dataSourceUrl: "",
+                meta: null,
+                meta_field: {},
+                additionalColumns: [],
+                api: EV.getComponent("data"),
+                defaultValues: null,
+                sortConfig: { key: "", direction: 1 }
+            }
+        },
+        computed: {
+            getHeaders: function () {
+                if (this.headersFromColumns) {
+                    var headers = [];
+                    for (var h in this.columns) {
+                        headers.push(h);
+                    }
+                    return headers;
+                } else {
+                    if (this.list.length > 0) {
+                        var headers = [];
+                        for (var h in this.list[0]) {
+                            headers.push(h);
+                        }
+                        return headers;
+                    }
+                    else
+                        return [];
+                }
+            },
+            columnCount: function () {
+                return this.getHeaders.length + this.additionalColumns.length + (this.actionComponentDefined ? 1 : 0);
+            },
+            detailRowDefined: function () {
+                return this.detailRow != null;
+            },
+            isDefaultDetailRow: function () {
+                return this.detailRow.toLowerCase().trim() === "default";
+            },
+            actionComponentDefined: function () {
+                return this.actionComponent != null;
+            },
+            fields: function () {
+                if (this.meta === null) return null;
+                var a = {};
+                this.meta.META_FIELD.forEach((e) => {
+                    a[e.DB_NAME] = e;
+
+                    if (e.FORM_SOURCE !== null)
+                        try { a[e.DB_NAME].FORM_SOURCE = JSON.parse(e.FORM_SOURCE) } catch{ }
+
+                    if (e.GRID_FORMAT !== null) {
+                        try {
+                            a[e.DB_NAME].GRID_FORMAT = JSON.parse(e.GRID_FORMAT);
+                            if (e.DB_NAME === "additional.column")
+                                this.additionalColumns.push(e);
+                        } catch{ }
+                    }
+                    if (e.FORM_FORMAT !== null)
+                        try { a[e.DB_NAME].FORM_FORMAT = JSON.parse(e.FORM_FORMAT) } catch{ }
+                });
+                return a;
+            }
+        },
+        methods: {
+            setList: function (data) {
+                console.time("v-table.setList");
+                var me = this;
+                setTimeout(() => {
+                    me.list = data;
+                    if (me.paging) me.initPager(me.list);
+
+                    me.listConfig = [];
+                    for (var i in me.list) {
+                        // ADD Non existent columns
+                        this.addComputedColumns(me.list[i]);
+
+                        var config = { rowClass: "", state: "old", hide: false, changed: false, columns: {} };
+                        me.list[i].$$index = i;
+                        for (var colIdx in me.list[i]) {
+                            config.columns[colIdx] = { isFile: false };
+                            try {
+                                var json = JSON.parse(me.list[i][colIdx]);
+                                config.columns[colIdx].isFile = typeof json.base64 !== "undefined";
+                                me.list[i][colIdx] = json;
+                            } catch (e) {
+
+                            }
+                        }
+
+                        me.listConfig.push(config);
+                    }
+                    if (me.editable) me.newLine();
+
+                    this.loaded = true;
+                    me.$emit("set-list-completed");
+
+                    console.timeEnd("v-table.setList");
+                }, 100);
+            },
+            load: function (url, done) {
+                var me = this;
+                if (typeof me.dataSourceUrl === "undefined" && typeof url === "undefined") return;
+                if (typeof url !== "undefined") me.dataSourceUrl = url;
+                else url = me.dataSourceUrl;
+
+                if (this.preventFirstLoad) return;
+                var data = EV.getComponent("data");
+                data.ExecuteSource({
+                    url: url,
+                    loadComplete: function (obj, response) {
+                        // console.log("loadComplete", response);
+                        me.setList(response);
+
+                        if (typeof done === "function") done(response);
+                    }
+                });
+            },
+            clear: function () {
+                this.list = [];
+            },
+            loadObject: function (obj) {
+                this.setList(obj);
+            },
+            sort: function (columnKey) {
+                //MyData.sort(dynamicSort("name"));
+                if (this.sortConfig.key == columnKey) {
+                    this.sortConfig.direction *= - 1;
+                } else {
+                    this.sortConfig.key = columnKey;
+                    this.sortConfig.direction = 1;
+                }
+                this.list.sort(this.OrderBy(this.sortConfig.key, this.sortConfig.direction));
+
+
+            },
+            csvExport: function (fileName) {
+                let csvContent = "data:text/csv;charset=utf-8,\uFEFF";
+                //console.log(this.list);
+
+                var firstColumn = true;
+                for (var j in this.getHeaders) {
+                    var h = this.getHeaders[j];
+                    if (typeof h !== "string") continue;
+                    if (!this.show(h)) continue;
+                    csvContent += (firstColumn ? '' : ',');
+                    csvContent += this.getLabel(h);
+                    firstColumn = false;
+                }
+
+                for (var i in this.list) {
+                    if (i == "orderBy") continue;
+                    csvContent += '\n';
+                    firstColumn = true;
+                    for (var j in this.getHeaders) {
+                        var h = this.getHeaders[j];
+                        if (typeof h !== "string") continue;
+                        if (!this.show(h)) continue;
+
+                        csvContent += (firstColumn ? '' : ',');
+                        var format = this.getFormat(h);
+                        csvContent += (format === null) ? this.list[i][h]
+                            : v_format_main(this.list[i][h], format);
+
+                        firstColumn = false;
+                    }
+                }
+
+                const data = encodeURI(csvContent);
+                const link = document.createElement("a");
+                link.setAttribute("href", data);
+                link.setAttribute("download", fileName + ".csv");
+                link.click();
+            },
+            show: function (colName) {
+                if (colName === "$$index") return false;
+                if (typeof this.columnShow !== "undefined") {
+                    return this.columnShow.includes(colName);
+                } else {
+                    if (typeof this.columnIgnore === "undefined") {
+                        if (typeof this.columns === "undefined" || typeof this.columns[colName] === "undefined") return true;
+                        else {
+                            if (typeof this.columns[colName].visible === "undefined") return true;
+                            else return this.columns[colName].visible;
+                        }
+                    }
+                    else
+                        return !this.columnIgnore.includes(colName);
+                }
+            },
+            getLabel: function (colName) {
+                if (typeof this.columns === "undefined" || typeof this.columns[colName] === "undefined") {
+                    if (typeof this.columnLabels === "undefined" || typeof this.columnLabels[colName] === "undefined")
+                        return colName;
+                    else
+                        return this.columnLabels[colName];
+                } else
+                    return this.columns[colName].header;
+            },
+            toggleDetailRow: function (index) {
+                this.$set(this.showDetailRow, index, this.showDetailRow[index] == null ? true : !this.showDetailRow[index]);
+            },
+            getFormat: function (column) {
+                if (this.meta === null) {
+                    if (typeof this.columns === "undefined") return null;
+                    if (typeof this.columns[column] === "undefined") return null;
+                    if (typeof this.columns[column].format === "undefined") return null;
+
+                    return this.columns[column].format;
+                } else {
+                    if (typeof this.fields[column] === "undefined") return null;
+                    if (typeof this.fields[column].GRID_FORMAT === "undefined") return null;
+                    return this.fields[column].GRID_FORMAT;
+                }
+            },
+            getColumnClass: function (column) {
+                if (typeof this.columns === "undefined") return null;
+                if (typeof this.columns[column] === "undefined") return null;
+                if (typeof this.columns[column].cssClass === "undefined") return null;
+                return this.columns[column].cssClass;
+            },
+            getColumnStyle: function (column) {
+                if (typeof this.columns === "undefined") return null;
+                if (typeof this.columns[column] === "undefined") return null;
+                if (typeof this.columns[column].style === "undefined") return null;
+                return this.columns[column].style;
+            },
+            additionalColumnAction: function (action, data, id) {
+                switch (action) {
+                    case "redirect":
+                        window.location = URL.addPart(data, id);
+                        break;
+                    default:
+                }
+            },
+            getLineIndex: function (index) {
+                return (this.pager.current * this.pager.size) + index;
+            },
+            isForm: function (colName) {
+                if (typeof this.columns === "undefined") return false;
+                if (typeof this.columns[colName] === "undefined") return false;
+                if (typeof this.columns[colName].form === "undefined") return false;
+                return true;
+            },
+            lineChanged: function (value, payload) {
+                // console.log(payload);
+                //if (payload.firstLoad) return;
+                this.listConfig[payload.line].rowClass = "not-persisted";
+                this.listConfig[payload.line].changed = true;
+            },
+            submitLine: function (lineIndex) {
+                this.$emit('before-submit', this.list[lineIndex]);
+
+                var me = this;
+                if (this.listConfig[lineIndex].state == "new") {
+                    me.list[lineIndex][me.pk] = 0;
+                    me.api.Post({
+                        url: me.datasource,
+                        data: JSON.stringify(me.list[lineIndex]),
+                        done: function (response) {
+                            me.newLine();
+                            me.submited(response, lineIndex);
+                        }
+                    });
+                } else {
+                    me.api.Put({
+                        url: URL.addPart(me.datasource, me.list[lineIndex][me.pk]),
+                        data: JSON.stringify(me.list[lineIndex]),
+                        done: function (response) {
+                            me.submited(response, lineIndex);
+                        }
+                    });
+                }
+            },
+            deleteLine: function (lineIndex) {
+                var me = this;
+
+                if (this.listConfig[lineIndex].state == "new") {
+                    me.listConfig[lineIndex].state = "deleted";
+                } else {
+                    NOTIF.confirm({
+                        title: "Supprimer",
+                        text: "Etes-vous sûr ?",
+                        valider: function () {
+                            me.api.Delete({
+                                url: URL.addPart(me.datasource, me.list[lineIndex][me.pk]),
+                                done: function (response) {
+                                    if (!me.showDeleted) {
+                                        me.listConfig[lineIndex].state = "deleted";
+                                        me.listConfig[lineIndex].hide = true;
+                                    }
+
+                                    me.listConfig[lineIndex].rowClass = "deleted";
+
+                                    if (typeof response !== "undefined") me.list[lineIndex] = response;
+                                }
+                            });
+                        }
+                    });
+                }
+            },
+            submited: function (response, lineIndex) {
+                if (typeof response !== "undefined") this.list[lineIndex] = response;
+                this.listConfig[lineIndex].rowClass = "persisted";
+                this.listConfig[lineIndex].changed = false;
+                this.listConfig[lineIndex].state = "old";
+                this.$emit("submited", this.list[lineIndex]);
+            },
+            newLine: function () {
+                // console.log("newLine");
+                var line = {};
+                if (this.getHeaders.length > 0) { // TABLE IS NOT EMPTY
+                    for (var i in this.getHeaders) {
+                        if (this.defaultValues != null && typeof this.defaultValues !== "undefined" && typeof this.defaultValues[this.getHeaders[i]] !== "undefined")
+                            line[this.getHeaders[i]] = this.defaultValues[this.getHeaders[i]];
+                        else
+                            line[this.getHeaders[i]] = "";
+                    }
+                } else { // TABLE IS EMPTY
+                    for (var i in this.columns) {
+                        if (this.defaultValues != null && typeof this.defaultValues !== "undefined" && typeof this.defaultValues[i] !== "undefined")
+                            line[i] = this.defaultValues[i];
+                        else
+                            line[i] = "";
+                    }
+                }
+
+                this.list.push(line);
+                this.listConfig.push({ rowClass: "not-persisted", state: "new", changed: false });
+                this.addComputedColumns(this.list[this.list.length - 1], true);
+                setTimeout(() => { updateDom(); }, 200);
+                return this.list[this.list.length - 1];
+            },
+            selectLine: function (index) {
+                for (var i in this.listConfig) {
+                    if (this.listConfig[i].rowClass.match("selected") !== null) this.listConfig[i].rowClass = "";
+                }
+                this.listConfig[index].rowClass = "selected";
+            },
+            getFilterData: function (colName, source, sourceColId, sourceColName) {
+                if (typeof source === "undefined") {
+                    //console.log('SELECT count(*) as cnt, ' + colName + ' as id, ' + colName + ' as name FROM ?  ' + colName);
+                    return alasql('SELECT count(*) as cnt, ' + colName + ' as id, ' + colName + ' as name FROM ?  ' + colName
+                        + ' GROUP BY ' + colName,
+                        [this.list]);
+                } else {
+                    var sourceData = store.getters.getFilter(source); //{ key: "ItemList", filter: x => x.ItemType == "Nature d'activité" }
+                    //console.log("list", this.list);
+                    //console.log("sourceData", sourceData);
+                    //console.log('SELECT count(*) as cnt, ' + sourceColId + ' as id, ' + sourceColName + ' as name FROM ? a1 JOIN ? a2 on  ' + colName + '=' + sourceColId
+                    //    + ' GROUP BY ' + sourceColId + ',' + sourceColName);
+                    return alasql('SELECT count(a2.*) as cnt, a2.' + sourceColId + ' as id, a2.' + sourceColName + ' as name FROM ? a1 JOIN ? a2 on  a1.' + colName + '=a2.' + sourceColId
+                        + ' GROUP BY a2.' + sourceColId + ',a2.' + sourceColName,
+                        [this.list, sourceData]);
+                }
+            },
+            filtrer: function (filters) {
+                var me = this;
+                const filterKeys = Object.keys(filters);
+                // filters all elements passing the criteria
+                var filteredList = this.list.filter((item) => {
+                    // dynamically validate all filter criteria
+                    return filterKeys.every(key => {
+                        // ignores an empty filter
+                        if (!filters[key].length) return true;
+                        return filters[key].includes(item[key]);
+                    });
+                });
+                if (filteredList.length > 0) {
+                    this.listConfig.forEach((e) => { e.hide = true });
+                    filteredList.forEach(item => {
+                        me.listConfig[item.$$index].hide = false;
+                    });
+                }
+            },
+            clearFilter: function () {
+                this.listConfig.forEach((e) => { e.hide = false });
+            },
+            addComputedColumns: function (line, force) {
+                //log.off();
+                //log.group("addComputedColumns");
+                //log.table(line);
+                if (this.headersFromColumns) {
+                    //log.green("headersFromColumns");
+                    for (var newColIndex in this.getHeaders) {
+                        var newCol = this.getHeaders[newColIndex];
+                        ///log.log(newColIndex + " -> newCol", newCol);
+                        if (!Object.keys(line).includes(newCol) || force) {
+                            ///log.red("this.columns["+newCol+"]", this.columns[newCol]);
+                            if (typeof this.columns[newCol].compute !== "undefined") line[newCol] = this.columns[newCol].compute(line);
+                            else if (!Object.keys(line).includes(newCol)) line[newCol] = "";
+                            //log.whiteTitle("====>", line[newCol]);
+                        }
+                    }
+                }
+                //log.groupEnd("addComputedColumns");
+                //log.on();
+            },
+            hasSlot(name = 'default') {
+                return !!this.$slots[name] || !!this.$scopedSlots[name];
+            }
+        },
+        mounted: function () {
+            if (this.tableData != null) {
+                this.setList(this.tableData);
+            } else {
+                this.dataSourceUrl = this.datasource;
+                this.load();
+            }
+            me = this;
+            // BIND TO BUS META
+            if (typeof this.metaName === "undefined") return "";
+            if (typeof bus.$data[this.metaName] === "undefined") return "";
+            this.meta = bus.$data[this.metaName];
+            this.meta.META_FIELD.forEach((e) => {
+                me.meta_field[e.DB_NAME] = e;
+            });
+        }
+    });
+</script>

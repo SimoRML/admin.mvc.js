@@ -1,0 +1,266 @@
+﻿<script id="v-form-template" type="text/template">
+    <div>
+        <form :id="elementId" onsubmit="return false;">
+            <template v-for="field in meta"
+                      v-if="field.FORM_SHOW==1 && field.STATUS.trim() !== 'DISABLED' && field.STATUS.trim() !== 'NEW' && field.FORM_TYPE.match('subform-') === null">
+                @*BEFORE*@
+                <component v-if="typeof field.before_component !== 'undefined'"
+                           :name="field.FORM_TYPE + '-before-' + elementId"
+                           :ref="field.before_component.ref"
+                           :is="field.before_component.name"
+                           v-bind="{visible:field.before_component.visible, data:body[field.before_component.model]}"></component>
+                @*THE COMPONENET*@
+                <component :name="field.FORM_TYPE + '-' + elementId"
+                           :is="field.FORM_TYPE"
+                           v-model="body[field.DB_NAME]"
+                           v-bind="getBind(field)"></component>
+                @*AFTER*@
+                <component v-if="typeof field.after_component !== 'undefined'"
+                           :name="field.FORM_TYPE + '-after-' + elementId"
+                           :ref="field.after_component.ref"
+                           :is="field.after_component.name"
+                           v-bind="{visible:field.after_component.visible, data:body[field.after_component.model]}"></component>
+            </template>
+            <button type="submit" class="btn btn-fill btn-primary" v-on:click="submit">Enregitrer<div class="ripple-container"></div></button>
+            <button type="button" class="btn btn-fill btn-secondary" v-on:click="reset">Annuler<div class="ripple-container"></div></button>
+        </form>
+    </div>
+</script>
+<script type="text/javascript">
+    Vue.component('v-form', {
+        mixins: [MixinBase],
+        template: $("#v-form-template").html(),
+        props: {
+            metaDatasource: String,
+            metaDefinition: Array,
+            api: String,
+            additionalFields: Array,
+            boName: String,
+        },
+        data: function () {
+            return {
+                meta: {},
+                body: {},
+                verb: "POST",
+                pk: {
+                    key: "",
+                    value: -1
+                },
+                subFroms: [],
+                crudApi: null,
+            }
+        },
+        methods: {
+            getBind: function (field) {
+                // console.log("v-form bind field", field);
+                var bind = { id: field.DB_NAME, label: field.FORM_NAME, optional: field.FORM_OPTIONAL, fieldName: field.DB_NAME, mode: this.mode(), boName: this.boName };
+                if (typeof field.source === "undefined")
+                    bind.datasource = field.FORM_SOURCE;
+                else {
+                    bind.source = field.source;
+                    bind.sourceValue = field.sourceValue;
+                    bind.sourceDisplay = field.sourceDisplay;
+                    if (typeof field.sourceFilter !== "undefined")
+                        bind.sourceFilter = field.sourceFilter;
+                }
+                
+                // JSON_DATA
+                try {
+                    var json_data = JSON.parse(field.JSON_DATA);
+                    console.log('%c DEFAULT', 'color:red',  json_data.DEFAULT, "mode", this.mode());
+
+                    if (typeof json_data.DEFAULT !== "undefined")
+                        bind.default = json_data.DEFAULT;
+                } catch (e) { }
+
+
+                return bind;
+            },
+            mode: function () {
+                switch (this.verb) {
+                    case 'POST':
+                        return "insert";
+                        break;
+                    case 'PUT':
+                        return "update";
+                        break;
+                    default:
+                        return "update";
+                        break;
+                }
+            },
+            formatBody: function (entity) {
+                var me = this;
+
+                for (var i in this.meta) {
+                    // PUT WITH DEFAULT VALUE
+                    if (typeof this.meta[i].STATUS === "undefined") this.meta[i].STATUS = "ACTIVE";
+                    if (typeof this.meta[i].FORM_SHOW === "undefined") this.meta[i].FORM_SHOW = 1;
+                    if (typeof this.meta[i].FORM_OPTIONAL === "undefined") this.meta[i].FORM_OPTIONAL = 0;
+
+
+                    // push subform
+                    if (typeof this.meta[i].FORM_TYPE !== "undefined" && this.meta[i].FORM_TYPE.match('subform-') !== null) {
+                        this.subFroms.push(this.meta[i]);
+                        continue;
+                    }
+                    // save PK
+                    if (this.meta[i].STATUS.trim().toLowerCase() == 'pk') {
+                        this.pk.key = this.meta[i].DB_NAME;
+                    } else {
+                        // SET DEFAULT VALUE
+                        // console.log("SET DEFAULT VALUE ", this.meta[i].DB_NAME , (typeof this.meta[i].FORM_DEFAULT !== "undefined" && this.meta[i].FORM_DEFAULT != null));
+                        if (this.meta[i].FORM_TYPE == "") continue;
+                        if (typeof this.meta[i].FORM_DEFAULT !== "undefined" && this.meta[i].FORM_DEFAULT != null) {
+                            this.body[this.meta[i].DB_NAME] = this.meta[i].FORM_DEFAULT;
+                        }
+                        else
+                            this.body[this.meta[i].DB_NAME] = null;
+                    }
+                }
+            },
+            submit: function () {
+                this.$emit("before-submit", this.body);
+                //   console.log("befor IF");
+                if (!document.getElementById(this.elementId).checkValidity()) return;
+                //   console.log("after IF");
+                var me = this;
+                var body = clone(me.body);
+                delete body.__ob__;
+
+                for (var field in body) {
+                    if (body[field] === null) body[field] = "";
+                }
+
+                var url = me.crudApi;
+                //console.log("submit ", url);
+                if (this.verb == 'PUT') url = URL.addPart(url, this.pk.value);
+                //console.log("submit ", url, "body", JSON.stringify(body));
+
+                var data = EV.getComponent("data");
+                data.ExecuteSource({
+                    url: url,
+                    data: JSON.stringify(body),
+                    method: me.verb,
+                    loadComplete: function (obj, response) {
+                        me.$emit("submit-success", response);
+                        me.reset();
+                    },
+                    fail: function (response) {
+                        me.$emit("submit-fail", response);
+                    }
+                });
+            },
+            reset: function () {
+                this.$emit("before-reset", this.body);
+                var me = this;
+                me.verb = "POST";
+                for (var i in me.body) {
+                    me.$set(me.body, i, null);
+                }
+                this.refresh();
+                this.insertMode();
+            },
+            refresh: function (inject) {
+                var me = this;
+                if (typeof inject === "function") inject(me);
+
+                var temp = clone(me.meta);
+
+                me.meta = null;
+                setTimeout(function () {
+                    // console.log("refresh temp " + me.elementId, temp);
+                    me.meta = temp;
+                    // console.log("refresh meta " + me.elementId, me.meta);
+                    setTimeout(function () {
+                        updateDom();
+                    }, 1);
+                }, 1);
+            },
+            GetDefinition: function () {
+                var me = this;
+                var data = EV.getComponent("data");
+
+                data.ExecuteSource({
+                    url: me.metaDatasource,
+                    loadComplete: function (obj, response) {
+                        me.meta = response.META_FIELD;
+                        // CONCAT ADDITIONAL FIELDS
+                        if (me.additionalFields != null && me.additionalFields.length > 0) {
+                            // console.log("CONCAT ADDITIONAL FIELDS before", me.additionalFields);
+                            me.meta = me.meta.concat(me.additionalFields);
+                            // console.log("CONCAT ADDITIONAL FIELDS after", me.meta);
+                        }
+                        bus.setMeta(response.BO_DB_NAME, response);
+                        me.formatBody();
+                        setTimeout(function () {
+                            updateDom();
+                        }, 500);
+                        me.$emit("get-definition-done");
+                    }
+                });
+            },
+            insertMode: function () {
+                this.$emit("insert-mode");
+            },
+            updateMode: function (entity) {
+                var me = this;
+                me.verb = "PUT";
+                // PARSE JSON_DATA
+                try {
+                    var jsonData = JSON.parse(entity.JSON_DATA);
+                    // entity.JSON_DATA = {};
+                    for (var i in jsonData) {
+                        entity["JSON_DATA." + i] = jsonData[i];
+                    }
+                    //console.log("JSON_DATA", entity);
+                } catch { }
+
+                for (var i in me.body) {
+                    me.$set(me.body, i, entity[i]);
+                }
+                // console.log("VFROM updateMode::", me.body);
+                me.refresh();
+                me.$emit("update-mode", entity);
+            },
+            Get: function (id) {
+                var me = this;
+                var url = URL.addPart(me.api, id);
+                var data = EV.getComponent("data");
+                this.pk.value = id;
+
+                // console.log("VFROM GET::" + url, this);
+
+                data.Get({
+                    url: url,
+                    loadComplete: function (obj, response) {
+                        // console.log("VFROM GET loadComplete ::" + url, response);
+                        if (typeof response.length === "number") response = response[0];
+                        me.updateMode(response);
+                        setTimeout(function () {
+                            updateDom();
+                        }, 500);
+                    }
+                });
+            }
+        },
+        created: function () {
+            var me = this;
+            me.crudApi = me.api;
+
+            // SET FORM META
+            if (typeof me.metaDatasource === "undefined") {
+                me.meta = me.metaDefinition;
+
+                // CONCAT ADDITIONAL FIELDS
+                if (me.additionalFields != null && me.additionalFields.length > 0) {
+                    me.meta = me.meta.concat(me.additionalFields);
+                }
+
+                me.formatBody();
+            } else {
+                me.GetDefinition();
+            }
+        }
+    });
+</script>

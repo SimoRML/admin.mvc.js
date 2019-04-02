@@ -1,6 +1,7 @@
 ﻿using FAIS.Models;
 using FAIS.Models.Authorize;
 using FAIS.Models.Repository;
+using System;
 using System.Linq;
 using System.Web.Mvc;
 using Z.EntityFramework.Plus;
@@ -21,14 +22,13 @@ namespace FAIS.Controllers
 
             try
             {
-                UserRoleManager.Instance.VerifyAccess(meta.BO_NAME);
+                UserRoleManager.Instance.VerifyAccess(meta.BO_DB_NAME);
             }
             catch (System.UnauthorizedAccessException ex)
             {
                 ViewBag.Message = ex.Message;
                 return PartialView("Unauthorized");
             }
-            
 
             return PartialView(meta);
         }
@@ -42,7 +42,7 @@ namespace FAIS.Controllers
 
             try
             {
-                UserRoleManager.Instance.VerifyAccess(meta.BO_NAME);
+                UserRoleManager.Instance.VerifyAccess(meta.BO_DB_NAME);
             }
             catch (System.UnauthorizedAccessException ex)
             {

@@ -166,5 +166,6 @@
       </EntityTypeMapping>
     </EntitySetMapping>
     <FunctionImportMapping FunctionImportName="GetSubForm" FunctionName="FAIS_Model.Store.GetSubForm" />
+    <FunctionImportMapping FunctionImportName="GetSubFormId" FunctionName="FAIS_Model.Store.GetSubFormId" />
   </EntityContainerMapping>
 </Mapping>

@@ -1,0 +1,19 @@
+﻿<div id="vappRolesAdd">
+    <h4>Créer un rôle</h4>
+    <div class="col-md-12">
+        <v-text label="Nom du rôle" v-model="roleName" :optional="0"></v-text>
+    </div>
+</div>
+<script type="text/javascript">
+    var vappRolesAdd = new Vue({
+        el: "#vappRolesAdd",
+        data: {
+            roleName: ""
+        },
+        methods: {
+            val: function () {
+                return this.roleName;
+            },
+        },
+    });
+</script>

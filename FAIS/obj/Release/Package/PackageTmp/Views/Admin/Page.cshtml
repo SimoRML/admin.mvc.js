@@ -1,0 +1,615 @@
+﻿<style>
+    .props {
+        right: 0 !important;
+        left: unset;
+        width: 300px !important;
+        z-index: 9999 !important;
+        padding: 0 !important;
+    }
+
+        .props h4 {
+            background: #666;
+            color: #eee;
+            margin: 0;
+            padding: 10px 20px;
+        }
+
+        .props .content {
+            padding: 10px 20px;
+        }
+
+    .layoutContainer {
+        margin-right: auto;
+    }
+
+        .layoutContainer.edit-mode {
+            margin-right: 290px;
+        }
+
+    .addSection {
+        height: 0px;
+        border-top: 1px solid #0072c6;
+        position: relative;
+        margin-top: 14px;
+    }
+
+        .addSection .addSectionBtn {
+            position: absolute;
+            left: 0px;
+            top: -14px;
+        }
+
+        .addSection.addComponent .addSectionBtn {
+            left: calc(50% - 14px);
+        }
+
+        .addSection .addSectionBtn button {
+            background: #0072c6;
+        }
+
+    .componentContainer {
+        padding: 10px;
+        margin-bottom: 10px;
+        border: none;
+    }
+
+    .edit-mode .componentContainer {
+        border: 1px dashed #bbb;
+    }
+
+        .edit-mode .componentContainer:hover {
+            border: 1px solid #bbb;
+        }
+
+        .edit-mode .componentContainer.selected {
+            border-color: #0072c6;
+            box-shadow: 0 0 5px 0px #0072c6;
+        }
+
+            .edit-mode .componentContainer.selected:hover {
+                border-color: #025da0;
+            }
+
+    .componentContainer > div {
+        background-color: #f5f5f5;
+        min-height: 50px;
+    }
+
+    .column.selected > .card {
+        box-shadow: 0 0 5px 1px #0072c6;
+    }
+
+    #layout {
+        overflow-y: auto;
+        overflow-x: hidden;
+        padding-right: 15px;
+        padding-left: 5px;
+    }
+
+    ifarme {
+        width: 100%;
+        border: none;
+    }
+
+    .devider {
+        position: relative;
+        background: #fff;
+        text-align: center;
+    }
+
+        .devider .txt {
+            background: #fff;
+            display: initial;
+            padding: 2px 10px;
+            z-index: 1;
+            position: relative;
+        }
+
+        .devider .line {
+            border-top: 1px solid;
+            position: absolute;
+            top: 48%;
+            width: 100%;
+        }
+</style>
+<div id="vapp" class="row">
+
+    <div id="layout" :class="{'layoutContainer scroll-this':true, 'edit-mode': editMode}">
+        <template v-for="(section, sectionIndex) in layout.sections">
+
+            @*@*----------------------SECTION*@
+            <div class="section row">
+
+                @*@*----------------------COLUMN*@
+                <div v-for="(col, colIndex) in section.columns"
+                     :class="col.class + ' column ' + selectedClass(sectionIndex, colIndex)"
+                     v-on:click="setSelected(sectionIndex, colIndex)">
+                    <div class="card"
+                         :style="'height:'+col.height">
+                        <div class="card-header" v-if="col.showTitle">
+                            <h4 class="card-title">
+                                {{ col.title }}
+                            </h4>
+                        </div>
+                        <div class="card-content">
+
+                            @*@*----------------------COMPONENT*@
+                            <div v-for="(component, compIndex) in col.components"
+                                 :class="'row componentContainer ' + selectedClass(sectionIndex, colIndex, compIndex)"
+                                 v-on:click="setSelectedComponenet(compIndex)">
+                                <div :id="'componentPlaceHolder_' + sectionIndex +'_'+ colIndex +'_'+ compIndex">
+
+                                </div>
+                            </div>
+                            @*@*----------------------FIN COMPONENT*@
+
+
+                            @*@*----------------------ADD COMPONENET*@
+                            <div class="addSection addComponent" v-if="editMode">
+                                <div class="dropdown addSectionBtn">
+                                    <button href="#" class="dropdown-toggle btn btn-round btn-fab btn-fab-mini btn-fab-x-mini" data-toggle="dropdown">
+                                        <i class="material-icons">add</i>
+                                    </button>
+                                    <ul class="dropdown-menu dropdown-menu-left">
+                                        <template v-for="(c, key) in componentsTypes">
+                                            <li :class="c.class">
+                                                <a href="javascript:;" v-on:click="addComponent(sectionIndex, colIndex, key)">
+                                                    <i class="material-icons">{{ c.icone }}</i> {{ c.name }}
+                                                </a>
+                                            </li>
+                                        </template>
+                                    </ul>
+                                </div>
+                            </div>
+                            @*@*----------------------FIN ADD COMPONENET*@
+
+                        </div>
+                    </div>
+                </div>
+                @*@*----------------------FIN COLUMN*@
+            </div>
+            @*@*----------------------FIN SECTION*@
+
+        </template>
+
+        @*@*----------------------ADD SECTION*@
+        <div class="addSection" v-if="editMode">
+            <div class="dropdown addSectionBtn">
+                <button href="#" class="dropdown-toggle btn btn-round btn-fab btn-fab-mini btn-fab-x-mini" data-toggle="dropdown">
+                    <i class="material-icons">add</i>
+                </button>
+                <ul class="dropdown-menu dropdown-menu-left">
+                    <template v-for="(st, key) in sectionTypes">
+                        <li>
+                            <a href="javascript:;" v-on:click="addSection(key)">
+                                <img :src="st.img" style="width:35px" /> {{ st.name }}
+                            </a>
+                        </li>
+                    </template>
+                </ul>
+            </div>
+        </div>
+        @*----------------------FIN ADD SECTION*@
+    </div>
+
+    @*PROPS*@
+    <button type="button" class="btn btn-fill btn-sm btn-warning pull-right no-print" v-on:click="editPage" v-if="previewMode" style="position: fixed;right: 10px;top: 64px;"><i class="material-icons">remove_red_eye</i></button>
+    <div class="sidebar props scroll-this" v-if="editMode">
+        <h4 class="">Page</h4>
+        <div class="content">
+            <div>
+                <div class="form-group label-floating">
+                    <label class="control-label">Titre<i> - optionnel</i></label>
+                    <input type="text" class="form-control"
+                           v-model="layout.page.title">
+                </div>
+                <div class="form-group label-floating">
+                    <label class="control-label">Groupe<i> - optionnel</i></label>
+                    <input type="text" class="form-control"
+                           v-model="layout.page.groupe">
+                </div>
+                <div>
+                    <button type="button" class="btn btn-fill btn-sm btn-danger pull-right" v-on:click="unPublishPage" v-if="pageStatus == 'public'"><i class="material-icons">cancel</i> Retirer</button>
+                    <button type="button" class="btn btn-fill btn-sm btn-primary pull-right" v-on:click="publishPage" v-else>Publier</button>
+
+                    <button type="button" class="btn btn-fill btn-sm btn-success pull-right" v-on:click="savePage"><i class="material-icons">save</i></button>
+                    <button type="button" class="btn btn-fill btn-sm btn-warning pull-right" v-on:click="previewPage"><i class="material-icons">remove_red_eye</i></button>
+                </div>
+            </div>
+            <div style="clear:both"></div>
+        </div>
+
+        <template v-if="currentColumn.line>-1">
+            <h4 class="">Bloc : </h4>
+            <div class="content">
+                <div>
+                    <div class="row">
+                        <v-text class="col-md-10" label="Titre" v-model="selectedColumn.title" optional="1"></v-text>
+                        <v-checkbox class="col-md-2" v-model="selectedColumn.showTitle" :return-bool="true"></v-checkbox>
+                    </div>
+                    <div class="row">
+                        <v-text class="col-md-12" label="Hauteur" v-model="selectedColumn.height" optional="1" detail="Laisser vide pour une hauteur automatique."></v-text>
+                    </div>
+                </div>
+            </div>
+        </template>
+
+
+        <template v-if="selectedComponent != null">
+            <h4 class="">Composant : </h4>
+            <div class="content">
+                <div>
+                    <template v-for="(propa, key) in componentsTypes[selectedComponent.type].props">
+                        <div class="devider" v-if="typeof propa.devider != 'undefined'"><div class="txt">{{propa.devider}}</div><div class="line"></div></div>
+                        <component :id="'prop_' + propa.type + '_' + currentColumn.line + '_' + currentColumn.column + '_' + currentColumn.component"
+                                   :is="propa.type"
+                                   v-model="selectedComponent.props[key]"
+                                   v-bind='{label:propa.label,line:currentColumn.line, column: currentColumn.column, datasource:propa.datasource,detail:propa.detail}'></component>
+                    </template>
+                    <div>
+                        <button type="button" class="btn btn-fill btn-primary pull-right" v-on:click="appliquer">Appliquer</button>
+                    </div>
+                </div>
+            </div>
+        </template>
+    </div>
+</div>
+<script type="text/javascript">
+    var layout = null, layoutStr = "";
+    try {
+        layoutStr = '@Html.Raw(ViewBag.dataLayout.ToString().Replace("\\\"","\\\\\"").Replace("\\n", "\\\\n"))';
+        layout = JSON.parse(layoutStr);
+    } catch (e) {
+        log.red("ERROR", e);
+    }
+    var vapp = new Vue({
+        el: "#vapp",
+        data: {
+            pageStatus: "@ViewBag.STATUS",
+            mode: "edit",
+            api:EV.getComponent("data"),
+            sectionTypes: {
+                _1: { name: "Une colonne", img: "Content/img/layouts/_1.png", cols: ["col-sm-12 col-md-12"] },
+                _2: { name: "Deux colonnes", img: "Content/img/layouts/_2.png", cols: ["col-sm-12 col-md-6", "col-sm-12 col-md-6"] },
+                _3: { name: "Trois colonne", img: "Content/img/layouts/_3.png", cols: ["col-sm-12 col-md-4", "col-sm-12 col-md-4", "col-sm-12 col-md-4"] },
+                _2_left: { name: "Colonne de gauche d'un tiers", img: "Content/img/layouts/_2_left.png", cols: ["col-sm-12 col-md-4", "col-sm-12 col-md-8"] },
+                _2_right: { name: "Colonne de droite d'un tiers", img: "Content/img/layouts/_2_right.png", cols: ["col-sm-12 col-md-8", "col-sm-12 col-md-4"] },
+            },
+            componentsTypes: {
+                FORM: {
+                    name: "Formulaire",
+                    icone: "tab",
+                    class: "",
+                    props: {
+                        source: { label: "Source de données", type: "v-select", datasource: JSON.stringify({ source: "meta_bo", value: "BO_DB_NAME", display: "BO_NAME", filter: "[STATUS]<>'-1'" }) },
+                        actionIcone: { //{"type":"button", "color":"btn-success","icon":"settings","action":"redirect", "data":"#admin.page"}
+                            devider: "Boutton action",
+                            label: "icone",
+                            type: "v-select2",
+                            datasource: [{ Value: "print", Display:'<i class="material-icons">print</i> PRINT'}]
+                        },
+                        actionColor: {
+                            label: "Couleur",
+                            type: "v-select2",
+                            datasource: [
+                                { Value: "btn-success", Display: '<button type="button" class="btn btn-success btn-round btn-fab btn-fab-mini btn-fab-x-mini"></button> Vert' },
+                                { Value: "btn-info", Display: '<button type="button" class="btn btn-info btn-round btn-fab btn-fab-mini btn-fab-x-mini"></button> Bleue' },
+                                { Value: "btn-primary", Display: '<button type="button" class="btn btn-primary btn-round btn-fab btn-fab-mini btn-fab-x-mini"></button> Bleue' },
+                                { Value: "btn-warning", Display: '<button type="button" class="btn btn-warning btn-round btn-fab btn-fab-mini btn-fab-x-mini"></button> Orange' },
+                                { Value: "btn-danger", Display: '<button type="button" class="btn btn-danger btn-round btn-fab btn-fab-mini btn-fab-x-mini"></button> Rouge' },
+                                ]
+                        },
+                        actionHref: {
+                            label: "Lien",
+                            type: "v-text",
+                        },
+                    }
+                },
+                TABLE: {
+                    name: "Table",
+                    icone: "table_chart",
+                    class: "",
+                    props: {
+                        source: { label: "Source de données", type: "v-select", datasource: JSON.stringify({ source: "meta_bo", value: "BO_DB_NAME", display: "BO_NAME", filter: "[STATUS]<>'-1'" }) }
+                    }
+                },
+                TABLE_EDITABLE: {
+                    name: "Table editable",
+                    icone: "storage",
+                    class: "",
+                    props: {
+                        source: { label: "Source de données", type: "v-select", datasource: JSON.stringify({ source: "meta_bo", value: "BO_DB_NAME", display: "BO_NAME", filter: "[STATUS]<>'-1'" }) }
+                    }
+                },
+                LIST: {
+                    name: "Liste",
+                    icone: "format_list_bulleted",
+                    class: "disabled",
+                },
+                TXT: {
+                    name: "Text",
+                    icone: "text_format",
+                    class: "",
+                    props: {
+                        title: { label: "Titre", type: "v-text" },
+                        body: { label: "Paragraphe", type: "v-textarea" }
+                    }
+                },
+                IMG: {
+                    name: "Image",
+                    icone: "image",
+                    class: "",
+                    props: {
+                        image: { label: "Télécharger", type: "v-file" }
+                    }
+                },
+                SHORTCUT: {
+                    name: "Racourcis",
+                    icone: "keyboard_tab",
+                    class: "",
+                    props: {
+                        display: { label: "Texte", type: "v-text" },
+                        link: { label: "Lien", type: "v-text" }
+                    }
+                },
+                LINK: {
+                    name: "Lien",
+                    icone: "link",
+                    class: "",
+                    props: {
+                        link: { label: "Lien", type: "v-text" },
+                        height: { label:"Hauteur", type: "v-text" }
+                    }
+                },
+                USER_WIDGET: {
+                    name: "User widget",
+                    icone: "person",
+                    class: "",
+                    props: {
+                        userId: { label: "ID Utilisateur", type: "v-text" }
+                    },
+                    apply: function ($compDiv, props, compKey) {
+                        log.green("props", props);
+                        INCLUDE($compDiv, "router/widgets/userwidget?compKey="+compKey, function () {
+                            window["vappUserWidget" + compKey].val(props);
+                        });
+                    }
+                },
+                EDITION_WIDGET: {
+                    name: "Edition widget",
+                    icone: "print",
+                    class: "",
+                    props: {
+                        source: {label: "Source de données", type: "v-select", datasource: JSON.stringify({ source: "meta_bo", value: "META_BO_ID", display: "BO_NAME", filter: "[STATUS]<>'-1'" }) },
+                        filter: {label: "Filtre", type: "v-text", detail:"ex: id=[uri.id]"},
+
+                        logo: { devider: "En-tête", label: "Logo", type: "v-file" },
+                        societe: { label: "Société", type: "v-textarea" },
+                        societeFacture: { label: "Société facturée", type: "v-textarea" },
+
+                        num: { label: "Champ N°", type: "v-text" },
+                        ref: { label: "Champ Référence", type: "v-text" },
+
+                        productName: { devider: "Détail: Sub-form", label: "Champ designation", type: "v-text" },
+                        unite: { label: "Champ unité", type: "v-text" },
+                        qte: { label: "Champ quantité", type: "v-text" },
+                        prix: {  label: "Champ prix unitaire", type: "v-text" },
+
+                        footer: { devider: "Pied", label: "Pied de page", type: "v-textarea" },
+                    },
+                    apply: function ($compDiv, props, compKey) {
+                        log.green("props", props);
+                        INCLUDE($compDiv, "router/widgets/editionwidget?compKey=" + compKey, function () {
+                            window["vappEditionWidget" + compKey].val(props);
+                        });
+                    }
+                },
+            },
+            layout: {
+                page: {
+                    title: "",
+                    groupe: "",
+                    boId:"@ViewBag.pageId",
+                },
+                sections: []
+            },
+            props: {
+                current: "page",
+                selectedItem: "Page",
+            },
+            currentColumn: { line: -1, column: -1, component: -1 },
+            selectedComponent: null,
+        },
+        computed: {
+            pageTitle: function () {
+                return this.layout.page.title;
+            },
+            selectedColumn: function () {
+                return this.layout.sections[this.currentColumn.line].columns[this.currentColumn.column];
+            },
+            editMode: function () {
+                return this.mode == "edit";
+            },
+            previewMode: function () {
+                return this.mode == "preview";
+            },
+            publicMode: function () {
+                return this.mode == "public";
+            },
+        },
+        watch: {
+            pageTitle: function (newVal, oldVal) {
+                $("#pageTitle").html(newVal);
+            }
+        },
+        methods: {
+            previewPage: function () {
+                this.currentColumn.line = -1;
+                this.currentColumn.column = -1;
+                this.selectedComponent = null;
+                this.mode = "preview";
+                //$("#layout").height("auto");
+            },
+            editPage: function () {
+                this.mode = "edit";
+                //$("#layout").height($("#v-content").height());
+            },
+            publicPage: function () {
+                this.currentColumn.line = -1;
+                this.currentColumn.column = -1;
+                this.selectedComponent = null;
+                this.mode = "public";
+            },
+            savePage: function () {
+                this.api.Put({
+                    url: "metabo/Crud/3/" + this.layout.page.boId,
+                    data: JSON.stringify({ LAYOUT: JSON.stringify(this.layout) }),
+                    done: function (response) {
+                        NOTIF.success("Page enregistrée avec succès.");
+                    },
+                });
+            },
+            publishPage: function () {
+                var me = this;
+                this.api.Put({
+                    url: "metabo/Crud/3/" + this.layout.page.boId,
+                    data: JSON.stringify({ STATUS: 'public', LAYOUT: JSON.stringify(this.layout) }),
+                    done: function (response) {
+                        NOTIF.success("Page publiée avec succès.");
+                        me.pageStatus = "public";
+                    },
+                });
+            },
+            unPublishPage: function () {
+                var me = this;
+                this.api.Put({
+                    url: "metabo/Crud/3/" + this.layout.page.boId,
+                    data: JSON.stringify({ STATUS: 'draft', LAYOUT: JSON.stringify(this.layout) }),
+                    done: function (response) {
+                        NOTIF.success("Page mise en mode brouillon avec succès.");
+                        me.pageStatus = "draft";
+                    },
+                });
+            },
+            selectedClass: function (line, column, component) {
+                if (typeof component !== "undefined") {
+                    if (line == this.currentColumn.line && column == this.currentColumn.column && component == this.currentColumn.component) return "selected";
+                } else if (line == this.currentColumn.line && column == this.currentColumn.column) return "selected";
+                return "";
+            },
+            setSelected: function (line, column) {
+                if (!this.editMode) return;
+                this.currentColumn.line = line;
+                this.currentColumn.column = column;
+            },
+            setSelectedComponenet: function (component, noTimout  = false) {
+                if (!this.editMode) return;
+
+                this.currentColumn.component = component;
+                this.selectedComponent = null;
+                var me = this;
+                if (noTimout) me.selectedComponent = me.layout.sections[me.currentColumn.line].columns[me.currentColumn.column].components[me.currentColumn.component];
+                else {
+                    setTimeout(() => {
+                        me.selectedComponent = me.layout.sections[me.currentColumn.line].columns[me.currentColumn.column].components[me.currentColumn.component];
+                    }, 100);
+                }
+                setTimeout(() => { $('.scroll-this').perfectScrollbar(); }, 500);
+            },
+            addSection: function (sectionKey) {
+                var section = {
+                    type: sectionKey,
+                    columns: []
+                };
+
+                for (var i in this.sectionTypes[sectionKey].cols) {
+                    section.columns.push({
+                        title: "Titre",
+                        showTitle: true,
+                        class: this.sectionTypes[sectionKey].cols[i],
+                        components: [],
+                        height: "auto",
+                    });
+                }
+
+                this.layout.sections.push(section);
+            },
+            addComponent: function (sectionIndex, colIndex, key) {
+                var component = { type: key, props: {} };
+
+                for (var i in this.componentsTypes[key].props) {
+                    component.props[i] = null;
+                }
+
+                this.layout.sections[sectionIndex].columns[colIndex].components.push(component);
+            },
+            applyAll: function () {
+                for (var i in this.layout.sections) {
+                    for (var j in this.layout.sections[i].columns) {
+                        this.setSelected(i, j);
+                        for (var k in this.layout.sections[i].columns[j].components) {
+                            this.setSelectedComponenet(k, true);
+                            this.appliquer();
+                        }
+                    }
+                }
+            },
+            appliquer: function () {
+                var compKey = "_" + this.currentColumn.line + '_' + this.currentColumn.column + '_' + this.currentColumn.component;
+                var $compDiv = $("#componentPlaceHolder" + compKey);
+                $compDiv.css({
+                    background: "#fff",
+                    "min-height": "0px",
+                });
+
+                switch (this.selectedComponent.type) {
+                    case "FORM":
+                        INCLUDE($compDiv, "bo/formulaire/" + this.selectedComponent.props.source + "?compKey=" + compKey, null,
+                            "var props" + compKey + " = " + JSON.stringify(this.selectedComponent.props) + ";"
+                            );
+                        break;
+                    case "TABLE":
+                        INCLUDE($compDiv, "bo/table/" + this.selectedComponent.props.source);
+                        break;
+                    case "TABLE_EDITABLE":
+                        INCLUDE($compDiv, "bo/tableeditable/" + this.selectedComponent.props.source);
+                        break;
+                    case "IMG":
+                        var img = JSON.parse(this.selectedComponent.props.image);
+                        $compDiv.html("<img src='" + img.base64 + "' style='width:100%'>");
+                        break;
+                    case "TXT":
+                        var args = this.selectedComponent.props;
+                        $compDiv.html("<h4>" + args.title + "</h4><p>" + args.body + "</p>");
+                        break;
+                    case "SHORTCUT":
+                        var args = this.selectedComponent.props;
+                        $compDiv.html("<a href='" + args.link + "'>" + args.display + "</a>");
+                        break;
+                    case "LINK":
+                        var args = this.selectedComponent.props;
+                        $compDiv.html("<iframe src='" + args.link + "' height='" + args.height + "' width='100%' frameborder='0' ></iframe>");
+                        break;
+                    default:
+                        this.componentsTypes[this.selectedComponent.type].apply($compDiv, this.selectedComponent.props, compKey);
+                        break;
+                }
+            }
+        },
+        mounted: function () {
+            //this.mode = "publie";
+            if (this.editMode) $("#layout").height($("#v-content").height());
+            // bus.loadList("metaList", { url: "metabo", method: "GET" }, (response) => {  });
+            if (layout != null) {
+                var me = this;
+                this.layout = layout;
+                setTimeout(() => {
+                    me.applyAll();
+                    if("@ViewBag.PageStatus" == "PUBLIC" )me.publicPage();
+                }, 100);
+            }
+
+            //setTimeout(() => { $('.scroll-this').each(function () { $(this).perfectScrollbar(); }) }, 500);
+        }
+    });
+</script>

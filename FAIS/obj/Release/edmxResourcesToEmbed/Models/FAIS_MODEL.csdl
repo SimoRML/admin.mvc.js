@@ -137,6 +137,9 @@
     <FunctionImport Name="GetSubForm" ReturnType="Collection(String)">
       <Parameter Name="meta_bo_id" Mode="In" Type="Int32" />
     </FunctionImport>
+    <FunctionImport Name="GetSubFormId" ReturnType="Collection(Int64)">
+      <Parameter Name="meta_bo_id" Mode="In" Type="Int32" />
+    </FunctionImport>
   </EntityContainer>
   <EntityType Name="PlusSequence">
     <Key>
