@@ -106,7 +106,7 @@
                     </button>
                     <ul class="dropdown-menu dropdown-menu-left">
                         <li v-for="item_s_c in meta_sub_child">
-                            <a v-if="item_s_c.FORM_TYPE.indexOf('subform-')==-1" href="javascript:;" v-on:click="mapping_sub_form.child=item_s_c.FORM_NAME,mapping_sub_form.id_subform=item_s_c.META_BO_ID">
+                            <a v-if="item_s_c.FORM_TYPE.indexOf('subform-')==-1" href="javascript:;" v-on:click="mapping_sub_form.child=item_s_c.FORM_NAME,mapping_sub_form.id_subform=item_s_p.META_BO_ID">
                                 {{ item_s_c.FORM_NAME }}
                             </a>
                         </li>
