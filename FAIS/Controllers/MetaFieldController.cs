@@ -1,4 +1,6 @@
-﻿using System;
+﻿using FAIS.Models;
+using FAIS.Models.Repository;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Entity;
@@ -6,12 +8,9 @@ using System.Data.Entity.Infrastructure;
 using System.Data.Entity.Validation;
 using System.Linq;
 using System.Net;
-using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web.Http;
 using System.Web.Http.Description;
-using FAIS.Models;
-using FAIS.Models.Repository;
 
 namespace FAIS.Controllers
 {
@@ -60,6 +59,7 @@ namespace FAIS.Controllers
                 new { Value= "v-label"      , Display= "Etiquette" },
                 new { Value= "v-number"     , Display= "Numeric" },
                 new { Value= "v-select"     , Display= "Liste de choix" },
+                new { Value= "v-select-multiple"     , Display= "Liste multi selection" },
                 new { Value= "v-text"       , Display= "Text" },
                 new { Value= "v-textarea"   , Display= "Zone de text" },
             }.ToList();
@@ -176,7 +176,7 @@ namespace FAIS.Controllers
         [HttpGet]
         public async Task<IHttpActionResult> GetDefaultValue(string format, string boName)
         {
-            string cle = "", formule = "", step="", type = "";
+            string cle = "", formule = "", step = "", type = "";
             bool inFomule = false;
             int count = 0;
 
@@ -228,7 +228,7 @@ namespace FAIS.Controllers
                     var rst = db.PlusSequenceNextID(cle, boName, int.Parse(step)).ToList()[0];
                     return Ok(format.Replace(formule, rst.ToString()));
                 case "date":
-                    return Ok(step == "" ? DateTime.Now: DateTime.Now.AddDays(int.Parse(step)));
+                    return Ok(step == "" ? DateTime.Now : DateTime.Now.AddDays(int.Parse(step)));
                 default:
                     return BadRequest("Formule non prise en charge !");
             }

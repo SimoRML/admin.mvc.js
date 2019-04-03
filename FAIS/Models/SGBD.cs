@@ -49,8 +49,14 @@ namespace FAIS.Models
                 using (cmd = new SqlCommand(sqlQuery, cn))
                 {
                     if (parametres != null)
+                    {
                         foreach (var item in parametres)
-                            cmd.Parameters.AddWithValue(item.Key, item.Value == null ? "" : item.Value);
+                        {
+                            var value = item.Value;
+                            if (item.Value.GetType().ToString() == "Newtonsoft.Json.Linq.JArray") value = item.Value.ToString().Replace("\r", "").Replace("\n", "");
+                            cmd.Parameters.AddWithValue(item.Key, item.Value == null ? "" : value);
+                        }
+                    }
 
                     using (da = new SqlDataAdapter(cmd))
                     {
