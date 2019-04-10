@@ -72,6 +72,7 @@ namespace FAIS.Models
             catch (Exception ex)
             {
                 // TODO LOG EXCEPTION
+                var message = ex.Message;
                 return false;
             }
         }
