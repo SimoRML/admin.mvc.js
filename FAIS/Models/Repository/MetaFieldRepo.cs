@@ -25,5 +25,64 @@ namespace FAIS.Models.Repository
             return mETA_FIELD;
         }
 
+        public dynamic GetDefaultValue(string format, string boName, int persist)
+        {
+            string cle = "", formule = "", step = "", type = "";
+            bool inFomule = false;
+            int count = 0;
+
+            foreach (char car in format)
+            {
+                if (car == '[')
+                {
+                    formule += car;
+                    inFomule = true;
+                    continue;
+                }
+                if (car == ']')
+                {
+                    formule += car;
+                    inFomule = false;
+                    continue;
+                }
+
+                if (inFomule)
+                {
+                    formule += car;
+                    count++;
+                    if (count == 1)
+                    {
+                        switch (car)
+                        {
+                            case '+':
+                                type = "plus";
+                                break;
+                            case 'd':
+                                type = "date";
+                                break;
+                        }
+                    }
+                    else
+                    {
+                        step += car;
+                    }
+                }
+                else
+                {
+                    cle += car;
+                }
+            }
+
+            switch (type)
+            {
+                case "plus":
+                    var rst = db.PlusSequenceNextID(cle, boName, int.Parse(step), persist).ToList()[0];
+                    return new { type, value = format.Replace(formule, rst.ToString()) };
+                case "date":
+                    return new { type, value = step == "" ? DateTime.Now : DateTime.Now.AddDays(int.Parse(step)) };
+                default:
+                    return new { type = "error", msg = "Formule non prise en charge !" };
+            }
+        }
     }
 }

@@ -59,11 +59,11 @@ DataSource.prototype.ExecuteSource = function (source) {
 
     if (settings.method === "POST" || settings.method === "PUT")
         me.Trigger("show", "PagePreloader");
-    console.log("ExecuteSource call ." + source.method + "::" + source.url + ".", settings);
+    log.orange("api call > ", source.method + "::" + source.url + ".", settings);
     $.ajax(settings)
         .done(function (response) {
             me.Trigger("hide", "PagePreloader");
-            // console.log("ExecuteSource response : " + settings.method + "::" + settings.url, response);
+            log.orange_1("api response > ", source.method + "::" + source.url + ".", response);
             try { response = JSON.parse(response); } catch{ }
                 
             var html = "";

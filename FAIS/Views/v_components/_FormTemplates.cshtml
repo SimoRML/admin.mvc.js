@@ -5,7 +5,8 @@
         data: function () {
             return {
                 data: null,
-                model: null
+                model: null,
+                readOnly: null,
             }
         },
         created: function () {
@@ -43,21 +44,25 @@
             if (typeof this.default !== "undefined") {
                 // get calculated default from erver
                 if (this.mode === "insert") {
-                    if (this.default.indexOf('\[') > -1 && this.default.indexOf('\]') > -1) {
-                        var me = this;
-                        EV.getComponent("data").Get({
-                            url: "MetaField/GetDefaultValue/?format=" + encodeURIComponent(this.default) + "&boName=" + this.boName,
-                            done: function (response) {
-                                me.model = response;
-                                me.bindBack({ target: { value: me.model } });
-                            },
-                            fail: function (response) {
-                                NOTIF.warning("Champ : " + me.elementId + "<br>" + response);
-                            }
-                        });
-                    } else {
-                        this.model = this.default;
-                        me.bindBack({ target: { value: me.model } });
+                    if (this.default != null) {
+                        if (this.default.indexOf('\[') > -1 && this.default.indexOf('\]') > -1) {
+                            var me = this;
+                            EV.getComponent("data").Get({
+                                url: "MetaField/GetDefaultValue/?format=" + encodeURIComponent(this.default) + "&boName=" + this.boName,
+                                done: function (response) {
+                                    if (response.type == 'plus')
+                                        me.readOnly = true;
+                                    me.model = response.value;
+                                    me.bindBack({ target: { value: me.model } });
+                                },
+                                fail: function (response) {
+                                    NOTIF.warning("Champ : " + me.elementId + "<br>" + response);
+                                }
+                            });
+                        } else {
+                            this.model = this.default;
+                            me.bindBack({ target: { value: me.model } });
+                        }
                     }
                 }
             }
@@ -119,7 +124,7 @@
         <input type="text" class="form-control"
                :value="model"
                v-on:input="bindBack($event)"
-               :required="!isOptional" :disabled="disabled">
+               :required="!isOptional" :disabled="disabled || readOnly">
         <div class="category form-category" v-if="detail != null">
             <div class="row">
                 <div class="col-md-12">
@@ -454,11 +459,18 @@
                 // console.log("setValue me.selected : " + me.id, "'" + me.selected + "'");
                 // var time = me.selected == '' ? 1000 : 100;
                 setTimeout(function () {
-                    // console.log("setValue : " + me.id, "'" + me.selected + "'");
+                    // log.redTitle("setValue : " + me.id, "'" + me.selected + "'", me.data);
                     $("#" + me.elementId + " select").val(me.selected);
                     $("#" + me.elementId + " select").selectpicker('refresh');
-                    // bus.$emit(me.elementId + "-changed", me.$refs.selectpicker);
-                    me.emitChanged(me.selected, emitter);
+                    // log.greenTitle("value : " + me.elementId, "'" + $("#" + me.elementId + " select").val() == '' + "'");
+                    if ($("#" + me.elementId + " select").val() == '') {
+                        setTimeout(function () {
+                            $("#" + me.elementId + " select").val(me.selected);
+                            $("#" + me.elementId + " select").selectpicker('refresh');
+                            me.emitChanged(me.selected, emitter);
+                        }, 100);
+                    }
+                    else me.emitChanged(me.selected, emitter);
                 }, 100);
             },
             emitChanged: function (value, emitter) {
@@ -477,7 +489,7 @@
 
                 if (value == null && me.selectedObject == null) return;
 
-                this.$emit("changed", { value: value, line: this.line, column: this.column, emitter: emitter }, me.selectedObject);
+                this.$emit("changed", { value: value, line: this.line, column: this.column, emitter: emitter, object: me.selectedObject }, me.selectedObject);
                 bus.$emit(this.elementId + "-changed", value, me.selectedObject);
             },
             populateData: function (data) {
@@ -587,7 +599,7 @@
         },
         data: function () {
             return {
-                selected: this.value,
+                selected: this.value == null || this.value == "" ? [] : (typeof this.value == "string" ? JSON.parse(this.value) : this.value),
                 selectedObject: null,
                 detailFields: null,
                 parentValue: null,
@@ -698,30 +710,6 @@
             } else {
                 me.populateData(this.list);
             }
-            // console.log("mounted", this.elementId, " cond: ", this.isConditional);
-            if (this.isConditional) {
-                var parentId = typeof me.line === "undefined" ? me.parent : me.parent + "_" + me.line;
-                bus.$on(parentId + "-changed", (value, obj) => {
-                    console.log(parentId + "-changed, value:", value, "obj :", obj);
-                    var filteredData = [];
-                    me.data.forEach((e) => {
-                        if (e.Attributes[me.linkField] == value) filteredData.push(clone(e));
-                    });
-                    me.filteredData = filteredData;
-                    me.setValue(me.selected, "mounted bus event");
-                });
-            } else
-                this.setValue(me.selected, "mounted");
-
-            /*
-            var setValueFix = function () {
-                console.log("SELECT fix ", me.elementId, "selected", me.selected, "value", me.value, "JQ", $("#" + me.elementId + " select").val());
-            };
-            EV.Event(setValueFix,1);
-            */
-        },
-        beforeDestroy() {
-            bus.$off(this.parent + "-changed");
         }
     });
 
@@ -841,9 +829,9 @@
                     for (var i in me.data) a.push(me.data[i]);
                     me.data = a;
                 }
-                //log.green("data select 2", me.value, me.data.filter(x => x[me.sourceValue] == me.value)[0]);
-
-                me.selected = me.data.filter(x => x[me.sourceValue] == me.value)[0];
+                log.greenTitle("data select 2", me.value, me.data.filter(x => x[me.sourceValue] == me.value)[0]);
+                var s = me.data.filter(x => x[me.sourceValue] == me.value)[0];
+                if (typeof s !== "undefined") me.selected = s;
                 //log.green("data select 2 .selected ==", me.selected);
             },
             populateData: function (data) {

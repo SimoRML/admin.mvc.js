@@ -593,6 +593,7 @@
     <Content Include="Scripts\vue.js" />
     <Content Include="Scripts\vuex.js" />
     <Content Include="SQL\BO_ROLE.sql" />
+    <Content Include="SQL\changes_pending_to_other_bases.sql" />
     <Content Include="SQL\changes_pending.sql" />
     <Content Include="SQL\CreateTable_v1.sql" />
     <Content Include="SQL\CreateView.sql" />
@@ -672,6 +673,7 @@
     <Content Include="surface\vendor\waves\waves.min.js" />
     <Content Include="surface\vendor\wow\animate.css" />
     <Content Include="surface\vendor\wow\wow.min.js" />
+    <Content Include="_front\mixins\PageComponents.js" />
     <Content Include="_front\mixins\pager.js" />
     <Content Include="_front\models\lang.js" />
     <Content Include="_front\main.js" />
@@ -768,6 +770,7 @@
     <Content Include="Views\Bo\Unauthorized.cshtml" />
     <Content Include="Views\Router\widgets\editionWidget.cshtml" />
     <Content Include="Views\Router\widgets\baseWidget.cshtml" />
+    <Content Include="Views\Router\widgets\etatsortiewidget.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

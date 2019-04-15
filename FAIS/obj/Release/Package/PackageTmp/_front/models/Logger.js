@@ -56,7 +56,10 @@
         this.log("%c" + args[0], "color:green; font-weight:bold;",...args.slice(1));
     },
     orange: function (...args) {
-        this.log("%c" + args[0], "color:orange; font-weight:bold;",...args.slice(1));
+        this.log("%c" + args[0], "color:#ff9800; font-weight:bold;",...args.slice(1));
+    },
+    orange_1: function (...args) {
+        this.log("%c" + args[0], "color:#d67f00; font-weight:bold;",...args.slice(1));
     },
     table: function (...args) {
         if (!this.ACTIVE) return;

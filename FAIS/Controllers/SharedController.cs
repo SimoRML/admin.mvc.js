@@ -1,4 +1,5 @@
-﻿using System;
+﻿using FAIS.Models;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
@@ -17,6 +18,9 @@ namespace FAIS.Controllers
     [RoutePrefix("api/shared")]
     public class SharedController : ApiController
     {
+
+        private FAISEntities db = new FAISEntities();
+
         [HttpGet]
         [Route("lang/{lang}")]
         public IHttpActionResult Langue(string lang)
@@ -25,6 +29,15 @@ namespace FAIS.Controllers
             ResourceSet resourceSet  = rm.GetResourceSet(new System.Globalization.CultureInfo(lang), true, false);
             
             return Ok(Assembly.GetExecutingAssembly().GetManifestResourceNames());
+        }
+
+        [HttpGet]
+        [Route("page/{id}")]
+        public IHttpActionResult Page(long id)
+        {
+            var data = db.PAGE.Where(p => p.BO_ID == id).FirstOrDefault();
+
+            return Ok(data);
         }
     }
 }

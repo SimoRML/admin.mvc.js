@@ -41,6 +41,16 @@ namespace FAIS.Controllers
             return Ok(mETA_BO);
         }
 
+        // GET: api/MetaBo/5
+        [Route("byName/{name}")]
+        public async Task<IHttpActionResult> GetMETA_BOByName(string name)
+        {
+            long META_BO_ID = await db.META_BO.Where(x=> x.BO_DB_NAME == name)
+                .Select(x=>x.META_BO_ID)
+                .FirstOrDefaultAsync();
+
+            return Ok(META_BO_ID);
+        }
         [ResponseType(typeof(List<META_FIELD>))]
         [Route("GetDefinition/{id}")]
         public async Task<IHttpActionResult> GetDefinition(string id)
@@ -316,7 +326,8 @@ namespace FAIS.Controllers
                 MetaBoID = id,
                 Items = Items
             };
-            var meta = await db.META_BO.FindAsync(model.MetaBoID);
+            // var meta = await db.META_BO.FindAsync(model.MetaBoID);
+            var meta = db.META_BO.Find(model.MetaBoID);
 
             /* ACCESS RIGHTS */
             try
@@ -347,6 +358,7 @@ namespace FAIS.Controllers
             model.MetaBO = meta;
             model.BO_ID = id_;
             model.Items.Add("BO_ID", model.BO_ID);
+            
             //return Ok(model.FormatInsert());
             bool insert = model.Insert();
 

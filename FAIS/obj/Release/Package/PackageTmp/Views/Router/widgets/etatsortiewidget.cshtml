@@ -161,40 +161,6 @@
                                             <td></td>
                                         </tr>
                                     </tbody>
-                                    <thead>
-                                        <tr>
-                                            <th colspan="3" style="border: none !important;background: #fff;"></th>
-                                            <th colspan="2" style="text-align:right" class="left-border">SOUS&nbsp;TOTAL&nbsp;HT</th>
-                                            <th style="text-align:right">{{ total(line.sub) }}&nbsp;{{ devise }}</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr>
-                                            <td colspan="3" style="border: none !important;background: #fff;"></td>
-                                            <td colspan="2" align="right" class="left-border">TVA</td>
-                                            <td align="right">20&nbsp;%</td>
-                                        </tr>
-                                        <tr>
-                                            <td colspan="3" style="border: none !important;background: #fff;"></td>
-                                            <td colspan="2" align="right" class="left-border">TOTAL TTC</td>
-                                            <td align="right">{{ parseFloat((total(line.sub) * 1.2 * 100) / 100).toFixed(2) }}&nbsp;{{ devise }}</td>
-                                        </tr>
-                                        <tr>
-                                            <td colspan="3" style="border: none !important;background: #fff;"></td>
-                                            <td colspan="2" align="right" class="left-border">ACOMPTE</td>
-                                            <td align="right">
-                                                <input type="text" v-model="acompte" style="border:none; text-align:right;width: 60%;" class="no-print" /><span class="print" style="display:none">{{ acompte }}</span>&nbsp;{{ devise }}
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                    <thead>
-                                        <tr>
-                                            <th colspan="3" style="border: none !important;background: #fff;"></th>
-                                            <th colspan="2" style="text-align:right" class="left-border">A PAYE</th>
-                                            <th style="text-align:right">{{ parseFloat(((total(line.sub) * 1.2 * 100) / 100) - acompte).toFixed(2) }}</th>
-                                        </tr>
-                                    </thead>
-
                                 </table>
                             </div>
                         </div>

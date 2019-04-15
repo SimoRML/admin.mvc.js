@@ -36,6 +36,7 @@ namespace FAIS.Controllers
             var data = db.PAGE.Where(p => p.BO_ID == id).FirstOrDefault();
 
             ViewBag.STATUS = data.STATUS;
+            ViewBag.Mode = "edit";
             ViewBag.dataLayout = data.LAYOUT == null ? "" : data.LAYOUT;
             return PartialView();
         }

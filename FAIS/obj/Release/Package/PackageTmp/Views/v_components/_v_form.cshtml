@@ -12,7 +12,8 @@
                 @*THE COMPONENET*@
                 <component :name="field.FORM_TYPE + '-' + elementId"
                            :is="field.FORM_TYPE"
-                           v-model="body[field.DB_NAME]"
+                           v-model='body[field.DB_NAME]'
+                           @*v-model="getModel(body,field)"*@
                            v-bind="getBind(field)"></component>
                 @*AFTER*@
                 <component v-if="typeof field.after_component !== 'undefined'"
@@ -51,6 +52,12 @@
             }
         },
         methods: {
+            getModel: function (body, field) {
+                if (field.FORM_TYPE == "v-select-multiple")
+                    return [];
+                else
+                    return body[field.DB_NAME];
+            },
             getBind: function (field) {
                 // console.log("v-form bind field", field);
                 var bind = { id: field.DB_NAME, label: field.FORM_NAME, optional: field.FORM_OPTIONAL, fieldName: field.DB_NAME, mode: this.mode(), boName: this.boName };
@@ -63,11 +70,11 @@
                     if (typeof field.sourceFilter !== "undefined")
                         bind.sourceFilter = field.sourceFilter;
                 }
-                
+
                 // JSON_DATA
                 try {
                     var json_data = JSON.parse(field.JSON_DATA);
-                    console.log('%c DEFAULT', 'color:red',  json_data.DEFAULT, "mode", this.mode());
+                    //console.log('%c DEFAULT', 'color:red', json_data.DEFAULT, "mode", this.mode());
 
                     if (typeof json_data.DEFAULT !== "undefined")
                         bind.default = json_data.DEFAULT;
@@ -100,9 +107,22 @@
 
 
                     // push subform
-                    if (typeof this.meta[i].FORM_TYPE !== "undefined" && this.meta[i].FORM_TYPE.match('subform-') !== null) {
-                        this.subFroms.push(this.meta[i]);
-                        continue;
+                    if (typeof this.meta[i].FORM_TYPE !== "undefined") {
+                        if (this.meta[i].FORM_TYPE.match('subform-') !== null) {
+                            this.subFroms.push(this.meta[i]);
+                            continue;
+                        } else {
+                            //log.blueTitle(this.meta[i].FORM_TYPE, this.body[this.meta[i].DB_NAME]);
+                            //switch (this.meta[i].FORM_TYPE) {
+                            //    case "v-select-multiple":
+                            //        this.body[this.meta[i].DB_NAME] = this.body[this.meta[i].DB_NAME] == null ? [] : JSON.parse(this.body[this.meta[i].DB_NAME]);
+                            //        break;
+                            //    case "v-number":
+                            //        if (this.body[this.meta[i].DB_NAME] != null) this.body[this.meta[i].DB_NAME] =parseFloat(this.body[this.meta[i].DB_NAME]);
+                            //        break;
+                            //}
+                            //log.blue(this.meta[i].FORM_TYPE, this.body[this.meta[i].DB_NAME]);
+                        }
                     }
                     // save PK
                     if (this.meta[i].STATUS.trim().toLowerCase() == 'pk') {
@@ -219,6 +239,21 @@
                 for (var i in me.body) {
                     me.$set(me.body, i, entity[i]);
                 }
+
+                //for (var i in this.meta) {
+                //    if (typeof this.meta[i].FORM_TYPE !== "undefined") {
+                //        log.blueTitle(this.meta[i].FORM_TYPE, this.body[this.meta[i].DB_NAME]);
+                //        switch (this.meta[i].FORM_TYPE) {
+                //            case "v-select-multiple":
+                //                this.body[this.meta[i].DB_NAME] = this.body[this.meta[i].DB_NAME] == null ? [] : JSON.parse(this.body[this.meta[i].DB_NAME]);
+                //                break;
+                //            case "v-number":
+                //                if (this.body[this.meta[i].DB_NAME] != null) this.body[this.meta[i].DB_NAME] = parseFloat(this.body[this.meta[i].DB_NAME]);
+                //                break;
+                //        }
+                //        log.blue(this.meta[i].FORM_TYPE, this.body[this.meta[i].DB_NAME]);
+                //    }
+                //}
                 // console.log("VFROM updateMode::", me.body);
                 me.refresh();
                 me.$emit("update-mode", entity);

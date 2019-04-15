@@ -1,9 +1,10 @@
 ﻿<style id="css_vappEditionWidget_@ViewBag.compKey">
-    .tableContainer{
-        width:100%;
-        font-family:Arial;
-        margin-bottom:100px;
+    .tableContainer {
+        width: 100%;
+        font-family: Arial;
+        margin-bottom: 100px;
     }
+
     .table-header {
         width: 100%;
     }
@@ -35,7 +36,6 @@
             background: #00345b;
             color: #fff;
             font-size: 15px !important;
-            
         }
 
 
@@ -72,6 +72,11 @@
                         </div>
                         <div class="col-md-6">
                             <a href="javascript:;" class="btn btn-default btn-sm pull-right no-print" v-on:click="print"><i class="material-icons">print</i></a>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12" style="text-align:center">
+                            <h4>{{ title }}</h4>
                         </div>
                     </div>
                     <br />
@@ -130,9 +135,15 @@
                                     </thead>
                                     <tbody class="table-col-bordered">
                                         <tr v-for="item in line.sub">
-                                            <td>{{ item[props.productName] }}</td>
-                                            <td align="center" width="1px">{{ item[props.unite] }}</td>
-                                            <td align="right">{{ item[props.qte] }}</td>
+                                            <td v-format="{value:item[props.productName], format: props.productNameFormat}">{{ item[props.productName] }}</td>
+                                            <td align="center" width="1px"
+                                                v-format="{value:item[props.unite], format: props.uniteFormat}">
+                                                {{ item[props.unite] }}
+                                            </td>
+                                            <td align="right"
+                                                v-format="{value:item[props.qte], format: props.qteFormat}">
+                                                {{ item[props.qte] }}
+                                            </td>
                                             <td align="right">
                                                 {{ item[props.prix] }}&nbsp;{{ devise }}
                                             </td>
@@ -212,7 +223,8 @@
             props: null,
             data: [],
             detail: [],
-            acompte:0,
+            acompte: 0,
+            aSource: {},
         },
         computed: {
             to10Lines: function () {
@@ -233,11 +245,15 @@
                     return "";
                 }
             },
+            title: function () {
+                return this.getProp('title');
+            },
             societe: function () {
                 return this.getProp('societe').replaceAll("\n", "<br>");
             },
             societeFacture: function () {
-                return this.getProp('societeFacture').replaceAll("\n", "<br>");
+                return this.aSource[this.getProp("aRS")] + "<br/>" + this.aSource[this.getProp("aADR")] + "<br/>" + this.aSource[this.getProp("aTEL")] + "<br/>" + this.aSource[this.getProp("aMAIL")];
+                // return this.getProp('societeFacture').replaceAll("\n", "<br>");
             },
             total: function () {
                 return (sub) => {
@@ -297,16 +313,25 @@
                     url: "metabo/filter/includesubform",
                     data: JSON.stringify({MetaBoID: this.props.source, Items: filter }),
                     done: function (response) {
-                        log.blue("GET FILTER", response);
+                        // log.blue("GET FILTER", response);
                         me.data = response;
                         if (me.data.filter(x => x.sub).length > 0) {
                             for (var i in me.data) {
                                 me.data[i].sub = JSON.parse(me.data[i].sub);
                             }
                         }
-                        // log.green("GET FILTER", me.data);
+                        //log.green("GET FILTER", me.data[0][me.getProp("aSource")]);
+
+                        EV.getComponent('data').Get({
+                            url: "metabo/Crud/" + me.getProp("aDataSource") + "/" + me.data[0][me.getProp("aSource")],
+                            done: function (responseSource) {
+                                //log.blue("GET ASOURCE", responseSource);
+                                me.aSource = responseSource[0];
+                            }
+                        });
                     }
                 });
+
             },
             print: function () {
                 PrintElem("vappEditionWidget_@ViewBag.compKey");

@@ -179,9 +179,6 @@
   <Function Name="GetSubForm" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
     <Parameter Name="meta_bo_id" Type="int" Mode="In" />
   </Function>
-  <Function Name="GetSubFormId" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
-    <Parameter Name="meta_bo_id" Type="int" Mode="In" />
-  </Function>
   <Function Name="MoveBoToCurrentVersion" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
     <Parameter Name="BO_ID" Type="bigint" Mode="In" />
   </Function>
@@ -189,6 +186,7 @@
     <Parameter Name="cle" Type="varchar" Mode="In" />
     <Parameter Name="TableName" Type="varchar" Mode="In" />
     <Parameter Name="stepBy" Type="int" Mode="In" />
+    <Parameter Name="presist" Type="int" Mode="In" />
   </Function>
   <EntityContainer Name="FAIS_ModelStoreContainer">
     <EntitySet Name="BO" EntityType="Self.BO" Schema="dbo" store:Type="Tables" />

@@ -176,62 +176,67 @@ namespace FAIS.Controllers
         [HttpGet]
         public async Task<IHttpActionResult> GetDefaultValue(string format, string boName)
         {
-            string cle = "", formule = "", step = "", type = "";
-            bool inFomule = false;
-            int count = 0;
+            //string cle = "", formule = "", step = "", type = "";
+            //bool inFomule = false;
+            //int count = 0;
 
-            foreach (char car in format)
-            {
-                if (car == '[')
-                {
-                    formule += car;
-                    inFomule = true;
-                    continue;
-                }
-                if (car == ']')
-                {
-                    formule += car;
-                    inFomule = false;
-                    continue;
-                }
+            //foreach (char car in format)
+            //{
+            //    if (car == '[')
+            //    {
+            //        formule += car;
+            //        inFomule = true;
+            //        continue;
+            //    }
+            //    if (car == ']')
+            //    {
+            //        formule += car;
+            //        inFomule = false;
+            //        continue;
+            //    }
 
-                if (inFomule)
-                {
-                    formule += car;
-                    count++;
-                    if (count == 1)
-                    {
-                        switch (car)
-                        {
-                            case '+':
-                                type = "plus";
-                                break;
-                            case 'd':
-                                type = "date";
-                                break;
-                        }
-                    }
-                    else
-                    {
-                        step += car;
-                    }
-                }
-                else
-                {
-                    cle += car;
-                }
-            }
+            //    if (inFomule)
+            //    {
+            //        formule += car;
+            //        count++;
+            //        if (count == 1)
+            //        {
+            //            switch (car)
+            //            {
+            //                case '+':
+            //                    type = "plus";
+            //                    break;
+            //                case 'd':
+            //                    type = "date";
+            //                    break;
+            //            }
+            //        }
+            //        else
+            //        {
+            //            step += car;
+            //        }
+            //    }
+            //    else
+            //    {
+            //        cle += car;
+            //    }
+            //}
 
-            switch (type)
-            {
-                case "plus":
-                    var rst = db.PlusSequenceNextID(cle, boName, int.Parse(step)).ToList()[0];
-                    return Ok(format.Replace(formule, rst.ToString()));
-                case "date":
-                    return Ok(step == "" ? DateTime.Now : DateTime.Now.AddDays(int.Parse(step)));
-                default:
-                    return BadRequest("Formule non prise en charge !");
-            }
+            //switch (type)
+            //{
+            //    case "plus":
+            //        var rst = db.PlusSequenceNextID(cle, boName, int.Parse(step), 0).ToList()[0];
+            //        return Ok(new { type, value = format.Replace(formule, rst.ToString()) });
+            //    case "date":
+            //        return Ok(new { type, value = step == "" ? DateTime.Now : DateTime.Now.AddDays(int.Parse(step)) });
+            //    default:
+            //        return BadRequest("Formule non prise en charge !");
+            //}
+            var df = new MetaFieldRepo().GetDefaultValue(format, boName, 0);
+            if (df.type == "error")
+                return BadRequest(df.msg);
+            else
+                return Ok(df);
         }
 
         // DELETE: api/MetaField/GetDefaultValue/

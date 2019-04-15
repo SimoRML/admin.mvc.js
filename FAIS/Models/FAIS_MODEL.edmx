@@ -184,9 +184,6 @@
         <Function Name="GetSubForm" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="meta_bo_id" Type="int" Mode="In" />
         </Function>
-        <Function Name="GetSubFormId" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
-          <Parameter Name="meta_bo_id" Type="int" Mode="In" />
-        </Function>
         <Function Name="MoveBoToCurrentVersion" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="BO_ID" Type="bigint" Mode="In" />
         </Function>
@@ -194,6 +191,7 @@
           <Parameter Name="cle" Type="varchar" Mode="In" />
           <Parameter Name="TableName" Type="varchar" Mode="In" />
           <Parameter Name="stepBy" Type="int" Mode="In" />
+          <Parameter Name="presist" Type="int" Mode="In" />
         </Function>
         <EntityContainer Name="FAIS_ModelStoreContainer">
           <EntitySet Name="BO" EntityType="Self.BO" Schema="dbo" store:Type="Tables" />
@@ -348,6 +346,7 @@
             <Parameter Name="cle" Mode="In" Type="String" />
             <Parameter Name="TableName" Mode="In" Type="String" />
             <Parameter Name="stepBy" Mode="In" Type="Int32" />
+            <Parameter Name="presist" Mode="In" Type="Int32" />
           </FunctionImport>
           <EntitySet Name="NOTIF" EntityType="FAIS_Model.NOTIF" />
           <EntitySet Name="TASK" EntityType="FAIS_Model.TASK" />
@@ -604,7 +603,6 @@
             </EntityTypeMapping>
           </EntitySetMapping>
           <FunctionImportMapping FunctionImportName="GetSubForm" FunctionName="FAIS_Model.Store.GetSubForm" />
-          <FunctionImportMapping FunctionImportName="GetSubFormId" FunctionName="FAIS_Model.Store.GetSubFormId" />
         </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>

@@ -32,7 +32,7 @@ Router.prototype.Load = function (page) {
     me.$element.load(URL.addPart(baseUrl,url), function (response, status, xhr) {
         me.Trigger("hide", "PagePreloader");
 
-        log.red("ROUTER LOAD ", status, xhr);
+        // log.red("ROUTER LOAD ", status, xhr);
         if (status === "success") {
             /*
             if ($(".vue-app").length > 0 && me.vueApp === null) {

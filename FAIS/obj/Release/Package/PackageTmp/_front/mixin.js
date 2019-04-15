@@ -89,7 +89,7 @@ var MixinStore = {
 };
 
 var MixinAuthorize = {
-    mixins:[MixinStore],
+    mixins: [MixinStore],
     methods: {
         can: function (boName, accessType) {
             if (typeof boName === "undefined") boName = this.boName;
@@ -108,8 +108,8 @@ var MixinAuthorize = {
             }
             return true;
         },
-        canRead:   function (boName) { return this.can(boName, 'r'); },
-        canWrite:  function (boName) { return this.can(boName, 'w'); },
+        canRead: function (boName) { return this.can(boName, 'r'); },
+        canWrite: function (boName) { return this.can(boName, 'w'); },
         canAccess: function (boName) { return this.can(boName, 'a'); },
     }
 };
@@ -124,26 +124,39 @@ function v_format_directive(e1, binding, vnode) {
         } catch { }
     }
     if (typeof binding.value.format.fct === "undefined") return;
-    //console.log("FORMAT", binding);
-    
+    /// console.log("FORMAT", binding);
+
     switch (binding.value.format.fct.toLowerCase()) {
         case 'display':
             var display = "";
+            var aDisplay = [];
             var list = bus.getList(binding.value.format.source);
-            //console.log("FORMAT 2 ", e1, "list", list);
+            //log.blueTitle("FORMAT display ", e1, "list", list);
             for (var i in list) {
                 var e = list[i];
-                //console.log("FORMAT e.Value", e.Value);
-                // console.log("FORMAT ", e.Value, " === ", binding.value.value, e.Value == binding.value.value);
-                if (e.Value == binding.value.value) {
-                    display = e.Display;
-                    break;
+                //log.blue("e.value ", e.Value);
+                //log.red("binding.value.value ", binding.value.value);
+
+                if (Array.isArray(binding.value.value)) {
+                    // log.redTitle("IS ARRAY");
+                    for (var j in binding.value.value) {
+                        // log.red(j, binding.value.value[j]);
+                        if (e.Value == binding.value.value[j]) {
+                            aDisplay.push(e.Display);
+                        }
+                    }
+                    display = aDisplay.join(", ");
+                } else {
+                    if (e.Value == binding.value.value) {
+                        display = e.Display;
+                        break;
+                    }
                 }
             }
             $(e1).html(display === "" ? binding.value.value : display);
             break;
         case 'store-display':
-            console.log('store-display', store.getters.getFilter({ key: binding.value.format.source, filter: binding.value.format.filter(binding.value.value) })[0][binding.value.format.display]);
+            // console.log('store-display', store.getters.getFilter({ key: binding.value.format.source, filter: binding.value.format.filter(binding.value.value) })[0][binding.value.format.display]);
             $(e1).html(store.getters.getFilter({ key: binding.value.format.source, filter: binding.value.format.filter(binding.value.value) })[0][binding.value.format.display]); // x => x.ItemType == "Nature d'activité" && x.ItemListID == binding.value.value ));
             break;
         case 'date':
@@ -162,14 +175,14 @@ function INCLUDE($element, url, done, script) {
 
     if (typeof script !== "undefined") {
         $element.html("");
-        $element.append($("<script>"+script+"</script><div class='elementContent'></div>"));
+        $element.append($("<script>" + script + "</script><div class='elementContent'></div>"));
         $element = $element.find(".elementContent");
     }
 
     $element.load(url, function (response, status, xhr) {
         $preloaderElement.removeClass("preLoader");
         if (status === "success") {
-            if(typeof done === "function" ) done();
+            if (typeof done === "function") done();
             updateDom();
         } else {
             $preloaderElement.addClass("preLoaderError");

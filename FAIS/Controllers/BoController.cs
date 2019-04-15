@@ -100,6 +100,7 @@ namespace FAIS.Controllers
         {
             ViewBag.pageId = id;
             ViewBag.PageStatus = "PUBLIC";
+            ViewBag.Mode = "public";
 
             var data = db.PAGE.Where(p => p.BO_ID == id && p.STATUS == "public").FirstOrDefault();
 

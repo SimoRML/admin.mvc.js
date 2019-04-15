@@ -1,4 +1,5 @@
-﻿using System;
+﻿using FAIS.Models.Repository;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
@@ -102,7 +103,7 @@ namespace FAIS.Models.VForm
 
         public string Format()
         {
-            return string.Format(" {0} {1} {2} @{3} ", Logic, Field, Condition, Field.Replace(".",""));
+            return string.Format(" {0} {1} {2} @{3} ", Logic, Field, Condition, Field.Replace(".", ""));
         }
 
     }
@@ -151,9 +152,31 @@ namespace FAIS.Models.VForm
         public bool Insert()
         {
             // TODO : call repo validator
+            SetPlusValues();
             return ExecInsert(FormatInsert(), Items);
         }
+        public void SetPlusValues()
+        {
+            try
+            {
+                DataTable metaFields = new SGBD().Cmd("select *, JSON_VALUE(JSON_DATA,'$.DEFAULT') as 'DEFAULT' from META_FIELD where META_BO_ID = " + this.MetaBoID
+                                    + " AND JSON_VALUE(JSON_DATA,'$.DEFAULT') like '%[+%]%'");
 
+                foreach (DataRow mf in metaFields.Rows)
+                {
+                    if (this.Items.ContainsKey(mf["DB_NAME"].ToString()))
+                    {
+                        var df = new MetaFieldRepo().GetDefaultValue(mf["DEFAULT"].ToString(), this.MetaBO.BO_DB_NAME, 1);
+                        if (df.type != "error")
+                            this.Items[mf["DB_NAME"].ToString()] = df.value;
+                    }
+                }
+
+            }
+            catch (Exception)
+            {
+            }
+        }
         public string Update()
         {
             return ExecUpdate(FormatUpdate(), Items);

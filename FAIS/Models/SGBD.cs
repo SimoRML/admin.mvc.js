@@ -85,7 +85,12 @@ namespace FAIS.Models
                 {
                     if (parametres != null)
                         foreach (var item in parametres)
-                            cmd.Parameters.AddWithValue(item.Key, item.Value);
+                        {
+                            var value = item.Value;
+                            if (item.Value.GetType().ToString() == "Newtonsoft.Json.Linq.JArray") value = item.Value.ToString().Replace("\r", "").Replace("\n", "");
+                            cmd.Parameters.AddWithValue(item.Key, item.Value == null ? "" : value);
+                        }
+                    //cmd.Parameters.AddWithValue(item.Key, item.Value);
 
                     using (da = new SqlDataAdapter(cmd))
                     {

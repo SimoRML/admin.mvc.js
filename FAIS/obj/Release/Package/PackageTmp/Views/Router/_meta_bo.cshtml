@@ -570,7 +570,7 @@
                     body.FORM_NAME = body.GRID_NAME;
 
                     // FORM_SOURCE
-                    if (body.FORM_TYPE === "v-select") {
+                    if (body.FORM_TYPE === "v-select" || body.FORM_TYPE === "v-select-multiple") {
                         // clean detail fields
                         var FORM_SOURCE = bus.FORM_SOURCE;
                         if (typeof FORM_SOURCE.detail !== "undefined") {
@@ -732,7 +732,7 @@
                         }
                     );
 
-                    if (value == "v-select") {
+                    if (value == "v-select" || value=="v-select-multiple") {
                         me.$refs.fieldsForm.execute(
                             function (component) {
                                 component.meta[2].after_component.visible = true;

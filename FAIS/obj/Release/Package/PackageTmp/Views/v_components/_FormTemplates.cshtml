@@ -5,7 +5,8 @@
         data: function () {
             return {
                 data: null,
-                model: null
+                model: null,
+                readOnly: null,
             }
         },
         created: function () {
@@ -43,21 +44,25 @@
             if (typeof this.default !== "undefined") {
                 // get calculated default from erver
                 if (this.mode === "insert") {
-                    if (this.default.indexOf('\[') > -1 && this.default.indexOf('\]') > -1) {
-                        var me = this;
-                        EV.getComponent("data").Get({
-                            url: "MetaField/GetDefaultValue/?format=" + encodeURIComponent(this.default) + "&boName=" + this.boName,
-                            done: function (response) {
-                                me.model = response;
-                                me.bindBack({ target: { value: me.model } });
-                            },
-                            fail: function (response) {
-                                NOTIF.warning("Champ : " + me.elementId + "<br>" + response);
-                            }
-                        });
-                    } else {
-                        this.model = this.default;
-                        me.bindBack({ target: { value: me.model } });
+                    if (this.default != null) {
+                        if (this.default.indexOf('\[') > -1 && this.default.indexOf('\]') > -1) {
+                            var me = this;
+                            EV.getComponent("data").Get({
+                                url: "MetaField/GetDefaultValue/?format=" + encodeURIComponent(this.default) + "&boName=" + this.boName,
+                                done: function (response) {
+                                    if (response.type == 'plus')
+                                        me.readOnly = true;
+                                    me.model = response.value;
+                                    me.bindBack({ target: { value: me.model } });
+                                },
+                                fail: function (response) {
+                                    NOTIF.warning("Champ : " + me.elementId + "<br>" + response);
+                                }
+                            });
+                        } else {
+                            this.model = this.default;
+                            me.bindBack({ target: { value: me.model } });
+                        }
                     }
                 }
             }
@@ -119,7 +124,7 @@
         <input type="text" class="form-control"
                :value="model"
                v-on:input="bindBack($event)"
-               :required="!isOptional" :disabled="disabled">
+               :required="!isOptional" :disabled="disabled || readOnly">
         <div class="category form-category" v-if="detail != null">
             <div class="row">
                 <div class="col-md-12">
@@ -454,11 +459,18 @@
                 // console.log("setValue me.selected : " + me.id, "'" + me.selected + "'");
                 // var time = me.selected == '' ? 1000 : 100;
                 setTimeout(function () {
-                    // console.log("setValue : " + me.id, "'" + me.selected + "'");
+                    // log.redTitle("setValue : " + me.id, "'" + me.selected + "'", me.data);
                     $("#" + me.elementId + " select").val(me.selected);
                     $("#" + me.elementId + " select").selectpicker('refresh');
-                    // bus.$emit(me.elementId + "-changed", me.$refs.selectpicker);
-                    me.emitChanged(me.selected, emitter);
+                    // log.greenTitle("value : " + me.elementId, "'" + $("#" + me.elementId + " select").val() == '' + "'");
+                    if ($("#" + me.elementId + " select").val() == '') {
+                        setTimeout(function () {
+                            $("#" + me.elementId + " select").val(me.selected);
+                            $("#" + me.elementId + " select").selectpicker('refresh');
+                            me.emitChanged(me.selected, emitter);
+                        }, 100);
+                    }
+                    else me.emitChanged(me.selected, emitter);
                 }, 100);
             },
             emitChanged: function (value, emitter) {
@@ -477,7 +489,7 @@
 
                 if (value == null && me.selectedObject == null) return;
 
-                this.$emit("changed", { value: value, line: this.line, column: this.column, emitter: emitter }, me.selectedObject);
+                this.$emit("changed", { value: value, line: this.line, column: this.column, emitter: emitter, object: me.selectedObject }, me.selectedObject);
                 bus.$emit(this.elementId + "-changed", value, me.selectedObject);
             },
             populateData: function (data) {
@@ -523,13 +535,193 @@
 </script>
 
 
+@*-----------------------------------------------------------------------------------------------------SELECT MULTIPLE-----------------------*@
+<script id="v-select-multiple-template" type="text/template">
+    <div :id="elementId" :class="cssClass + ' form-group label-floating'">
+        <label class="control-label">{{ label }}<i v-show="isOptional"> - optionnel</i></label>
+        <select ref="selectpicker" class="selectpicker" data-style="select-with-transition" title="Choisir" data-size="10"
+                v-model="selected"
+                v-on:change="bindBack($event)"
+                :required="!isOptional"
+                :disabled="disabled"
+                :multiple="multiple">
+            <option value=""> Choisir </option>
+            <template v-if="isConditional">
+                <option v-for="item in filteredData"
+                        :value="item[sourceValue]">
+                    {{ item[sourceDisplay] }}
+                </option>
+            </template>
+            <template v-else>
+                <option v-for="item in data"
+                        :value="item[sourceValue]">
+                    {{ item[sourceDisplay] }}
+                </option>
+            </template>
+        </select>
+        <div class="category form-category" v-if="hasDetailFields && selectedObject != null">
+            <div class="row">
+                <div v-for="(value,index) in detailFields" :class="value.class">
+                    <b v-show="value.label != ''">{{ value.label }} : </b>
+                    <span v-format="{value:selectedObject.Attributes[index], format: value.format}">
+                        {{ selectedObject.Attributes[index] }}
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</script>
+<script type="text/javascript">
+    Vue.component('v-select-multiple', {
+        template: $("#v-select-multiple-template").html(),
+        mixins: [FormMixin],
+        props: {
+            multiple: {
+                type: Boolean,
+                default: true
+            },
+            source: {
+                type: String,
+                default: null
+            },
+            sourceDisplay: {
+                type: String,
+                default: 'Display'
+            },
+            sourceValue: {
+                type: String,
+                default: 'Value'
+            },
+            sourceFilter: {
+                type: Function,
+                default: null,
+            }
+        },
+        data: function () {
+            return {
+                selected: this.value == null || this.value == "" ? [] : (typeof this.value == "string" ? JSON.parse(this.value) : this.value),
+                selectedObject: null,
+                detailFields: null,
+                parentValue: null,
+                linkField: null,
+                parent: null,
+                filteredData: []
+            }
+        },
+        computed: {
+            isConditional: function () {
+                try {
+                    var jsona = JSON.parse(this.datasource);
+                    if (typeof jsona.parent !== "undefined" && jsona.parent !== "" && jsona.link_field !== "") {
+                        this.linkField = jsona.link_field;
+                        this.parent = jsona.parent;
+                        return true;
+                    }
+                } catch { }
+                return false;
+            },
+            hasDetailFields: function () {
+                try {
+                    var jsona = JSON.parse(this.datasource);
+                    if (typeof jsona.detail !== "undefined") {
+                        this.detailFields = jsona.detail;
+                        for (var prop in jsona.detail) {
+                            if (jsona.detail.hasOwnProperty(prop)) {
+                                return true;
+                            }
+                        }
+                        return false;
+                    }
+                } catch { }
+                return false;
+            },
+            list: function () {
+                if (this.source === null) return null;
+                else {
+                    if (this.sourceFilter == null)
+                        return this.$store.getters.get(this.source);
+                    else
+                        return this.$store.getters.getFilter({ key: this.source, filter: this.sourceFilter });
+                }
+            }
+        },
+        watch: {
+            value: function (newVal, oldVal) {
+                //console.log("watch value", newVal);
+                this.setValue(newVal, "watch");
+            },
+            list: function (newVal, oldVal) {
+                //console.log("watch list", newVal);
+                this.populateData(newVal);
+            },
+        },
+        methods: {
+            setValue: function (value, emitter) {
+                var me = this;
+                if (me.data === null) return;
+
+                if (!Array.isArray(me.data)) {
+                    var a = [];
+                    for (var i in me.data) a.push(me.data[i]);
+                    me.data = a;
+                }
+
+                if (typeof value !== "undefined" && value !== "") me.selected = value;
+                // console.log(emitter + ".setValue : (" + me.id + ")", me.selected, "data", me.data);
+                // console.log("setValue me.selected : " + me.id, "'" + me.selected + "'");
+                // var time = me.selected == '' ? 1000 : 100;
+                setTimeout(function () {
+                    // console.log("setValue : " + me.id, "'" + me.selected + "'");
+                    $("#" + me.elementId + " select").val(me.selected);
+                    $("#" + me.elementId + " select").selectpicker('refresh');
+                    // bus.$emit(me.elementId + "-changed", me.$refs.selectpicker);
+                    me.emitChanged(me.selected, emitter);
+                }, 100);
+            },
+            emitChanged: function (value, emitter) {
+                // console.log("EMIT CHANGED", this.elementId);
+                if (value == "") return;
+                if (this.data == null) return;
+                if (typeof firstLoad === "undefined") firstLoad = false;
+                var me = this;
+
+                me.selectedObject = null;
+                // console.log("EMIT CHAGED " + this.elementId, this.data);
+                this.data.forEach((item) => {
+                    if (item[this.sourceValue] == value)
+                        me.selectedObject = item;
+                });
+
+                if (value == null && me.selectedObject == null) return;
+
+                this.$emit("changed", { value: value, line: this.line, column: this.column, emitter: emitter }, me.selectedObject);
+                bus.$emit(this.elementId + "-changed", value, me.selectedObject);
+            },
+            populateData: function (data) {
+                var me = this;
+                me.data = data;
+                me.setValue();
+            }
+        },
+        mounted: function () {
+            var me = this;
+            if (this.source === null) {
+                bus.loadList(this.fieldName, me.datasource, (response) => { me.populateData(response) });
+            } else {
+                me.populateData(this.list);
+            }
+        }
+    });
+
+</script>
+
+
 @*-----------------------------------------------------------------------------------------------------SELECT-----------------------*@
 <script id="v-select2-template" type="text/template">
     <div :id="elementId" class="dropdown"
          :disabled="disabled">
-        <button href="#" class="dropdown-toggle btn btn-xs btn-primary btn-simple" data-toggle="dropdown" 
-                style="text-align:left; width:100%; height:46px;border-bottom: solid 1px #ddd;" v-html="selected[sourceDisplay]">
-        </button>
+        <button href="#" class="dropdown-toggle btn btn-xs btn-primary btn-simple" data-toggle="dropdown"
+                style="text-align:left; width:100%; height:46px;border-bottom: solid 1px #ddd;" v-html="selected[sourceDisplay]"></button>
         <ul class="dropdown-menu dropdown-menu-left">
             <li v-for="item in data">
                 <a href="javascript:;" v-on:click="selected = item" v-html="item[sourceDisplay]">
@@ -637,9 +829,9 @@
                     for (var i in me.data) a.push(me.data[i]);
                     me.data = a;
                 }
-                //log.green("data select 2", me.value, me.data.filter(x => x[me.sourceValue] == me.value)[0]);
-
-                me.selected = me.data.filter(x => x[me.sourceValue] == me.value)[0];
+                log.greenTitle("data select 2", me.value, me.data.filter(x => x[me.sourceValue] == me.value)[0]);
+                var s = me.data.filter(x => x[me.sourceValue] == me.value)[0];
+                if (typeof s !== "undefined") me.selected = s;
                 //log.green("data select 2 .selected ==", me.selected);
             },
             populateData: function (data) {
