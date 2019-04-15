@@ -68,7 +68,7 @@
                     </button>
                     <ul class="dropdown-menu dropdown-menu-left">
                         <li v-for="item_c in meta_child">
-                            <a v-if="item_c.FORM_TYPE.indexOf('subform-')==-1" href="javascript:;" v-on:click="mapping.child=item_c.FORM_NAME">
+                            <a v-if="item_c.FORM_TYPE.indexOf('subform-')==-1" href="javascript:;" v-on:click="mapping.child=item_c.FORM_NAME,mapping.child_to_db=item_c.DB_NAME">
                                 {{ item_c.FORM_NAME }}
                             </a>
                         </li>
@@ -94,7 +94,7 @@
                     </button>
                     <ul class="dropdown-menu dropdown-menu-left">
                         <li v-for="item_s_p in meta_sub_parent">
-                            <a v-if="item_s_p.FORM_TYPE.indexOf('subform-')==-1" href="javascript:;" v-on:click="mapping_sub_form.parent=item_s_p.FORM_NAME,mapping_sub_form.id_subform=item_s_p.META_BO_ID">
+                            <a v-if="item_s_p.FORM_TYPE.indexOf('subform-')==-1" href="javascript:;" v-on:click="mapping_sub_form.parent=item_s_p.FORM_NAME,mapping_sub_form.id_subform_p=item_s_p.META_BO_ID">
                                 {{ item_s_p.FORM_NAME }}
                             </a>
                         </li>
@@ -106,7 +106,7 @@
                     </button>
                     <ul class="dropdown-menu dropdown-menu-left">
                         <li v-for="item_s_c in meta_sub_child">
-                            <a v-if="item_s_c.FORM_TYPE.indexOf('subform-')==-1" href="javascript:;" v-on:click="mapping_sub_form.child=item_s_c.FORM_NAME,mapping_sub_form.id_subform=item_s_p.META_BO_ID">
+                            <a v-if="item_s_c.FORM_TYPE.indexOf('subform-')==-1" href="javascript:;" v-on:click="mapping_sub_form.child=item_s_c.FORM_NAME,mapping_sub_form.id_subform_c=item_s_c.META_BO_ID,mapping_sub_form.child_to_db_sb=item_s_c.DB_NAME">
                                 {{ item_s_c.FORM_NAME }}
                             </a>
                         </li>
@@ -140,7 +140,8 @@
                 {
                     parent: 'Choix du parent',
                     link: "=",
-                    child: 'Choix du fils'
+                    child: 'Choix du fils',
+                    child_to_db:''
                 }
             ],
             mappings_sub_form: [
@@ -148,7 +149,9 @@
                     parent: 'Choix du parent (SUB-FORM)',
                     link: "=",
                     child: 'Choix du fils (SUB-FORM)',
-                    id_subform: ''
+                    child_to_db_sb: '',
+                    id_subform_p: '',
+                    id_subform_c: ''
 
                 }
             ]
@@ -159,7 +162,8 @@
                 this.mappings.push({
                     parent: 'Choix du parent',
                     link: "=",
-                    child: 'Choix du fils'
+                    child: 'Choix du fils',
+                    child_to_db:''
                 })
             },
             addMapping_sub_form: function () {
@@ -167,7 +171,9 @@
                     parent: 'Choix du parent (SUB-FORM)',
                     link: "=",
                     child: 'Choix du fils (SUB-FORM)',
-                    id_subform:''
+                    child_to_db_sb:'',
+                    id_subform: '',
+                    id_subform_c: ''
                 })
             },
             val: function (data) {
@@ -224,7 +230,7 @@
                             });
                         }
                     });
-                    
+
                 }
             });
 

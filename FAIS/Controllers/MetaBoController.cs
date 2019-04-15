@@ -485,7 +485,7 @@ namespace FAIS.Controllers
                 var value = s.Cmd("select " + originalField.Rows[0][0].ToString() + " from " + BO_DB_NAME + " where BO_ID =" + bo_id);
 
 
-                JSONA_STRING.Add(item.child.ToString(), value.Rows[0][0].ToString());
+                JSONA_STRING.Add(item.child_to_db.ToString(), value.Rows[0][0].ToString());
 
 
             }
@@ -494,24 +494,47 @@ namespace FAIS.Controllers
 
             // DAT SUB-FORM
             var parentData = await Insert((int)_JSON_MAPP["value"], JSONA_STRING);
-            foreach (var item_sub_form in _JSON_MAPP["MyMapping"]["mapping_sub_form"])
+            //////foreach (var item_sub_form in _JSON_MAPP["MyMapping"]["mapping_sub_form"])
+            //////{
+            //////    var originalField = s.Cmd("select DB_NAME from META_FIELD where FORM_NAME='" + item_sub_form["parent"].ToString() + "' and META_BO_ID=" + item_sub_form["id_subform_p"]);
+            //////    var tableName = s.Cmd("select BO_DB_NAME from META_bo where META_BO_ID=" + item_sub_form["id_subform_p"]);
+
+
+            //////    var value_s = s.Cmd("select  " + originalField.Rows[0][0].ToString() + " from " + tableName.Rows[0][0].ToString() + "  where BO_ID in (select BO_CHILD_ID from BO_CHILDS where BO_PARENT_ID = " + bo_id + ")");
+
+
+            //////    foreach (var v in value_s.Rows)
+            //////    {
+            //////        JSONA_STRING_SUBFORM = new Dictionary<string, object>();
+            //////        JSONA_STRING_SUBFORM.Add(item_sub_form.child_to_db_sb.ToString(), ((System.Data.DataRow)v).ItemArray[0].ToString());
+            //////        await InsertChilds((int)item_sub_form["id_subform_c"], (long)BO_Insert_return, JSONA_STRING_SUBFORM);
+            //////    }
+
+
+            //////}
+
+            // TEST BEGIN
+
+            var dt = s.Cmd("select BO_CHILD_ID from BO_CHILDS where BO_PARENT_ID = " + bo_id);
+            int id_subform_c = 0;
+            foreach (var r in dt.Rows)
             {
-                var originalField = s.Cmd("select DB_NAME from META_FIELD where FORM_NAME='" + item_sub_form["parent"].ToString() + "' and META_BO_ID=" + item_sub_form["id_subform"]);
-                var tableName = s.Cmd("select BO_DB_NAME from META_bo where META_BO_ID=" + item_sub_form["id_subform"]);
-
-
-                var value_s = s.Cmd("select  " + originalField.Rows[0][0].ToString() + " from " + tableName.Rows[0][0].ToString() + "  where BO_ID in (select BO_CHILD_ID from BO_CHILDS where BO_PARENT_ID = " + bo_id + ")");
-
-
-                foreach (var v in value_s.Rows)
+                JSONA_STRING_SUBFORM = new Dictionary<string, object>();
+                foreach (var item_sub_form in _JSON_MAPP["MyMapping"]["mapping_sub_form"])
                 {
-                    JSONA_STRING_SUBFORM = new Dictionary<string, object>();
-                    JSONA_STRING_SUBFORM.Add(item_sub_form.child.ToString(), ((System.Data.DataRow)v).ItemArray[0].ToString());
-                    await InsertChilds((int)item_sub_form["id_subform"], (long)BO_Insert_return, JSONA_STRING_SUBFORM);
+                    var originalField = s.Cmd("select DB_NAME from META_FIELD where FORM_NAME='" + item_sub_form["parent"].ToString() + "' and META_BO_ID=" + item_sub_form["id_subform_p"]);
+                    var tableName = s.Cmd("select BO_DB_NAME from META_bo where META_BO_ID=" + item_sub_form["id_subform_p"]);
+                    var value_s = s.Cmd("select  " + originalField.Rows[0][0].ToString() + " from " + tableName.Rows[0][0].ToString() + "  where BO_ID =" + ((System.Data.DataRow)r).ItemArray[0].ToString());
+
+                    id_subform_c = (int)item_sub_form["id_subform_c"];
+                    JSONA_STRING_SUBFORM.Add(item_sub_form.child_to_db_sb.ToString(), value_s.Rows[0][0].ToString());
+
                 }
-
-
+                await InsertChilds(id_subform_c, (long)BO_Insert_return, JSONA_STRING_SUBFORM);
             }
+
+            //TEST FIN
+
 
             s.Cmd("update task  set ETAT=1 where task_id=" + taks_id);
             return Ok(BO_DB_NAME);
