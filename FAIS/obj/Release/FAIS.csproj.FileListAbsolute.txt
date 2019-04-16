@@ -289,7 +289,6 @@ D:\PERSO\FAIS_GIT\admin.mvc.js\FAIS\bin\fr\Microsoft.AspNet.Identity.Core.resour
 D:\PERSO\FAIS_GIT\admin.mvc.js\FAIS\bin\fr\Microsoft.AspNet.Identity.Owin.resources.dll
 D:\PERSO\FAIS_GIT\admin.mvc.js\FAIS\bin\fr\Microsoft.AspNet.Identity.EntityFramework.resources.dll
 D:\PERSO\FAIS_GIT\admin.mvc.js\FAIS\bin\fr\System.Web.Http.Owin.resources.dll
-D:\PERSO\FAIS_GIT\admin.mvc.js\FAIS\obj\Release\FAIS.csprojAssemblyReference.cache
 D:\PERSO\FAIS_GIT\admin.mvc.js\FAIS\obj\Release\FAIS.Properties.Resources.resources
 D:\PERSO\FAIS_GIT\admin.mvc.js\FAIS\obj\Release\FAIS.Resources.lang.fr-FR.resources
 D:\PERSO\FAIS_GIT\admin.mvc.js\FAIS\obj\Release\FAIS.csproj.GenerateResource.cache

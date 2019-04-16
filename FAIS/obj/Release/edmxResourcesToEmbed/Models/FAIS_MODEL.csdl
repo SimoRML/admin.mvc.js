@@ -128,7 +128,6 @@
       <Parameter Name="cle" Mode="In" Type="String" />
       <Parameter Name="TableName" Mode="In" Type="String" />
       <Parameter Name="stepBy" Mode="In" Type="Int32" />
-      <Parameter Name="presist" Mode="In" Type="Int32" />
     </FunctionImport>
     <EntitySet Name="NOTIF" EntityType="FAIS_Model.NOTIF" />
     <EntitySet Name="TASK" EntityType="FAIS_Model.TASK" />
