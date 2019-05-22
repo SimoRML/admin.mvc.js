@@ -268,7 +268,14 @@
 <script type="text/javascript">
 
     bus.setScope("flowLastIndex", 0);
-    var Workflow_items = '@Html.Raw(Model.ITEMS.Replace("'","``"))';
+ @{ 
+     var model_items= Model.ITEMS;
+     if (Model.ITEMS != null )
+     {
+         model_items = Model.ITEMS.Replace("'", "``");
+     }
+ }
+    var Workflow_items = '@Html.Raw(model_items)';
     console.log(Workflow_items);
 
                 try {

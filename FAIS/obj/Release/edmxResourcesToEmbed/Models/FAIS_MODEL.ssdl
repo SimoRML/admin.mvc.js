@@ -1,7 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Schema Namespace="FAIS_Model.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
-  <!--Erreurs détectées durant la génération :
-avertissement 6002: La table/vue 'lasphere_joud.dbo.BO' n'a pas de clé primaire définie. La clé a été déduite et la définition a été créée en tant que table/vue en lecture seule.-->
+<Schema Namespace="Fais_Model.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
   <EntityType Name="BO">
     <Key>
       <PropertyRef Name="BO_ID" />
@@ -15,8 +13,6 @@ avertissement 6002: La table/vue 'lasphere_joud.dbo.BO' n'a pas de clé primaire
     <Property Name="BO_TYPE" Type="varchar" MaxLength="100" />
     <Property Name="VERSION" Type="int" />
   </EntityType>
-  <!--Erreurs détectées durant la génération :
-avertissement 6002: La table/vue 'lasphere_joud.dbo.BO_CHILDS' n'a pas de clé primaire définie. La clé a été déduite et la définition a été créée en tant que table/vue en lecture seule.-->
   <EntityType Name="BO_CHILDS">
     <Key>
       <PropertyRef Name="BO_PARENT_ID" />
@@ -156,7 +152,7 @@ avertissement 6002: La table/vue 'lasphere_joud.dbo.BO_CHILDS' n'a pas de clé p
     <Property Name="ACTIVE" Type="int" />
     <Property Name="ITEMS" Type="nvarchar(max)" />
   </EntityType>
-  <Association Name="FK__META_FIEL__META___33D4B598">
+  <Association Name="FK__META_FIEL__META___47A6A41B">
     <End Role="META_BO" Type="Self.META_BO" Multiplicity="1" />
     <End Role="META_FIELD" Type="Self.META_FIELD" Multiplicity="*" />
     <ReferentialConstraint>
@@ -168,7 +164,7 @@ avertissement 6002: La table/vue 'lasphere_joud.dbo.BO_CHILDS' n'a pas de clé p
       </Dependent>
     </ReferentialConstraint>
   </Association>
-  <Association Name="FK__VERSIONS__META_B__4BAC3F29">
+  <Association Name="FK__VERSIONS__META_B__489AC854">
     <End Role="META_BO" Type="Self.META_BO" Multiplicity="0..1" />
     <End Role="VERSIONS" Type="Self.VERSIONS" Multiplicity="*" />
     <ReferentialConstraint>
@@ -180,18 +176,33 @@ avertissement 6002: La table/vue 'lasphere_joud.dbo.BO_CHILDS' n'a pas de clé p
       </Dependent>
     </ReferentialConstraint>
   </Association>
+  <Function Name="cleanMetaBo" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo" />
   <Function Name="GetSubForm" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
     <Parameter Name="meta_bo_id" Type="int" Mode="In" />
   </Function>
+  <Function Name="GetSubFormId" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+    <Parameter Name="meta_bo_id" Type="int" Mode="In" />
+  </Function>
+  <Function Name="InitMetaBo" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo" />
+  <Function Name="INSERT_BO_LIGNES" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+    <Parameter Name="nbrLignes" Type="int" Mode="In" />
+    <Parameter Name="BO_NAME" Type="varchar" Mode="In" />
+  </Function>
   <Function Name="MoveBoToCurrentVersion" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
     <Parameter Name="BO_ID" Type="bigint" Mode="In" />
+  </Function>
+  <Function Name="MoveFromTmp" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+    <Parameter Name="metBoId" Type="int" Mode="In" />
   </Function>
   <Function Name="PlusSequenceNextID" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
     <Parameter Name="cle" Type="varchar" Mode="In" />
     <Parameter Name="TableName" Type="varchar" Mode="In" />
     <Parameter Name="stepBy" Type="int" Mode="In" />
+    <Parameter Name="presist" Type="int" Mode="In" />
   </Function>
-  <EntityContainer Name="FAIS_ModelStoreContainer">
+  <EntityContainer Name="Fais_ModelStoreContainer">
+    <EntitySet Name="BO" EntityType="Self.BO" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="BO_CHILDS" EntityType="Self.BO_CHILDS" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="BO_ROLE" EntityType="Self.BO_ROLE" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="META_BO" EntityType="Self.META_BO" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="META_FIELD" EntityType="Self.META_FIELD" Schema="dbo" store:Type="Tables" />
@@ -201,30 +212,11 @@ avertissement 6002: La table/vue 'lasphere_joud.dbo.BO_CHILDS' n'a pas de clé p
     <EntitySet Name="TASK" EntityType="Self.TASK" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="VERSIONS" EntityType="Self.VERSIONS" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="WORKFLOW" EntityType="Self.WORKFLOW" Schema="dbo" store:Type="Tables" />
-    <EntitySet Name="BO" EntityType="Self.BO" store:Type="Tables" store:Schema="dbo">
-      <DefiningQuery>SELECT 
-    [BO].[BO_ID] AS [BO_ID], 
-    [BO].[CREATED_BY] AS [CREATED_BY], 
-    [BO].[CREATED_DATE] AS [CREATED_DATE], 
-    [BO].[UPDATED_BY] AS [UPDATED_BY], 
-    [BO].[UPDATED_DATE] AS [UPDATED_DATE], 
-    [BO].[STATUS] AS [STATUS], 
-    [BO].[BO_TYPE] AS [BO_TYPE], 
-    [BO].[VERSION] AS [VERSION]
-    FROM [dbo].[BO] AS [BO]</DefiningQuery>
-    </EntitySet>
-    <EntitySet Name="BO_CHILDS" EntityType="Self.BO_CHILDS" store:Type="Tables" store:Schema="dbo">
-      <DefiningQuery>SELECT 
-    [BO_CHILDS].[BO_PARENT_ID] AS [BO_PARENT_ID], 
-    [BO_CHILDS].[BO_CHILD_ID] AS [BO_CHILD_ID], 
-    [BO_CHILDS].[RELATION] AS [RELATION]
-    FROM [dbo].[BO_CHILDS] AS [BO_CHILDS]</DefiningQuery>
-    </EntitySet>
-    <AssociationSet Name="FK__META_FIEL__META___33D4B598" Association="Self.FK__META_FIEL__META___33D4B598">
+    <AssociationSet Name="FK__META_FIEL__META___47A6A41B" Association="Self.FK__META_FIEL__META___47A6A41B">
       <End Role="META_BO" EntitySet="META_BO" />
       <End Role="META_FIELD" EntitySet="META_FIELD" />
     </AssociationSet>
-    <AssociationSet Name="FK__VERSIONS__META_B__4BAC3F29" Association="Self.FK__VERSIONS__META_B__4BAC3F29">
+    <AssociationSet Name="FK__VERSIONS__META_B__489AC854" Association="Self.FK__VERSIONS__META_B__489AC854">
       <End Role="META_BO" EntitySet="META_BO" />
       <End Role="VERSIONS" EntitySet="VERSIONS" />
     </AssociationSet>

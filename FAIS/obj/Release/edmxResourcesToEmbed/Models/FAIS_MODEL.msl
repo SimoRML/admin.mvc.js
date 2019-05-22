@@ -1,8 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
-  <EntityContainerMapping StorageEntityContainer="FAIS_ModelStoreContainer" CdmEntityContainer="FAISEntities">
+  <EntityContainerMapping StorageEntityContainer="Fais_ModelStoreContainer" CdmEntityContainer="FAISEntities">
     <EntitySetMapping Name="BO">
-      <EntityTypeMapping TypeName="FAIS_Model.BO">
+      <EntityTypeMapping TypeName="Fais_Model.BO">
         <MappingFragment StoreEntitySet="BO">
           <ScalarProperty Name="BO_ID" ColumnName="BO_ID" />
           <ScalarProperty Name="CREATED_BY" ColumnName="CREATED_BY" />
@@ -16,7 +16,7 @@
       </EntityTypeMapping>
     </EntitySetMapping>
     <EntitySetMapping Name="BO_CHILDS">
-      <EntityTypeMapping TypeName="FAIS_Model.BO_CHILDS">
+      <EntityTypeMapping TypeName="Fais_Model.BO_CHILDS">
         <MappingFragment StoreEntitySet="BO_CHILDS">
           <ScalarProperty Name="BO_PARENT_ID" ColumnName="BO_PARENT_ID" />
           <ScalarProperty Name="BO_CHILD_ID" ColumnName="BO_CHILD_ID" />
@@ -24,10 +24,25 @@
         </MappingFragment>
       </EntityTypeMapping>
     </EntitySetMapping>
+    <EntitySetMapping Name="BO_ROLE">
+      <EntityTypeMapping TypeName="Fais_Model.BO_ROLE">
+        <MappingFragment StoreEntitySet="BO_ROLE">
+          <ScalarProperty Name="BO_ROLE_ID" ColumnName="BO_ROLE_ID" />
+          <ScalarProperty Name="META_BO_ID" ColumnName="META_BO_ID" />
+          <ScalarProperty Name="ROLE_ID" ColumnName="ROLE_ID" />
+          <ScalarProperty Name="CAN_READ" ColumnName="CAN_READ" />
+          <ScalarProperty Name="CAN_WRITE" ColumnName="CAN_WRITE" />
+          <ScalarProperty Name="CREATED_BY" ColumnName="CREATED_BY" />
+          <ScalarProperty Name="CREATED_DATE" ColumnName="CREATED_DATE" />
+          <ScalarProperty Name="UPDATED_BY" ColumnName="UPDATED_BY" />
+          <ScalarProperty Name="UPDATED_DATE" ColumnName="UPDATED_DATE" />
+          <ScalarProperty Name="STATUS" ColumnName="STATUS" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
     <EntitySetMapping Name="META_BO">
-      <EntityTypeMapping TypeName="FAIS_Model.META_BO">
+      <EntityTypeMapping TypeName="Fais_Model.META_BO">
         <MappingFragment StoreEntitySet="META_BO">
-          <ScalarProperty Name="JSON_DATA" ColumnName="JSON_DATA" />
           <ScalarProperty Name="META_BO_ID" ColumnName="META_BO_ID" />
           <ScalarProperty Name="BO_NAME" ColumnName="BO_NAME" />
           <ScalarProperty Name="VERSION" ColumnName="VERSION" />
@@ -38,13 +53,13 @@
           <ScalarProperty Name="STATUS" ColumnName="STATUS" />
           <ScalarProperty Name="BO_DB_NAME" ColumnName="BO_DB_NAME" />
           <ScalarProperty Name="TYPE" ColumnName="TYPE" />
+          <ScalarProperty Name="JSON_DATA" ColumnName="JSON_DATA" />
         </MappingFragment>
       </EntityTypeMapping>
     </EntitySetMapping>
     <EntitySetMapping Name="META_FIELD">
-      <EntityTypeMapping TypeName="FAIS_Model.META_FIELD">
+      <EntityTypeMapping TypeName="Fais_Model.META_FIELD">
         <MappingFragment StoreEntitySet="META_FIELD">
-          <ScalarProperty Name="JSON_DATA" ColumnName="JSON_DATA" />
           <ScalarProperty Name="META_FIELD_ID" ColumnName="META_FIELD_ID" />
           <ScalarProperty Name="META_BO_ID" ColumnName="META_BO_ID" />
           <ScalarProperty Name="DB_NAME" ColumnName="DB_NAME" />
@@ -67,11 +82,64 @@
           <ScalarProperty Name="UPDATED_DATE" ColumnName="UPDATED_DATE" />
           <ScalarProperty Name="STATUS" ColumnName="STATUS" />
           <ScalarProperty Name="VERSION" ColumnName="VERSION" />
+          <ScalarProperty Name="JSON_DATA" ColumnName="JSON_DATA" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="NOTIF">
+      <EntityTypeMapping TypeName="Fais_Model.NOTIF">
+        <MappingFragment StoreEntitySet="NOTIF">
+          <ScalarProperty Name="ID_NOTIF" ColumnName="ID_NOTIF" />
+          <ScalarProperty Name="VALIDATOR" ColumnName="VALIDATOR" />
+          <ScalarProperty Name="ETAT" ColumnName="ETAT" />
+          <ScalarProperty Name="CREATED_DATE" ColumnName="CREATED_DATE" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="PAGE">
+      <EntityTypeMapping TypeName="Fais_Model.PAGE">
+        <MappingFragment StoreEntitySet="PAGE">
+          <ScalarProperty Name="BO_ID" ColumnName="BO_ID" />
+          <ScalarProperty Name="TITLE" ColumnName="TITLE" />
+          <ScalarProperty Name="GROUPE" ColumnName="GROUPE" />
+          <ScalarProperty Name="STATUS" ColumnName="STATUS" />
+          <ScalarProperty Name="LAYOUT" ColumnName="LAYOUT" />
+          <ScalarProperty Name="CREATED_DATE" ColumnName="CREATED_DATE" />
+          <ScalarProperty Name="CREATED_BY" ColumnName="CREATED_BY" />
+          <ScalarProperty Name="UPDATED_DATE" ColumnName="UPDATED_DATE" />
+          <ScalarProperty Name="UPDATED_BY" ColumnName="UPDATED_BY" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="PlusSequence">
+      <EntityTypeMapping TypeName="Fais_Model.PlusSequence">
+        <MappingFragment StoreEntitySet="PlusSequence">
+          <ScalarProperty Name="SequenceID" ColumnName="SequenceID" />
+          <ScalarProperty Name="cle" ColumnName="cle" />
+          <ScalarProperty Name="TableName" ColumnName="TableName" />
+          <ScalarProperty Name="StartValue" ColumnName="StartValue" />
+          <ScalarProperty Name="StepBy" ColumnName="StepBy" />
+          <ScalarProperty Name="CurrentValue" ColumnName="CurrentValue" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="TASK">
+      <EntityTypeMapping TypeName="Fais_Model.TASK">
+        <MappingFragment StoreEntitySet="TASK">
+          <ScalarProperty Name="TASK_ID" ColumnName="TASK_ID" />
+          <ScalarProperty Name="BO_ID" ColumnName="BO_ID" />
+          <ScalarProperty Name="JSON_DATA" ColumnName="JSON_DATA" />
+          <ScalarProperty Name="STATUS" ColumnName="STATUS" />
+          <ScalarProperty Name="ETAT" ColumnName="ETAT" />
+          <ScalarProperty Name="TASK_LEVEL" ColumnName="TASK_LEVEL" />
+          <ScalarProperty Name="TASK_TYPE" ColumnName="TASK_TYPE" />
+          <ScalarProperty Name="CREATED_DATE" ColumnName="CREATED_DATE" />
+          <ScalarProperty Name="CREATED_BY" ColumnName="CREATED_BY" />
         </MappingFragment>
       </EntityTypeMapping>
     </EntitySetMapping>
     <EntitySetMapping Name="VERSIONS">
-      <EntityTypeMapping TypeName="FAIS_Model.VERSIONS">
+      <EntityTypeMapping TypeName="Fais_Model.VERSIONS">
         <MappingFragment StoreEntitySet="VERSIONS">
           <ScalarProperty Name="VERSIONS_ID" ColumnName="VERSIONS_ID" />
           <ScalarProperty Name="META_BO_ID" ColumnName="META_BO_ID" />
@@ -85,86 +153,23 @@
         </MappingFragment>
       </EntityTypeMapping>
     </EntitySetMapping>
-    <FunctionImportMapping FunctionImportName="MoveBoToCurrentVersion" FunctionName="FAIS_Model.Store.MoveBoToCurrentVersion" />
-    <EntitySetMapping Name="PlusSequence">
-      <EntityTypeMapping TypeName="FAIS_Model.PlusSequence">
-        <MappingFragment StoreEntitySet="PlusSequence">
-          <ScalarProperty Name="CurrentValue" ColumnName="CurrentValue" />
-          <ScalarProperty Name="StepBy" ColumnName="StepBy" />
-          <ScalarProperty Name="StartValue" ColumnName="StartValue" />
-          <ScalarProperty Name="TableName" ColumnName="TableName" />
-          <ScalarProperty Name="cle" ColumnName="cle" />
-          <ScalarProperty Name="SequenceID" ColumnName="SequenceID" />
-        </MappingFragment>
-      </EntityTypeMapping>
-    </EntitySetMapping>
-    <FunctionImportMapping FunctionImportName="PlusSequenceNextID" FunctionName="FAIS_Model.Store.PlusSequenceNextID" />
-    <EntitySetMapping Name="NOTIF">
-      <EntityTypeMapping TypeName="FAIS_Model.NOTIF">
-        <MappingFragment StoreEntitySet="NOTIF">
-          <ScalarProperty Name="CREATED_DATE" ColumnName="CREATED_DATE" />
-          <ScalarProperty Name="ETAT" ColumnName="ETAT" />
-          <ScalarProperty Name="VALIDATOR" ColumnName="VALIDATOR" />
-          <ScalarProperty Name="ID_NOTIF" ColumnName="ID_NOTIF" />
-        </MappingFragment>
-      </EntityTypeMapping>
-    </EntitySetMapping>
-    <EntitySetMapping Name="TASK">
-      <EntityTypeMapping TypeName="FAIS_Model.TASK">
-        <MappingFragment StoreEntitySet="TASK">
-          <ScalarProperty Name="CREATED_BY" ColumnName="CREATED_BY" />
-          <ScalarProperty Name="CREATED_DATE" ColumnName="CREATED_DATE" />
-          <ScalarProperty Name="TASK_TYPE" ColumnName="TASK_TYPE" />
-          <ScalarProperty Name="TASK_LEVEL" ColumnName="TASK_LEVEL" />
-          <ScalarProperty Name="ETAT" ColumnName="ETAT" />
-          <ScalarProperty Name="STATUS" ColumnName="STATUS" />
-          <ScalarProperty Name="JSON_DATA" ColumnName="JSON_DATA" />
-          <ScalarProperty Name="BO_ID" ColumnName="BO_ID" />
-          <ScalarProperty Name="TASK_ID" ColumnName="TASK_ID" />
-        </MappingFragment>
-      </EntityTypeMapping>
-    </EntitySetMapping>
     <EntitySetMapping Name="WORKFLOW">
-      <EntityTypeMapping TypeName="FAIS_Model.WORKFLOW">
+      <EntityTypeMapping TypeName="Fais_Model.WORKFLOW">
         <MappingFragment StoreEntitySet="WORKFLOW">
-          <ScalarProperty Name="ITEMS" ColumnName="ITEMS" />
-          <ScalarProperty Name="ACTIVE" ColumnName="ACTIVE" />
+          <ScalarProperty Name="BO_ID" ColumnName="BO_ID" />
           <ScalarProperty Name="LIBELLE" ColumnName="LIBELLE" />
-          <ScalarProperty Name="BO_ID" ColumnName="BO_ID" />
+          <ScalarProperty Name="ACTIVE" ColumnName="ACTIVE" />
+          <ScalarProperty Name="ITEMS" ColumnName="ITEMS" />
         </MappingFragment>
       </EntityTypeMapping>
     </EntitySetMapping>
-    <EntitySetMapping Name="BO_ROLE">
-      <EntityTypeMapping TypeName="FAIS_Model.BO_ROLE">
-        <MappingFragment StoreEntitySet="BO_ROLE">
-          <ScalarProperty Name="STATUS" ColumnName="STATUS" />
-          <ScalarProperty Name="UPDATED_DATE" ColumnName="UPDATED_DATE" />
-          <ScalarProperty Name="UPDATED_BY" ColumnName="UPDATED_BY" />
-          <ScalarProperty Name="CREATED_DATE" ColumnName="CREATED_DATE" />
-          <ScalarProperty Name="CREATED_BY" ColumnName="CREATED_BY" />
-          <ScalarProperty Name="CAN_WRITE" ColumnName="CAN_WRITE" />
-          <ScalarProperty Name="CAN_READ" ColumnName="CAN_READ" />
-          <ScalarProperty Name="ROLE_ID" ColumnName="ROLE_ID" />
-          <ScalarProperty Name="META_BO_ID" ColumnName="META_BO_ID" />
-          <ScalarProperty Name="BO_ROLE_ID" ColumnName="BO_ROLE_ID" />
-        </MappingFragment>
-      </EntityTypeMapping>
-    </EntitySetMapping>
-    <EntitySetMapping Name="PAGE">
-      <EntityTypeMapping TypeName="FAIS_Model.PAGE">
-        <MappingFragment StoreEntitySet="PAGE">
-          <ScalarProperty Name="UPDATED_BY" ColumnName="UPDATED_BY" />
-          <ScalarProperty Name="UPDATED_DATE" ColumnName="UPDATED_DATE" />
-          <ScalarProperty Name="CREATED_BY" ColumnName="CREATED_BY" />
-          <ScalarProperty Name="CREATED_DATE" ColumnName="CREATED_DATE" />
-          <ScalarProperty Name="LAYOUT" ColumnName="LAYOUT" />
-          <ScalarProperty Name="STATUS" ColumnName="STATUS" />
-          <ScalarProperty Name="GROUPE" ColumnName="GROUPE" />
-          <ScalarProperty Name="TITLE" ColumnName="TITLE" />
-          <ScalarProperty Name="BO_ID" ColumnName="BO_ID" />
-        </MappingFragment>
-      </EntityTypeMapping>
-    </EntitySetMapping>
-    <FunctionImportMapping FunctionImportName="GetSubForm" FunctionName="FAIS_Model.Store.GetSubForm" />
+    <FunctionImportMapping FunctionImportName="cleanMetaBo" FunctionName="Fais_Model.Store.cleanMetaBo" />
+    <FunctionImportMapping FunctionImportName="GetSubForm" FunctionName="Fais_Model.Store.GetSubForm" />
+    <FunctionImportMapping FunctionImportName="GetSubFormId" FunctionName="Fais_Model.Store.GetSubFormId" />
+    <FunctionImportMapping FunctionImportName="InitMetaBo" FunctionName="Fais_Model.Store.InitMetaBo" />
+    <FunctionImportMapping FunctionImportName="INSERT_BO_LIGNES" FunctionName="Fais_Model.Store.INSERT_BO_LIGNES" />
+    <FunctionImportMapping FunctionImportName="MoveBoToCurrentVersion" FunctionName="Fais_Model.Store.MoveBoToCurrentVersion" />
+    <FunctionImportMapping FunctionImportName="MoveFromTmp" FunctionName="Fais_Model.Store.MoveFromTmp" />
+    <FunctionImportMapping FunctionImportName="PlusSequenceNextID" FunctionName="Fais_Model.Store.PlusSequenceNextID" />
   </EntityContainerMapping>
 </Mapping>

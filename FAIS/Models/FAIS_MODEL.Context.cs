@@ -29,40 +29,19 @@ namespace FAIS.Models
     
         public virtual DbSet<BO> BO { get; set; }
         public virtual DbSet<BO_CHILDS> BO_CHILDS { get; set; }
+        public virtual DbSet<BO_ROLE> BO_ROLE { get; set; }
         public virtual DbSet<META_BO> META_BO { get; set; }
         public virtual DbSet<META_FIELD> META_FIELD { get; set; }
-        public virtual DbSet<VERSIONS> VERSIONS { get; set; }
-        public virtual DbSet<PlusSequence> PlusSequence { get; set; }
         public virtual DbSet<NOTIF> NOTIF { get; set; }
-        public virtual DbSet<TASK> TASK { get; set; }
-        public virtual DbSet<WORKFLOW> WORKFLOW { get; set; }
-        public virtual DbSet<BO_ROLE> BO_ROLE { get; set; }
         public virtual DbSet<PAGE> PAGE { get; set; }
+        public virtual DbSet<PlusSequence> PlusSequence { get; set; }
+        public virtual DbSet<TASK> TASK { get; set; }
+        public virtual DbSet<VERSIONS> VERSIONS { get; set; }
+        public virtual DbSet<WORKFLOW> WORKFLOW { get; set; }
     
-        public virtual int MoveBoToCurrentVersion(Nullable<long> bO_ID)
+        public virtual int cleanMetaBo()
         {
-            var bO_IDParameter = bO_ID.HasValue ?
-                new ObjectParameter("BO_ID", bO_ID) :
-                new ObjectParameter("BO_ID", typeof(long));
-    
-            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("MoveBoToCurrentVersion", bO_IDParameter);
-        }
-    
-        public virtual ObjectResult<string> PlusSequenceNextID(string cle, string tableName, Nullable<int> stepBy)
-        {
-            var cleParameter = cle != null ?
-                new ObjectParameter("cle", cle) :
-                new ObjectParameter("cle", typeof(string));
-    
-            var tableNameParameter = tableName != null ?
-                new ObjectParameter("TableName", tableName) :
-                new ObjectParameter("TableName", typeof(string));
-    
-            var stepByParameter = stepBy.HasValue ?
-                new ObjectParameter("stepBy", stepBy) :
-                new ObjectParameter("stepBy", typeof(int));
-    
-            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<string>("PlusSequenceNextID", cleParameter, tableNameParameter, stepByParameter);
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("cleanMetaBo");
         }
     
         public virtual ObjectResult<string> GetSubForm(Nullable<int> meta_bo_id)
@@ -81,6 +60,63 @@ namespace FAIS.Models
                 new ObjectParameter("meta_bo_id", typeof(int));
     
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<Nullable<long>>("GetSubFormId", meta_bo_idParameter);
+        }
+    
+        public virtual int InitMetaBo()
+        {
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("InitMetaBo");
+        }
+    
+        public virtual int INSERT_BO_LIGNES(Nullable<int> nbrLignes, string bO_NAME)
+        {
+            var nbrLignesParameter = nbrLignes.HasValue ?
+                new ObjectParameter("nbrLignes", nbrLignes) :
+                new ObjectParameter("nbrLignes", typeof(int));
+    
+            var bO_NAMEParameter = bO_NAME != null ?
+                new ObjectParameter("BO_NAME", bO_NAME) :
+                new ObjectParameter("BO_NAME", typeof(string));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("INSERT_BO_LIGNES", nbrLignesParameter, bO_NAMEParameter);
+        }
+    
+        public virtual int MoveBoToCurrentVersion(Nullable<long> bO_ID)
+        {
+            var bO_IDParameter = bO_ID.HasValue ?
+                new ObjectParameter("BO_ID", bO_ID) :
+                new ObjectParameter("BO_ID", typeof(long));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("MoveBoToCurrentVersion", bO_IDParameter);
+        }
+    
+        public virtual int MoveFromTmp(Nullable<int> metBoId)
+        {
+            var metBoIdParameter = metBoId.HasValue ?
+                new ObjectParameter("metBoId", metBoId) :
+                new ObjectParameter("metBoId", typeof(int));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("MoveFromTmp", metBoIdParameter);
+        }
+    
+        public virtual ObjectResult<string> PlusSequenceNextID(string cle, string tableName, Nullable<int> stepBy, Nullable<int> presist)
+        {
+            var cleParameter = cle != null ?
+                new ObjectParameter("cle", cle) :
+                new ObjectParameter("cle", typeof(string));
+    
+            var tableNameParameter = tableName != null ?
+                new ObjectParameter("TableName", tableName) :
+                new ObjectParameter("TableName", typeof(string));
+    
+            var stepByParameter = stepBy.HasValue ?
+                new ObjectParameter("stepBy", stepBy) :
+                new ObjectParameter("stepBy", typeof(int));
+    
+            var presistParameter = presist.HasValue ?
+                new ObjectParameter("presist", presist) :
+                new ObjectParameter("presist", typeof(int));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<string>("PlusSequenceNextID", cleParameter, tableNameParameter, stepByParameter, presistParameter);
         }
     }
 }
