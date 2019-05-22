@@ -4,7 +4,7 @@
   <edmx:Runtime>
     <!-- SSDL content -->
     <edmx:StorageModels>
-    <Schema Namespace="Fais_Model.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+      <Schema Namespace="FAISModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
         <EntityType Name="BO">
           <Key>
             <PropertyRef Name="BO_ID" />
@@ -109,17 +109,6 @@
           <Property Name="UPDATED_DATE" Type="datetime" />
           <Property Name="UPDATED_BY" Type="varchar" MaxLength="100" />
         </EntityType>
-        <EntityType Name="PlusSequence">
-          <Key>
-            <PropertyRef Name="SequenceID" />
-          </Key>
-          <Property Name="SequenceID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-          <Property Name="cle" Type="varchar" MaxLength="500" />
-          <Property Name="TableName" Type="varchar" MaxLength="50" />
-          <Property Name="StartValue" Type="int" />
-          <Property Name="StepBy" Type="int" />
-          <Property Name="CurrentValue" Type="int" />
-        </EntityType>
         <EntityType Name="TASK">
           <Key>
             <PropertyRef Name="TASK_ID" />
@@ -205,7 +194,7 @@
           <Parameter Name="stepBy" Type="int" Mode="In" />
           <Parameter Name="presist" Type="int" Mode="In" />
         </Function>
-        <EntityContainer Name="Fais_ModelStoreContainer">
+        <EntityContainer Name="FAISModelStoreContainer">
           <EntitySet Name="BO" EntityType="Self.BO" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="BO_CHILDS" EntityType="Self.BO_CHILDS" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="BO_ROLE" EntityType="Self.BO_ROLE" Schema="dbo" store:Type="Tables" />
@@ -213,7 +202,6 @@
           <EntitySet Name="META_FIELD" EntityType="Self.META_FIELD" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="NOTIF" EntityType="Self.NOTIF" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="PAGE" EntityType="Self.PAGE" Schema="dbo" store:Type="Tables" />
-          <EntitySet Name="PlusSequence" EntityType="Self.PlusSequence" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="TASK" EntityType="Self.TASK" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="VERSIONS" EntityType="Self.VERSIONS" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="WORKFLOW" EntityType="Self.WORKFLOW" Schema="dbo" store:Type="Tables" />
@@ -226,10 +214,11 @@
             <End Role="VERSIONS" EntitySet="VERSIONS" />
           </AssociationSet>
         </EntityContainer>
-      </Schema></edmx:StorageModels>
+      </Schema>
+    </edmx:StorageModels>
     <!-- CSDL content -->
     <edmx:ConceptualModels>
-      <Schema Namespace="Fais_Model" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+      <Schema Namespace="FAISModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
         <EntityType Name="BO">
           <Key>
             <PropertyRef Name="BO_ID" />
@@ -283,6 +272,7 @@
           <Property Name="TYPE" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
           <Property Name="JSON_DATA" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
           <NavigationProperty Name="META_FIELD" Relationship="Self.FK__META_FIEL__META___47A6A41B" FromRole="META_BO" ToRole="META_FIELD" />
+          <NavigationProperty Name="VERSIONS" Relationship="Self.FK__VERSIONS__META_B__489AC854" FromRole="META_BO" ToRole="VERSIONS" />
         </EntityType>
         <EntityType Name="META_FIELD">
           <Key>
@@ -335,17 +325,6 @@
           <Property Name="UPDATED_DATE" Type="DateTime" Precision="3" />
           <Property Name="UPDATED_BY" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
         </EntityType>
-        <EntityType Name="PlusSequence">
-          <Key>
-            <PropertyRef Name="SequenceID" />
-          </Key>
-          <Property Name="SequenceID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="cle" Type="String" MaxLength="500" FixedLength="false" Unicode="false" />
-          <Property Name="TableName" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="StartValue" Type="Int32" />
-          <Property Name="StepBy" Type="Int32" />
-          <Property Name="CurrentValue" Type="Int32" />
-        </EntityType>
         <EntityType Name="TASK">
           <Key>
             <PropertyRef Name="TASK_ID" />
@@ -373,7 +352,6 @@
           <Property Name="UPDATED_BY" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
           <Property Name="UPDATED_DATE" Type="DateTime" Precision="3" />
           <Property Name="STATUS" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
-          <NavigationProperty Name="META_BO" Relationship="Self.FK__VERSIONS__META_B__489AC854" FromRole="VERSIONS" ToRole="META_BO" />
         </EntityType>
         <EntityType Name="WORKFLOW">
           <Key>
@@ -416,7 +394,6 @@
           <EntitySet Name="META_FIELD" EntityType="Self.META_FIELD" />
           <EntitySet Name="NOTIF" EntityType="Self.NOTIF" />
           <EntitySet Name="PAGE" EntityType="Self.PAGE" />
-          <EntitySet Name="PlusSequence" EntityType="Self.PlusSequence" />
           <EntitySet Name="TASK" EntityType="Self.TASK" />
           <EntitySet Name="VERSIONS" EntityType="Self.VERSIONS" />
           <EntitySet Name="WORKFLOW" EntityType="Self.WORKFLOW" />
@@ -430,10 +407,10 @@
           </AssociationSet>
           <FunctionImport Name="cleanMetaBo" />
           <FunctionImport Name="GetSubForm" ReturnType="Collection(String)">
-          <Parameter Name="meta_bo_id" Mode="In" Type="Int32" />
+            <Parameter Name="meta_bo_id" Mode="In" Type="Int32" />
           </FunctionImport>
           <FunctionImport Name="GetSubFormId" ReturnType="Collection(Int64)">
-          <Parameter Name="meta_bo_id" Mode="In" Type="Int32" />
+            <Parameter Name="meta_bo_id" Mode="In" Type="Int32" />
           </FunctionImport>
           <FunctionImport Name="InitMetaBo" />
           <FunctionImport Name="INSERT_BO_LIGNES">
@@ -441,10 +418,10 @@
             <Parameter Name="BO_NAME" Mode="In" Type="String" />
           </FunctionImport>
           <FunctionImport Name="MoveBoToCurrentVersion">
-          <Parameter Name="BO_ID" Mode="In" Type="Int64" />
+            <Parameter Name="BO_ID" Mode="In" Type="Int64" />
           </FunctionImport>
           <FunctionImport Name="MoveFromTmp">
-          <Parameter Name="metBoId" Mode="In" Type="Int32" />
+            <Parameter Name="metBoId" Mode="In" Type="Int32" />
           </FunctionImport>
           <FunctionImport Name="PlusSequenceNextID" ReturnType="Collection(String)">
             <Parameter Name="cle" Mode="In" Type="String" />
@@ -458,9 +435,9 @@
     <!-- C-S mapping content -->
     <edmx:Mappings>
       <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
-        <EntityContainerMapping StorageEntityContainer="Fais_ModelStoreContainer" CdmEntityContainer="FAISEntities">
+        <EntityContainerMapping StorageEntityContainer="FAISModelStoreContainer" CdmEntityContainer="FAISEntities">
           <EntitySetMapping Name="BO">
-            <EntityTypeMapping TypeName="Fais_Model.BO">
+            <EntityTypeMapping TypeName="FAISModel.BO">
               <MappingFragment StoreEntitySet="BO">
                 <ScalarProperty Name="BO_ID" ColumnName="BO_ID" />
                 <ScalarProperty Name="CREATED_BY" ColumnName="CREATED_BY" />
@@ -474,7 +451,7 @@
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="BO_CHILDS">
-            <EntityTypeMapping TypeName="Fais_Model.BO_CHILDS">
+            <EntityTypeMapping TypeName="FAISModel.BO_CHILDS">
               <MappingFragment StoreEntitySet="BO_CHILDS">
                 <ScalarProperty Name="BO_PARENT_ID" ColumnName="BO_PARENT_ID" />
                 <ScalarProperty Name="BO_CHILD_ID" ColumnName="BO_CHILD_ID" />
@@ -483,7 +460,7 @@
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="BO_ROLE">
-            <EntityTypeMapping TypeName="Fais_Model.BO_ROLE">
+            <EntityTypeMapping TypeName="FAISModel.BO_ROLE">
               <MappingFragment StoreEntitySet="BO_ROLE">
                 <ScalarProperty Name="BO_ROLE_ID" ColumnName="BO_ROLE_ID" />
                 <ScalarProperty Name="META_BO_ID" ColumnName="META_BO_ID" />
@@ -499,7 +476,7 @@
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="META_BO">
-            <EntityTypeMapping TypeName="Fais_Model.META_BO">
+            <EntityTypeMapping TypeName="FAISModel.META_BO">
               <MappingFragment StoreEntitySet="META_BO">
                 <ScalarProperty Name="META_BO_ID" ColumnName="META_BO_ID" />
                 <ScalarProperty Name="BO_NAME" ColumnName="BO_NAME" />
@@ -516,7 +493,7 @@
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="META_FIELD">
-            <EntityTypeMapping TypeName="Fais_Model.META_FIELD">
+            <EntityTypeMapping TypeName="FAISModel.META_FIELD">
               <MappingFragment StoreEntitySet="META_FIELD">
                 <ScalarProperty Name="META_FIELD_ID" ColumnName="META_FIELD_ID" />
                 <ScalarProperty Name="META_BO_ID" ColumnName="META_BO_ID" />
@@ -545,7 +522,7 @@
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="NOTIF">
-            <EntityTypeMapping TypeName="Fais_Model.NOTIF">
+            <EntityTypeMapping TypeName="FAISModel.NOTIF">
               <MappingFragment StoreEntitySet="NOTIF">
                 <ScalarProperty Name="ID_NOTIF" ColumnName="ID_NOTIF" />
                 <ScalarProperty Name="VALIDATOR" ColumnName="VALIDATOR" />
@@ -555,7 +532,7 @@
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="PAGE">
-            <EntityTypeMapping TypeName="Fais_Model.PAGE">
+            <EntityTypeMapping TypeName="FAISModel.PAGE">
               <MappingFragment StoreEntitySet="PAGE">
                 <ScalarProperty Name="BO_ID" ColumnName="BO_ID" />
                 <ScalarProperty Name="TITLE" ColumnName="TITLE" />
@@ -569,20 +546,8 @@
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-          <EntitySetMapping Name="PlusSequence">
-            <EntityTypeMapping TypeName="Fais_Model.PlusSequence">
-              <MappingFragment StoreEntitySet="PlusSequence">
-                <ScalarProperty Name="SequenceID" ColumnName="SequenceID" />
-                <ScalarProperty Name="cle" ColumnName="cle" />
-                <ScalarProperty Name="TableName" ColumnName="TableName" />
-                <ScalarProperty Name="StartValue" ColumnName="StartValue" />
-                <ScalarProperty Name="StepBy" ColumnName="StepBy" />
-                <ScalarProperty Name="CurrentValue" ColumnName="CurrentValue" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
           <EntitySetMapping Name="TASK">
-            <EntityTypeMapping TypeName="Fais_Model.TASK">
+            <EntityTypeMapping TypeName="FAISModel.TASK">
               <MappingFragment StoreEntitySet="TASK">
                 <ScalarProperty Name="TASK_ID" ColumnName="TASK_ID" />
                 <ScalarProperty Name="BO_ID" ColumnName="BO_ID" />
@@ -597,7 +562,7 @@
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="VERSIONS">
-            <EntityTypeMapping TypeName="Fais_Model.VERSIONS">
+            <EntityTypeMapping TypeName="FAISModel.VERSIONS">
               <MappingFragment StoreEntitySet="VERSIONS">
                 <ScalarProperty Name="VERSIONS_ID" ColumnName="VERSIONS_ID" />
                 <ScalarProperty Name="META_BO_ID" ColumnName="META_BO_ID" />
@@ -612,7 +577,7 @@
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="WORKFLOW">
-            <EntityTypeMapping TypeName="Fais_Model.WORKFLOW">
+            <EntityTypeMapping TypeName="FAISModel.WORKFLOW">
               <MappingFragment StoreEntitySet="WORKFLOW">
                 <ScalarProperty Name="BO_ID" ColumnName="BO_ID" />
                 <ScalarProperty Name="LIBELLE" ColumnName="LIBELLE" />
@@ -621,14 +586,14 @@
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-          <FunctionImportMapping FunctionImportName="cleanMetaBo" FunctionName="Fais_Model.Store.cleanMetaBo" />
-          <FunctionImportMapping FunctionImportName="GetSubForm" FunctionName="Fais_Model.Store.GetSubForm" />
-          <FunctionImportMapping FunctionImportName="GetSubFormId" FunctionName="Fais_Model.Store.GetSubFormId" />
-          <FunctionImportMapping FunctionImportName="InitMetaBo" FunctionName="Fais_Model.Store.InitMetaBo" />
-          <FunctionImportMapping FunctionImportName="INSERT_BO_LIGNES" FunctionName="Fais_Model.Store.INSERT_BO_LIGNES" />
-          <FunctionImportMapping FunctionImportName="MoveBoToCurrentVersion" FunctionName="Fais_Model.Store.MoveBoToCurrentVersion" />
-          <FunctionImportMapping FunctionImportName="MoveFromTmp" FunctionName="Fais_Model.Store.MoveFromTmp" />
-          <FunctionImportMapping FunctionImportName="PlusSequenceNextID" FunctionName="Fais_Model.Store.PlusSequenceNextID" />
+          <FunctionImportMapping FunctionImportName="cleanMetaBo" FunctionName="FAISModel.Store.cleanMetaBo" />
+          <FunctionImportMapping FunctionImportName="GetSubForm" FunctionName="FAISModel.Store.GetSubForm" />
+          <FunctionImportMapping FunctionImportName="GetSubFormId" FunctionName="FAISModel.Store.GetSubFormId" />
+          <FunctionImportMapping FunctionImportName="InitMetaBo" FunctionName="FAISModel.Store.InitMetaBo" />
+          <FunctionImportMapping FunctionImportName="INSERT_BO_LIGNES" FunctionName="FAISModel.Store.INSERT_BO_LIGNES" />
+          <FunctionImportMapping FunctionImportName="MoveBoToCurrentVersion" FunctionName="FAISModel.Store.MoveBoToCurrentVersion" />
+          <FunctionImportMapping FunctionImportName="MoveFromTmp" FunctionName="FAISModel.Store.MoveFromTmp" />
+          <FunctionImportMapping FunctionImportName="PlusSequenceNextID" FunctionName="FAISModel.Store.PlusSequenceNextID" />
         </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>

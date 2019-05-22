@@ -18,6 +18,7 @@ namespace FAIS.Models
         public META_BO()
         {
             this.META_FIELD = new HashSet<META_FIELD>();
+            this.VERSIONS = new HashSet<VERSIONS>();
         }
     
         public long META_BO_ID { get; set; }
@@ -34,5 +35,7 @@ namespace FAIS.Models
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<META_FIELD> META_FIELD { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<VERSIONS> VERSIONS { get; set; }
     }
 }

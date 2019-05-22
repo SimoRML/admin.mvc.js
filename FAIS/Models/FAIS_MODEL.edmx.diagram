@@ -4,20 +4,19 @@
   <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
     <!-- Diagram content (shape and connector positions) -->
     <edmx:Diagrams>
-      <Diagram DiagramId="dc22e6edfae84bc399b37077660097a2" Name="Diagram1" ZoomLevel="63">
-        <EntityTypeShape EntityType="Fais_Model.BO" Width="1.5" PointX="5.75" PointY="0.75" IsExpanded="true" />
-        <EntityTypeShape EntityType="Fais_Model.BO_CHILDS" Width="1.5" PointX="5.75" PointY="4.75" IsExpanded="true" />
-        <EntityTypeShape EntityType="Fais_Model.BO_ROLE" Width="1.5" PointX="7.75" PointY="0.75" IsExpanded="true" />
-        <EntityTypeShape EntityType="Fais_Model.META_BO" Width="1.5" PointX="0.75" PointY="4.25" IsExpanded="true" />
-        <EntityTypeShape EntityType="Fais_Model.META_FIELD" Width="1.5" PointX="3" PointY="1.25" IsExpanded="true" />
-        <EntityTypeShape EntityType="Fais_Model.NOTIF" Width="1.5" PointX="7.75" PointY="4.75" IsExpanded="true" />
-        <EntityTypeShape EntityType="Fais_Model.PAGE" Width="1.5" PointX="5.75" PointY="7.75" IsExpanded="true" />
-        <EntityTypeShape EntityType="Fais_Model.PlusSequence" Width="1.5" PointX="7.75" PointY="7.75" IsExpanded="true" />
-        <EntityTypeShape EntityType="Fais_Model.TASK" Width="1.5" PointX="9.75" PointY="0.75" IsExpanded="true" />
-        <EntityTypeShape EntityType="Fais_Model.VERSIONS" Width="1.5" PointX="3" PointY="7.625" IsExpanded="true" />
-        <EntityTypeShape EntityType="Fais_Model.WORKFLOW" Width="1.5" PointX="9.75" PointY="4.75" IsExpanded="true" />
-        <AssociationConnector Association="Fais_Model.FK__META_FIEL__META___47A6A41B" ManuallyRouted="false" />
-        <AssociationConnector Association="Fais_Model.FK__VERSIONS__META_B__489AC854" ManuallyRouted="false" />
+      <Diagram DiagramId="c499c5e5d1f0437dad3314ea7c7ed75e" Name="Diagram1">
+        <EntityTypeShape EntityType="FAISModel.BO" Width="1.5" PointX="5.75" PointY="0.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="FAISModel.BO_CHILDS" Width="1.5" PointX="5.75" PointY="4.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="FAISModel.BO_ROLE" Width="1.5" PointX="7.75" PointY="0.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="FAISModel.META_BO" Width="1.5" PointX="0.75" PointY="4.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="FAISModel.META_FIELD" Width="1.5" PointX="3" PointY="1.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="FAISModel.NOTIF" Width="1.5" PointX="7.75" PointY="4.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="FAISModel.PAGE" Width="1.5" PointX="5.75" PointY="7.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="FAISModel.TASK" Width="1.5" PointX="7.75" PointY="7.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="FAISModel.VERSIONS" Width="1.5" PointX="3" PointY="7.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="FAISModel.WORKFLOW" Width="1.5" PointX="9.75" PointY="0.75" IsExpanded="true" />
+        <AssociationConnector Association="FAISModel.FK__META_FIEL__META___47A6A41B" ManuallyRouted="false" />
+        <AssociationConnector Association="FAISModel.FK__VERSIONS__META_B__489AC854" ManuallyRouted="false" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

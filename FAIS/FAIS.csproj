@@ -297,9 +297,6 @@
     <Compile Include="Models\PAGE.cs">
       <DependentUpon>FAIS_MODEL.tt</DependentUpon>
     </Compile>
-    <Compile Include="Models\PlusSequence.cs">
-      <DependentUpon>FAIS_MODEL.tt</DependentUpon>
-    </Compile>
     <Compile Include="Models\Repository\MetaBoRepo.cs" />
     <Compile Include="Models\Repository\MetaFieldRepo.cs" />
     <Compile Include="Models\Repository\VersionsRepo.cs" />
