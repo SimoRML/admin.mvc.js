@@ -299,6 +299,7 @@
     </Compile>
     <Compile Include="Models\Repository\MetaBoRepo.cs" />
     <Compile Include="Models\Repository\MetaFieldRepo.cs" />
+    <Compile Include="Models\Repository\UserQuery.cs" />
     <Compile Include="Models\Repository\VersionsRepo.cs" />
     <Compile Include="Models\SessionVar.cs" />
     <Compile Include="Models\SGBD.cs" />
@@ -769,6 +770,7 @@
     <Content Include="Views\Router\widgets\editionWidget.cshtml" />
     <Content Include="Views\Router\widgets\baseWidget.cshtml" />
     <Content Include="Views\Router\widgets\etatsortiewidget.cshtml" />
+    <Content Include="Views\Router\widgets\queryWidget.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

@@ -1,4 +1,5 @@
 ﻿using FAIS.Models;
+using FAIS.Models.Repository;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -38,6 +39,22 @@ namespace FAIS.Controllers
             var data = db.PAGE.Where(p => p.BO_ID == id).FirstOrDefault();
 
             return Ok(data);
+        }
+
+        [HttpPost]
+        [Route("query")]
+        public IHttpActionResult Query(UserQuery model)
+        {
+            if (!model.validate()) return BadRequest("Only select querys are granted !");
+            try
+            {
+                return Ok(model.Execute());
+            }
+            catch (Exception ex)
+            {
+                return InternalServerError(ex);
+            }
+            
         }
     }
 }
