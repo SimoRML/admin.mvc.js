@@ -774,6 +774,7 @@
     <Content Include="Views\Router\widgets\baseWidget.cshtml" />
     <Content Include="Views\Router\widgets\etatsortiewidget.cshtml" />
     <Content Include="Views\Router\widgets\queryWidget.cshtml" />
+    <Content Include="Views\v_components\_v_multifile.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
