@@ -10,7 +10,7 @@
                            :is="field.before_component.name"
                            v-bind="{visible:field.before_component.visible, data:body[field.before_component.model]}"></component>
                 @*THE COMPONENET*@
-                <component :name="field.FORM_TYPE + '-' + elementId"
+                <component :name="field.FORM_TYPE + '-' + elementId" :ref="field.FORM_TYPE + '-' + elementId"
                            :is="field.FORM_TYPE"
                            v-model='body[field.DB_NAME]'
                            @*v-model="getModel(body,field)"*@
@@ -141,6 +141,18 @@
             },
             submit: function () {
                 this.$emit("before-submit", this.body);
+
+                // typeof article_BO_vapp.$refs.theForm.$refs["v-multi-image-_prvcn5yhb"][0].save
+
+                // CALL SAVE METHOD IN CHILD COMPONENETS
+                //log.red("submit ", this.meta);
+                for (var idx in this.meta) {
+                    var field = this.meta[idx];
+                    // log.red("save ", field.FORM_TYPE + '-' + this.elementId, typeof this.$refs[field.FORM_TYPE + '-' + this.elementId][0].save);
+                    if (typeof this.$refs[field.FORM_TYPE + '-' + this.elementId][0].save === "function")
+                        this.$refs[field.FORM_TYPE + '-' + this.elementId][0].save();
+                }
+
                 //   console.log("befor IF");
                 if (!document.getElementById(this.elementId).checkValidity()) return;
                 //   console.log("after IF");

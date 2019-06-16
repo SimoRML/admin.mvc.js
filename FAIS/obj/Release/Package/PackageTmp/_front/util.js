@@ -273,11 +273,12 @@ function FormTypeToDbType(formType) {
 }
 
 
-function getBase64(file) {
+function getBase64(file, args) {
+    // log.redTitle("base64", file, args);
     return new Promise((resolve, reject) => {
         const reader = new FileReader();
         reader.readAsDataURL(file);
-        reader.onload = () => resolve(reader.result);
+        reader.onload = () => resolve({ file, data: reader.result, args });
         reader.onerror = error => reject(error);
     });
 }
@@ -322,4 +323,55 @@ function resizeImg(img, width, height) {
 
     // encode image to data-uri with base64 version of compressed image
     return canvas.toDataURL();
+}
+
+function ReadExpression(expression) {
+    var cle = "", formule = "", step = "", type = "", expressions=[];
+    var inFomule = false;
+    var count = 0;
+
+    for (var j in expression)
+    {
+        var car = expression[j];
+        if (typeof car === "function") continue;
+        // console.log(typeof car, car);
+        if (car == '[') {
+            formule = "";
+            inFomule = true;
+            continue;
+        }
+        if (car == ']') {
+            inFomule = false;
+
+            expressions.push({ expression: formule });
+            continue;
+        }
+
+        if (inFomule) {
+            formule += car;
+            count++;
+        }
+    }
+
+    for (var i in expressions) {
+        var args = expressions[i].expression.split('.');
+        expressions[i].root = args[0].toLowerCase();
+        expressions[i].args = args.splice(1);
+        switch (expressions[i].root) {
+            case "store":
+                expressions[i].type = "store";
+                break;
+            case "+":
+                expressions[i].type = "plus";
+                break;
+            case "d":
+                expressions[i].type = "date";
+                break;
+            default:
+                expressions[i].type = "default";
+                break;
+        }
+    }
+
+    return {  expressions };    
 }

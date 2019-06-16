@@ -57,6 +57,7 @@ namespace FAIS.Controllers
                 new { Value= "v-email"      , Display= "Email" },
                 new { Value= "v-file"       , Display= "Fichier" },
                 new { Value= "v-label"      , Display= "Etiquette" },
+                new { Value= "v-multi-image"     , Display= "Multi image" },
                 new { Value= "v-number"     , Display= "Numeric" },
                 new { Value= "v-select"     , Display= "Liste de choix" },
                 new { Value= "v-select-multiple"     , Display= "Liste multi selection" },

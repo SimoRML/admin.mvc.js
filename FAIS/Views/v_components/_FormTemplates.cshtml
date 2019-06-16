@@ -219,7 +219,8 @@
                 var file = document.querySelector('#' + this.elementId + ' input[type="file"]').files[0];
 
                 getBase64(file).then(
-                    data => {
+                    response => {
+                        var data = response.data;
                         me.fileType = file.type.match("/") === null ? "application/octet-stream" : file.type;
                         me.name = file.name;
 

@@ -382,6 +382,20 @@
                 },
                 EDITION_WIDGET: { ...{ name: "Facture", widgetName: "editionwidget" }, ...EDITION_WIDGET },
                 ETAT_WIDGET: { ...{ name: "Etat de sortie", widgetName: "etatsortiewidget" }, ...EDITION_WIDGET },
+                QUERY: {
+                    name: "Requête",
+                    icone: "kitchen",
+                    class: "",
+                    props: {
+                        query: { label: "Requête SQL", type: "v-textarea" }
+                    },
+                    apply: function ($compDiv, props, compKey) {
+                        //log.green("props", props);
+                        INCLUDE($compDiv, "router/widgets/querywidget?compKey=" + compKey, function () {
+                            window["vappQueryWidget" + compKey].val(props);
+                        });
+                    }
+                },
             },
             layout: {
                 page: {

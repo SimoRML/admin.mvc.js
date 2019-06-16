@@ -84,6 +84,9 @@ var MixinStore = {
     methods: {
         getList: function (key) {
             return this.$store.getters.get(key);
+        },
+        getDefaultValue: function (expression) {
+
         }
     }
 };

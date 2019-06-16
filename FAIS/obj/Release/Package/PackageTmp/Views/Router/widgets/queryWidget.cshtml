@@ -1,0 +1,34 @@
+﻿<div id="vappQueryWidget_@ViewBag.compKey">
+    <v-table ref="theTable"></v-table>
+</div>
+<script type="text/javascript">
+    window["vappQueryWidget"+ "@ViewBag.compKey"] = new Vue({
+        el: "#vappQueryWidget_@ViewBag.compKey",
+        data: {
+            props: null
+        },
+        methods: {
+            val: function (props) {
+                this.props = props;
+                this.load();
+
+                return this.props;
+            },
+            load: function () {
+                var me = this;
+                var api = EV.getComponent("data");
+                api.Post({ 
+                    url:"shared/query",
+                    data: JSON.stringify({ sqlQuery: this.props.query }),
+                    done: function (response) { 
+                        me.$refs.theTable.loadObject(response);
+                    },
+                    fail: function (ex) {                         
+                        NOTIF.error("Internal server ERROR !");
+                        console.log("Internal server ERROR !", ex);
+                    }
+                });
+            },
+        }
+    });
+</script>

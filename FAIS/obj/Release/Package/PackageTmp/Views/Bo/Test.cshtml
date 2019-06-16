@@ -1,6 +1,29 @@
-﻿
-THIS IS THE TEST VEIW
+﻿<div id="test">
+    <div class="card">
+        <div class="card-header">
+            <h4 class="card-title">
+                {{ title }}
+            </h4>
+        </div>
+        <div class="card-content">
+            <h5>Multi File Upload</h5>
+            <v-multi-image ref="file" v-model="fileName" label="Multi file component"></v-multi-image>
+            <hr />
+            {{ fileName }}
+        </div>
+        <div class="card-footer">
+            Footer
+        </div>
+    </div>
 
-<script>
-    alert(0);
+</div>
+<script type="text/javascript">
+    var testVapp = new Vue({
+        el: "#test",
+        data: {
+            title: "TEST VIEW TITLE",
+            fileName: "20190613.033620.img.json",
+        }
+    });
+
 </script>

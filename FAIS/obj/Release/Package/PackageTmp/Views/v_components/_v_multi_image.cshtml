@@ -1,0 +1,219 @@
+﻿@*-----------------------------------------------------------------------------------------------------FILE-----------------------*@
+<script id="v-multi-image-template" type="text/template">
+    <div :id="elementId">
+        <div :class="cssClass + ' inputContainer row form-group'">
+            <label class="control-label">
+                {{ label }}
+                <i v-show="isOptional"> - optionnel</i>
+            </label>
+            <input type="file" class="form-control" multiple accept="image/png, image/jpeg, image/gif"
+                   v-on:input="bindFileBack($event)"
+                   :required="!isOptional && false" :disabled="disabled">
+            <div class="category form-category" v-if="detail != null">
+                <div class="row">
+                    <div class="col-md-12">
+                        <small>{{ detail }}</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-2 file-upload" v-for="(file, index) in files" v-bind:key="index" :title="file.name">
+                <template v-if="file.fileType.match('image') !== null">
+                    <div class="imageContainer">
+                        <img :src="file.base64" />
+                    </div>
+                </template>
+                <template v-else>
+                    <div class="fileContainer">
+                        {{ file.name }}
+                    </div>
+                </template>
+                <div class="pull-right text-danger pointer" v-on:click="removeFile(index)"><i class="material-icons">close</i></div>
+                <div class="text-truncat">
+                    {{ file.name }}
+                </div>
+            </div>
+        </div>
+    </div>
+</script>
+<style>
+    .pointer {
+        cursor: pointer;
+    }
+
+    .inputContainer {
+        border: dashed 1px #aaa;
+        padding: 0px 10px 10px 10px;
+        margin-bottom: 10px;
+    }
+
+        .inputContainer.drag-over {
+            border-color: #b7ffa6;
+        }
+
+            .inputContainer.drag-over:after {
+                content: 'Déposer vos fichiers ici ...';
+                float: right;
+                margin-right: 50%;
+                margin-top: 10px;
+            }
+
+    .file-upload {
+        min-height: 30px;
+        text-align: center;
+    }
+
+        .file-upload .fileContainer {
+            min-height: 30px;
+            border: 1px dashed #aaa;
+            border-top: none;
+            border-left: none;
+            border-right: none;
+        }
+
+        .file-upload .imageContainer {
+            display: inline-block;
+            border: 1px dashed #aaa;
+            padding: 5px;
+            height: 145px;
+            overflow: hidden;
+        }
+
+        .file-upload img {
+            width: 150px;
+        }
+</style>
+<script type="text/javascript">
+    Vue.component('v-multi-image', {
+        template: $("#v-multi-image-template").html(),
+        mixins: [FormMixin],
+        data: function () {
+            return {
+                files: [],
+                fileName: "",
+                changed: false,
+            };
+        },
+        methods: {
+            removeFile: function (index) {
+                this.changed = true;
+                this.files.splice(index, 1);
+                // this.fileType = "";
+                // this.base64 = "";
+                // this.name = "";
+                // this.$emit('input', "", { me: this.line, me: this.column });
+            },
+            bindFileBack: function (e) {
+                this.changed = true;
+                var maxWidth = 1000;
+                var me = this;
+                var files = document.querySelector('#' + this.elementId + ' input[type="file"]').files;
+                // log.green("files", document.querySelector('#' + this.elementId + ' input[type="file"]').files);
+                for (var i = 0; i < files.length; i++) {
+                    var file = files[i];
+                    // log.red("file", typeof file, file);
+
+                    getBase64(file).then(
+                        (response) => {
+                            var data = response.data;
+                            var F = response.file;
+                            // var me = response.args.me;
+                            var index = me.files.length;
+                            var currentFile = {
+                                index: index,
+                                fileType: F.type.match("/") === null ? "application/octet-stream" : F.type,
+                                name: F.name
+                            }
+
+                            if (currentFile.fileType.match('image') === null) {
+                                currentFile.base64 = data;
+                                // me.$emit('input', JSON.stringify({ name: me.files[index].name, type: me.files[index].fileType, base64: me.files[index].base64 }), { me: this.line, me: this.column });
+                            } else {
+                                $("#tmpImg" + index).remove();
+                                $("body").append($("<img id='tmpImg" + index + "' src='" + data + "' style='position:absolute; letf:-30000px; top:-30000px' />"));
+                                var $img = $("#tmpImg" + index);
+                                $img.on("load", function () {
+                                    if ($(this).width() > maxWidth) { // resize the img
+                                        $(this).width(maxWidth);
+                                        data = resizeImg(this, $(this).width(), $(this).height());
+                                        currentFile.fileType = "image/png";
+                                        $("#tmpImg" + index).remove();
+                                    }
+                                    currentFile.base64 = data;
+                                    // me.$emit('input', JSON.stringify({ name: me.name, type: me.fileType, base64: me.base64 }), { me: this.line, me: this.column });
+                                });
+                            }
+
+                            Vue.set(me.files, index, currentFile);
+                        }
+                    );
+
+
+                }
+                setTimeout(function () {
+                    // Vue.set(me, files, me.files);
+                    // log.red("files", me.files.length);
+                    me.files.push();
+                    // log.red("files aa", me.files.length);
+
+
+                    //log.group("AFTER");
+                    //for (var ii = 0; ii < me.files.length; ii++) {
+                    //    log.green(me.files[ii].name, ii);
+                    //}
+                    //log.groupEnd();
+                }, 1000);
+            },
+            save: function () {
+                if (!this.changed) return;
+                var me = this;
+                EV.getComponent("data").Post({
+                    url: "file/save",
+                    data: JSON.stringify({ FileName: this.fileName, Files: this.files }),
+                    done: (response) => {
+                        if (response.success) me.changed = false;
+                    }
+                });
+            }
+        },
+        mounted: function () {
+            var me = this;
+            this.fileName = this.value;
+            log.blueTitle("Images multiples", this.fileName, typeof this.fileName, this.fileName == "", this.fileName == null);
+            if (this.fileName == null || this.fileName == "" || typeof this.fileName === "undefined") {
+                // Get file name from server
+                EV.getComponent("data").Get({
+                    url: "file/name/img",
+                    done: (response) => {
+                        me.fileName = response;
+                        me.$emit('input', me.fileName, { me: this.line, me: this.column });
+                    }
+                });
+            } else {
+                // Get files from server
+                EV.getComponent("data").Get({
+                    url: "file/?fileName=" + this.fileName,
+                    done: (response) => {                        
+                        log.greenTitle("response", response);
+                        me.files = response;
+                    }
+                });
+            }
+
+            $(".inputContainer").on("dragover", function (e) {
+                console.log(".inputContainer ");
+                $(this).addClass("drag-over");
+            });
+            $(".inputContainer").on("dragleave", function (e) {
+                $(this).removeClass("drag-over");
+            });
+            $(".inputContainer").on("dragend", function (e) {
+                $(this).removeClass("drag-over");
+            });
+            $(".inputContainer").on("drop", function (e) {
+                $(this).removeClass("drag-over");
+            });
+        }
+    });
+</script>

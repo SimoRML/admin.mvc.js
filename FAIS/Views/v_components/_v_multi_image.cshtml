@@ -2,7 +2,10 @@
 <script id="v-multi-image-template" type="text/template">
     <div :id="elementId">
         <div :class="cssClass + ' inputContainer row form-group'">
-            <label class="control-label">{{ label }}<i v-show="isOptional"> - optionnel</i></label>
+            <label class="control-label">
+                {{ label }}
+                <i v-show="isOptional"> - optionnel</i>
+            </label>
             <input type="file" class="form-control" multiple accept="image/png, image/jpeg, image/gif"
                    v-on:input="bindFileBack($event)"
                    :required="!isOptional && false" :disabled="disabled">
@@ -38,23 +41,27 @@
     .pointer {
         cursor: pointer;
     }
+
     .inputContainer {
         border: dashed 1px #aaa;
         padding: 0px 10px 10px 10px;
         margin-bottom: 10px;
     }
+
         .inputContainer.drag-over {
             border-color: #b7ffa6;
         }
-        .inputContainer.drag-over:after {
-            content: 'Déposer vos fichiers ici ...';
-            float:right;
-            margin-right:50%;
-            margin-top:10px;
-        }
+
+            .inputContainer.drag-over:after {
+                content: 'Déposer vos fichiers ici ...';
+                float: right;
+                margin-right: 50%;
+                margin-top: 10px;
+            }
+
     .file-upload {
         min-height: 30px;
-        text-align:center;
+        text-align: center;
     }
 
         .file-upload .fileContainer {
@@ -83,22 +90,14 @@
         mixins: [FormMixin],
         data: function () {
             return {
-                files: []
-                // fileType: "",
-                // base64: "",
-                // name: ""
+                files: [],
+                fileName: "",
+                changed: false,
             };
-        },
-        computed: {
-            getBase64: function () {
-                return function (index) {
-                    return this.files[index].base64;
-                }
-            },
-            cmpFiles: function(){return this.files}
         },
         methods: {
             removeFile: function (index) {
+                this.changed = true;
                 this.files.splice(index, 1);
                 // this.fileType = "";
                 // this.base64 = "";
@@ -106,6 +105,7 @@
                 // this.$emit('input', "", { me: this.line, me: this.column });
             },
             bindFileBack: function (e) {
+                this.changed = true;
                 var maxWidth = 1000;
                 var me = this;
                 var files = document.querySelector('#' + this.elementId + ' input[type="file"]').files;
@@ -125,32 +125,20 @@
                                 fileType: F.type.match("/") === null ? "application/octet-stream" : F.type,
                                 name: F.name
                             }
-                            log.group(F.name, index);
-                            for (var ii = 0; ii < me.files.length; ii++) {
-                                log.green(me.files[ii].name, ii);
-                            }
-                            log.groupEnd("BEFORE");
-                            // log.green(F.name, F.type, index);
-                            /*
-                             me.files[index] = {
-                                fileType: file.type.match("/") === null ? "application/octet-stream" : file.type,
-                                name: file.name
-                            };
-                            */
 
                             if (currentFile.fileType.match('image') === null) {
                                 currentFile.base64 = data;
                                 // me.$emit('input', JSON.stringify({ name: me.files[index].name, type: me.files[index].fileType, base64: me.files[index].base64 }), { me: this.line, me: this.column });
                             } else {
                                 $("#tmpImg" + index).remove();
-                                $("body").append($("<img id='tmpImg"+index+"' src='" + data + "' style='position:absolute; letf:-30000px; top:-30000px' />"));
+                                $("body").append($("<img id='tmpImg" + index + "' src='" + data + "' style='position:absolute; letf:-30000px; top:-30000px' />"));
                                 var $img = $("#tmpImg" + index);
                                 $img.on("load", function () {
                                     if ($(this).width() > maxWidth) { // resize the img
                                         $(this).width(maxWidth);
                                         data = resizeImg(this, $(this).width(), $(this).height());
                                         currentFile.fileType = "image/png";
-                                        $("#tmpImg" + index ).remove();
+                                        $("#tmpImg" + index).remove();
                                     }
                                     currentFile.base64 = data;
                                     // me.$emit('input', JSON.stringify({ name: me.name, type: me.fileType, base64: me.base64 }), { me: this.line, me: this.column });
@@ -160,8 +148,8 @@
                             Vue.set(me.files, index, currentFile);
                         }
                     );
-                    
-                    
+
+
                 }
                 setTimeout(function () {
                     // Vue.set(me, files, me.files);
@@ -170,52 +158,47 @@
                     // log.red("files aa", me.files.length);
 
 
-                    log.group("AFTER");
-                    for (var ii = 0; ii < me.files.length; ii++) {
-                        log.green(me.files[ii].name, ii);
-                    }
-                    log.groupEnd();
+                    //log.group("AFTER");
+                    //for (var ii = 0; ii < me.files.length; ii++) {
+                    //    log.green(me.files[ii].name, ii);
+                    //}
+                    //log.groupEnd();
                 }, 1000);
-
-                //getBase64(file).then(
-                //    data => {
-                //        me.fileType = file.type.match("/") === null ? "application/octet-stream" : file.type;
-                //        me.name = file.name;
-
-                //        if (me.fileType.match('image') === null) {
-                //            me.base64 = data;
-                //            me.$emit('input', JSON.stringify({ name: me.name, type: me.fileType, base64: me.base64 }), { me: this.line, me: this.column });
-                //        } else {
-                //            $("#tmpImg").remove();
-                //            $("body").append($("<img id='tmpImg' src='" + data + "' style='position:absolute; letf:-30000px; top:-30000px' />"));
-                //            var $img = $("#tmpImg");
-                //            $img.on("load", function () {
-                //                if ($(this).width() > maxWidth) { // resize the img
-                //                    $(this).width(maxWidth);
-                //                    data = resizeImg(this, $(this).width(), $(this).height());
-                //                    me.fileType = "image/png";
-                //                    $("#tmpImg").remove();
-                //                }
-                //                me.base64 = data;
-                //                me.$emit('input', JSON.stringify({ name: me.name, type: me.fileType, base64: me.base64 }), { me: this.line, me: this.column });
-                //            });
-                //        }
-
-
-                //    }
-                //);
+            },
+            save: function () {
+                if (!this.changed) return;
+                var me = this;
+                EV.getComponent("data").Post({
+                    url: "file/save",
+                    data: JSON.stringify({ FileName: this.fileName, Files: this.files }),
+                    done: (response) => {
+                        if (response.success) me.changed = false;
+                    }
+                });
             }
         },
         mounted: function () {
-            try {
-                var json = JSON.parse(this.value);
-                this.name = json.name;
-                this.fileType = json.type;
-                this.base64 = json.base64;
-
-                // console.log("file name", this.name);
-            } catch (e) {
-
+            var me = this;
+            this.fileName = this.value;
+            log.blueTitle("Images multiples", this.fileName, typeof this.fileName, this.fileName == "", this.fileName == null);
+            if (this.fileName == null || this.fileName == "" || typeof this.fileName === "undefined") {
+                // Get file name from server
+                EV.getComponent("data").Get({
+                    url: "file/name/img",
+                    done: (response) => {
+                        me.fileName = response;
+                        me.$emit('input', me.fileName, { me: this.line, me: this.column });
+                    }
+                });
+            } else {
+                // Get files from server
+                EV.getComponent("data").Get({
+                    url: "file/?fileName=" + this.fileName,
+                    done: (response) => {                        
+                        log.greenTitle("response", response);
+                        me.files = response;
+                    }
+                });
             }
 
             $(".inputContainer").on("dragover", function (e) {

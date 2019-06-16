@@ -240,6 +240,7 @@
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\AdminController.cs" />
     <Compile Include="Controllers\BoController.cs" />
+    <Compile Include="Controllers\FileController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\MetaBoController.cs" />
     <Compile Include="Controllers\MetaFieldController.cs" />
@@ -774,10 +775,11 @@
     <Content Include="Views\Router\widgets\baseWidget.cshtml" />
     <Content Include="Views\Router\widgets\etatsortiewidget.cshtml" />
     <Content Include="Views\Router\widgets\queryWidget.cshtml" />
-    <Content Include="Views\v_components\_v_multifile.cshtml" />
+    <Content Include="Views\v_components\_v_multi_image.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+    <Folder Include="Content\files\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -791,10 +793,12 @@
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Resources\lang.fr-FR.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>lang.fr-FR.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
