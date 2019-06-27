@@ -1,5 +1,9 @@
 ﻿@model FAIS.Models.META_BO
 @{
+    string boName()
+    {
+        return Model.BO_NAME;
+    }
     string boDbName(string txt)
     {
         return Model.BO_DB_NAME + txt;
@@ -8,32 +12,59 @@
 }
 @helper renderTable(bool includeDatasource)
 {
-    <v-table ref="theTable"
-             meta-name="@Model.BO_DB_NAME"
-             :column-show="columnShow"
-             :column-labels="columnLabels"
-             @if (includeDatasource) { @: datasource="metabo/select/@Model.BO_DB_NAME"
-             }
-             action-component="@Model.BO_DB_NAME-action"
-             detail-row="default"
-             :prevent-first-load="filterExists">
-        <div slot="action" slot-scope="slotProps">
-            <a :href="'#' + formatActionHfer(slotProps, props.actionHref)" :class="'btn btn-round btn-fab btn-fab-mini btn-fab-x-mini ' + props.actionColor">
-                <i class="material-icons">{{ props.actionIcone }}</i>
-            </a>
+    <template v-if="canRead()">
+        <v-table ref="theTable"
+                 meta-name="@Model.BO_DB_NAME"
+                 :column-show="columnShow"
+                 :column-labels="columnLabels"
+                 @if (includeDatasource) { @: datasource="metabo/select/@Model.BO_DB_NAME"
+                 }
+                 :action-component="canWrite() ? '@Model.BO_DB_NAME-action' : ''"
+                 detail-row="default"
+                 :prevent-first-load="filterExists">
+
+
+            <div slot="action" slot-scope="slotProps" v-if="props != null && props.actionHref != null">
+                <a :href="'#' + formatActionHref(slotProps, props.actionHref)" :class="'btn btn-round btn-fab btn-fab-mini btn-fab-x-mini ' + props.actionColor">
+                    <i class="material-icons">{{ props.actionIcone }}</i>
+                </a>
+            </div>
+
+        </v-table>
+    </template>
+    <template v-else>
+        <div class="alert alert-danger alert-with-icon" data-notify="container">
+            <i class="material-icons" data-notify="icon">error</i>
+            <button type="button" aria-hidden="true" class="close">
+                <i class="material-icons">close</i>
+            </button>
+            <span data-notify="message">Unauthorized Read Access On @Model.BO_NAME</span>
         </div>
-    </v-table>
+    </template>
 }
 @helper renderForm()
 {
-    <v-form ref="theForm"
-            meta-datasource="metabo/GetDefinition/@Model.BO_DB_NAME"
-            api="metabo/Crud/@Model.META_BO_ID"
-            v-on:submit-success="success"
-            v-on:submit-fail="error"
-            v-on:get-definition-done="getDefinitionDone"
-            v-on:update-mode="updateMode"
-            v-on:insert-mode="insertMode"></v-form>
+    <template v-if="canWrite()">
+        <v-form ref="theForm"
+                meta-datasource="metabo/GetDefinition/@Model.BO_DB_NAME"
+                api="metabo/Crud/@Model.META_BO_ID"
+                bo-name="@Model.BO_DB_NAME"
+                v-on:submit-success="success"
+                v-on:submit-fail="error"
+                v-on:get-definition-done="getDefinitionDone"
+                v-on:update-mode="updateMode"
+                v-on:insert-mode="insertMode"
+                v-on:remove-success="removeSuccess"></v-form>
+    </template>
+    <template v-else>
+        <div class="alert alert-danger alert-with-icon" data-notify="container">
+            <i class="material-icons" data-notify="icon">error</i>
+            <button type="button" aria-hidden="true" class="close">
+                <i class="material-icons">close</i>
+            </button>
+            <span data-notify="message">Unauthorized Write Access On @Model.BO_NAME</span>
+        </div>
+    </template>
 }
 
 @if (Model.STATUS == "PENDING")
@@ -92,11 +123,11 @@ else
             <div class="nav-left">
                 <ul class="nav nav-pills nav-pills-icons" role="tablist">
                     <!--
-                    color-classes: "nav-pills-primary", "nav-pills-info", "nav-pills-success", "nav-pills-warning","nav-pills-danger"
-                -->
+                        color-classes: "nav-pills-primary", "nav-pills-info", "nav-pills-success", "nav-pills-warning","nav-pills-danger"
+                    -->
                     <li class="active">
                         <a id="@boDbName("tab-list")" href="#@boDbName("list")" role="tab" data-toggle="tab">
-                            @if (!isSubForm && false)
+                            @if (!isSubForm)
                             {
                                 <i class="material-icons">list</i>
                             }
@@ -106,16 +137,16 @@ else
                     </li>
                     <li>
                         <a id="@boDbName("tab-form")" href="#@boDbName("form")" role="tab" data-toggle="tab" v-show="CurrentMode.mode === 'update'">
-                            @if (!isSubForm && false)
+                            @if (!isSubForm)
                             {
                                 <i class="material-icons">create</i>
                             }
                             Modifier
                         </a>
                     </li>
-                    <li>
+                    <li v-if="canWrite()">
                         <a id="@boDbName("tab-form-add")" href="#@boDbName("form")" role="tab" data-toggle="tab" v-on:click="$refs.theForm.reset()">
-                            @if (!isSubForm && false)
+                            @if (!isSubForm)
                             {
                                 <i class="material-icons">note_add</i>
                             }
@@ -126,7 +157,7 @@ else
             </div>
             <div class="tab-content">
                 <div class="tab-pane active" id="@boDbName("list")">
-                    <div v-show="filterExists" class="card">
+                    <div v-show="filterExists" class="card" v-if="canRead()">
                         <div class="card-header">
                             Filtre
                         </div>
@@ -144,7 +175,7 @@ else
                                 </div>
                                 <div class="row">
                                     <div class="col-md-12">
-                                        <button type="submit" class="btn btn-fill btn-primary pull-right" v-on:click="filtrer">Filtrer<div class="ripple-container"></div></button>
+                                        <button id="@boDbName("btnFilter")" type="submit" class="btn btn-fill btn-primary pull-right" v-on:click="filtrer">Filtrer<div class="ripple-container"></div></button>
                                     </div>
                                 </div>
 
@@ -158,7 +189,7 @@ else
                     </div>
                 </div>
                 <div class="tab-pane " id="@boDbName("form")">
-                    <div :class="{'col-md-6':hasSubForm}">
+                    <div :class="{'col-md-12':hasSubForm}">
                         <div class="card">
                             <div class="card-header">
                                 <h4 class="card-title">{{ CurrentMode.title }}</h4>
@@ -171,7 +202,7 @@ else
                             </div>
                         </div>
                     </div>
-                    <div :class="'col-md-6 ' + CurrentMode.subFormMode" v-if="hasSubForm" v-for="subform in subForms">
+                    <div :class="'col-md-12 ' + CurrentMode.subFormMode" v-if="hasSubForm" v-for="subform in subForms">
                         <div class="card">
                             <div class="card-header">
                                 <h4 class="card-title subFormTitle">{{ subform.FORM_NAME }}</h4>
@@ -191,9 +222,16 @@ else
 
     <script id="@boDbName("-action-template")" type="vue/template">
         <div class="pull-right">
+            <v-workflow-v :boid="row.BO_ID" :index="index" vapp="@boDbName("vapp")"></v-workflow-v>
+
             <button class="btn btn-primary btn-round btn-fab btn-fab-mini btn-fab-x-mini"
                     v-on:click="edit(row.BO_ID)">
                 <i class="material-icons">create</i>
+            </button>
+
+            <button class="btn btn-danger btn-round btn-fab btn-fab-mini btn-fab-x-mini"
+                    v-on:click="remove(row.BO_ID, index)">
+                <i class="material-icons">delete</i>
             </button>
         </div>
     </script>
@@ -203,12 +241,11 @@ else
         // parse json data
         try {
             window["@boDbName("META_BO")"].JSON_DATA = JSON.parse(window["@boDbName("META_BO")"].JSON_DATA);
-
-            @*if ("@isSubForm"=="True") {
+            if ("@isSubForm"=="True") {
                 $(".subFormTitle").html(window["@boDbName("META_BO")"].JSON_DATA.TITLE);
             } else {
                 $("#pageTitle").html(window["@boDbName("META_BO")"].JSON_DATA.TITLE);
-            }*@
+            }
         } catch {}
 
         // build table props from meta_fields
@@ -218,7 +255,8 @@ else
             if (e.GRID_SHOW == 1) window["@boDbName("columnShow")"].push(e.DB_NAME);
             window["@boDbName("columnLabels")"][e.DB_NAME] = e.GRID_NAME;
         });
-
+        window["@boDbName("columnShow")"].push('BO_STATUS');
+        window["@boDbName("columnLabels")"]['BO_STATUS'] = 'Statut';
         bus.setMeta("@Model.BO_DB_NAME", @boDbName("META_BO"));
     </script>
 
@@ -226,7 +264,9 @@ else
         var @boDbName("vapp") = new Vue(
         {
             el: '#@boDbName("-vue-app")',
+            mixins: [MixinAuthorize],
             data: {
+                boName: "@boDbName("")",
                 hasSubForm: false,
                 subForms: [],
                 FormModes: {
@@ -271,13 +311,18 @@ else
                 }
             },
             methods: {
+                removeSuccess: function () {
+                    NOTIF.success("Enregistrement supprimé avec succèss !");
+                    this.$refs.theTable.removeLine(payload.index);
+                },
                 success: function (response) {
                     NOTIF.success('Objet enregistré avec succès.');
                     if (this.$refs.theForm.mode() === "insert" && this.hasSubForm) {
                         this.$refs.theForm.Get(response.BO_ID);
                     } else $("#@boDbName("tab-list")").trigger("click");
 
-                    this.$refs.theTable.load();
+                    if (this.filterExists) $("#@boDbName("btnFilter")").trigger("click");
+                    else this.$refs.theTable.load();
                 },
                 error: function (Response) {
                     console.log('Impossible d\'enregistré l\'objet !<br>', Response);
@@ -343,25 +388,37 @@ else
                         }
                     });
                 },
-                formatActionHfer: function (slotScope, href) {
+                formatActionHref: function (slotScope, href) {
                     return href.replaceAll("[BO_ID]", slotScope.line.BO_ID);
                 }
             },
             mounted: function(){
                 this.CurrentMode = this.FormModes.insert;
+                log.redTitle("props" + "@ViewBag.compKey");
                 this.props = window["props" + "@ViewBag.compKey"];
+                log.redTitle("this.props",this.props);
             }
         });
 
         Vue.component('@boDbName("-action")', {
             template: $("#@boDbName("-action-template")").html(),
             props: {
-                row: Object
+                row: Object,
+                index: Number,
             },
             methods: {
                 edit: (id) => {
                     @boDbName("vapp").$refs.theForm.Get(id);
                     $("#@boDbName("tab-form")").trigger("click");
+                },
+                remove: (id, index) => {
+                    NOTIF.confirm({
+                        title: "Etes vous sûr ?",
+                        valider: function () {
+                            @boDbName("vapp").$refs.theForm.remove(id, index);
+                        }
+                    });
+                    
                 }
             }
         });
@@ -370,7 +427,7 @@ else
     <script id="@boDbName("-detail-row-template")" type="text/template">
         <div>
             <div v-for="field in metafield" class="col-md-3">
-                <b>{{field.GRID_NAME}} : </b><span v-format="{value:row[field.DB_NAME], format:field.GRID_FORMAT}">{{row[field.DB_NAME]}}</span>
+                <b>{{field.GRID_NAME}} : {{field.TYPE}} </b><span v-format="{value:row[field.DB_NAME], format:field.GRID_FORMAT}">{{row[field.DB_NAME]}}</span>
             </div>
         </div>
     </script>
@@ -380,7 +437,7 @@ else
             template: $("#@boDbName("-detail-row-template")").html(),
             props: {
                 row: Object,
-                metafield:Object,
+                metafield: Object,
             },
             methods: {
                 edit: (id) => editFormMetaBo(id)

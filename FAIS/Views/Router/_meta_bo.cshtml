@@ -642,8 +642,32 @@
                             FORM_TYPE: "v-text",
                             FORM_SHOW: 1,
                             FORM_OPTIONAL: 1,
+                        },
+                        {
+                            DB_NAME: 'JSON_DATA.ORDER',
+                            STATUS: 'ACTIVE',
+                            FORM_NAME: "Ordre",
+                            FORM_TYPE: "v-number",
+                            JSON_DATA: '{"DEFAULT":"[+1]"}',
+                            FORM_SHOW: 1,
+                            FORM_OPTIONAL: 0,
                         }
                     ];
+                },
+                metaFieldTableColumns: function () {
+                    return {
+                        // 'FORM_NAME','FORM_TYPE','STATUS','JSON_DATA.ORDER'
+                        FORM_NAME: {header: "NOM"},
+                        FORM_TYPE: {header: "TYPE"},
+                        STATUS: { header: "STATUT" },
+                        ordre: {
+                            header: "ORDRE",
+                            compute: function (line) {
+                                var jsonData = JSON.parse(line.JSON_DATA);
+                                return jsonData === null ? "999" : (typeof jsonData.ORDER === "undefined" ? "999" : jsonData.ORDER);
+                            }
+                        }
+                    };
                 },
                 fieldsFormMetaDefinition: function () {
                     return [

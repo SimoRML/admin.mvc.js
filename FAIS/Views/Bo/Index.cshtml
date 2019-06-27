@@ -44,7 +44,8 @@
                 v-on:submit-fail="error"
                 v-on:get-definition-done="getDefinitionDone"
                 v-on:update-mode="updateMode"
-                v-on:insert-mode="insertMode"></v-form>
+                v-on:insert-mode="insertMode"
+                v-on:remove-success="removeSuccess"></v-form>
     </template>
     <template v-else>
         <div class="alert alert-danger alert-with-icon" data-notify="container">
@@ -179,7 +180,7 @@ else
                     </div>
                 </div>
                 <div class="tab-pane " id="@boDbName("form")">
-                    <div :class="{'col-md-6':hasSubForm}">
+                    <div :class="{'col-md-12':hasSubForm}">
                         <div class="card">
                             <div class="card-header">
                                 <h4 class="card-title">{{ CurrentMode.title }}</h4>
@@ -192,13 +193,13 @@ else
                             </div>
                         </div>
                     </div>
-                    <div :class="'col-md-6 ' + CurrentMode.subFormMode" v-if="hasSubForm" v-for="subform in subForms">
+                    <div :class="'col-md-12 ' + CurrentMode.subFormMode" v-if="hasSubForm" @*v-for="subform in subForms"*@>
                         <div class="card">
                             <div class="card-header">
-                                <h4 class="card-title subFormTitle">{{ subform.FORM_NAME }}</h4>
+                                <h4 class="card-title subFormTitle">{{ subForms[0].FORM_NAME }}</h4>
                             </div>
                             <div class="card-content">
-                                <div v-include="{url:subform.url}"></div>
+                                <div v-include="{url:subForms[0].url}"></div>
                             </div>
                         </div>
                     </div>
@@ -219,6 +220,10 @@ else
                 <i class="material-icons">create</i>
             </button>
 
+            <button class="btn btn-danger btn-round btn-fab btn-fab-mini btn-fab-x-mini"
+                    v-on:click="remove(row.BO_ID, index)">
+                <i class="material-icons">delete</i>
+            </button>
         </div>
     </script>
     <script type="text/javascript">
@@ -296,6 +301,10 @@ else
                 }
             },
             methods: {
+                removeSuccess: function (payload) {
+                    NOTIF.success("Enregistrement supprimé avec succèss !");
+                    this.$refs.theTable.removeLine(payload.index);
+                },
                 success: function (response) {
                     NOTIF.success('Objet enregistré avec succès.');
                     if (this.$refs.theForm.mode() === "insert" && this.hasSubForm) {
@@ -385,6 +394,15 @@ else
                 edit: (id) => {
                     @boDbName("vapp").$refs.theForm.Get(id);
                     $("#@boDbName("tab-form")").trigger("click");
+                },
+                remove: (id, index) => {
+                    NOTIF.confirm({
+                        title: "Etes vous sûr ?",
+                        valider: function () {
+                            @boDbName("vapp").$refs.theForm.remove(id, index);
+                        }
+                    });
+                    
                 }
             }
         });

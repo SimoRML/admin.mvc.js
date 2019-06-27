@@ -18,14 +18,25 @@ namespace FAIS.Models.VForm
         public string Value { get; set; }
         public string Display { get; set; }
         public string Filter { get; set; }
-
+        private string ignoredTables = "[meta_bo][meta_field]";
         private string sqlQuery
         {
             get
             {
                 // TODO : prevent SQL injection
                 if (this.Filter == null) this.Filter = "";
-                return String.Format("Select convert(varchar,{0}) as value, {1} as display,* from {2} {3}", this.Value, this.Display, this.Source, this.Filter.Trim() == "" ? "" : " where " + this.Filter);
+                return String.Format(
+                    "Select convert(varchar,{0}) as value, {1} as display,* from {2} where 1=1 " +
+                    ( this.ignoredTables.Contains("["+ this.Source.ToLower().Trim() +"]") ? "" :
+@" AND BO_ID not in (
+	select BO.BO_ID
+	from BO inner join META_BO on  BO.BO_TYPE = META_BO.META_BO_ID AND META_BO.BO_DB_NAME = '{2}'
+	where BO.STATUS = 'deleted'
+) "
+                    )
+ +
+" {3} "
+                    , this.Value, this.Display, this.Source, this.Filter.Trim() == "" ? "" : " AND " + this.Filter);
             }
         }
 
@@ -121,7 +132,7 @@ namespace FAIS.Models.VForm
             foreach (var item in Items)
             {
                 fields += ",[" + item.Key + "]";
-                values += ",@" + item.Key;
+                values += ",@" + Helper.cleanDBName(item.Key);
             }
             if (fields != "") fields = fields.Remove(0, 1);
             if (values != "") values = values.Remove(0, 1);
@@ -133,7 +144,7 @@ namespace FAIS.Models.VForm
             string Field_Values = "";
             foreach (var item in Items)
             {
-                Field_Values += ",[" + item.Key + "]=@" + item.Key;
+                Field_Values += ",[" + item.Key + "]=@" + Helper.cleanDBName(item.Key);
             }
             if (Field_Values != "") Field_Values = Field_Values.Remove(0, 1);
 
@@ -149,7 +160,7 @@ namespace FAIS.Models.VForm
 
         }
 
-        public bool Insert()
+        public string Insert()
         {
             // TODO : call repo validator
             SetPlusValues();

@@ -17,6 +17,27 @@ function cleanObject(obj) {
     return tmp;
 }
 
+function orderBy(arr, key, direction, type) {
+    if (typeof type == "undefined") type = "string";
+    // DESC
+    if (direction === "desc") return arr.sort(function (a, b) {
+        var x;
+
+        if (type === "string") { x = a[key].toLowerCase(); var y = b[key].toLowerCase(); }
+        else { x = a[key]; var y = b[key]; }
+
+        return ((x > y) ? -1 : ((x < y) ? 1 : 0));
+    });
+
+    // ASC
+    return arr.sort(function (a, b) {
+        if (type === "string") { x = a[key].toLowerCase(); var y = b[key].toLowerCase(); }
+        else { x = a[key]; var y = b[key]; }
+
+        return ((x < y) ? -1 : ((x > y) ? 1 : 0));
+    });
+}
+
 jQuery.fn.apiload = function (url, params, callback) {
     var selector, type, response,
         self = this,

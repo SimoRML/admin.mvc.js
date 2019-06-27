@@ -9,7 +9,7 @@ namespace FAIS.Models
         // private BORepositoryGenerator Gen { get; set; }
         public META_BO MetaBO { get; set; }
 
-        public bool ExecInsert(string statement, Dictionary<string, object> items)
+        public string ExecInsert(string statement, Dictionary<string, object> items)
         {
             return s.Insert(statement, items);
 
@@ -63,7 +63,7 @@ namespace FAIS.Models
                         else bo.STATUS
                         end 'BO_STATUS'
                         from " + Tname + " c " +
-                        "inner join BO on BO.BO_ID = c.BO_ID";
+                        "inner join BO on BO.BO_ID = c.BO_ID AND BO.STATUS != 'deleted'";
             return select;
         }
 
@@ -79,7 +79,7 @@ namespace FAIS.Models
                         end 'BO_STATUS' " +
                         (subform == null ? "" : ", (SELECT * FROM " + subform + @"  where BO_ID in (select BO_CHILD_ID from BO_CHILDS where BO_PARENT_ID = c.BO_ID) FOR JSON PATH) as sub")
                          + " from " + meta.BO_DB_NAME + @" c 
-                         inner join BO on BO.BO_ID = c.BO_ID";
+                         inner join BO on BO.BO_ID = c.BO_ID AND BO.STATUS != 'deleted'";
             return select;
         }
 

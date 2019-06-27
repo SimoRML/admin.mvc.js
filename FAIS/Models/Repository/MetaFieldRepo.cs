@@ -79,7 +79,7 @@ namespace FAIS.Models.Repository
                     var rst = db.PlusSequenceNextID(cle, boName, int.Parse(step), persist).ToList()[0];
                     return new { type, value = format.Replace(formule, rst.ToString()) };
                 case "date":
-                    return new { type, value = step == "" ? DateTime.Now : DateTime.Now.AddDays(int.Parse(step)) };
+                    return new { type, value = step == "" ? DateTime.Now.ToString("yyyy-MM-dd") : DateTime.Now.AddDays(int.Parse(step)).ToString("yyyy-MM-dd") };
                 default:
                     return new { type = "error", msg = "Formule non prise en charge !" };
             }

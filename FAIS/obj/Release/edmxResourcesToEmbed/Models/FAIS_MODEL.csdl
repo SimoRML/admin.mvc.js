@@ -199,6 +199,7 @@
     <Property Name="UPDATED_BY" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
     <Property Name="UPDATED_DATE" Type="DateTime" Precision="3" />
     <Property Name="STATUS" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+    <Property Name="PAGE_ID" Type="Int64" />
   </EntityType>
   <EntityType Name="PAGE">
     <Key>

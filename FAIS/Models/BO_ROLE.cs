@@ -24,5 +24,6 @@ namespace FAIS.Models
         public string UPDATED_BY { get; set; }
         public Nullable<System.DateTime> UPDATED_DATE { get; set; }
         public string STATUS { get; set; }
+        public Nullable<long> PAGE_ID { get; set; }
     }
 }

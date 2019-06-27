@@ -219,7 +219,8 @@
                 var file = document.querySelector('#' + this.elementId + ' input[type="file"]').files[0];
 
                 getBase64(file).then(
-                    data => {
+                    response => {
+                        var data = response.data;
                         me.fileType = file.type.match("/") === null ? "application/octet-stream" : file.type;
                         me.name = file.name;
 
@@ -857,8 +858,8 @@
 
 @*-----------------------------------------------------------------------------------------------------DatePicker-----------------------*@
 <script id="FormDatePickerTemplate" type="text/template">
-    <div :id="elementId" :class="cssClass + ' form-group'">
-        <label class="label-control" v-show="typeof label !== 'undefined'">
+    <div :id="elementId" :class="cssClass + ' form-group'" style="margin-top:0 !important;">
+        <label class="label-control" v-show="typeof label !== 'undefined'" style="font-size: 11px; margin-bottom: 0px;">
             {{ label }}<i v-show="isOptional"> - optionnel</i>
         </label>
         <input type="date" class="form-control"

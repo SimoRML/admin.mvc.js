@@ -73,8 +73,8 @@
 
                 // JSON_DATA
                 try {
-                    var json_data = JSON.parse(field.JSON_DATA);
-                    //console.log('%c DEFAULT', 'color:red', json_data.DEFAULT, "mode", this.mode());
+                    var json_data = typeof field.JSON_DATA == "string" ? JSON.parse(field.JSON_DATA) : field.JSON_DATA;
+                    console.log('%c DEFAULT', 'color:red', json_data.DEFAULT, "mode", this.mode());
 
                     if (typeof json_data.DEFAULT !== "undefined")
                         bind.default = json_data.DEFAULT;
@@ -104,6 +104,15 @@
                     if (typeof this.meta[i].STATUS === "undefined") this.meta[i].STATUS = "ACTIVE";
                     if (typeof this.meta[i].FORM_SHOW === "undefined") this.meta[i].FORM_SHOW = 1;
                     if (typeof this.meta[i].FORM_OPTIONAL === "undefined") this.meta[i].FORM_OPTIONAL = 0;
+
+                    try {
+                        this.meta[i].JSON_DATA = JSON.parse(this.meta[i].JSON_DATA);
+                        if (typeof this.meta[i].JSON_DATA.ORDER === "undefined") this.meta[i].ORDER = parseFloat(999);
+                        else this.meta[i].ORDER = parseFloat(this.meta[i].JSON_DATA.ORDER);
+                    } catch (e) {
+                        this.meta[i].ORDER = parseFloat(999);
+                    }
+                    orderBy(this.meta, "ORDER", "asc", "number")
 
 
                     // push subform
@@ -148,8 +157,8 @@
                 //log.red("submit ", this.meta);
                 for (var idx in this.meta) {
                     var field = this.meta[idx];
-                    // log.red("save ", field.FORM_TYPE + '-' + this.elementId, typeof this.$refs[field.FORM_TYPE + '-' + this.elementId][0].save);
-                    if (typeof this.$refs[field.FORM_TYPE + '-' + this.elementId][0].save === "function")
+                    //log.red("save ", field, field.FORM_TYPE + '-' + this.elementId, typeof this.$refs[field.FORM_TYPE + '-' + this.elementId]);
+                    if (typeof this.$refs[field.FORM_TYPE + '-' + this.elementId] !== "undefined" && typeof this.$refs[field.FORM_TYPE + '-' + this.elementId][0].save === "function")
                         this.$refs[field.FORM_TYPE + '-' + this.elementId][0].save();
                 }
 
@@ -183,6 +192,20 @@
                     },
                     fail: function (response) {
                         me.$emit("submit-fail", response);
+                    }
+                });
+            },
+            remove: function (boId, index) {
+                var me = this;
+                var data = EV.getComponent("data");
+                data.ExecuteSource({
+                    url: me.crudApi + "/" + boId,
+                    method: "delete",
+                    loadComplete: function (obj, response) {
+                        me.$emit("remove-success", { response, index });
+                    },
+                    fail: function (response) {
+                        me.$emit("remove-fail", response);
                     }
                 });
             },

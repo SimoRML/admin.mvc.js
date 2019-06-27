@@ -8,6 +8,8 @@ namespace FAIS.Models
 {
     public class Helper
     {
+        private const string EmptyChar = "";
+
         public static string GetSQL(string fileName) => File.ReadAllText(System.Web.Hosting.HostingEnvironment.MapPath("~/SQL/" + fileName))
                 .Replace("\r\n", " ")
                 .Replace("\r", " ")
@@ -20,14 +22,20 @@ namespace FAIS.Models
         {
             str = str
                 .Replace("  ", " ").Replace("  ", " ").Replace("  ", " ").Replace("  ", " ")
-                .Replace(" ", "_")
-                .Replace("é", "e")
-                .Replace("è", "e")
-                .Replace("ë", "e")
-                .Replace("ê", "e")
-                .Replace("à", "a")
-                .Replace("â", "a")
-                .Replace("ç", "c")
+                .Replace(' ', '_')
+                .Replace("(", EmptyChar)
+                .Replace(")", EmptyChar)
+                .Replace("[", EmptyChar)
+                .Replace("]", EmptyChar)
+                .Replace("{", EmptyChar)
+                .Replace("}", EmptyChar)
+                .Replace('é', 'e')
+                .Replace('è', 'e')
+                .Replace('ë', 'e')
+                .Replace('ê', 'e')
+                .Replace('à', 'a')
+                .Replace('â', 'a')
+                .Replace('ç', 'c')
                 ;
 
             System.Text.StringBuilder sb = new System.Text.StringBuilder();

@@ -145,9 +145,9 @@ namespace FAIS.Models.Repository
             return await db.Database.SqlQuery<META_BO_EX>("select JSON_VALUE(JSON_DATA, '$.TITLE') TITLE, JSON_VALUE(JSON_DATA, '$.GROUPE') GROUPE, * from META_BO  " + where + "  AND JSON_VALUE(JSON_DATA, '$.MENU') = 1 ").ToListAsync();
         }
 
-        public async Task<List<META_BO_EX>> GetPagesAsync()
+        public async Task<List<META_BO_EX>> GetPagesAsync(string where)
         {
-            return await db.Database.SqlQuery<META_BO_EX>("select BO_ID as META_BO_ID, 'PAGE' as type, JSON_VALUE(LAYOUT, '$.page.title') TITLE, JSON_VALUE(LAYOUT, '$.page.groupe') GROUPE from [PAGE] WHERE JSON_VALUE(LAYOUT, '$.page.title') <> '' AND JSON_VALUE(LAYOUT, '$.page.groupe') <> '' AND STATUS = 'public'").ToListAsync();
+            return await db.Database.SqlQuery<META_BO_EX>("select BO_ID as META_BO_ID, 'PAGE' as type, JSON_VALUE(LAYOUT, '$.page.title') TITLE, JSON_VALUE(LAYOUT, '$.page.groupe') GROUPE from [PAGE] WHERE JSON_VALUE(LAYOUT, '$.page.title') <> '' AND JSON_VALUE(LAYOUT, '$.page.groupe') <> '' AND STATUS = 'public' " + where).ToListAsync();
         }
         //public async Task<META_BO_EX> FindMetaBoExAsync(long id)
         //{

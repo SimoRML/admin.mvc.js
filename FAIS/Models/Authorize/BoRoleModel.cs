@@ -57,11 +57,17 @@ namespace FAIS.Models.Authorize
             var parametres = new Dictionary<string, object>();
             parametres.Add("ROLE_ID", roleId);
             return new SGBD().Cmd(@"
-select bo.META_BO_ID, bo.META_BO_ID, bo.BO_NAME, borole.*,
-case when BO_ROLE_ID is null then 'new' else 'old' end as lineStatus
+select bo.META_BO_ID, bo.BO_NAME, borole.*,
+case when BO_ROLE_ID is null then 'new' else 'old' end as lineStatus, 'BO' as OBJECT_TYPE
 from META_BO bo
 left outer join BO_ROLE borole  on bo.META_BO_ID = borole.META_BO_ID AND borole.ROLE_ID = @ROLE_ID 
 where bo.STATUS != '-1'
+union
+select p.BO_ID, p.TITLE, borole.*,
+case when BO_ROLE_ID is null then 'new' else 'old' end as lineStatus, 'PAGE' as OBJECT_TYPE
+from PAGE p
+left outer join BO_ROLE borole  on p.BO_ID = borole.PAGE_ID AND borole.ROLE_ID = @ROLE_ID 
+where p.STATUS = 'public'
 ", parametres);
         }
 
@@ -70,9 +76,14 @@ where bo.STATUS != '-1'
             var parametres = new Dictionary<string, object>();
             // parametres.Add("ROLE_ID", roleId);
             return new SGBD().Cmd(@"
-                        select bo.META_BO_ID, bo.META_BO_ID, bo.BO_NAME, bo.BO_DB_NAME, borole.*
+                        select  bo.META_BO_ID, bo.BO_NAME, bo.BO_DB_NAME, borole.*
                         from META_BO bo
-                        left outer join BO_ROLE borole  on bo.META_BO_ID = borole.META_BO_ID AND borole.ROLE_ID in (select roles.Id from AspNetRoles roles where Name in ('"+ string.Join("','", roleNames) +"'))");  
+                        left outer join BO_ROLE borole  on bo.META_BO_ID = borole.META_BO_ID AND borole.ROLE_ID in (select roles.Id from AspNetRoles roles where Name in ('"+ string.Join("','", roleNames) +"')) " +
+                        @"
+union
+select p.BO_ID, p.TITLE, convert(varchar,p.BO_ID), borole.*
+from PAGE p
+left outer join BO_ROLE borole  on p.BO_ID = borole.PAGE_ID AND borole.ROLE_ID in (select roles.Id from AspNetRoles roles where Name in ('" + string.Join("','", roleNames) + "')) where p.STATUS = 'public'");  
         }
 
         public async System.Threading.Tasks.Task<bool> SetUsersRolesAsync(string roleName, List<UserModel> users)
@@ -110,12 +121,14 @@ where bo.STATUS != '-1'
             {
                 var boRole = new BO_ROLE()
                 {
-                    META_BO_ID = line.META_BO_ID,
                     ROLE_ID = line.ROLE_ID,
                     CAN_READ = line.CAN_READ,
                     CAN_WRITE = line.CAN_WRITE,
                     STATUS = "ACTIVE",
                 };
+
+                if (line.OBJECT_TYPE == "BO") boRole.META_BO_ID = line.META_BO_ID;
+                else boRole.PAGE_ID = line.META_BO_ID;
 
                 if (line.lineStatus == "new")
                 {
@@ -151,6 +164,7 @@ where bo.STATUS != '-1'
         public bool CAN_READ { get; set; }
         public bool CAN_WRITE { get; set; }
         public string lineStatus { get; set; }
+        public string OBJECT_TYPE { get; set; }
     }
 
 }

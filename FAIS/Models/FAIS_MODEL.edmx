@@ -34,6 +34,7 @@
           <Property Name="BO_ROLE_ID" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="META_BO_ID" Type="bigint" Nullable="false" />
           <Property Name="ROLE_ID" Type="nvarchar" MaxLength="128" Nullable="false" />
+          <Property Name="PAGE_ID" Type="bigint" />
           <Property Name="CAN_READ" Type="bit" />
           <Property Name="CAN_WRITE" Type="bit" />
           <Property Name="CREATED_BY" Type="varchar" MaxLength="100" />
@@ -417,6 +418,7 @@
           <Property Name="UPDATED_BY" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
           <Property Name="UPDATED_DATE" Type="DateTime" Precision="3" />
           <Property Name="STATUS" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Name="PAGE_ID" Type="Int64" />
         </EntityType>
         <EntityType Name="PAGE">
           <Key>
@@ -574,6 +576,7 @@
           <EntitySetMapping Name="BO_ROLE">
             <EntityTypeMapping TypeName="FAIS_Model.BO_ROLE">
               <MappingFragment StoreEntitySet="BO_ROLE">
+                <ScalarProperty Name="PAGE_ID" ColumnName="PAGE_ID" />
                 <ScalarProperty Name="STATUS" ColumnName="STATUS" />
                 <ScalarProperty Name="UPDATED_DATE" ColumnName="UPDATED_DATE" />
                 <ScalarProperty Name="UPDATED_BY" ColumnName="UPDATED_BY" />

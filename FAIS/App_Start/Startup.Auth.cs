@@ -10,6 +10,10 @@ using Microsoft.Owin.Security.OAuth;
 using Owin;
 using FAIS.Providers;
 using FAIS.Models;
+using System.Web.Cors;
+using Microsoft.Owin.Cors;
+using System.Threading.Tasks;
+using System.Configuration;
 
 namespace FAIS
 {
@@ -23,6 +27,30 @@ namespace FAIS
         public void ConfigureAuth(IAppBuilder app)
         {
             // Configurer le contexte de base de données et le gestionnaire des utilisateurs pour utiliser une instance unique par demande
+            
+            if (! string.IsNullOrEmpty(ConfigurationManager.AppSettings["cors"]))
+            {
+                var policy = new CorsPolicy()
+                {
+                    AllowAnyHeader = true,
+                    AllowAnyMethod = true,
+                    SupportsCredentials = true
+                };
+                string[] cors = ConfigurationManager.AppSettings["cors"].Split(';');
+                foreach (var c in cors)
+                {
+                    policy.Origins.Add(c);
+                }
+                app.UseCors(new CorsOptions
+                {
+                    PolicyProvider = new CorsPolicyProvider
+                    {
+                        PolicyResolver = context => Task.FromResult(policy)
+                    }
+                });
+            }
+            //app.UseCors(Microsoft.Owin.Cors.CorsOptions.AllowAll);
+
             app.CreatePerOwinContext(ApplicationDbContext.Create);
             app.CreatePerOwinContext<ApplicationUserManager>(ApplicationUserManager.Create);
 

@@ -5,6 +5,7 @@ using System.Net;
 using System.Net.Http;
 using System.Web.Http;
 using System.IO;
+using System.Web.Script.Serialization;
 
 namespace FAIS.Controllers
 {
@@ -37,7 +38,9 @@ namespace FAIS.Controllers
             // File.Create(System.Web.Hosting.HostingEnvironment.MapPath("~/Content/files/" + fileName + ".tmp"));
             try
             {
-                File.WriteAllText(System.Web.Hosting.HostingEnvironment.MapPath("~/Content/files/" + model.FileName), System.Web.Helpers.Json.Encode(model.Files), System.Text.Encoding.UTF8);
+                var serializer = new JavaScriptSerializer() { MaxJsonLength = Int32.MaxValue };
+
+                File.WriteAllText(System.Web.Hosting.HostingEnvironment.MapPath("~/Content/files/" + model.FileName), serializer.Serialize(model.Files), System.Text.Encoding.UTF8);
                 return Ok(new { success = true });
             }
             catch (Exception ex)

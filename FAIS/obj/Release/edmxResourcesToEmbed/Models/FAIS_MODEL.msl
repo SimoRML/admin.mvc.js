@@ -137,6 +137,7 @@
     <EntitySetMapping Name="BO_ROLE">
       <EntityTypeMapping TypeName="FAIS_Model.BO_ROLE">
         <MappingFragment StoreEntitySet="BO_ROLE">
+          <ScalarProperty Name="PAGE_ID" ColumnName="PAGE_ID" />
           <ScalarProperty Name="STATUS" ColumnName="STATUS" />
           <ScalarProperty Name="UPDATED_DATE" ColumnName="UPDATED_DATE" />
           <ScalarProperty Name="UPDATED_BY" ColumnName="UPDATED_BY" />
