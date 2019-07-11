@@ -1,4 +1,5 @@
 ﻿using FAIS.Models.Repository;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -170,14 +171,20 @@ namespace FAIS.Models.VForm
         {
             try
             {
-                DataTable metaFields = new SGBD().Cmd("select *, JSON_VALUE(JSON_DATA,'$.DEFAULT') as 'DEFAULT' from META_FIELD where META_BO_ID = " + this.MetaBoID
-                                    + " AND JSON_VALUE(JSON_DATA,'$.DEFAULT') like '%[+%]%'");
+                //DataTable metaFields = new SGBD().Cmd("select *, JSON_VALUE(JSON_DATA,'$.DEFAULT') as 'DEFAULT' from META_FIELD where META_BO_ID = " + this.MetaBoID
+                //                    + " AND JSON_VALUE(JSON_DATA,'$.DEFAULT') like '%[+%]%'");
+
+                DataTable metaFields = new SGBD().Cmd("select * from META_FIELD where META_BO_ID = " + this.MetaBoID
+                                    + " AND   JSON_DATA like '%\"DEFAULT\":%[+%]%' ");
+
 
                 foreach (DataRow mf in metaFields.Rows)
                 {
                     if (this.Items.ContainsKey(mf["DB_NAME"].ToString()))
                     {
-                        var df = new MetaFieldRepo().GetDefaultValue(mf["DEFAULT"].ToString(), this.MetaBO.BO_DB_NAME, 1);
+                        var jsonData = JsonConvert.DeserializeObject<Dictionary<string, string>>(mf["JSON_DATA"].ToString());
+
+                        var df = new MetaFieldRepo().GetDefaultValue(jsonData["DEFAULT"].ToString(), this.MetaBO.BO_DB_NAME, 1);
                         if (df.type != "error")
                             this.Items[mf["DB_NAME"].ToString()] = df.value;
                     }
