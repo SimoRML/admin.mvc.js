@@ -1,0 +1,63 @@
+﻿<div id="vappBoRoles">
+    <h4><i class="material-icons">verified_user</i> Droits d'accèss > {{ role.Name }}</h4>
+    <div class="col-md-12">
+        <table class="table table-striped v-table">
+            <thead>
+                <tr>
+                    <th>BO</th>
+                    <th>
+                        Lecture
+                        <a href="javascript:;" class="btn btn-simple btn-xs" v-on:click="selectAll('CAN_READ')"><i class="material-icons">done_all</i></a>
+                    </th>
+                    <th>
+                        Ecriture
+                        <a href="javascript:;" class="btn btn-simple btn-xs" v-on:click="selectAll('CAN_WRITE')"><i class="material-icons">done_all</i></a>
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr v-for="(borole, idx) in boRoles" v-bind:key="borole.META_BO_ID">
+                    <td>
+                        {{ borole.BO_NAME }}
+                    </td>
+                    <td align="center" style="padding: 5px;">
+                        <v-checkbox :return-bool="true" class="tableForm" v-model="borole.CAN_READ"></v-checkbox>
+                    </td>
+                    <td align="center" style="padding: 5px;">
+                        <v-checkbox :return-bool="true" class="tableForm" v-model="borole.CAN_WRITE"></v-checkbox>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+<script type="text/javascript">
+    var vappBoRoles = new Vue({
+        el: "#vappBoRoles",
+        data: {
+            boRoles: [],
+            role: "",
+        },
+        methods: {
+            val: function (data) {
+                if (typeof data !== "undefined") {
+                    var me = this;
+                    this.role = data;
+                    EV.getComponent('data').Get({
+                        url: "profile/boroles/" + me.role.Id,
+                        done: function (response) {
+                            me.boRoles = response;
+                        },
+                    });
+                }
+                return this.boRoles;
+            },
+            selectAll: function (key) {
+                // console.log(this.boRoles);
+                var allSelected = this.boRoles.filter(x => x[key] || x[key] == 1).length > 0;
+                // log.red("allSelected", allSelected, key, this.boRoles.filter(x => x[key] || x[key] == 1).length);
+                for (var i in this.boRoles) this.boRoles[i][key] = allSelected ? false : true;
+            },
+        }
+    });
+</script>

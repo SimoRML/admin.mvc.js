@@ -1,0 +1,925 @@
+﻿<script type="text/javascript">
+    var FormMixin = {
+        mixins: [MixinBase],
+        props: ['label', 'optional', 'datasource', 'value', 'cssClass', 'fieldName', 'line', 'column', 'disabled', 'detail', 'default', 'mode', 'boName'],
+        data: function () {
+            return {
+                data: null,
+                model: null,
+                readOnly: null,
+            }
+        },
+        created: function () {
+            var me = this;
+            // console.log("LOADING DATA SOURCE", me.datasource);
+            // bus.loadList(this.fieldName, me.datasource, (response) => { me.populateData(response) });
+        },
+        computed: {
+            isOptional: function () {
+                return typeof this.optional !== "undefined" && this.optional.toString() === "1";
+            }
+        },
+        methods: {
+            bindBack: function (e) {
+                // console.log("bindBack", e.target.type, e.target.value, this.selected);
+                if (e.target.type === "checkbox") {
+                    this.$emit('input', this.returnBool ? e.target.checked : (e.target.checked ? 1 : 0), { line: this.line, column: this.column });
+                }
+                else if (e.target.type === "select-multiple") {
+                    this.$emit('input', this.selected, { line: this.line, column: this.column });
+                }
+                else {
+                    //console.log("bindBack else", 'input', e.target.value, { line: this.line, column: this.column }, this.data);
+                    this.$emit('input', e.target.value, { line: this.line, column: this.column }, this.data);
+                }
+
+                // bus.$emit(this.elementId + "-changed", e.target);
+                if (e.target.type == "select-one") {
+                    this.emitChanged(this.selected, "bindBack");
+                }
+            }
+        },
+        mounted: function () {
+            this.model = this.value;
+            if (typeof this.default !== "undefined") {
+                // get calculated default from erver
+                if (this.mode === "insert") {
+                    if (this.default != null) {
+                        if (this.default.indexOf('\[') > -1 && this.default.indexOf('\]') > -1) {
+                            var me = this;
+                            EV.getComponent("data").Get({
+                                url: "MetaField/GetDefaultValue/?format=" + encodeURIComponent(this.default) + "&boName=" + this.boName,
+                                done: function (response) {
+                                    if (response.type == 'plus')
+                                        me.readOnly = true;
+                                    me.model = response.value;
+                                    me.bindBack({ target: { value: me.model } });
+                                },
+                                fail: function (response) {
+                                    NOTIF.warning("Champ : " + me.elementId + "<br>" + response);
+                                }
+                            });
+                        } else {
+                            this.model = this.default;
+                            me.bindBack({ target: { value: me.model } });
+                        }
+                    }
+                }
+            }
+        }
+    }
+</script>
+
+@*-----------------------------------------------------------------------------------------------------LABEL-----------------------*@
+<script id="v-label-template" type="text/template">
+    <div :id="elementId" :class="cssClass + ' form-group label-floating is-focused'">
+        <label class="control-label">{{ label }}</label>
+        <input type="text" class="form-control" style="background-size: 100% 0px, 100% 1px;"
+               :value="model" readonly>
+        <div class="category form-category" v-if="detail != null">
+            <div class="row">
+                <div class="col-md-12">
+                    <small>{{ detail }}</small>
+                </div>
+            </div>
+        </div>
+    </div>
+</script>
+<script type="text/javascript">
+    Vue.component('v-label', {
+        template: $("#v-label-template").html(),
+        mixins: [FormMixin]
+    });
+</script>
+
+@*-----------------------------------------------------------------------------------------------------EMAIL-----------------------*@
+<script id="v-email-template" type="text/template">
+    <div :id="elementId" :class="cssClass + ' form-group label-floating'">
+        <label class="control-label">{{ label }}<i v-show="isOptional"> - optionnel</i></label>
+        <input type="email" class="form-control"
+               :value="model"
+               v-on:input="bindBack($event)"
+               :required="!isOptional" :disabled="disabled">
+        <div class="category form-category" v-if="detail != null">
+            <div class="row">
+                <div class="col-md-12">
+                    <small>{{ detail }}</small>
+                </div>
+            </div>
+        </div>
+    </div>
+</script>
+<script type="text/javascript">
+    Vue.component('v-email', {
+        template: $("#v-email-template").html(),
+        mixins: [FormMixin]
+    });
+</script>
+
+
+@*-----------------------------------------------------------------------------------------------------TEXT-----------------------*@
+<script id="v-text-template" type="text/template">
+    <div :id="elementId" :class="cssClass + ' form-group label-floating'">
+        <label class="control-label">{{ label }}<i v-show="isOptional"> - optionnel</i></label>
+        <input type="text" class="form-control"
+               :value="model"
+               v-on:input="bindBack($event)"
+               :required="!isOptional" :disabled="disabled || readOnly">
+        <div class="category form-category" v-if="detail != null">
+            <div class="row">
+                <div class="col-md-12">
+                    <small>{{ detail }}</small>
+                </div>
+            </div>
+        </div>
+    </div>
+</script>
+<script type="text/javascript">
+    Vue.component('v-text', {
+        template: $("#v-text-template").html(),
+        mixins: [FormMixin]
+    });
+</script>
+
+@*-----------------------------------------------------------------------------------------------------FILE-----------------------*@
+<script id="v-file-template" type="text/template">
+    <div :id="elementId">
+        <div :class="cssClass + ' form-group'">
+            <label class="control-label">{{ label }}<i v-show="isOptional"> - optionnel</i></label>
+            <div class="file-upload">
+                <template v-if="fileType.match('image') !== null">
+                    <div class="imageContainer">
+                        <img :src="base64" />
+                    </div>
+                </template>
+                <template v-else>
+                    <div class="fileContainer">
+                        {{ name }}
+                    </div>
+                </template>
+            </div>
+            <input type="file" class="form-control"
+                   v-on:input="bindFileBack($event)"
+                   :required="!isOptional && false" :disabled="disabled">
+            <div class="category form-category" v-if="detail != null">
+                <div class="row">
+                    <div class="col-md-12">
+                        <small>{{ detail }}</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <button v-if="name != ''" type="button" class="btn btn-xs btn-danger" v-on:click="removeFile"><i class="material-icons">close</i> Supprimer le fichier</button>
+    </div>
+</script>
+<style>
+    .file-upload {
+        min-height: 30px;
+    }
+
+        .file-upload .fileContainer {
+            min-height: 30px;
+            border: 1px dashed #aaa;
+            border-top: none;
+            border-left: none;
+            border-right: none;
+        }
+
+        .file-upload .imageContainer {
+            display: inline-block;
+            border: 1px dashed #aaa;
+            padding: 5px;
+        }
+
+        .file-upload img {
+            width: 200px;
+        }
+</style>
+<script type="text/javascript">
+    Vue.component('v-file', {
+        template: $("#v-file-template").html(),
+        mixins: [FormMixin],
+        data: function () {
+            return {
+                fileType: "",
+                base64: "",
+                name: ""
+            };
+        },
+        methods: {
+            removeFile: function () {
+                this.fileType = "";
+                this.base64 = "";
+                this.name = "";
+                this.$emit('input', "", { me: this.line, me: this.column });
+            },
+            bindFileBack: function (e) {
+                var maxWidth = 1000;
+                var me = this;
+                var file = document.querySelector('#' + this.elementId + ' input[type="file"]').files[0];
+
+                getBase64(file).then(
+                    data => {
+                        me.fileType = file.type.match("/") === null ? "application/octet-stream" : file.type;
+                        me.name = file.name;
+
+                        if (me.fileType.match('image') === null) {
+                            me.base64 = data;
+                            me.$emit('input', JSON.stringify({ name: me.name, type: me.fileType, base64: me.base64 }), { me: this.line, me: this.column });
+                        } else {
+                            $("#tmpImg").remove();
+                            $("body").append($("<img id='tmpImg' src='" + data + "' style='position:absolute; letf:-30000px; top:-30000px' />"));
+                            var $img = $("#tmpImg");
+                            $img.on("load", function () {
+                                if ($(this).width() > maxWidth) { // resize the img
+                                    $(this).width(maxWidth);
+                                    data = resizeImg(this, $(this).width(), $(this).height());
+                                    me.fileType = "image/png";
+                                    $("#tmpImg").remove();
+                                }
+                                me.base64 = data;
+                                me.$emit('input', JSON.stringify({ name: me.name, type: me.fileType, base64: me.base64 }), { me: this.line, me: this.column });
+                            });
+                        }
+
+
+                    }
+                );
+            }
+        },
+        mounted: function () {
+            try {
+                var json = JSON.parse(this.value);
+                this.name = json.name;
+                this.fileType = json.type;
+                this.base64 = json.base64;
+
+                console.log("file name", this.name);
+            } catch (e) {
+
+            }
+        }
+    });
+</script>
+
+@*-----------------------------------------------------------------------------------------------------TEXT AREA-----------------------*@
+<script id="v-textarea-template" type="text/template">
+    <div :id="elementId" :class="cssClass + ' form-group label-floating'">
+        <label class="control-label">{{ label }}<i v-show="isOptional"> - optionnel</i></label>
+        <textarea type="text" class="form-control" style="min-height: 100px;"
+                  :value="model"
+                  v-on:input="bindBack($event)"
+                  :required="!isOptional" :disabled="disabled"></textarea>
+        <div class="category form-category" v-if="detail != null">
+            <div class="row">
+                <div class="col-md-12">
+                    <small>{{ detail }}</small>
+                </div>
+            </div>
+        </div>
+    </div>
+</script>
+<script type="text/javascript">
+    Vue.component('v-textarea', {
+        template: $("#v-textarea-template").html(),
+        mixins: [FormMixin]
+    });
+</script>
+
+@*-----------------------------------------------------------------------------------------------------NUMBER-----------------------*@
+<script id="v-number-template" type="text/template">
+    <div :id="elementId" :class="cssClass + ' form-group label-floating'">
+        <label class="control-label">{{ label }}<i v-show="isOptional"> - optionnel</i></label>
+        <input type="number" class="form-control" step=".01"
+               :value="model"
+               v-on:input="bindBack($event)"
+               :required="!isOptional" :disabled="disabled">
+        <div class="category form-category" v-if="detail != null">
+            <div class="row">
+                <div class="col-md-12">
+                    <small>{{ detail }}</small>
+                </div>
+            </div>
+        </div>
+    </div>
+</script>
+<script type="text/javascript">
+    Vue.component('v-number', {
+        template: $("#v-number-template").html(),
+        mixins: [FormMixin]
+    });
+</script>
+
+@*-----------------------------------------------------------------------------------------------------hidden-----------------------*@
+<script id="v-hidden-template" type="text/template">
+    <div :id="elementId">
+        <input type="hidden"
+               :value="model">
+    </div>
+</script>
+<script type="text/javascript">
+    Vue.component('v-hidden', {
+        template: $("#v-hidden-template").html(),
+        mixins: [FormMixin]
+    });
+</script>
+@*-----------------------------------------------------------------------------------------------------SELECT-----------------------*@
+<script id="v-select-template" type="text/template">
+    <div :id="elementId" :class="cssClass + ' form-group label-floating'">
+        <label class="control-label">{{ label }}<i v-show="isOptional"> - optionnel</i></label>
+        <select ref="selectpicker" class="selectpicker" data-style="select-with-transition" title="Choisir" data-size="10"
+                v-model="selected"
+                v-on:change="bindBack($event)"
+                :required="!isOptional"
+                :disabled="disabled"
+                :multiple="multiple">
+            <option value=""> Choisir </option>
+            <template v-if="isConditional">
+                <option v-for="item in filteredData"
+                        :value="item[sourceValue]">
+                    {{ item[sourceDisplay] }}
+                </option>
+            </template>
+            <template v-else>
+                <option v-for="item in data"
+                        :value="item[sourceValue]">
+                    {{ item[sourceDisplay] }}
+                </option>
+            </template>
+        </select>
+        <div class="category form-category" v-if="hasDetailFields && selectedObject != null">
+            <div class="row">
+                <div v-for="(value,index) in detailFields" :class="value.class">
+                    <b v-show="value.label != ''">{{ value.label }} : </b>
+                    <span v-format="{value:selectedObject.Attributes[index], format: value.format}">
+                        {{ selectedObject.Attributes[index] }}
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</script>
+<script type="text/javascript">
+    Vue.component('v-select', {
+        template: $("#v-select-template").html(),
+        mixins: [FormMixin],
+        props: {
+            multiple: {
+                type: Boolean,
+                default: false
+            },
+            source: {
+                type: String,
+                default: null
+            },
+            sourceDisplay: {
+                type: String,
+                default: 'Display'
+            },
+            sourceValue: {
+                type: String,
+                default: 'Value'
+            },
+            sourceFilter: {
+                type: Function,
+                default: null,
+            }
+        },
+        data: function () {
+            return {
+                selected: this.value,
+                selectedObject: null,
+                detailFields: null,
+                parentValue: null,
+                linkField: null,
+                parent: null,
+                filteredData: []
+            }
+        },
+        computed: {
+            isConditional: function () {
+                try {
+                    var jsona = JSON.parse(this.datasource);
+                    if (typeof jsona.parent !== "undefined" && jsona.parent !== "" && jsona.link_field !== "") {
+                        this.linkField = jsona.link_field;
+                        this.parent = jsona.parent;
+                        return true;
+                    }
+                } catch { }
+                return false;
+            },
+            hasDetailFields: function () {
+                try {
+                    var jsona = JSON.parse(this.datasource);
+                    if (typeof jsona.detail !== "undefined") {
+                        this.detailFields = jsona.detail;
+                        for (var prop in jsona.detail) {
+                            if (jsona.detail.hasOwnProperty(prop)) {
+                                return true;
+                            }
+                        }
+                        return false;
+                    }
+                } catch { }
+                return false;
+            },
+            list: function () {
+                if (this.source === null) return null;
+                else {
+                    if (this.sourceFilter == null)
+                        return this.$store.getters.get(this.source);
+                    else
+                        return this.$store.getters.getFilter({ key: this.source, filter: this.sourceFilter });
+                }
+            }
+        },
+        watch: {
+            value: function (newVal, oldVal) {
+                //console.log("watch value", newVal);
+                this.setValue(newVal, "watch");
+            },
+            list: function (newVal, oldVal) {
+                //console.log("watch list", newVal);
+                this.populateData(newVal);
+            },
+        },
+        methods: {
+            setValue: function (value, emitter) {
+                var me = this;
+                if (me.data === null) return;
+
+                if (!Array.isArray(me.data)) {
+                    var a = [];
+                    for (var i in me.data) a.push(me.data[i]);
+                    me.data = a;
+                }
+
+                if (typeof value !== "undefined" && value !== "") me.selected = value;
+                // console.log(emitter + ".setValue : (" + me.id + ")", me.selected, "data", me.data);
+                // console.log("setValue me.selected : " + me.id, "'" + me.selected + "'");
+                // var time = me.selected == '' ? 1000 : 100;
+                setTimeout(function () {
+                    // log.redTitle("setValue : " + me.id, "'" + me.selected + "'", me.data);
+                    $("#" + me.elementId + " select").val(me.selected);
+                    $("#" + me.elementId + " select").selectpicker('refresh');
+                    // log.greenTitle("value : " + me.elementId, "'" + $("#" + me.elementId + " select").val() == '' + "'");
+                    if ($("#" + me.elementId + " select").val() == '') {
+                        setTimeout(function () {
+                            $("#" + me.elementId + " select").val(me.selected);
+                            $("#" + me.elementId + " select").selectpicker('refresh');
+                            me.emitChanged(me.selected, emitter);
+                        }, 100);
+                    }
+                    else me.emitChanged(me.selected, emitter);
+                }, 100);
+            },
+            emitChanged: function (value, emitter) {
+                // console.log("EMIT CHANGED", this.elementId);
+                if (value == "") return;
+                if (this.data == null) return;
+                if (typeof firstLoad === "undefined") firstLoad = false;
+                var me = this;
+
+                me.selectedObject = null;
+                // console.log("EMIT CHAGED " + this.elementId, this.data);
+                this.data.forEach((item) => {
+                    if (item[this.sourceValue] == value)
+                        me.selectedObject = item;
+                });
+
+                if (value == null && me.selectedObject == null) return;
+
+                this.$emit("changed", { value: value, line: this.line, column: this.column, emitter: emitter, object: me.selectedObject }, me.selectedObject);
+                bus.$emit(this.elementId + "-changed", value, me.selectedObject);
+            },
+            populateData: function (data) {
+                var me = this;
+                me.data = data;
+                me.setValue();
+            }
+        },
+        mounted: function () {
+            var me = this;
+            if (this.source === null) {
+                bus.loadList(this.fieldName, me.datasource, (response) => { me.populateData(response) });
+            } else {
+                me.populateData(this.list);
+            }
+            // console.log("mounted", this.elementId, " cond: ", this.isConditional);
+            if (this.isConditional) {
+                var parentId = typeof me.line === "undefined" ? me.parent : me.parent + "_" + me.line;
+                bus.$on(parentId + "-changed", (value, obj) => {
+                    console.log(parentId + "-changed, value:", value, "obj :", obj);
+                    var filteredData = [];
+                    me.data.forEach((e) => {
+                        if (e.Attributes[me.linkField] == value) filteredData.push(clone(e));
+                    });
+                    me.filteredData = filteredData;
+                    me.setValue(me.selected, "mounted bus event");
+                });
+            } else
+                this.setValue(me.selected, "mounted");
+
+            /*
+            var setValueFix = function () {
+                console.log("SELECT fix ", me.elementId, "selected", me.selected, "value", me.value, "JQ", $("#" + me.elementId + " select").val());
+            };
+            EV.Event(setValueFix,1);
+            */
+        },
+        beforeDestroy() {
+            bus.$off(this.parent + "-changed");
+        }
+    });
+
+</script>
+
+
+@*-----------------------------------------------------------------------------------------------------SELECT MULTIPLE-----------------------*@
+<script id="v-select-multiple-template" type="text/template">
+    <div :id="elementId" :class="cssClass + ' form-group label-floating'">
+        <label class="control-label">{{ label }}<i v-show="isOptional"> - optionnel</i></label>
+        <select ref="selectpicker" class="selectpicker" data-style="select-with-transition" title="Choisir" data-size="10"
+                v-model="selected"
+                v-on:change="bindBack($event)"
+                :required="!isOptional"
+                :disabled="disabled"
+                :multiple="multiple">
+            <option value=""> Choisir </option>
+            <template v-if="isConditional">
+                <option v-for="item in filteredData"
+                        :value="item[sourceValue]">
+                    {{ item[sourceDisplay] }}
+                </option>
+            </template>
+            <template v-else>
+                <option v-for="item in data"
+                        :value="item[sourceValue]">
+                    {{ item[sourceDisplay] }}
+                </option>
+            </template>
+        </select>
+        <div class="category form-category" v-if="hasDetailFields && selectedObject != null">
+            <div class="row">
+                <div v-for="(value,index) in detailFields" :class="value.class">
+                    <b v-show="value.label != ''">{{ value.label }} : </b>
+                    <span v-format="{value:selectedObject.Attributes[index], format: value.format}">
+                        {{ selectedObject.Attributes[index] }}
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</script>
+<script type="text/javascript">
+    Vue.component('v-select-multiple', {
+        template: $("#v-select-multiple-template").html(),
+        mixins: [FormMixin],
+        props: {
+            multiple: {
+                type: Boolean,
+                default: true
+            },
+            source: {
+                type: String,
+                default: null
+            },
+            sourceDisplay: {
+                type: String,
+                default: 'Display'
+            },
+            sourceValue: {
+                type: String,
+                default: 'Value'
+            },
+            sourceFilter: {
+                type: Function,
+                default: null,
+            }
+        },
+        data: function () {
+            return {
+                selected: this.value == null || this.value == "" ? [] : (typeof this.value == "string" ? JSON.parse(this.value) : this.value),
+                selectedObject: null,
+                detailFields: null,
+                parentValue: null,
+                linkField: null,
+                parent: null,
+                filteredData: []
+            }
+        },
+        computed: {
+            isConditional: function () {
+                try {
+                    var jsona = JSON.parse(this.datasource);
+                    if (typeof jsona.parent !== "undefined" && jsona.parent !== "" && jsona.link_field !== "") {
+                        this.linkField = jsona.link_field;
+                        this.parent = jsona.parent;
+                        return true;
+                    }
+                } catch { }
+                return false;
+            },
+            hasDetailFields: function () {
+                try {
+                    var jsona = JSON.parse(this.datasource);
+                    if (typeof jsona.detail !== "undefined") {
+                        this.detailFields = jsona.detail;
+                        for (var prop in jsona.detail) {
+                            if (jsona.detail.hasOwnProperty(prop)) {
+                                return true;
+                            }
+                        }
+                        return false;
+                    }
+                } catch { }
+                return false;
+            },
+            list: function () {
+                if (this.source === null) return null;
+                else {
+                    if (this.sourceFilter == null)
+                        return this.$store.getters.get(this.source);
+                    else
+                        return this.$store.getters.getFilter({ key: this.source, filter: this.sourceFilter });
+                }
+            }
+        },
+        watch: {
+            value: function (newVal, oldVal) {
+                //console.log("watch value", newVal);
+                this.setValue(newVal, "watch");
+            },
+            list: function (newVal, oldVal) {
+                //console.log("watch list", newVal);
+                this.populateData(newVal);
+            },
+        },
+        methods: {
+            setValue: function (value, emitter) {
+                var me = this;
+                if (me.data === null) return;
+
+                if (!Array.isArray(me.data)) {
+                    var a = [];
+                    for (var i in me.data) a.push(me.data[i]);
+                    me.data = a;
+                }
+
+                if (typeof value !== "undefined" && value !== "") me.selected = value;
+                // console.log(emitter + ".setValue : (" + me.id + ")", me.selected, "data", me.data);
+                // console.log("setValue me.selected : " + me.id, "'" + me.selected + "'");
+                // var time = me.selected == '' ? 1000 : 100;
+                setTimeout(function () {
+                    // console.log("setValue : " + me.id, "'" + me.selected + "'");
+                    $("#" + me.elementId + " select").val(me.selected);
+                    $("#" + me.elementId + " select").selectpicker('refresh');
+                    // bus.$emit(me.elementId + "-changed", me.$refs.selectpicker);
+                    me.emitChanged(me.selected, emitter);
+                }, 100);
+            },
+            emitChanged: function (value, emitter) {
+                // console.log("EMIT CHANGED", this.elementId);
+                if (value == "") return;
+                if (this.data == null) return;
+                if (typeof firstLoad === "undefined") firstLoad = false;
+                var me = this;
+
+                me.selectedObject = null;
+                // console.log("EMIT CHAGED " + this.elementId, this.data);
+                this.data.forEach((item) => {
+                    if (item[this.sourceValue] == value)
+                        me.selectedObject = item;
+                });
+
+                if (value == null && me.selectedObject == null) return;
+
+                this.$emit("changed", { value: value, line: this.line, column: this.column, emitter: emitter }, me.selectedObject);
+                bus.$emit(this.elementId + "-changed", value, me.selectedObject);
+            },
+            populateData: function (data) {
+                var me = this;
+                me.data = data;
+                me.setValue();
+            }
+        },
+        mounted: function () {
+            var me = this;
+            if (this.source === null) {
+                bus.loadList(this.fieldName, me.datasource, (response) => { me.populateData(response) });
+            } else {
+                me.populateData(this.list);
+            }
+        }
+    });
+
+</script>
+
+
+@*-----------------------------------------------------------------------------------------------------SELECT-----------------------*@
+<script id="v-select2-template" type="text/template">
+    <div :id="elementId" class="dropdown"
+         :disabled="disabled">
+        <button href="#" class="dropdown-toggle btn btn-xs btn-primary btn-simple" data-toggle="dropdown"
+                style="text-align:left; width:100%; height:46px;border-bottom: solid 1px #ddd;" v-html="selected[sourceDisplay]"></button>
+        <ul class="dropdown-menu dropdown-menu-left">
+            <li v-for="item in data">
+                <a href="javascript:;" v-on:click="selected = item" v-html="item[sourceDisplay]">
+                </a>
+            </li>
+        </ul>
+    </div>
+</script>
+<script type="text/javascript">
+    Vue.component('v-select2', {
+        template: $("#v-select2-template").html(),
+        mixins: [FormMixin],
+        props: {
+            multiple: {
+                type: Boolean,
+                default: false
+            },
+            source: {
+                type: String,
+                default: null
+            },
+            sourceDisplay: {
+                type: String,
+                default: 'Display'
+            },
+            sourceValue: {
+                type: String,
+                default: 'Value'
+            },
+            sourceFilter: {
+                type: Function,
+                default: null,
+            }
+        },
+        data: function () {
+            return {
+                selected: JSON.parse("{\"" + this.sourceDisplay + "\":\" Choisir \", \"" + this.sourceValue + "\":\"\"}"),
+                selectedObject: null,
+                detailFields: null,
+                parentValue: null,
+                linkField: null,
+                parent: null,
+                filteredData: []
+            }
+        },
+        computed: {
+            isConditional: function () {
+                try {
+                    var jsona = JSON.parse(this.datasource);
+                    if (typeof jsona.parent !== "undefined" && jsona.parent !== "" && jsona.link_field !== "") {
+                        this.linkField = jsona.link_field;
+                        this.parent = jsona.parent;
+                        return true;
+                    }
+                } catch { }
+                return false;
+            },
+            hasDetailFields: function () {
+                try {
+                    var jsona = JSON.parse(this.datasource);
+                    if (typeof jsona.detail !== "undefined") {
+                        this.detailFields = jsona.detail;
+                        for (var prop in jsona.detail) {
+                            if (jsona.detail.hasOwnProperty(prop)) {
+                                return true;
+                            }
+                        }
+                        return false;
+                    }
+                } catch { }
+                return false;
+            },
+            list: function () {
+                if (this.source === null) return null;
+                else {
+                    if (this.sourceFilter == null)
+                        return this.$store.getters.get(this.source);
+                    else
+                        return this.$store.getters.getFilter({ key: this.source, filter: this.sourceFilter });
+                }
+            }
+        },
+        watch: {
+            value: function (newVal, oldVal) {
+                //console.log("watch value", newVal);
+                this.setValue(newVal, "watch");
+            },
+            list: function (newVal, oldVal) {
+                //console.log("watch list", newVal);
+                this.populateData(newVal);
+            },
+            selected: function (newVal, oldVal) {
+                if (typeof newVal[this.sourceValue] === "undefined") return;
+                //log.red("selected", newVal, newVal[this.sourceValue]);
+                this.$emit('input', newVal[this.sourceValue], { line: this.line, column: this.column }, this.data);
+            }
+        },
+        methods: {
+            setValue: function (value, emitter) {
+                var me = this;
+                if (me.data === null) return;
+                // if (typeof me.data === "object") me.data = Object.keys(me.data).map(i => me.data[i]);
+                if (!Array.isArray(me.data)) {
+                    var a = [];
+                    for (var i in me.data) a.push(me.data[i]);
+                    me.data = a;
+                }
+                log.greenTitle("data select 2", me.value, me.data.filter(x => x[me.sourceValue] == me.value)[0]);
+                var s = me.data.filter(x => x[me.sourceValue] == me.value)[0];
+                if (typeof s !== "undefined") me.selected = s;
+                //log.green("data select 2 .selected ==", me.selected);
+            },
+            populateData: function (data) {
+                var me = this;
+                me.data = data;
+                me.setValue();
+            }
+        },
+        mounted: function () {
+            var me = this;
+            if (this.source === null) {
+                bus.loadList(this.fieldName, me.datasource, (response) => { me.populateData(response) });
+            } else {
+                me.populateData(this.list);
+            }
+        },
+        beforeDestroy() {
+            bus.$off(this.parent + "-changed");
+        }
+    });
+
+</script>
+
+@*-----------------------------------------------------------------------------------------------------DatePicker-----------------------*@
+<script id="FormDatePickerTemplate" type="text/template">
+    <div :id="elementId" :class="cssClass + ' form-group'">
+        <label class="label-control" v-show="typeof label !== 'undefined'">
+            {{ label }}<i v-show="isOptional"> - optionnel</i>
+        </label>
+        <input type="date" class="form-control"
+               :value="model && model.split('T')[0]"
+               v-on:input="bindBack($event)"
+               :required="!isOptional" :disabled="disabled" />
+        <div class="category form-category" v-if="detail != null">
+            <div class="row">
+                <div class="col-md-12">
+                    <small>{{ detail }}</small>
+                </div>
+            </div>
+        </div>
+    </div>
+</script>
+<script type="text/javascript">
+    Vue.component('v-datepicker', {
+        template: $("#FormDatePickerTemplate").html(),
+        mixins: [FormMixin]
+    });
+    Vue.component('v-date', {
+        template: $("#FormDatePickerTemplate").html(),
+        mixins: [FormMixin]
+    });
+</script>
+
+@*-----------------------------------------------------------------------------------------------------checkbox-----------------------*@
+<script id="v-checkbox-template" type="text/template">
+    <div :id="elementId" :class="cssClass + ' form-group'">
+        <div class="checkbox">
+            <label>
+                <input type="checkbox" name="optionsCheckboxes"
+                       v-model="isChecked"
+                       v-on:change="bindBack($event)"
+                       :required="!isOptional" :disabled="disabled">{{ label }}<i v-show="isOptional"> - optionnel</i>
+                <div class="category form-category" v-if="detail != null">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <small>{{ detail }}</small>
+                        </div>
+                    </div>
+                </div>
+            </label>
+        </div>
+    </div>
+</script>
+<script type="text/javascript">
+    Vue.component('v-checkbox', {
+        template: $("#v-checkbox-template").html(),
+        mixins: [FormMixin],
+        props: {
+            returnBool: {
+                type: Boolean,
+                default: false,
+            },
+        },
+        computed: {
+            isChecked: {
+                get: function () { return this.value == 1; },
+                set: function () { }
+            }
+        }
+    });
+</script>

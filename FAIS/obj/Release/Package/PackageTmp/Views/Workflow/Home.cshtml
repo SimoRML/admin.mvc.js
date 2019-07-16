@@ -1,0 +1,462 @@
+﻿@model FAIS.Models.WORKFLOW
+<style type="text/css">
+    .wf-item {
+        position: relative;
+    }
+
+        .wf-item .button {
+            white-space: pre-line;
+        }
+
+            .wf-item .button .top-icone {
+                display: block;
+                font-size: 250% !important;
+            }
+
+        .wf-item .action {
+            position: absolute;
+            right: -35px;
+            top: 43px;
+        }
+
+    .arrow-right {
+        padding-top: 40px;
+        text-align: center;
+    }
+
+        .arrow-right i {
+            font-size: 50px;
+        }
+</style>
+<script type="text/javascript">
+    var flowItemBase = {
+        props: {
+            index: Number,
+            value: Object,
+            locked: {
+                type: Boolean,
+                default: false
+            }
+        },
+        data: function () {
+            return {
+                isLast: true,
+            };
+        },
+        methods: {
+            remove: function () {
+                var me = this;
+                NOTIF.confirm({
+                    title: "Supprimer le noeud !",
+                    text: "Etes-vous sûr de vouloir supprimer ce noeud ?",
+                    valider: function () {
+                        me.$emit('remove-node', me.index);
+                    }
+                });
+            },
+            showAddBtn: function () {
+                return this.index == bus.scope.flowLastIndex;
+            }
+        }
+    };
+</script>
+@* ---------------------------------------------- BO COMPONENET              *@
+<script id="bo-template" type="text/template">
+    <div class="dropdown wf-item col-xs-2 col-sm-2 col-md-2">
+        <div class="dropdown">
+            <button href="#" :class="{'dropdown-toggle btn btn-round btn-block button':true, 'btn-info':selectedMeta.value !== -1, 'disabled':locked}" :data-toggle="locked?'' : 'dropdown'">
+                <i class="material-icons top-icone">
+                    memory
+                </i>
+                {{ selectedMeta.display }}
+                <b class="caret"></b>
+            </button>
+            <ul class="dropdown-menu dropdown-menu-left">
+                <li class="dropdown-submenu">
+                    <a tabindex="-1" href="javascript:;">Définir le busiess object</a>
+                    <ul class="dropdown-menu">
+                        <li v-for="meta in metaList">
+                            <a v-if="meta.TYPE!='subform'" href="javascript:;" v-on:click="val({ value: meta.META_BO_ID, display: meta.BO_NAME })">{{ meta.BO_NAME }}</a>
+                        </li>
+                    </ul>
+                </li>
+                <li :class="{'disabled':selectedMeta.value === -1}">
+                    <a href="javascript:;" v-on:click="$emit('configurer-mapping',index)">
+                        <i class="material-icons">link</i>
+                        Mapping
+                    </a>
+                </li>
+                <li class="divider"></li>
+                <li>
+                    <a href="javascript:;" v-on:click="remove()" v-if="index>0">
+                        <i class="material-icons">delete</i>
+                        Supprimer le noeud
+                    </a>
+                </li>
+            </ul>
+        </div>
+        <div class="dropdown action">
+            <button href="#" :class="{'dropdown-toggle btn btn-simple btn-xs':true, 'btn-info':selectedMeta.value !== -1}" data-toggle="dropdown" v-show="selectedMeta.value !== -1 && showAddBtn()">
+                <i class="material-icons">add</i>
+            </button>
+            <ul :class="{'dropdown-menu': true, 'dropdown-menu-left': (index % 3 != 0), 'dropdown-menu-right': (index % 3 == 0 && index > 0)}">
+                <li class="dropdown-header">Ajouter une étape</li>
+                <li>
+                    <a href="javascript:;" v-on:click="$emit('add-bo', index); isLast=false">
+                        <i class="material-icons">memory</i>
+                        Nouveau busniss object
+                    </a>
+                </li>
+                <li>
+                    <a href="javascript:;" v-on:click="$emit('add-validation', index); isLast=false">
+                        <i class="material-icons">done_outline</i>
+                        Validation
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</script>
+
+<script type="text/javascript">
+    var workflowId = @ViewBag.id;
+
+    Vue.component('bo', {
+        template: $("#bo-template").html(),
+        mixins: [flowItemBase],
+        data: function () {
+            return {
+                metaList: [],
+                selectedMeta: { value: -1, display: "Choisir" },
+            };
+        },
+        methods: {
+            val: function (value) {
+                if (typeof value !== "undefined") {
+                    this.selectedMeta = value;
+                    this.$emit("value-changed", { index: this.index, value: this.selectedMeta });
+                }
+                return this.selectedMeta;
+            },
+        },
+        mounted: function () {
+            var me = this;
+            bus.loadList("metaList", { url: "metabo", method: "GET" }, (response) => {
+            me.metaList = response;
+            });
+            if (me.value!==null) me.selectedMeta = me.value;
+        }
+    });
+
+</script>
+
+@* ---------------------------------------------- VALIDATION COMPONENET              *@
+<script id="validation-template" type="text/template">
+    <div class="dropdown wf-item col-xs-2 col-sm-2 col-md-2">
+        <div class="dropdown">
+            <button href="#" :class="{'dropdown-toggle btn btn-round btn-block button':true, 'btn-warning':!configured, 'btn-success':configured}" data-toggle="dropdown">
+                <i class="material-icons top-icone">
+                    done_outline
+                </i>
+                VALIDAT°
+                <b class="caret"></b>
+            </button>
+            <ul class="dropdown-menu dropdown-menu-center">
+                <li>
+                    <a href="javascript:;" v-on:click="$emit('configurer-validation',index)">
+                        <i class="material-icons">build</i>
+                        Configurer
+                    </a>
+                </li>
+                <li class="divider"></li>
+                <li>
+                    <a href="javascript:;" v-on:click="remove()">
+                        <i class="material-icons">delete</i>
+                        Supprimer le noeud
+                    </a>
+                </li>
+            </ul>
+        </div>
+        <div class="dropdown action">
+            <button href="#" :class="{'dropdown-toggle btn btn-simple btn-xs':true, 'btn-warning':!configured, 'btn-success':configured}" data-toggle="dropdown" v-show="showAddBtn()">
+                <i class="material-icons">add</i>
+            </button>
+            <ul :class="{'dropdown-menu': true, 'dropdown-menu-left': (index % 3 != 0), 'dropdown-menu-right': (index % 3 == 0 && index > 0)}">
+                <li class="dropdown-header">Ajouter une étape</li>
+                <li>
+                    <a href="javascript:;" v-on:click="$emit('add-bo', index); isLast=false">
+                        <i class="material-icons">memory</i>
+                        Nouveau busniss object
+                    </a>
+                </li>
+                <li>
+                    <a href="javascript:;" v-on:click="$emit('add-validation', index); isLast=false">
+                        <i class="material-icons">done_outline</i>
+                        Validation
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</script>
+
+<script type="text/javascript">
+    Vue.component('validation', {
+        template: $("#validation-template").html(),
+        mixins: [flowItemBase],
+        data: function () {
+            return {
+                configured: false
+            };
+        }
+    });
+
+</script>
+
+@* ---------------------------------------------- VUE              *@
+<div class="card" id="my-vue-app">
+    <div class="card-header">
+        <h4 class="card-title">WORKFLOW</h4>
+    </div>
+    <div class="card-content">
+        <div class="row form-group">
+            <template v-for="(item, index) in flowItems">
+                <template v-if="item.status !== 'deleted'">
+                    <div class="col-md-1 arrow-right" v-if="index === 0">
+                        <i class="material-icons">
+                            input
+                        </i>
+                    </div>
+                    <div class="col-md-1 arrow-right" v-else>
+                        <i class="material-icons">
+                            arrow_right_alt
+                        </i>
+                    </div>
+                    <template v-if="item.type === 'bo'">
+                        <bo :ref="'node_' + index"
+                            :index="index"
+                            :value="item.value"
+                            :locked="item.locked"
+                            v-on:value-changed="setItemValue"
+                            v-on:add-bo="addBo"
+                            v-on:add-validation="addValidation"
+                            v-on:remove-node="removeNode"
+                            v-on:configurer-mapping="configurerMapping"></bo>
+                    </template>
+                    <template v-if="item.type === 'validation'">
+                        <validation :ref="'node_' + index"
+                                    :index="index"
+                                    v-on:add-bo="addBo"
+                                    v-on:add-validation="addValidation"
+                                    v-on:remove-node="removeNode"
+                                    v-on:configurer-validation="configurerValidation"></validation>
+                    </template>
+                </template>
+            </template>
+
+
+        </div>
+    </div>
+    <div class="card-footer" style="padding-bottom: 35px;">
+        <div class="pull-right">
+            <button type="submit" class="btn btn-fill btn-sm btn-primary" v-on:click="submit">Enregitrer<div class="ripple-container"></div></button>
+            <button type="button" class="btn btn-fill btn-sm btn-secondary">Annuler<div class="ripple-container"></div></button>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+
+    bus.setScope("flowLastIndex", 0);
+   var Workflow_items = '@Html.Raw(Model.ITEMS == null ? "" : Model.ITEMS.Replace("'","``"))';
+    console.log(Workflow_items);
+
+                try {
+                    Workflow_items = JSON.parse(Workflow_items);
+                } catch (e) {
+                    Workflow_items = [{ type: "bo", status: "new", precedent: null, next: null, "value": null, locked: false }/*, { type: "validation", status: "new", precedent: 0, next: null }*/];
+                }
+
+                var vapp = new Vue({
+        el: "#my-vue-app",
+        data: {
+                flowItems: Workflow_items
+            //flowItems: [{ "type": "bo", "status": "new", "next": null, "precedent": null, "index": 0, "value": { "value": 3, "display": "article" } }],
+        },
+        methods: {
+                submit: function () {
+                        var workflow = [], errors = [];
+
+                // VALIDATION
+                for (var i in this.flowItems) {
+                            var item = clone(this.flowItems[i]);
+                            if (typeof item.index === "undefined") {
+                                errors.push("Le noeud N° <b>" + (parseInt(i) + 1) + "</b> n'est pas configuré !");
+                                continue;
+                            }
+                            workflow.push(item);
+                        }
+                        if (errors.length > 0) {
+                            NOTIF.warning(errors.join("<br>"));
+                        } else {
+                    // FORMATAGE
+                    for (var i in workflow) {
+                                var item = workflow[i];
+                                if (item.next != null) {
+                                    item.next = item.next.index;
+                                }
+
+                            }
+
+                            // SUBMIT
+                            var me = this;
+                            var data = EV.getComponent("data");
+                            data.Put({
+                            url: 'metabo/Crud/2/' + workflowId,
+                        data: JSON.stringify({
+                                ITEMS: JSON.stringify(workflow)
+                        }),
+                        done: function (response) {
+                                    NOTIF.success("Workflow enregistré avec succes");
+                                    //  me.reset();
+                                },
+                        fail: function (response) {
+                                    NOTIF.error("Server Error ! " + JSON.stringify(response));
+                                }
+                            });
+                            console.log("submit", workflow);
+                        }
+                    },
+            setItemValue: function (payload) {
+                        this.flowItems[payload.index].index = payload.index;
+                        this.flowItems[payload.index].value = payload.value;
+                    },
+            addBo: function (index) {
+                        var bo = { type: "bo", status: "new", precedent: index, next: null,value:null };
+                    this.flowItems[index].next = bo;
+                    this.flowItems.push(bo);
+                    this.setLastIndex();
+                },
+            addValidation: function (index) {
+                    var validation = { type: "validation", status: "new", precedent: index, next: null };
+                this.flowItems[index].next = validation;
+                this.flowItems.push(validation);
+                this.setLastIndex();
+            },
+            removeNode: function (index) {
+                this.flowItems[index].status = "deleted";
+                this.setLastIndex();
+            },
+            setLastIndex: function () {
+                var lastIndex = 0;
+                for (var i in this.flowItems)
+                    if (this.flowItems[i].status !== 'deleted')
+                        lastIndex = i;
+                bus.setScope("flowLastIndex", lastIndex);
+            },
+            configurerValidation: function (index) {
+                var me = this;
+                var item = me.flowItems[index];
+
+                //Boucla get precedent item
+                // if is bo stop and get
+                // else get precedent of precedent till you get the nearest bo
+                var metaBoId = me.closestItem(index, 'bo').value.value;
+
+                if (metaBoId === -1) {
+                    NOTIF.warning("Vous devez dabord définir le BO du noeud précédent !");
+                    return;
+                }
+
+                NOTIF.modal({
+                width: "90%",
+                    height: "80vh",
+                    url: "workflow/validation/" + metaBoId,
+                    load: function () {
+                        validationVapp.val(item.value);
+                    },
+                    valider: () => {
+                        me.setItemValue({ index: index, value: validationVapp.val() });
+                        //item.value = validationVapp.val(); // { metaBoId: metaBoId, rules: validationVapp.$data.rules, validators: validationVapp.$data.validators };
+                        me.$refs["node_" + index][0].$data.configured = item.value.rules.length > 0 && item.value.validators.length > 0;
+
+                        //Lock closest BO
+                        if (item.value.rules.length > 0) {
+                            me.closestItem(index, 'bo').locked = true;
+                        } else {
+
+                            me.closestItem(index, 'bo').locked = false;
+                        }
+
+                    }
+                });
+            },
+            configurerMapping: function (index) {
+                var me = this;
+                var item = me.flowItems[index];
+
+                //Boucla get precedent item
+                // if is bo stop and get
+                // else get precedent of precedent till you get the nearest bo
+                var metaBoId_child = item.value.value;
+                var metaBoId_parent = me.closestItem(index, 'bo').value.value;
+
+                if (metaBoId_parent === -1) {
+                    NOTIF.warning("Vous devez dabord définir le BO du noeud précédent !");
+                    return;
+                }
+                if (metaBoId_child === -1) {
+                    NOTIF.warning("Vous devez dabord définir le BO du noeud en cours !");
+                    return;
+                }
+
+                NOTIF.modal({
+                width: "50%",
+                    height: "80vh",
+                    url: "workflow/mapping/" + metaBoId_parent + "?id2="+metaBoId_child,
+                    load: function () {
+                        mappingVapp.val(item.value.MyMapping);
+                    },
+                    valider: () => {
+
+                        me.flowItems[index].value.MyMapping = mappingVapp.val();
+
+                        //item.value = validationVapp.val(); // { metaBoId: metaBoId, rules: validationVapp.$data.rules, validators: validationVapp.$data.validators };
+                        // me.$refs["node_" + index][0].$data.configured = item.value.rules.length > 0 && item.value.validators.length > 0;
+
+
+                    }
+                });
+            },
+            closestItem: function (index, type) {
+                var precedentIndex = index;
+                var continue_ = true;
+
+                while (continue_) {
+
+                    precedentIndex--;
+                    if (precedentIndex == 0) {
+                        continue_ = false;
+                    }
+                    if (this.flowItems[precedentIndex].type == type) {
+                        return this.flowItems[precedentIndex];
+                    }
+                }
+            }
+        },
+        mounted: function () {
+            this.setLastIndex();
+        }
+    });
+
+    //setTimeout(() => {
+    //    NOTIF.modal({
+    //        width: "90%",
+    //        height: "80vh",
+    //        url: "workflow/validation/55",
+    //        valider: () => {
+    //            //me.$refs["node_" + index][0].$data.configured = true;
+    //        }
+    //    });
+    //},500);
+</script>

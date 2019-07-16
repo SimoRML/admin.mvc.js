@@ -1,0 +1,368 @@
+﻿<style id="css_vappEditionWidget_@ViewBag.compKey">
+    .tableContainer {
+        width: 100%;
+        font-family: Arial;
+        margin-bottom: 100px;
+    }
+
+    .table-header {
+        width: 100%;
+    }
+
+        .table-header th {
+            border-right: 1px solid #ddd !important;
+            border-top: 1px solid #ddd !important;
+        }
+
+            .table-header th:first-child, .table-header .left-border {
+                border-left: 1px solid #ddd !important;
+            }
+
+        .table-header td {
+            border-right: 1px solid #ddd !important;
+            border-top: 1px solid #ddd !important;
+        }
+
+            .table-header td:first-child {
+                border-left: 1px solid #ddd !important;
+            }
+
+        .table-header tr:last-child td {
+            border-bottom: 1px solid #ddd !important;
+        }
+
+
+        .table-header thead th {
+            background: #00345b;
+            color: #fff;
+            font-size: 15px !important;
+        }
+
+
+    .table-col-bordered th {
+        border-radius: none !important;
+        border-right: 1px solid #ddd !important;
+    }
+
+        .table-col-bordered th:first-child {
+            border-left: 1px solid #ddd !important;
+        }
+
+    .table-col-bordered td {
+        border: none !important;
+        border-right: 1px solid #ddd !important;
+    }
+
+        .table-col-bordered td:first-child {
+            border-left: 1px solid #ddd !important;
+        }
+
+    .table-col-bordered tr:last-child td {
+        border-bottom: 1px solid #ddd !important;
+    }
+</style>
+<div id="vappEditionWidget_@ViewBag.compKey">
+    <table class="tableContainer">
+        <thead>
+            <tr>
+                <th>
+                    <div class="row">
+                        <div class="col-md-6" style="text-align:left">
+                            <img :src="logo" style="width:80px" />
+                        </div>
+                        <div class="col-md-6">
+                            <a href="javascript:;" class="btn btn-default btn-sm pull-right no-print" v-on:click="print"><i class="material-icons">print</i></a>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12" style="text-align:center">
+                            <h4>{{ title }}</h4>
+                        </div>
+                    </div>
+                    <br />
+                    <table style="width:100%;">
+                        <tr>
+                            <td style="width:50%">
+                                <div v-html="societe"></div>
+                            </td>
+                            <td style="width:50%">
+                                <div v-html="societeFacture"></div>
+                            </td>
+                        </tr>
+                    </table>
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>
+
+                    @*BIG LOOP*@
+                    <div v-for="line in data">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <table class="table v-table table-header table-bordered table-col-bordered" cellpadding="5" cellspacing="0">
+                                    <thead>
+                                        <tr>
+                                            <th>Date</th>
+                                            <th>N°</th>
+                                            <th>Ref</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>{{ now }}</td>
+                                            <td>{{ line[props.num] }}</td>
+                                            <td>{{ line[props.ref] }}</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <br />
+                        <div class="row">
+                            <div class="col-md-12">
+                                <table class="table v-table table-header table-bordered" style="border:none" cellpadding="5" cellspacing="0">
+                                    <thead class="table-col-bordered">
+                                        <tr>
+                                            <th>Désignation</th>
+                                            <th width="1px">Unité</th>
+                                            <th width="1px">Quantité</th>
+                                            <th width="1px">Prix&nbsp;HT</th>
+                                            <th width="1px">TVA</th>
+                                            <th width="1px">Total&nbsp;HT</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="table-col-bordered">
+                                        <tr v-for="item in line.sub">
+                                            <td v-format="{value:item[props.productName], format: props.productNameFormat}">{{ item[props.productName] }}</td>
+                                            <td align="center" width="1px"
+                                                v-format="{value:item[props.unite], format: props.uniteFormat}">
+                                                {{ item[props.unite] }}
+                                            </td>
+                                            <td align="right"
+                                                v-format="{value:item[props.qte], format: props.qteFormat}">
+                                                {{ item[props.qte] }}
+                                            </td>
+                                            <td align="right">
+                                                {{ item[props.prix] }}&nbsp;{{ devise }}
+                                            </td>
+                                            <td align="right">20&nbsp;%</td>
+                                            <td align="right">
+                                                {{ item[props.qte] * item[props.prix] }}&nbsp;{{ devise }}
+                                            </td>
+                                        </tr>
+                                        <tr v-for="item in to10Lines(line)">
+                                            <td>&nbsp;</td>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                        </tr>
+                                    </tbody>
+                                    <thead>
+                                        <tr>
+                                            <th colspan="3" style="border: none !important;background: #fff;"></th>
+                                            <th colspan="2" style="text-align:right" class="left-border">SOUS&nbsp;TOTAL&nbsp;HT</th>
+                                            <th style="text-align:right">{{ total(line.sub) }}&nbsp;{{ devise }}</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td colspan="3" style="border: none !important;background: #fff;"></td>
+                                            <td colspan="2" align="right" class="left-border">TVA</td>
+                                            <td align="right">20&nbsp;%</td>
+                                        </tr>
+                                        <tr>
+                                            <td colspan="3" style="border: none !important;background: #fff;"></td>
+                                            <td colspan="2" align="right" class="left-border">TOTAL TTC</td>
+                                            <td align="right">{{ parseFloat((total(line.sub) * 1.2 * 100) / 100).toFixed(2) }}&nbsp;{{ devise }}</td>
+                                        </tr>
+                                        <tr>
+                                            <td colspan="3" style="border: none !important;background: #fff;"></td>
+                                            <td colspan="2" align="right" class="left-border">ACOMPTE</td>
+                                            <td align="right">
+                                                <input type="text" v-model="acompte" style="border:none; text-align:right;width: 60%;" class="no-print" /><span class="print" style="display:none">{{ acompte }}</span>&nbsp;{{ devise }}
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                    <thead>
+                                        <tr>
+                                            <th colspan="3" style="border: none !important;background: #fff;"></th>
+                                            <th colspan="2" style="text-align:right" class="left-border">A PAYE</th>
+                                            <th style="text-align:right">{{ parseFloat(((total(line.sub) * 1.2 * 100) / 100) - acompte).toFixed(2) }}</th>
+                                        </tr>
+                                    </thead>
+
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                </td>
+            </tr>
+        </tbody>
+        <tfoot class="footer">
+            <tr>
+                <td>
+                    <br />
+                    <br />
+                    <br />
+                    <hr />
+                    <div style="text-align:center" v-html="footer"></div>
+                </td>
+            </tr>
+        </tfoot>
+    </table>
+</div>
+<script type="text/javascript">
+    window["vappEditionWidget"+ "@ViewBag.compKey"] = new Vue({
+        el: "#vappEditionWidget_@ViewBag.compKey",
+        data: {
+            props: null,
+            data: [],
+            detail: [],
+            acompte: 0,
+            aSource: {},
+        },
+        computed: {
+            to10Lines: function () {
+                return function (line) { return line.sub.length < 10 ? new Array(10 - line.sub.length) : 1; };
+            },
+            devise: function (){
+                return "DH";
+            },
+            now: function () {
+                return new moment().format("DD/MM/YYYY");
+            },
+            logo: function () {
+                try {
+
+                    var jsona = JSON.parse(this.getProp('logo'));
+                    return jsona == null ? "" : (typeof jsona.base64 === "undefined" ? "" : jsona.base64);
+                } catch (e) {
+                    return "";
+                }
+            },
+            title: function () {
+                return this.getProp('title');
+            },
+            societe: function () {
+                return this.getProp('societe').replaceAll("\n", "<br>");
+            },
+            societeFacture: function () {
+                return this.aSource[this.getProp("aRS")] + "<br/>" + this.aSource[this.getProp("aADR")] + "<br/>" + this.aSource[this.getProp("aTEL")] + "<br/>" + this.aSource[this.getProp("aMAIL")];
+                // return this.getProp('societeFacture').replaceAll("\n", "<br>");
+            },
+            total: function () {
+                return (sub) => {
+                    var sum = 0;
+                    for (var i in sub) {
+                        // log.red(i, sub[i]);
+                        sum += (sub[i][this.props.prix] * sub[i][this.props.qte]);
+                    }
+                    return sum;
+                }
+            },
+            footer: function (){
+                return this.getProp('footer').replaceAll("\n", "<br>");
+            }
+        },
+        methods: {
+            getProp: function (key) {
+                return this.props == null ? "" : (typeof this.props[key] === "undefined" ? "" : (this.props[key] == null ? "" : this.props[key]));
+            },
+            val: function (props) {
+                this.props = props;
+                this.load();
+
+                return this.props;
+            },
+            load: function () {
+                var me = this;
+                // metabo/filter
+                // { "MetaBoID": 40049, "Items": [{ "Logic": " and ", "Field": "Nom", "Condition": " like ", "Value": "%15%" }] }
+
+                var filter = [{ "Logic": " and ", "Field": "", "Condition": "", "Value": "" }], step = 'Field';
+                var f = this.props.filter;
+                var isFormule = false;
+                for (var i in f) {
+                    if (typeof f[i] == "string") {
+                        //log.blue(f[i]);
+                        if (f[i] == "=") {
+                            if (filter[filter.length - 1].Field.trim().toLowerCase() == "id") filter[filter.length - 1].Field = "BO.BO_ID";
+                            step = "Condition";
+                        }
+                        if (f[i] == "[") { isFormule = true; step = "Value"; continue; }
+                        if (f[i] == "]") {
+                            if (isFormule) {
+                                var value = valueFromFormule(filter[filter.length - 1].Value);
+                                filter[filter.length - 1].Value = value == null ? -1 : value;
+                            }
+                            isFormule = false;
+                            step = "Logic";
+                            continue;
+                        }
+                        filter[filter.length - 1][step] += f[i];
+                    }
+                }
+
+                // log.blue("LOAD EDIT WDGT", this.props.source, JSON.stringify({ MetaBoID: this.props.source, Items: filter }));
+                EV.getComponent('data').Post({
+                    url: "metabo/filter/includesubform",
+                    data: JSON.stringify({MetaBoID: this.props.source, Items: filter }),
+                    done: function (response) {
+                        // log.blue("GET FILTER", response);
+                        me.data = response;
+                        if (me.data.filter(x => x.sub).length > 0) {
+                            for (var i in me.data) {
+                                me.data[i].sub = JSON.parse(me.data[i].sub);
+                            }
+                        }
+                        //log.green("GET FILTER", me.data[0][me.getProp("aSource")]);
+
+                        EV.getComponent('data').Get({
+                            url: "metabo/Crud/" + me.getProp("aDataSource") + "/" + me.data[0][me.getProp("aSource")],
+                            done: function (responseSource) {
+                                //log.blue("GET ASOURCE", responseSource);
+                                me.aSource = responseSource[0];
+                            }
+                        });
+                    }
+                });
+
+            },
+            print: function () {
+                PrintElem("vappEditionWidget_@ViewBag.compKey");
+            },
+        }
+    });
+    function valueFromFormule(formule) {
+        var source = formule.split('.')[0];
+        var key = formule.split('.')[1];
+        switch (source) {
+            case "uri":
+                return URL.queryString(key);
+        }
+    }
+
+    function PrintElem(elem) {
+        var mywindow = window.open('', 'new div', 'height=600,width=800');
+        mywindow.document.write('<html><head><title></title>');
+        //mywindow.document.write('<link rel="stylesheet" href="css/midday_receipt.css" type="text/css" />');
+
+        mywindow.document.write('<style>@@media print {' + document.getElementById('css_' + elem).innerHTML + ' .footer {width:100%;position:relative;bottom: 0px;font-family: Arial;} .no-print, .no-print * {display: none!important;} .print{display:inline-block !important;}} ' + document.getElementById('css_' + elem).innerHTML + '</style>');
+        mywindow.document.write('</head><body>');
+        mywindow.document.write(document.getElementById(elem).innerHTML);
+        mywindow.document.write('</body></html>');
+        mywindow.document.close();
+        mywindow.focus();
+        setTimeout(function () {
+            mywindow.print();
+            mywindow.close();
+        }, 100);
+
+        return true;
+    }
+</script>

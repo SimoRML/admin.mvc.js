@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Schema Namespace="Fais_Model.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+<Schema Namespace="FAISModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
   <EntityType Name="BO">
     <Key>
       <PropertyRef Name="BO_ID" />
@@ -104,17 +104,6 @@
     <Property Name="UPDATED_DATE" Type="datetime" />
     <Property Name="UPDATED_BY" Type="varchar" MaxLength="100" />
   </EntityType>
-  <EntityType Name="PlusSequence">
-    <Key>
-      <PropertyRef Name="SequenceID" />
-    </Key>
-    <Property Name="SequenceID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-    <Property Name="cle" Type="varchar" MaxLength="500" />
-    <Property Name="TableName" Type="varchar" MaxLength="50" />
-    <Property Name="StartValue" Type="int" />
-    <Property Name="StepBy" Type="int" />
-    <Property Name="CurrentValue" Type="int" />
-  </EntityType>
   <EntityType Name="TASK">
     <Key>
       <PropertyRef Name="TASK_ID" />
@@ -200,7 +189,7 @@
     <Parameter Name="stepBy" Type="int" Mode="In" />
     <Parameter Name="presist" Type="int" Mode="In" />
   </Function>
-  <EntityContainer Name="Fais_ModelStoreContainer">
+  <EntityContainer Name="FAISModelStoreContainer">
     <EntitySet Name="BO" EntityType="Self.BO" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="BO_CHILDS" EntityType="Self.BO_CHILDS" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="BO_ROLE" EntityType="Self.BO_ROLE" Schema="dbo" store:Type="Tables" />
@@ -208,7 +197,6 @@
     <EntitySet Name="META_FIELD" EntityType="Self.META_FIELD" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="NOTIF" EntityType="Self.NOTIF" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="PAGE" EntityType="Self.PAGE" Schema="dbo" store:Type="Tables" />
-    <EntitySet Name="PlusSequence" EntityType="Self.PlusSequence" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="TASK" EntityType="Self.TASK" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="VERSIONS" EntityType="Self.VERSIONS" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="WORKFLOW" EntityType="Self.WORKFLOW" Schema="dbo" store:Type="Tables" />

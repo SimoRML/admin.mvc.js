@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Schema Namespace="Fais_Model" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+<Schema Namespace="FAISModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
   <EntityType Name="BO">
     <Key>
       <PropertyRef Name="BO_ID" />
@@ -53,6 +53,7 @@
     <Property Name="TYPE" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
     <Property Name="JSON_DATA" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
     <NavigationProperty Name="META_FIELD" Relationship="Self.FK__META_FIEL__META___47A6A41B" FromRole="META_BO" ToRole="META_FIELD" />
+    <NavigationProperty Name="VERSIONS" Relationship="Self.FK__VERSIONS__META_B__489AC854" FromRole="META_BO" ToRole="VERSIONS" />
   </EntityType>
   <EntityType Name="META_FIELD">
     <Key>
@@ -105,17 +106,6 @@
     <Property Name="UPDATED_DATE" Type="DateTime" Precision="3" />
     <Property Name="UPDATED_BY" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
   </EntityType>
-  <EntityType Name="PlusSequence">
-    <Key>
-      <PropertyRef Name="SequenceID" />
-    </Key>
-    <Property Name="SequenceID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-    <Property Name="cle" Type="String" MaxLength="500" FixedLength="false" Unicode="false" />
-    <Property Name="TableName" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-    <Property Name="StartValue" Type="Int32" />
-    <Property Name="StepBy" Type="Int32" />
-    <Property Name="CurrentValue" Type="Int32" />
-  </EntityType>
   <EntityType Name="TASK">
     <Key>
       <PropertyRef Name="TASK_ID" />
@@ -143,7 +133,6 @@
     <Property Name="UPDATED_BY" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
     <Property Name="UPDATED_DATE" Type="DateTime" Precision="3" />
     <Property Name="STATUS" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
-    <NavigationProperty Name="META_BO" Relationship="Self.FK__VERSIONS__META_B__489AC854" FromRole="VERSIONS" ToRole="META_BO" />
   </EntityType>
   <EntityType Name="WORKFLOW">
     <Key>
@@ -186,7 +175,6 @@
     <EntitySet Name="META_FIELD" EntityType="Self.META_FIELD" />
     <EntitySet Name="NOTIF" EntityType="Self.NOTIF" />
     <EntitySet Name="PAGE" EntityType="Self.PAGE" />
-    <EntitySet Name="PlusSequence" EntityType="Self.PlusSequence" />
     <EntitySet Name="TASK" EntityType="Self.TASK" />
     <EntitySet Name="VERSIONS" EntityType="Self.VERSIONS" />
     <EntitySet Name="WORKFLOW" EntityType="Self.WORKFLOW" />
