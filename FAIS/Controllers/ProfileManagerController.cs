@@ -77,7 +77,8 @@ META_BO_ID in (select META_BO_ID from BO_ROLE WHERE (CAN_READ = 1 OR CAN_WRITE =
                     childs = ""
                 });
             }
-            var pages = await new MetaBoRepo().GetPagesAsync();
+            var pages = await new MetaBoRepo().GetPagesAsync(@" AND (
+BO_ID in (select PAGE_ID from BO_ROLE WHERE (CAN_READ = 1 OR CAN_WRITE = 1) AND ROLE_ID in (select roles.Id from AspNetRoles roles where Name in ('" + string.Join("', '", boRoleModel.GetUserRoles(User)) + "'))) or 'admin' in ('" + string.Join("', '", boRoleModel.GetUserRoles(User)) + "') )");
             foreach (var page in pages)
             {
                 if (!menu.ContainsKey(page.GROUPE))

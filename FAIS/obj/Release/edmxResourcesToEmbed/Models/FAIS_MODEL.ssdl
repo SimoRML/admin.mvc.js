@@ -29,6 +29,7 @@
     <Property Name="BO_ROLE_ID" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
     <Property Name="META_BO_ID" Type="bigint" Nullable="false" />
     <Property Name="ROLE_ID" Type="nvarchar" MaxLength="128" Nullable="false" />
+    <Property Name="PAGE_ID" Type="bigint" />
     <Property Name="CAN_READ" Type="bit" />
     <Property Name="CAN_WRITE" Type="bit" />
     <Property Name="CREATED_BY" Type="varchar" MaxLength="100" />

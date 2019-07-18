@@ -276,7 +276,8 @@ namespace FAIS.Controllers
             /* FIN ACCESS RIGHTS */
 
             List<object> result = new List<object>();
-            bool insert = false, deleted = false;
+            string insert = "-";
+            bool deleted = false;
             foreach (var ligne in Items)
             {
                 var model = new CrudModel()
@@ -305,8 +306,8 @@ namespace FAIS.Controllers
                 model.Items.Add("BO_ID", id_);
                 insert = model.Insert();
 
-                result.Add(new { inserted = insert, BO_ID = id_ });
-                if (!insert)
+                result.Add(new { inserted = insert == "", BO_ID = id_ });
+                if (insert != "")
                 {
                     deleted = true;
                     db.Entry(bo_model).State = EntityState.Deleted;
@@ -360,7 +361,7 @@ namespace FAIS.Controllers
             model.Items.Add("BO_ID", model.BO_ID);
             
             //return Ok(model.FormatInsert());
-            bool insert = model.Insert();
+            string insert = model.Insert();
 
             // Workflow executer begin 
             var s = new SGBD();
@@ -456,13 +457,13 @@ namespace FAIS.Controllers
 
             }
 
-            if (insert)
+            if (insert == "")
             {
                 BO_Insert_return = id_;
                 return Ok(model);
             }
             else
-                return InternalServerError();
+                return InternalServerError(new Exception(insert));
         }
 
         //Insert data automaticly using the Mapping on the WORKFLOWs
@@ -588,11 +589,11 @@ namespace FAIS.Controllers
 
             model.MetaBO = meta;
             model.Items.Add("BO_ID", id_);
-            bool insert = model.Insert();
-            if (insert)
+            string insert = model.Insert();
+            if (insert == "")
                 return Ok(model);
             else
-                return InternalServerError();
+                return InternalServerError(new Exception(insert));
         }
 
         // INSERT BO CHILDS multi
@@ -615,7 +616,8 @@ namespace FAIS.Controllers
             /* FIN ACCESS RIGHTS */
 
             List<object> result = new List<object>();
-            bool insert = false, deleted = false;
+            string insert = "-";
+            bool deleted = false;
             foreach (var ligne in Items)
             {
                 BO bo_model = new BO()
@@ -652,7 +654,7 @@ namespace FAIS.Controllers
                 insert = model.Insert();
                 result.Add(new { inserted = insert, BO_ID = id_ });
 
-                if (!insert)
+                if (insert != "")
                 {
                     deleted = true;
                     db.Entry(bo_model).State = EntityState.Deleted;
@@ -858,6 +860,40 @@ namespace FAIS.Controllers
             s.Cmd("update bo set status='" + status + "' where BO_ID=" + boid);
 
             return Ok(new { success = true, status });
+        }
+
+        // DELETE BO
+        [HttpDelete]
+        [Route("Crud/{id}/{bo_id}")]
+        public async Task<IHttpActionResult> Delete(long id, long bo_id)
+        {
+            var meta = await db.META_BO.FindAsync(id);
+
+            /* ACCESS RIGHTS */
+            try
+            {
+                UserRoleManager.Instance.VerifyWrite(meta.BO_DB_NAME);
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                return Content(HttpStatusCode.Forbidden, ex.Message);
+            }
+            /* FIN ACCESS RIGHTS */
+
+            var BO_ToUpdate = db.BO.SingleOrDefault(bo => bo.BO_ID == bo_id);
+
+            BO_ToUpdate.UPDATED_BY = User.Identity.Name;
+            BO_ToUpdate.UPDATED_DATE = DateTime.Now;
+            BO_ToUpdate.STATUS = "deleted";
+            try
+            {
+                await db.SaveChangesAsync();
+                return Ok(BO_ToUpdate);
+            }
+            catch (Exception ex)
+            {
+                return InternalServerError(ex);
+            }
         }
     }
 }

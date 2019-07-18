@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Schema Namespace="FAISModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+<Schema Namespace="FAIS_Model" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
   <EntityType Name="BO">
     <Key>
       <PropertyRef Name="BO_ID" />
@@ -22,21 +22,6 @@
     <Property Name="BO_CHILD_ID" Type="Int64" Nullable="false" />
     <Property Name="RELATION" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
   </EntityType>
-  <EntityType Name="BO_ROLE">
-    <Key>
-      <PropertyRef Name="BO_ROLE_ID" />
-    </Key>
-    <Property Name="BO_ROLE_ID" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-    <Property Name="META_BO_ID" Type="Int64" Nullable="false" />
-    <Property Name="ROLE_ID" Type="String" MaxLength="128" FixedLength="false" Unicode="true" Nullable="false" />
-    <Property Name="CAN_READ" Type="Boolean" />
-    <Property Name="CAN_WRITE" Type="Boolean" />
-    <Property Name="CREATED_BY" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
-    <Property Name="CREATED_DATE" Type="DateTime" Precision="3" />
-    <Property Name="UPDATED_BY" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
-    <Property Name="UPDATED_DATE" Type="DateTime" Precision="3" />
-    <Property Name="STATUS" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
-  </EntityType>
   <EntityType Name="META_BO">
     <Key>
       <PropertyRef Name="META_BO_ID" />
@@ -51,9 +36,8 @@
     <Property Name="STATUS" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
     <Property Name="BO_DB_NAME" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
     <Property Name="TYPE" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+    <NavigationProperty Name="META_FIELD" Relationship="Self.FK__META_FIEL__META___33D4B598" FromRole="META_BO" ToRole="META_FIELD" />
     <Property Name="JSON_DATA" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
-    <NavigationProperty Name="META_FIELD" Relationship="Self.FK__META_FIEL__META___47A6A41B" FromRole="META_BO" ToRole="META_FIELD" />
-    <NavigationProperty Name="VERSIONS" Relationship="Self.FK__VERSIONS__META_B__489AC854" FromRole="META_BO" ToRole="VERSIONS" />
   </EntityType>
   <EntityType Name="META_FIELD">
     <Key>
@@ -83,6 +67,92 @@
     <Property Name="VERSION" Type="Int32" />
     <Property Name="JSON_DATA" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
   </EntityType>
+  <EntityType Name="VERSIONS">
+    <Key>
+      <PropertyRef Name="VERSIONS_ID" />
+    </Key>
+    <Property Name="VERSIONS_ID" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="META_BO_ID" Type="Int64" />
+    <Property Name="NUM" Type="Int32" Nullable="false" />
+    <Property Name="SQLQUERY" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" Nullable="false" />
+    <Property Name="CREATED_BY" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+    <Property Name="CREATED_DATE" Type="DateTime" Precision="3" />
+    <Property Name="UPDATED_BY" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+    <Property Name="UPDATED_DATE" Type="DateTime" Precision="3" />
+    <Property Name="STATUS" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+    <NavigationProperty Name="META_BO" Relationship="Self.FK__VERSIONS__META_B__4BAC3F29" FromRole="VERSIONS" ToRole="META_BO" />
+  </EntityType>
+  <Association Name="FK__META_FIEL__META___33D4B598">
+    <End Role="META_BO" Type="Self.META_BO" Multiplicity="1" />
+    <End Role="META_FIELD" Type="Self.META_FIELD" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="META_BO">
+        <PropertyRef Name="META_BO_ID" />
+      </Principal>
+      <Dependent Role="META_FIELD">
+        <PropertyRef Name="META_BO_ID" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK__VERSIONS__META_B__4BAC3F29">
+    <End Role="META_BO" Type="Self.META_BO" Multiplicity="0..1" />
+    <End Role="VERSIONS" Type="Self.VERSIONS" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="META_BO">
+        <PropertyRef Name="META_BO_ID" />
+      </Principal>
+      <Dependent Role="VERSIONS">
+        <PropertyRef Name="META_BO_ID" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <EntityContainer Name="FAISEntities" annotation:LazyLoadingEnabled="true">
+    <EntitySet Name="BO" EntityType="Self.BO" />
+    <EntitySet Name="BO_CHILDS" EntityType="Self.BO_CHILDS" />
+    <EntitySet Name="META_BO" EntityType="Self.META_BO" />
+    <EntitySet Name="META_FIELD" EntityType="Self.META_FIELD" />
+    <EntitySet Name="VERSIONS" EntityType="Self.VERSIONS" />
+    <AssociationSet Name="FK__META_FIEL__META___33D4B598" Association="Self.FK__META_FIEL__META___33D4B598">
+      <End Role="META_BO" EntitySet="META_BO" />
+      <End Role="META_FIELD" EntitySet="META_FIELD" />
+    </AssociationSet>
+    <AssociationSet Name="FK__VERSIONS__META_B__4BAC3F29" Association="Self.FK__VERSIONS__META_B__4BAC3F29">
+      <End Role="META_BO" EntitySet="META_BO" />
+      <End Role="VERSIONS" EntitySet="VERSIONS" />
+    </AssociationSet>
+    <FunctionImport Name="MoveBoToCurrentVersion">
+      <Parameter Name="BO_ID" Mode="In" Type="Int64" />
+    </FunctionImport>
+    <EntitySet Name="PlusSequence" EntityType="FAIS_Model.PlusSequence" />
+    <FunctionImport Name="PlusSequenceNextID" ReturnType="Collection(String)">
+      <Parameter Name="cle" Mode="In" Type="String" />
+      <Parameter Name="TableName" Mode="In" Type="String" />
+      <Parameter Name="stepBy" Mode="In" Type="Int32" />
+      <Parameter Name="presist" Mode="In" Type="Int32" />
+    </FunctionImport>
+    <EntitySet Name="NOTIF" EntityType="FAIS_Model.NOTIF" />
+    <EntitySet Name="TASK" EntityType="FAIS_Model.TASK" />
+    <EntitySet Name="WORKFLOW" EntityType="FAIS_Model.WORKFLOW" />
+    <EntitySet Name="BO_ROLE" EntityType="FAIS_Model.BO_ROLE" />
+    <EntitySet Name="PAGE" EntityType="FAIS_Model.PAGE" />
+    <FunctionImport Name="GetSubForm" ReturnType="Collection(String)">
+      <Parameter Name="meta_bo_id" Mode="In" Type="Int32" />
+    </FunctionImport>
+    <FunctionImport Name="GetSubFormId" ReturnType="Collection(Int64)">
+      <Parameter Name="meta_bo_id" Mode="In" Type="Int32" />
+    </FunctionImport>
+  </EntityContainer>
+  <EntityType Name="PlusSequence">
+    <Key>
+      <PropertyRef Name="SequenceID" />
+    </Key>
+    <Property Name="SequenceID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="cle" Type="String" MaxLength="500" FixedLength="false" Unicode="false" />
+    <Property Name="TableName" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+    <Property Name="StartValue" Type="Int32" />
+    <Property Name="StepBy" Type="Int32" />
+    <Property Name="CurrentValue" Type="Int32" />
+  </EntityType>
   <EntityType Name="NOTIF">
     <Key>
       <PropertyRef Name="ID_NOTIF" />
@@ -91,20 +161,6 @@
     <Property Name="VALIDATOR" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
     <Property Name="ETAT" Type="Int32" />
     <Property Name="CREATED_DATE" Type="DateTime" Precision="3" />
-  </EntityType>
-  <EntityType Name="PAGE">
-    <Key>
-      <PropertyRef Name="BO_ID" />
-    </Key>
-    <Property Name="BO_ID" Type="Int64" Nullable="false" />
-    <Property Name="TITLE" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-    <Property Name="GROUPE" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-    <Property Name="STATUS" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
-    <Property Name="LAYOUT" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
-    <Property Name="CREATED_DATE" Type="DateTime" Precision="3" />
-    <Property Name="CREATED_BY" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
-    <Property Name="UPDATED_DATE" Type="DateTime" Precision="3" />
-    <Property Name="UPDATED_BY" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
   </EntityType>
   <EntityType Name="TASK">
     <Key>
@@ -120,20 +176,6 @@
     <Property Name="CREATED_DATE" Type="DateTime" Precision="3" />
     <Property Name="CREATED_BY" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
   </EntityType>
-  <EntityType Name="VERSIONS">
-    <Key>
-      <PropertyRef Name="VERSIONS_ID" />
-    </Key>
-    <Property Name="VERSIONS_ID" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-    <Property Name="META_BO_ID" Type="Int64" />
-    <Property Name="NUM" Type="Int32" Nullable="false" />
-    <Property Name="SQLQUERY" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" Nullable="false" />
-    <Property Name="CREATED_BY" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
-    <Property Name="CREATED_DATE" Type="DateTime" Precision="3" />
-    <Property Name="UPDATED_BY" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
-    <Property Name="UPDATED_DATE" Type="DateTime" Precision="3" />
-    <Property Name="STATUS" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
-  </EntityType>
   <EntityType Name="WORKFLOW">
     <Key>
       <PropertyRef Name="BO_ID" />
@@ -143,72 +185,34 @@
     <Property Name="ACTIVE" Type="Int32" />
     <Property Name="ITEMS" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
   </EntityType>
-  <Association Name="FK__META_FIEL__META___47A6A41B">
-    <End Role="META_BO" Type="Self.META_BO" Multiplicity="1" />
-    <End Role="META_FIELD" Type="Self.META_FIELD" Multiplicity="*" />
-    <ReferentialConstraint>
-      <Principal Role="META_BO">
-        <PropertyRef Name="META_BO_ID" />
-      </Principal>
-      <Dependent Role="META_FIELD">
-        <PropertyRef Name="META_BO_ID" />
-      </Dependent>
-    </ReferentialConstraint>
-  </Association>
-  <Association Name="FK__VERSIONS__META_B__489AC854">
-    <End Role="META_BO" Type="Self.META_BO" Multiplicity="0..1" />
-    <End Role="VERSIONS" Type="Self.VERSIONS" Multiplicity="*" />
-    <ReferentialConstraint>
-      <Principal Role="META_BO">
-        <PropertyRef Name="META_BO_ID" />
-      </Principal>
-      <Dependent Role="VERSIONS">
-        <PropertyRef Name="META_BO_ID" />
-      </Dependent>
-    </ReferentialConstraint>
-  </Association>
-  <EntityContainer Name="FAISEntities" annotation:LazyLoadingEnabled="true">
-    <EntitySet Name="BO" EntityType="Self.BO" />
-    <EntitySet Name="BO_CHILDS" EntityType="Self.BO_CHILDS" />
-    <EntitySet Name="BO_ROLE" EntityType="Self.BO_ROLE" />
-    <EntitySet Name="META_BO" EntityType="Self.META_BO" />
-    <EntitySet Name="META_FIELD" EntityType="Self.META_FIELD" />
-    <EntitySet Name="NOTIF" EntityType="Self.NOTIF" />
-    <EntitySet Name="PAGE" EntityType="Self.PAGE" />
-    <EntitySet Name="TASK" EntityType="Self.TASK" />
-    <EntitySet Name="VERSIONS" EntityType="Self.VERSIONS" />
-    <EntitySet Name="WORKFLOW" EntityType="Self.WORKFLOW" />
-    <AssociationSet Name="FK__META_FIEL__META___47A6A41B" Association="Self.FK__META_FIEL__META___47A6A41B">
-      <End Role="META_BO" EntitySet="META_BO" />
-      <End Role="META_FIELD" EntitySet="META_FIELD" />
-    </AssociationSet>
-    <AssociationSet Name="FK__VERSIONS__META_B__489AC854" Association="Self.FK__VERSIONS__META_B__489AC854">
-      <End Role="META_BO" EntitySet="META_BO" />
-      <End Role="VERSIONS" EntitySet="VERSIONS" />
-    </AssociationSet>
-    <FunctionImport Name="cleanMetaBo" />
-    <FunctionImport Name="GetSubForm" ReturnType="Collection(String)">
-      <Parameter Name="meta_bo_id" Mode="In" Type="Int32" />
-    </FunctionImport>
-    <FunctionImport Name="GetSubFormId" ReturnType="Collection(Int64)">
-      <Parameter Name="meta_bo_id" Mode="In" Type="Int32" />
-    </FunctionImport>
-    <FunctionImport Name="InitMetaBo" />
-    <FunctionImport Name="INSERT_BO_LIGNES">
-      <Parameter Name="nbrLignes" Mode="In" Type="Int32" />
-      <Parameter Name="BO_NAME" Mode="In" Type="String" />
-    </FunctionImport>
-    <FunctionImport Name="MoveBoToCurrentVersion">
-      <Parameter Name="BO_ID" Mode="In" Type="Int64" />
-    </FunctionImport>
-    <FunctionImport Name="MoveFromTmp">
-      <Parameter Name="metBoId" Mode="In" Type="Int32" />
-    </FunctionImport>
-    <FunctionImport Name="PlusSequenceNextID" ReturnType="Collection(String)">
-      <Parameter Name="cle" Mode="In" Type="String" />
-      <Parameter Name="TableName" Mode="In" Type="String" />
-      <Parameter Name="stepBy" Mode="In" Type="Int32" />
-      <Parameter Name="presist" Mode="In" Type="Int32" />
-    </FunctionImport>
-  </EntityContainer>
+  <EntityType Name="BO_ROLE">
+    <Key>
+      <PropertyRef Name="BO_ROLE_ID" />
+    </Key>
+    <Property Name="BO_ROLE_ID" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="META_BO_ID" Type="Int64" Nullable="false" />
+    <Property Name="ROLE_ID" Type="String" Nullable="false" MaxLength="128" FixedLength="false" Unicode="true" />
+    <Property Name="CAN_READ" Type="Boolean" />
+    <Property Name="CAN_WRITE" Type="Boolean" />
+    <Property Name="CREATED_BY" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+    <Property Name="CREATED_DATE" Type="DateTime" Precision="3" />
+    <Property Name="UPDATED_BY" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+    <Property Name="UPDATED_DATE" Type="DateTime" Precision="3" />
+    <Property Name="STATUS" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+    <Property Name="PAGE_ID" Type="Int64" />
+  </EntityType>
+  <EntityType Name="PAGE">
+    <Key>
+      <PropertyRef Name="BO_ID" />
+    </Key>
+    <Property Name="BO_ID" Type="Int64" Nullable="false" />
+    <Property Name="TITLE" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+    <Property Name="GROUPE" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+    <Property Name="STATUS" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+    <Property Name="LAYOUT" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <Property Name="CREATED_DATE" Type="DateTime" Precision="3" />
+    <Property Name="CREATED_BY" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+    <Property Name="UPDATED_DATE" Type="DateTime" Precision="3" />
+    <Property Name="UPDATED_BY" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+  </EntityType>
 </Schema>

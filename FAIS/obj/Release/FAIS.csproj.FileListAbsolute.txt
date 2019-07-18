@@ -298,3 +298,7 @@ D:\PERSO\FAIS_GIT\admin.mvc.js\FAIS\obj\Release\fr-FR\FAIS.resources.dll
 D:\PERSO\FAIS_GIT\admin.mvc.js\FAIS\obj\Release\FAIS.csproj.CopyComplete
 D:\PERSO\FAIS_GIT\admin.mvc.js\FAIS\obj\Release\FAIS.dll
 D:\PERSO\FAIS_GIT\admin.mvc.js\FAIS\obj\Release\FAIS.pdb
+C:\www\_.net\NB\admin.mvc.js\FAIS\bin\Microsoft.Owin.Cors.dll
+C:\www\_.net\NB\admin.mvc.js\FAIS\bin\System.Web.Cors.dll
+C:\www\_.net\NB\admin.mvc.js\FAIS\bin\Microsoft.Owin.Cors.xml
+C:\www\_.net\NB\admin.mvc.js\FAIS\bin\fr\Microsoft.Owin.resources.dll

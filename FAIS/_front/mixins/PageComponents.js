@@ -26,6 +26,7 @@
                                             vapp.$refs.unite[0].populateData(subData);
                                             vapp.$refs.qte[0].populateData(subData);
                                             vapp.$refs.prix[0].populateData(subData);
+                                            vapp.$refs.tva[0].populateData(subData);
                                         }
                                     );
                                 }
@@ -106,6 +107,14 @@
             }
         },
         prixFormat: { type: "v-hidden" },
+
+        tva: {
+            label: "Champ TVA", type: "v-select",
+            changed: function (payload) {
+                vapp.selectedComponent.props.tvaFormat = payload.object.Attributes.GRID_FORMAT;
+            }
+        },
+        tvaFormat: { type: "v-hidden" },
 
         footer: { devider: "Pied", label: "Pied de page", type: "v-textarea" },
     },

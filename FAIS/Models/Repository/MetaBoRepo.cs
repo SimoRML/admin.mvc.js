@@ -1,4 +1,6 @@
 ﻿using FAIS.Models.VForm;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -136,18 +138,48 @@ namespace FAIS.Models.Repository
 
         public async Task<META_BO_EX> FindMetaBoExAsync(long id)
         {
-            META_BO_EX res = await db.Database.SqlQuery<META_BO_EX>("select JSON_VALUE(JSON_DATA, '$.TITLE') TITLE, JSON_VALUE(JSON_DATA, '$.GROUPE') GROUPE, * from META_BO WHERE META_BO_ID = " + id).FirstAsync();
+            //META_BO_EX res = await db.Database.SqlQuery<META_BO_EX>("select JSON_VALUE(JSON_DATA, '$.TITLE') TITLE, JSON_VALUE(JSON_DATA, '$.GROUPE') GROUPE, * from META_BO WHERE META_BO_ID = " + id).FirstAsync();
+
+            META_BO_EX res = await db.Database.SqlQuery<META_BO_EX>("select * from META_BO WHERE META_BO_ID = " + id).FirstAsync();
+
+            var jsonData = JsonConvert.DeserializeObject<Dictionary<string, string>>(res.JSON_DATA);
+            res.TITLE = jsonData.ContainsKey("TITLE") ? jsonData["TITLE"] : "";
+            res.GROUPE = jsonData.ContainsKey("GROUPE") ? jsonData["GROUPE"] : "";
+
             return res;
         }
 
         public async Task<List<META_BO_EX>> GetMetaBoExAsync(string where)
         {
-            return await db.Database.SqlQuery<META_BO_EX>("select JSON_VALUE(JSON_DATA, '$.TITLE') TITLE, JSON_VALUE(JSON_DATA, '$.GROUPE') GROUPE, * from META_BO  " + where + "  AND JSON_VALUE(JSON_DATA, '$.MENU') = 1 ").ToListAsync();
+            // return await db.Database.SqlQuery<META_BO_EX>("select JSON_VALUE(JSON_DATA, '$.TITLE') TITLE, JSON_VALUE(JSON_DATA, '$.GROUPE') GROUPE, * from META_BO  " + where + "  AND JSON_VALUE(JSON_DATA, '$.MENU') = 1 ").ToListAsync();
+            List<META_BO_EX> metaBoList = await db.Database.SqlQuery<META_BO_EX>("select * from META_BO  " + where + "  AND JSON_DATA like '%\"MENU\":1%' ").ToListAsync();
+            foreach (var metaBo in metaBoList)
+            {
+                var jsonData = JsonConvert.DeserializeObject<Dictionary<string, string>>(metaBo.JSON_DATA);
+                metaBo.TITLE = jsonData.ContainsKey("TITLE") ? jsonData["TITLE"] : "";
+                metaBo.GROUPE = jsonData.ContainsKey("GROUPE") ? jsonData["GROUPE"] : "";
+            }
+            return metaBoList;
         }
 
-        public async Task<List<META_BO_EX>> GetPagesAsync()
+        public async Task<List<META_BO_EX>> GetPagesAsync(string where)
         {
-            return await db.Database.SqlQuery<META_BO_EX>("select BO_ID as META_BO_ID, 'PAGE' as type, JSON_VALUE(LAYOUT, '$.page.title') TITLE, JSON_VALUE(LAYOUT, '$.page.groupe') GROUPE from [PAGE] WHERE JSON_VALUE(LAYOUT, '$.page.title') <> '' AND JSON_VALUE(LAYOUT, '$.page.groupe') <> '' AND STATUS = 'public'").ToListAsync();
+            //return await db.Database.SqlQuery<META_BO_EX>("select BO_ID as META_BO_ID, 'PAGE' as type, JSON_VALUE(LAYOUT, '$.page.title') TITLE, JSON_VALUE(LAYOUT, '$.page.groupe') GROUPE from [PAGE] WHERE JSON_VALUE(LAYOUT, '$.page.title') <> '' AND JSON_VALUE(LAYOUT, '$.page.groupe') <> '' AND STATUS = 'public' " + where).ToListAsync();
+
+            var pageList = await db.Database.SqlQuery<META_BO_EX>("select BO_ID as META_BO_ID, 'PAGE' as type, LAYOUT as JSON_DATA from [PAGE] WHERE LAYOUT not like '{\"page\":{\"title\":\"\"%' AND LAYOUT not like '{\"page\":{\"title\":\"%\",\"groupe\":\"\"%' AND STATUS = 'public' " + where).ToListAsync();
+
+            foreach (var page in pageList)
+            {
+                var jsonData = JsonConvert.DeserializeObject<Dictionary<string, object>>(page.JSON_DATA);
+                if (jsonData.ContainsKey("page"))
+                {
+                    JObject jobject = (JObject)jsonData["page"];
+                    page.TITLE = jobject.ContainsKey("title") ? jobject.SelectToken("title").ToString(): "";
+                    page.GROUPE = jobject.ContainsKey("groupe") ? jobject.SelectToken("groupe").ToString(): "";
+                }
+            }
+
+            return pageList;
         }
         //public async Task<META_BO_EX> FindMetaBoExAsync(long id)
         //{
@@ -248,4 +280,5 @@ namespace FAIS.Models.Repository
         public string TITLE { get; set; }
         public string GROUPE { get; set; }
     }
+
 }

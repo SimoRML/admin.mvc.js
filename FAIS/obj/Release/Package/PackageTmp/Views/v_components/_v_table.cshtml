@@ -198,7 +198,7 @@
                                     <td v-bind:colspan="columnCount">
                                         <template v-if="isDefaultDetailRow">
                                             @*DRAW DEFAULT DETAIL ROW*@
-                                            <div v-for="h in getHeaders" class="col-md-3">
+                                            <div v-for="h in getHeadersFroDetailRow" class="col-md-4">
                                                 <b>{{ getLabel(h) }} : </b>
                                                 <template v-if="listConfig[getLineIndex(index)].columns[h].isFile">
                                                     <span>
@@ -345,6 +345,27 @@
                     if (this.list.length > 0) {
                         var headers = [];
                         for (var h in this.list[0]) {
+                            headers.push(h);
+                        }
+                        return headers;
+                    }
+                    else
+                        return [];
+                }
+            },
+            getHeadersFroDetailRow: function () {
+                if (this.headersFromColumns) {
+                    var headers = [];
+                    for (var h in this.columns) {
+                        headers.push(h);
+                    }
+                    return headers;
+                } else {
+                    if (this.list.length > 0) {
+                        var headers = [];
+                        for (var h in this.list[0]) {
+                            if (h == "$$index") continue;
+                            if (Object.keys(this.meta_field).indexOf(h) == -1 && ["BO_ID", "CREATED_BY", "CREATED_DATE", "UPDATED_BY", "UPDATED_DATE", "BO_STATUS"].indexOf(h) == -1) continue;
                             headers.push(h);
                         }
                         return headers;
@@ -596,6 +617,10 @@
                         }
                     });
                 }
+            },
+            removeLine: function (index) {
+                this.list.splice(index, 1);
+                this.listConfig.splice(index, 1);
             },
             deleteLine: function (lineIndex) {
                 var me = this;

@@ -60,7 +60,7 @@
                             if (typeof response.type !== "undefined") {
                                 me.type = response.type.toLowerCase();
                                 if (response.type.toLowerCase() == "bo") {
-                                    NOTIF.info("Nouveau BusinessObject créé avec succès.");
+                                    log.blue("Nouveau BusinessObject créé avec succès.");
                                 }
                             }
                             else me.type = null;

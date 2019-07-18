@@ -63,7 +63,7 @@ DataSource.prototype.ExecuteSource = function (source) {
     $.ajax(settings)
         .done(function (response) {
             me.Trigger("hide", "PagePreloader");
-            log.orange_1("api response > ", source.method + "::" + source.url + ".", response);
+            //log.orange_1("api response > ", source.method + "::" + source.url + ".", response);
             try { response = JSON.parse(response); } catch{ }
                 
             var html = "";

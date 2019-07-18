@@ -4,7 +4,8 @@
         <table class="table table-striped v-table">
             <thead>
                 <tr>
-                    <th>BO</th>
+                    <th>TYPE</th>
+                    <th>NOM</th>
                     <th>
                         Lecture
                         <a href="javascript:;" class="btn btn-simple btn-xs" v-on:click="selectAll('CAN_READ')"><i class="material-icons">done_all</i></a>
@@ -17,6 +18,9 @@
             </thead>
             <tbody>
                 <tr v-for="(borole, idx) in boRoles" v-bind:key="borole.META_BO_ID">
+                    <td>
+                        {{ borole.OBJECT_TYPE }}
+                    </td>
                     <td>
                         {{ borole.BO_NAME }}
                     </td>

@@ -41,7 +41,7 @@ namespace FAIS.Models
             }
         }
 
-        public Boolean Insert(string sqlQuery, Dictionary<string, object> parametres = null)
+        public string Insert(string sqlQuery, Dictionary<string, object> parametres = null)
         {
             try
             {
@@ -54,7 +54,7 @@ namespace FAIS.Models
                         {
                             var value = item.Value;
                             if (item.Value.GetType().ToString() == "Newtonsoft.Json.Linq.JArray") value = item.Value.ToString().Replace("\r", "").Replace("\n", "");
-                            cmd.Parameters.AddWithValue(item.Key, item.Value == null ? "" : value);
+                            cmd.Parameters.AddWithValue(Helper.cleanDBName(item.Key), item.Value == null ? "" : value);
                         }
                     }
 
@@ -64,7 +64,7 @@ namespace FAIS.Models
                         {
                             da.Fill(ds, "tbl");
 
-                            return true;
+                            return "";
                         }
                     }
                 }
@@ -73,7 +73,7 @@ namespace FAIS.Models
             {
                 // TODO LOG EXCEPTION
                 var message = ex.Message;
-                return false;
+                return message;
             }
         }
 
@@ -89,7 +89,7 @@ namespace FAIS.Models
                         {
                             var value = item.Value;
                             if (item.Value.GetType().ToString() == "Newtonsoft.Json.Linq.JArray") value = item.Value.ToString().Replace("\r", "").Replace("\n", "");
-                            cmd.Parameters.AddWithValue(item.Key, item.Value == null ? "" : value);
+                            cmd.Parameters.AddWithValue(Helper.cleanDBName(item.Key), item.Value == null ? "" : value);
                         }
                     //cmd.Parameters.AddWithValue(item.Key, item.Value);
 

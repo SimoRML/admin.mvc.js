@@ -98,6 +98,16 @@ namespace FAIS.Controllers
         [Route("page/{id}")]
         public PartialViewResult Page(int id)
         {
+            try
+            {
+                UserRoleManager.Instance.VerifyAccess(id.ToString());
+            }
+            catch (System.UnauthorizedAccessException ex)
+            {
+                ViewBag.Message = ex.Message;
+                return PartialView("Unauthorized");
+            }
+
             ViewBag.pageId = id;
             ViewBag.PageStatus = "PUBLIC";
             ViewBag.Mode = "public";
