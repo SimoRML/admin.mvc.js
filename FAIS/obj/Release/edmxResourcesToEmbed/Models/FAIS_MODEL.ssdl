@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Schema Namespace="FAISModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+<Schema Namespace="FAIS_MODEL.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
   <EntityType Name="BO">
     <Key>
       <PropertyRef Name="BO_ID" />
@@ -29,7 +29,6 @@
     <Property Name="BO_ROLE_ID" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
     <Property Name="META_BO_ID" Type="bigint" Nullable="false" />
     <Property Name="ROLE_ID" Type="nvarchar" MaxLength="128" Nullable="false" />
-    <Property Name="PAGE_ID" Type="bigint" />
     <Property Name="CAN_READ" Type="bit" />
     <Property Name="CAN_WRITE" Type="bit" />
     <Property Name="CREATED_BY" Type="varchar" MaxLength="100" />
@@ -37,6 +36,7 @@
     <Property Name="UPDATED_BY" Type="varchar" MaxLength="100" />
     <Property Name="UPDATED_DATE" Type="datetime" />
     <Property Name="STATUS" Type="varchar" MaxLength="10" />
+    <Property Name="PAGE_ID" Type="bigint" />
   </EntityType>
   <EntityType Name="META_BO">
     <Key>
@@ -142,7 +142,7 @@
     <Property Name="ACTIVE" Type="int" />
     <Property Name="ITEMS" Type="nvarchar(max)" />
   </EntityType>
-  <Association Name="FK__META_FIEL__META___47A6A41B">
+  <Association Name="FK__META_FIEL__META___7AF13DF7">
     <End Role="META_BO" Type="Self.META_BO" Multiplicity="1" />
     <End Role="META_FIELD" Type="Self.META_FIELD" Multiplicity="*" />
     <ReferentialConstraint>
@@ -154,7 +154,7 @@
       </Dependent>
     </ReferentialConstraint>
   </Association>
-  <Association Name="FK__VERSIONS__META_B__489AC854">
+  <Association Name="FK__VERSIONS__META_B__7BE56230">
     <End Role="META_BO" Type="Self.META_BO" Multiplicity="0..1" />
     <End Role="VERSIONS" Type="Self.VERSIONS" Multiplicity="*" />
     <ReferentialConstraint>
@@ -166,7 +166,6 @@
       </Dependent>
     </ReferentialConstraint>
   </Association>
-  <Function Name="cleanMetaBo" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo" />
   <Function Name="GetSubForm" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
     <Parameter Name="meta_bo_id" Type="int" Mode="In" />
   </Function>
@@ -174,10 +173,6 @@
     <Parameter Name="meta_bo_id" Type="int" Mode="In" />
   </Function>
   <Function Name="InitMetaBo" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo" />
-  <Function Name="INSERT_BO_LIGNES" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
-    <Parameter Name="nbrLignes" Type="int" Mode="In" />
-    <Parameter Name="BO_NAME" Type="varchar" Mode="In" />
-  </Function>
   <Function Name="MoveBoToCurrentVersion" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
     <Parameter Name="BO_ID" Type="bigint" Mode="In" />
   </Function>
@@ -190,7 +185,7 @@
     <Parameter Name="stepBy" Type="int" Mode="In" />
     <Parameter Name="presist" Type="int" Mode="In" />
   </Function>
-  <EntityContainer Name="FAISModelStoreContainer">
+  <EntityContainer Name="FAIS_MODELStoreContainer">
     <EntitySet Name="BO" EntityType="Self.BO" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="BO_CHILDS" EntityType="Self.BO_CHILDS" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="BO_ROLE" EntityType="Self.BO_ROLE" Schema="dbo" store:Type="Tables" />
@@ -201,11 +196,11 @@
     <EntitySet Name="TASK" EntityType="Self.TASK" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="VERSIONS" EntityType="Self.VERSIONS" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="WORKFLOW" EntityType="Self.WORKFLOW" Schema="dbo" store:Type="Tables" />
-    <AssociationSet Name="FK__META_FIEL__META___47A6A41B" Association="Self.FK__META_FIEL__META___47A6A41B">
+    <AssociationSet Name="FK__META_FIEL__META___7AF13DF7" Association="Self.FK__META_FIEL__META___7AF13DF7">
       <End Role="META_BO" EntitySet="META_BO" />
       <End Role="META_FIELD" EntitySet="META_FIELD" />
     </AssociationSet>
-    <AssociationSet Name="FK__VERSIONS__META_B__489AC854" Association="Self.FK__VERSIONS__META_B__489AC854">
+    <AssociationSet Name="FK__VERSIONS__META_B__7BE56230" Association="Self.FK__VERSIONS__META_B__7BE56230">
       <End Role="META_BO" EntitySet="META_BO" />
       <End Role="VERSIONS" EntitySet="VERSIONS" />
     </AssociationSet>

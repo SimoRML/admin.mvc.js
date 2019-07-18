@@ -45,7 +45,7 @@ namespace FAIS.Controllers
                 return BadRequest(ModelState);
             }
 
-            if (id != pAGE.PAGE_ID)
+            if (id != pAGE.BO_ID)
             {
                 return BadRequest();
             }
@@ -92,7 +92,7 @@ namespace FAIS.Controllers
             db.PAGE.Add(pAGE);
             await db.SaveChangesAsync();
 
-            return CreatedAtRoute("DefaultApi", new { id = pAGE.PAGE_ID }, pAGE);
+            return CreatedAtRoute("DefaultApi", new { id = pAGE.BO_ID }, pAGE);
         }
 
         // DELETE: api/PageAPI/5
@@ -122,7 +122,7 @@ namespace FAIS.Controllers
 
         private bool PAGEExists(long id)
         {
-            return db.PAGE.Count(e => e.PAGE_ID == id) > 0;
+            return db.PAGE.Count(e => e.BO_ID == id) > 0;
         }
     }
 }

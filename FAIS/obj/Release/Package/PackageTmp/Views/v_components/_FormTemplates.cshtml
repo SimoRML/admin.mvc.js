@@ -495,7 +495,7 @@
             },
             populateData: function (data) {
                 var me = this;
-                me.data = data;
+                me.data = orderBy(data, this.sourceDisplay, "asc", "string");
                 me.setValue();
             }
         },

@@ -344,7 +344,7 @@
                 } else {
 
                     // ORDER BY : META_FIELD.JSON_DATA.ORDER
-                    if (typeof this.meta !== "undefined" && typeof this.meta.META_FIELD !== "undefined") {
+                    if (typeof this.meta !== "undefined" && this.meta !== null && typeof this.meta.META_FIELD !== "undefined") {
                         // console.log("v-table getHeaders before", this.meta.META_FIELD);
                         for (var i in this.meta.META_FIELD) {
                             var field = this.meta.META_FIELD[i];

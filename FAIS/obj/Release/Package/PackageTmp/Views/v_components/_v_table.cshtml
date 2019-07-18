@@ -342,15 +342,40 @@
                     }
                     return headers;
                 } else {
-                    if (this.list.length > 0) {
-                        var headers = [];
-                        for (var h in this.list[0]) {
-                            headers.push(h);
+
+                    // ORDER BY : META_FIELD.JSON_DATA.ORDER
+                    if (typeof this.meta !== "undefined" && this.meta !== null && typeof this.meta.META_FIELD !== "undefined") {
+                        // console.log("v-table getHeaders before", this.meta.META_FIELD);
+                        for (var i in this.meta.META_FIELD) {
+                            var field = this.meta.META_FIELD[i];
+                            try {
+                                field.JSON_DATA = JSON.parse(field.JSON_DATA);
+                                if (typeof field.JSON_DATA.ORDER === "undefined") field.ORDER = parseFloat(999);
+                                else field.ORDER = parseFloat(field.JSON_DATA.ORDER);
+                            } catch (e) {
+                                field.ORDER = parseFloat(999);
+                            }
+                            orderBy(this.meta.META_FIELD, "ORDER", "asc", "number");
+                            // console.log("v-table getHeaders after", this.meta.META_FIELD);
                         }
+
+                        var headers = [];
+                        for (var i in this.meta.META_FIELD) {
+                            headers.push(this.meta.META_FIELD[i].DB_NAME);
+                        }
+                        headers.push("BO_STATUS");
                         return headers;
+                    } else {
+                        if (this.list.length > 0) {
+                            var headers = [];
+                            for (var h in this.list[0]) {
+                                headers.push(h);
+                            }
+                            return headers;
+                        }
+                        else
+                            return [];
                     }
-                    else
-                        return [];
                 }
             },
             getHeadersFroDetailRow: function () {
