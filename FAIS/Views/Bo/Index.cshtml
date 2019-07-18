@@ -1,5 +1,5 @@
 ﻿@model FAIS.Models.META_BO
-@{
+@functions{
     string boName()
     {
         return Model.BO_NAME;
@@ -8,6 +8,8 @@
     {
         return Model.BO_DB_NAME + txt;
     }
+}
+@{ 
     bool isSubForm = ViewBag.isSubForm != null;
 }
 @helper renderTable(bool includeDatasource)

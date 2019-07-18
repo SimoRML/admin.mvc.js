@@ -293,6 +293,7 @@
     </Compile>
     <Compile Include="Models\Helper.cs" />
     <Compile Include="Models\IdentityModels.cs" />
+    <Compile Include="Models\ImageBase64.cs" />
     <Compile Include="Models\META_BO.cs">
       <DependentUpon>FAIS_MODEL.tt</DependentUpon>
     </Compile>

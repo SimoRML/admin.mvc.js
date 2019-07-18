@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 
 namespace FAIS.Models
 {
@@ -64,6 +65,21 @@ namespace FAIS.Models
                         end 'BO_STATUS'
                         from " + Tname + " c " +
                         "inner join BO on BO.BO_ID = c.BO_ID AND BO.STATUS != 'deleted'";
+            return select;
+        }
+        public string GenSelectFields(string Tname, List<string> fields, string where="")
+        {
+            string fieldString = "c." + fields.Aggregate((a, b) => a + ", c." + b);
+            // TODO : Filter 
+            string select = "";
+            //select = "select * from  " + Tname + " ";
+            select = "select "+ fieldString + @", BO.CREATED_BY,BO.CREATED_DATE,BO.UPDATED_BY,BO.UPDATED_DATE,
+                        case when convert(varchar,bo.STATUS) = '1'  
+                        then 'Nouveau'
+                        else bo.STATUS
+                        end 'BO_STATUS'
+                        from " + Tname + @" c " +
+                        " inner join BO on BO.BO_ID = c.BO_ID AND BO.STATUS != 'deleted' " + where ;
             return select;
         }
 

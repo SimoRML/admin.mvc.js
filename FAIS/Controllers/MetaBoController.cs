@@ -741,6 +741,38 @@ namespace FAIS.Controllers
             return Ok(dt);
         }
 
+        // SELECT FROM BO
+        [HttpPost]
+        [Route("SelectFields/{Tname}")]
+        public async Task<IHttpActionResult> SelectFields(string Tname, List<string> fields)
+        {
+            //return Ok("c." + fields.Aggregate((a, b) =>  a + ", c." + b));
+            var meta = await db.META_BO.Where(x => x.BO_DB_NAME == Tname).FirstOrDefaultAsync();
+
+            if (meta == null)
+            {
+                return BadRequest();
+            }
+
+            /* ACCESS RIGHTS */
+            try
+            {
+                UserRoleManager.Instance.VerifyRead(meta.BO_DB_NAME);
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                return Content(HttpStatusCode.Forbidden, ex.Message);
+            }
+            /* FIN ACCESS RIGHTS */
+
+            var s = new SGBD();
+            var Gen = new BORepositoryGenerator();
+            var dt = s.Cmd(Gen.GenSelectFields(meta.BO_DB_NAME, fields));
+
+            return Ok(dt);
+        }
+
+
         // SELECT FROM BO CHILDS
         [HttpGet]
         [Route("SelectChilds/{Tname}/{parentId}")]
