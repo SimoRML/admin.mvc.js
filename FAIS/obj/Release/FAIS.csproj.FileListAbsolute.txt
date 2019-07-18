@@ -148,6 +148,10 @@ C:\www\_.net\NB\admin.mvc.js\FAIS\obj\Release\FAIS.csproj.CopyComplete
 C:\www\_.net\NB\admin.mvc.js\FAIS\obj\Release\FAIS.dll
 C:\www\_.net\NB\admin.mvc.js\FAIS\obj\Release\FAIS.pdb
 C:\www\_.net\NB\admin.mvc.js\FAIS\obj\Release\FAIS.csprojAssemblyReference.cache
+D:\PERSO\FAIS_GIT\admin.mvc.js\FAIS\obj\Release\FAIS.Properties.Resources.resources
+D:\PERSO\FAIS_GIT\admin.mvc.js\FAIS\obj\Release\FAIS.Resources.lang.fr-FR.resources
+D:\PERSO\FAIS_GIT\admin.mvc.js\FAIS\obj\Release\FAIS.csproj.GenerateResource.cache
+D:\PERSO\FAIS_GIT\admin.mvc.js\FAIS\obj\Release\FAIS.csproj.CoreCompileInputs.cache
 D:\PERSO\FAIS_GIT\admin.mvc.js\FAIS\bin\ApplicationInsights.config
 D:\PERSO\FAIS_GIT\admin.mvc.js\FAIS\bin\FAIS.dll.config
 D:\PERSO\FAIS_GIT\admin.mvc.js\FAIS\bin\FAIS.dll
@@ -290,10 +294,6 @@ D:\PERSO\FAIS_GIT\admin.mvc.js\FAIS\bin\fr\Microsoft.AspNet.Identity.Owin.resour
 D:\PERSO\FAIS_GIT\admin.mvc.js\FAIS\bin\fr\Microsoft.AspNet.Identity.EntityFramework.resources.dll
 D:\PERSO\FAIS_GIT\admin.mvc.js\FAIS\bin\fr\System.Web.Http.Owin.resources.dll
 D:\PERSO\FAIS_GIT\admin.mvc.js\FAIS\obj\Release\FAIS.csprojAssemblyReference.cache
-D:\PERSO\FAIS_GIT\admin.mvc.js\FAIS\obj\Release\FAIS.Properties.Resources.resources
-D:\PERSO\FAIS_GIT\admin.mvc.js\FAIS\obj\Release\FAIS.Resources.lang.fr-FR.resources
-D:\PERSO\FAIS_GIT\admin.mvc.js\FAIS\obj\Release\FAIS.csproj.GenerateResource.cache
-D:\PERSO\FAIS_GIT\admin.mvc.js\FAIS\obj\Release\FAIS.csproj.CoreCompileInputs.cache
 D:\PERSO\FAIS_GIT\admin.mvc.js\FAIS\obj\Release\fr-FR\FAIS.resources.dll
 D:\PERSO\FAIS_GIT\admin.mvc.js\FAIS\obj\Release\FAIS.csproj.CopyComplete
 D:\PERSO\FAIS_GIT\admin.mvc.js\FAIS\obj\Release\FAIS.dll

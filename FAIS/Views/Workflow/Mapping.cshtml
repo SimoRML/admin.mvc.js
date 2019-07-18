@@ -192,7 +192,7 @@
                 url: "MetaField/metabo/" + metaBoId_parent,
                 done: function (response) {
                     api.Get({
-                        url: "metafield/GetSubFormID/" + metaBoId_parent, done: function (subId) {
+                        url: "MetaField/GetSubFormID/" + metaBoId_parent, done: function (subId) {
 
                             $.each(response, function (key, value) {
                                 if (value.FORM_TYPE.indexOf('subform-') > -1) {
@@ -214,7 +214,7 @@
                 url: "MetaField/metabo/" + metaBoId_child,
                 done: function (response) {
                     api.Get({
-                        url: "metafield/GetSubFormID/" + metaBoId_child, done: function (subId) {
+                        url: "MetaField/GetSubFormID/" + metaBoId_child, done: function (subId) {
                             $.each(response, function (key, value) {
                                 if (value.FORM_TYPE.indexOf('subform-') > -1) {
                                     api.Get({

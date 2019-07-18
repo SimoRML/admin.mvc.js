@@ -76,7 +76,7 @@ namespace FAIS.Models.Repository
             switch (type)
             {
                 case "plus":
-                    var rst = db.PlusSequenceNextID(cle, boName, int.Parse(step), persist).ToList()[0];
+                    var rst = db.PlusSequenceNextID(cle, boName, int.Parse(step), 1).ToList()[0];
                     return new { type, value = format.Replace(formule, rst.ToString()) };
                 case "date":
                     return new { type, value = step == "" ? DateTime.Now.ToString("yyyy-MM-dd") : DateTime.Now.AddDays(int.Parse(step)).ToString("yyyy-MM-dd") };
