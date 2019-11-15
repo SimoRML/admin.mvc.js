@@ -1,0 +1,143 @@
+﻿<script type="text/javascript" src="~/Content/js/jquery.zoom.min.js"></script>
+<style>
+    .thumbs-container {
+        height: 100px;
+        overflow-x: auto;
+        overflow-y: hidden;
+        display: flex;
+        flex-direction: row;
+        flex-wrap: nowrap;
+    }
+
+        .thumbs-container .thumb {
+            flex: 0 0 auto;
+            padding: 3px;
+            width: 100px;
+            height: 70px;
+            margin: 1px;
+            border: 1px solid #aaa;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+            .thumbs-container .thumb img {
+                width: 100%;
+                height: 100%;
+            }
+
+    .selected-image {
+        border-color: #0092ff !important;
+    }
+
+    .selected-image-container {
+        width: 100%;
+        margin-top: 10px;
+        position: relative;
+    }
+
+        .selected-image-container img {
+            width: 100%;
+            border: 1px solid #aaa;
+            border-radius: 5px;
+        }
+
+        .selected-image-container .btn-nav {
+            display: none;
+        }
+
+        .selected-image-container:hover .btn-nav {
+            display: block;
+        }
+
+        .selected-image-container .btn-previous {
+            position: absolute;
+            left: 20px;
+            top: 49%;
+        }
+
+        .selected-image-container .btn-next {
+            position: absolute;
+            right: 20px;
+            top: 49%;
+        }
+
+    #zoom {
+        cursor: zoom-in;
+    }
+</style>
+<div id="vappCarouselWidget_@ViewBag.compKey">
+    <div id="thumbs-container" class="thumbs-container">
+        <div v-for="(file, index) in files"
+             :id="'thumb-' + index"
+             :class="{'thumb':true, 'selected-image': index == selected}"
+             v-on:click="setSelected(index)">
+            <img :src="file.thumb" />
+        </div>
+    </div>
+    <div class="selected-image-container">
+        <div id="zoom">
+            <img v-if="selected != null" :src="files[selected].image" />
+        </div>
+        <i class="material-icons btn-previous btn-nav btn btn-round btn-fab btn-fab-x-mini" v-on:click="goto(-1)">keyboard_arrow_left</i>
+        <i class="material-icons btn-next btn-nav btn btn-round btn-fab btn-fab-x-mini" v-on:click="goto(1)">keyboard_arrow_right</i>
+    </div>
+</div>
+<script type="text/javascript">
+    window["vappCarouselWidget"+ "@ViewBag.compKey"] = new Vue({
+        el: "#vappCarouselWidget_@ViewBag.compKey",
+        data: {
+            props: null,
+            files: [],
+            selected: null,
+        },
+        methods: {
+            val: function (props) {
+                this.props = props;
+                this.load();
+
+                return this.props;
+            },
+            load: function () {
+                var me = this;
+                var api = EV.getComponent("data");
+                api.Get({
+                    url: "file/ls/" + me.props.dirName,
+                    done: function (response) {
+                        me.files = response;
+                        if (me.files.length > 0) me.setSelected(0);
+                    },
+                    fail: function (ex) {
+                        NOTIF.error("Internal server ERROR !");
+                        console.log("Internal server ERROR !", ex);
+                    }
+                });
+            },
+            goto: function (num) {
+                if (num < 0) { // previous
+
+                    if (this.selected == 0) this.setSelected(this.files.length - 1);
+                    else this.setSelected(this.selected + num);
+
+                } else { // next
+
+                    if (this.selected == this.files.length - 1) this.setSelected(0);
+                    else this.setSelected(this.selected + num);
+
+                }
+            },
+            setSelected: function (num) {
+                this.selected = num;
+                //document.getElementById('thumb-' + this.selected).scrollIntoView();
+
+                var col = document.getElementById('thumb-' + this.selected);
+                var div = document.getElementById('thumbs-container');
+                if (col != null && div != null) {
+                    div.scrollLeft = col.offsetLeft - div.offsetLeft;
+                }
+                setTimeout(function () { $('#zoom').zoom({ on: 'click' }); }, 100);
+                
+            }
+        }
+    });
+
+</script>

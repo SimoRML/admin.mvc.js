@@ -125,7 +125,7 @@
                      :class="col.class + ' column ' + selectedClass(sectionIndex, colIndex)"
                      v-on:click="setSelected(sectionIndex, colIndex)">
                     <div :class="{'card':col.showCard}"
-                         :style="'height:'+col.height">
+                         :style="'height:'+col.height+'; overflow-y: auto;'">
                         <div class="card-header" v-if="col.showTitle">
                             <h4 class="card-title">
                                 {{ col.title }}
@@ -393,6 +393,20 @@
                         //log.green("props", props);
                         INCLUDE($compDiv, "router/widgets/querywidget?compKey=" + compKey, function () {
                             window["vappQueryWidget" + compKey].val(props);
+                        });
+                    }
+                },
+                CAROUSEL: {
+                    name: "Carousel",
+                    icone: "view_carousel",
+                    class: "",
+                    props: {
+                        dirName: { label: "Dossier", type: "v-text" }
+                    },
+                    apply: function ($compDiv, props, compKey) {
+                        //log.green("props", props);
+                        INCLUDE($compDiv, "router/widgets/carouselWidget?compKey=" + compKey, function () {
+                            window["vappCarouselWidget" + compKey].val(props);
                         });
                     }
                 },

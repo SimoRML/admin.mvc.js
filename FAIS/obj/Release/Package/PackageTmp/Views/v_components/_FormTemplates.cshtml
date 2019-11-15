@@ -447,6 +447,7 @@
         methods: {
             setValue: function (value, emitter) {
                 var me = this;
+                var $select = $(document.getElementById(me.elementId).getElementsByTagName("select"));
                 if (me.data === null) return;
 
                 if (!Array.isArray(me.data)) {
@@ -454,20 +455,20 @@
                     for (var i in me.data) a.push(me.data[i]);
                     me.data = a;
                 }
-
+                if (typeof emitter === 'undefined') return;
                 if (typeof value !== "undefined" && value !== "") me.selected = value;
-                // console.log(emitter + ".setValue : (" + me.id + ")", me.selected, "data", me.data);
+                 console.log(emitter + ".setValue : (" + me.id + ")", me.selected, "data", me.data);
                 // console.log("setValue me.selected : " + me.id, "'" + me.selected + "'");
                 // var time = me.selected == '' ? 1000 : 100;
                 setTimeout(function () {
                     // log.redTitle("setValue : " + me.id, "'" + me.selected + "'", me.data);
-                    $("#" + me.elementId + " select").val(me.selected);
-                    $("#" + me.elementId + " select").selectpicker('refresh');
+                    $select.val(me.selected);
+                    $select.selectpicker('refresh');
                     // log.greenTitle("value : " + me.elementId, "'" + $("#" + me.elementId + " select").val() == '' + "'");
-                    if ($("#" + me.elementId + " select").val() == '') {
+                    if ($select.val() == '') {
                         setTimeout(function () {
-                            $("#" + me.elementId + " select").val(me.selected);
-                            $("#" + me.elementId + " select").selectpicker('refresh');
+                            $select.val(me.selected);
+                            $select.selectpicker('refresh');
                             me.emitChanged(me.selected, emitter);
                         }, 100);
                     }
@@ -660,6 +661,7 @@
             setValue: function (value, emitter) {
                 var me = this;
                 if (me.data === null) return;
+                var $select = $(document.getElementById(me.elementId).getElementsByTagName("select"));
 
                 if (!Array.isArray(me.data)) {
                     var a = [];
@@ -673,8 +675,8 @@
                 // var time = me.selected == '' ? 1000 : 100;
                 setTimeout(function () {
                     // console.log("setValue : " + me.id, "'" + me.selected + "'");
-                    $("#" + me.elementId + " select").val(me.selected);
-                    $("#" + me.elementId + " select").selectpicker('refresh');
+                    $select.val(me.selected);
+                    $select.selectpicker('refresh');
                     // bus.$emit(me.elementId + "-changed", me.$refs.selectpicker);
                     me.emitChanged(me.selected, emitter);
                 }, 100);

@@ -74,7 +74,7 @@
                 // JSON_DATA
                 try {
                     var json_data = typeof field.JSON_DATA == "string" ? JSON.parse(field.JSON_DATA) : field.JSON_DATA;
-                    console.log('%c DEFAULT', 'color:red', json_data.DEFAULT, "mode", this.mode());
+                    //console.log('%c DEFAULT', 'color:red', json_data.DEFAULT, "mode", this.mode());
 
                     if (typeof json_data.DEFAULT !== "undefined")
                         bind.default = json_data.DEFAULT;
@@ -100,11 +100,6 @@
                 var me = this;
 
                 for (var i in this.meta) {
-                    // PUT WITH DEFAULT VALUE
-                    if (typeof this.meta[i].STATUS === "undefined") this.meta[i].STATUS = "ACTIVE";
-                    if (typeof this.meta[i].FORM_SHOW === "undefined") this.meta[i].FORM_SHOW = 1;
-                    if (typeof this.meta[i].FORM_OPTIONAL === "undefined") this.meta[i].FORM_OPTIONAL = 0;
-
                     try {
                         this.meta[i].JSON_DATA = JSON.parse(this.meta[i].JSON_DATA);
                         if (typeof this.meta[i].JSON_DATA.ORDER === "undefined") this.meta[i].ORDER = parseFloat(999);
@@ -112,9 +107,19 @@
                     } catch (e) {
                         this.meta[i].ORDER = parseFloat(999);
                     }
-                    orderBy(this.meta, "ORDER", "asc", "number")
+                }
+                orderBy(this.meta, "ORDER", "asc", "number")
 
 
+                for (var i in this.meta) {
+                    // log.red("formatBody", this.meta[i].DB_NAME);
+                    //debugger;
+                    // PUT WITH DEFAULT VALUE
+                    if (typeof this.meta[i].STATUS === "undefined") this.meta[i].STATUS = "ACTIVE";
+                    if (typeof this.meta[i].FORM_SHOW === "undefined") this.meta[i].FORM_SHOW = 1;
+                    if (typeof this.meta[i].FORM_OPTIONAL === "undefined") this.meta[i].FORM_OPTIONAL = 0;
+
+                    
                     // push subform
                     if (typeof this.meta[i].FORM_TYPE !== "undefined") {
                         if (this.meta[i].FORM_TYPE.match('subform-') !== null) {
@@ -145,8 +150,11 @@
                         }
                         else
                             this.body[this.meta[i].DB_NAME] = null;
+
+                        //log.blue("Format body", this.meta[i].DB_NAME, this.body[this.meta[i].DB_NAME]);
                     }
                 }
+                //log.blueTitle("Body Formatted", this.body);
             },
             submit: function () {
                 this.$emit("before-submit", this.body);
@@ -273,9 +281,11 @@
                     }
                     //console.log("JSON_DATA", entity);
                 } catch { }
-
+                
                 for (var i in me.body) {
+                    //log.blue(i, entity[i]);
                     me.$set(me.body, i, entity[i]);
+                    // log.blue("------------>", i, me.body[i]);
                 }
 
                 //for (var i in this.meta) {

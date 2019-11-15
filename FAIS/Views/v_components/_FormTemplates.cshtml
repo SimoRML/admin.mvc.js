@@ -388,7 +388,7 @@
         },
         data: function () {
             return {
-                selected: this.value,
+                selected: this.multiple ? (typeof this.value === 'undefined' || this.value == '' ? [] : this.value) : this.value,
                 selectedObject: null,
                 detailFields: null,
                 parentValue: null,
@@ -454,25 +454,27 @@
                     for (var i in me.data) a.push(me.data[i]);
                     me.data = a;
                 }
-
+                //if (typeof emitter === 'undefined') return;
                 if (typeof value !== "undefined" && value !== "") me.selected = value;
-                // console.log(emitter + ".setValue : (" + me.id + ")", me.selected, "data", me.data);
+                 console.log(emitter + ".setValue : (" + me.id + ")", me.selected, "data", me.data);
                 // console.log("setValue me.selected : " + me.id, "'" + me.selected + "'");
                 // var time = me.selected == '' ? 1000 : 100;
                 setTimeout(function () {
-                    // log.redTitle("setValue : " + me.id, "'" + me.selected + "'", me.data);
-                    $("#" + me.elementId + " select").val(me.selected);
-                    $("#" + me.elementId + " select").selectpicker('refresh');
+                    var $select = $(document.getElementById(me.elementId).getElementsByTagName("select"));
+                    
+                    log.redTitle("$select : " + me.id, $select, me.data);
+                    $select.val(me.selected);
+                    $select.selectpicker('refresh');
                     // log.greenTitle("value : " + me.elementId, "'" + $("#" + me.elementId + " select").val() == '' + "'");
-                    if ($("#" + me.elementId + " select").val() == '') {
+                    if ($select.val() == '') {
                         setTimeout(function () {
-                            $("#" + me.elementId + " select").val(me.selected);
-                            $("#" + me.elementId + " select").selectpicker('refresh');
+                            $select.val(me.selected);
+                            $select.selectpicker('refresh');
                             me.emitChanged(me.selected, emitter);
-                        }, 100);
+                        }, 1000);
                     }
                     else me.emitChanged(me.selected, emitter);
-                }, 100);
+                }, 200);
             },
             emitChanged: function (value, emitter) {
                 // console.log("EMIT CHANGED", this.elementId);
@@ -672,9 +674,10 @@
                 // console.log("setValue me.selected : " + me.id, "'" + me.selected + "'");
                 // var time = me.selected == '' ? 1000 : 100;
                 setTimeout(function () {
+                    var $select = $(document.getElementById(me.elementId).getElementsByTagName("select"));
                     // console.log("setValue : " + me.id, "'" + me.selected + "'");
-                    $("#" + me.elementId + " select").val(me.selected);
-                    $("#" + me.elementId + " select").selectpicker('refresh');
+                    $select.val(me.selected);
+                    $select.selectpicker('refresh');
                     // bus.$emit(me.elementId + "-changed", me.$refs.selectpicker);
                     me.emitChanged(me.selected, emitter);
                 }, 100);

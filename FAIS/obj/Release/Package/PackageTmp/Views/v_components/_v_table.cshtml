@@ -126,7 +126,7 @@
                                             </template>
                                             <template v-else>
                                                 @*FILE COLUMN*@
-                                                <template v-if="typeof listConfig[getLineIndex(index)].columns != 'undefined' && listConfig[getLineIndex(index)].columns[h].isFile">
+                                                <template v-if="typeof listConfig[getLineIndex(index)].columns != 'undefined' && typeof listConfig[getLineIndex(index)].columns[h] != 'undefined' && listConfig[getLineIndex(index)].columns[h].isFile">
                                                     <td>
                                                         <a href="javascript:;" v-on:click="downloadFile(item[h].base64, item[h].type, item[h].name)">
                                                             <template v-if="item[h].type.match('image') !== null">

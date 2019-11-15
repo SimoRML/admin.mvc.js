@@ -19,10 +19,18 @@
         </div>
         <div class="row">
             <div class="col-md-2 file-upload" v-for="(file, index) in files" v-bind:key="index" :title="file.name">
-                <template v-if="file.fileType.match('image') !== null">
-                    <div class="imageContainer">
+                <template v-if="typeof file.image !== 'undefined' || typeof file.base64 !=='undefined'">
+                    <div class="imageContainer" v-if="typeof file.base64 !=='undefined'">
                         <img :src="file.base64" />
                     </div>
+                    <template v-else>
+                        <div class="imageContainer" v-if="typeof file.thumb !=='undefined'">
+                            <img :src="file.thumb" />
+                        </div>
+                        <div class="imageContainer" v-else>
+                            <img :src="file.image" />
+                        </div>
+                    </template>
                 </template>
                 <template v-else>
                     <div class="fileContainer">
@@ -168,11 +176,18 @@
             save: function () {
                 if (!this.changed) return;
                 var me = this;
+                NOTIF.info("Envoi d'images en cours ...");
                 EV.getComponent("data").Post({
-                    url: "file/save",
+                    url: "file/saveimg",
                     data: JSON.stringify({ FileName: this.fileName, Files: this.files }),
                     done: (response) => {
-                        if (response.success) me.changed = false;
+                        log.greenTitle("SAVED", response);
+                        if (response.success) {
+                            me.changed = false;
+                            NOTIF.success("Images envoyées avec succès !");
+                        } else {
+                            NOTIF.error("Images non envoyées ! ::: " + response.msg);
+                        }
                     }
                 });
             }
@@ -181,7 +196,7 @@
             var me = this;
             this.fileName = this.value;
             log.blueTitle("Images multiples", this.fileName, typeof this.fileName, this.fileName == "", this.fileName == null);
-            if (this.fileName == null || this.fileName == "" || typeof this.fileName === "undefined") {
+            if (this.fileName == null || this.fileName == "" || typeof this.fileName === "undefined" || this.fileName.match(".json") !== null) {
                 // Get file name from server
                 EV.getComponent("data").Get({
                     url: "file/name/img",
@@ -193,8 +208,8 @@
             } else {
                 // Get files from server
                 EV.getComponent("data").Get({
-                    url: "file/?fileName=" + this.fileName,
-                    done: (response) => {                        
+                    url: "file/ls/" + this.fileName,
+                    done: (response) => {
                         //log.greenTitle("response", response);
                         me.files = response;
                     }

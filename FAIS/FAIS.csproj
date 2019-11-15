@@ -257,6 +257,7 @@
     <Compile Include="Controllers\ProfileManagerController.cs" />
     <Compile Include="Controllers\ReportingController.cs" />
     <Compile Include="Controllers\RouterController.cs" />
+    <Compile Include="Controllers\RssController.cs" />
     <Compile Include="Controllers\SharedController.cs" />
     <Compile Include="Controllers\ValuesController.cs" />
     <Compile Include="Controllers\VersionsController.cs" />
@@ -504,6 +505,7 @@
     <Content Include="Content\js\jquery.select-bootstrap.js" />
     <Content Include="Content\js\jquery.tagsinput.js" />
     <Content Include="Content\js\jquery.validate.min.js" />
+    <Content Include="Content\js\jquery.zoom.min.js" />
     <Content Include="Content\js\material-dashboard.js" />
     <Content Include="Content\js\material.min.js" />
     <Content Include="Content\js\moment.min.js" />
@@ -607,6 +609,7 @@
     <Content Include="SQL\changes_pending.sql" />
     <Content Include="SQL\CreateTable_v1.sql" />
     <Content Include="SQL\CreateView.sql" />
+    <Content Include="SQL\DB-18-07-2019.sql" />
     <Content Include="SQL\DYNAMIC_SELECT.sql" />
     <Content Include="SQL\InitMetaBo.sql" />
     <Content Include="SQL\MoveBoToCurrentVersion.sql" />
@@ -784,6 +787,7 @@
     <Content Include="Views\Router\widgets\etatsortiewidget.cshtml" />
     <Content Include="Views\Router\widgets\queryWidget.cshtml" />
     <Content Include="Views\v_components\_v_multi_image.cshtml" />
+    <Content Include="Views\Router\widgets\carouselWidget.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
