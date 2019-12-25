@@ -1,4 +1,11 @@
-﻿<script id="v-menu-item-template" type="text/template">
+﻿<style>
+    .sidebar .nav [data-toggle="collapse"] ~ div > ul > li > a, .off-canvas-sidebar .nav [data-toggle="collapse"] ~ div > ul > li > a {
+        padding-left: 35px !important;
+    }
+</style>
+
+
+<script id="v-menu-item-template" type="text/template">
     <!-- <li>
         <a data-toggle="collapse" class="collapsed" aria-expanded="false">
             <i class="material-icons">image</i>
@@ -30,8 +37,9 @@
             </ul>
         </div>
     </li>-->
+
     <li v-if="parent">
-        <a  aria-expanded="false" data-toggle="collapse" class="v-collapse-a" v-on:click="isOpen = !isOpen">
+        <a aria-expanded="false" data-toggle="collapse" class="v-collapse-a" v-on:click="isOpen = !isOpen">
             <i class="material-icons">{{ icon }}</i>
             <p>
                 {{ text }}
@@ -40,9 +48,30 @@
         </a>
         <div aria-expanded="false" :class="'v-collapse ' + getOpenClass()">
             <ul class="nav">
-                <li v-for="item in childs">
-                    <a :href="'#' + item.href">
-                        {{ item.text }}
+                <li v-for="item in childs" v-if="item.parent==parent">
+                    <a aria-expanded="false" data-toggle="collapse" class="v-collapse-a" v-on:click="item.open= !item.open">
+                        <i class="material-icons">{{item.icon}}</i>
+                        <p>
+                            {{item.text}}
+                            <b class="caret"></b>
+                        </p>
+                    </a>
+                    <div aria-expanded="false" :class="'v-collapse ' + getOpenClass_sub_menu(item.open)">
+                        <ul class="nav">
+                            <li v-for="item_sub in item.childs">
+                                <a :href="'#' + item_sub.href" style="margin-left:30px">
+                                    <i class="material-icons">{{ item_sub.icon }}</i>
+                                    <p>{{ item_sub.text }}</p>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+
+                </li>
+                <li v-else>
+                    <a :href="href">
+                        <i class="material-icons">{{ icon }}</i>
+                        <p>{{ text }}---</p>
                     </a>
                 </li>
             </ul>
@@ -71,27 +100,36 @@
         },
         data: function () {
             return {
-                isOpen: false
+                isOpen: false,
+                isOpen_sub: false
             };
+
+
         },
         methods: {
             getOpenClass: function (v) {
                 return this.isOpen ? "open" : " collapse";
+            },
+            getOpenClass_sub_menu: function (v) {
+                return v ? "open" : " collapse";
+
+
             }
         }
     });
-   /* var Sidebar_isOpen = ($(".sidebar-wrapper.ps-active-x")[0]) ? "true" : "false";
-    $("#minimizeSidebar").click(function () {
-        if (Sidebar_isOpen == true) {
-            $(".v-collapse.open").addClass("hide");
-            $(".v-collapse.open").removeClass("open");
-        } else {
-            $(".v-collapse.hide").addClass("open");
-            $(".v-collapse.hide").removeClass("open");
-        }
-    })*/
+    /* var Sidebar_isOpen = ($(".sidebar-wrapper.ps-active-x")[0]) ? "true" : "false";
+     $("#minimizeSidebar").click(function () {
+         if (Sidebar_isOpen == true) {
+             $(".v-collapse.open").addClass("hide");
+             $(".v-collapse.open").removeClass("open");
+         } else {
+             $(".v-collapse.hide").addClass("open");
+             $(".v-collapse.hide").removeClass("open");
+         }
+     })*/
     $(".v-collapse").each(function () {
-        console.log(0);
+        //  console.log(0);
         $(this).addClass("collapse");
     })
+
 </script>

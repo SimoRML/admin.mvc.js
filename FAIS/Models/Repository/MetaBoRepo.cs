@@ -158,6 +158,10 @@ namespace FAIS.Models.Repository
                 var jsonData = JsonConvert.DeserializeObject<Dictionary<string, string>>(metaBo.JSON_DATA);
                 metaBo.TITLE = jsonData.ContainsKey("TITLE") ? jsonData["TITLE"] : "";
                 metaBo.GROUPE = jsonData.ContainsKey("GROUPE") ? jsonData["GROUPE"] : "";
+                metaBo.ICONEGROUPE = jsonData.ContainsKey("ICONEGROUPE") ? jsonData["ICONEGROUPE"] : "";
+                metaBo.MENUPRINCIPAL = jsonData.ContainsKey("MENUPRINCIPAL") ? jsonData["MENUPRINCIPAL"] : "";
+                metaBo.ICONEMENUPRINCIPAL = jsonData.ContainsKey("ICONEMENUPRINCIPAL") ? jsonData["ICONEMENUPRINCIPAL"] : "";
+                metaBo.ICONEBO = jsonData.ContainsKey("ICONEBO") ? jsonData["ICONEBO"] : "arrow_right";
             }
             return metaBoList;
         }
@@ -279,6 +283,10 @@ namespace FAIS.Models.Repository
     {
         public string TITLE { get; set; }
         public string GROUPE { get; set; }
+        public string ICONEGROUPE { get; set; }
+        public string MENUPRINCIPAL { get; set; }
+        public string ICONEMENUPRINCIPAL { get; set; }
+        public string ICONEBO { get; set; }
     }
 
 }

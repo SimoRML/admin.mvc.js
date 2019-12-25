@@ -1,13 +1,8 @@
 ﻿using FAIS.Models;
 using FAIS.Models.Authorize;
 using FAIS.Models.Repository;
-using System;
 using System.Collections.Generic;
-using System.Dynamic;
 using System.Linq;
-using System.Net;
-using System.Net.Http;
-using System.Security.Claims;
 using System.Threading.Tasks;
 using System.Web.Http;
 using System.Web.Http.Description;
@@ -28,57 +23,85 @@ namespace FAIS.Controllers
         {
             var metas = await new MetaBoRepo().GetMetaBoExAsync(@" WHERE CREATED_BY <> 'admin' AND TYPE='form' 
             AND (
-META_BO_ID in (select META_BO_ID from BO_ROLE WHERE (CAN_READ = 1 OR CAN_WRITE = 1) AND ROLE_ID in (select roles.Id from AspNetRoles roles where Name in ('" + string.Join("','", boRoleModel.GetUserRoles(User)) + "'))) or 'admin' in ('" + string.Join("','", boRoleModel.GetUserRoles(User)) + "') )");
+META_BO_ID in (select META_BO_ID from BO_ROLE WHERE (CAN_READ = 1 OR CAN_WRITE = 1) AND ROLE_ID in (select roles.Id from AspNetRoles roles where Name in ('" + string.Join("','", boRoleModel.GetUserRoles(User)) + "'))) or 'admin' in ('" + string.Join("','", boRoleModel.GetUserRoles(User)) + "') ) ");
 
             Dictionary<string, object> menu = new Dictionary<string, object>();
+            Dictionary<string, object> menuAdmin = new Dictionary<string, object>();
+
+            Dictionary<string, object> menu_new = new Dictionary<string, object>();
             if (User.IsInRole("admin"))
             {
-                menu.Add("Admin", new
+
+                menuAdmin.Add("Admin", new
                 {
                     icon = "build",
                     text = "Administration",
+                    MenuPrincipal = "Admin",
                     href = "home",
                     User = User.Identity.Name,
                     parent = true,
                     childs = new[] {
-                        new MenuFields { icon = "dashboard", text = "Meta Bo", href = "router.metabo" },
-                        new MenuFields { icon = "dashboard", text = "Workflow", href = "bo.admin.workflow" },
-                        new MenuFields { icon = "web", text = "Page", href = "bo.admin.page" },
-                        new MenuFields { icon = "pie_chart", text = "Reporting", href = "home.reporting" },
-                        new MenuFields { icon = "pie_chart", text = "Rôles", href = "admin.roles" },
-                    },
+                                       new MenuFields { icon = "extension", text = "MetaBO", href = "router.metabo" },
+                                       new MenuFields { icon = "dashboard", text = "Workflow", href = "bo.admin.workflow" },
+                                       new MenuFields { icon = "web", text = "Page", href = "bo.admin.page" },
+                                       new MenuFields { icon = "pie_chart", text = "Reporting", href = "home.reporting" },
+                                       new MenuFields { icon = "pie_chart", text = "Rôles", href = "admin.roles" },
+                                   },
                     open = false,
                 });
+
+                menu_new.Add("Administration", new Dictionary<string, object>()
+                         {
+                             { "icon", "build" },
+                             { "text","Administration" },
+                             //{ "href", "home" },
+                             { "User", User.Identity.Name },
+                             //{"MenuPrincipal",meta.MENUPRINCIPAL },
+                             { "parent", true },
+                             { "childs", new List<object>() },
+                             { "open", false }
+                         });
+                var mp = (List<object>)((Dictionary<string, object>)menu_new["Administration"])["childs"];
+
+                mp.Add(menuAdmin["Admin"]);
             }
+
+
+
             foreach (var meta in metas)
             {
+
                 if (meta.GROUPE == null) meta.GROUPE = "Objects";
 
                 if (!menu.ContainsKey(meta.GROUPE))
                 {
                     menu.Add(meta.GROUPE, new Dictionary<string, object>()
-                        {
-                            { "icon", "layers" },
-                            { "text", meta.GROUPE },
-                            { "href", "home" },
-                            { "User", User.Identity.Name },
-                            { "parent", true },
-                            { "childs", new List<object>() },
-                            { "open", false }
-                        });
+                         {
+                             { "icon", meta.ICONEGROUPE },
+                             { "text", meta.GROUPE },
+                             { "href", "home" },
+                             { "User", User.Identity.Name },
+                             {"MenuPrincipal",meta.MENUPRINCIPAL },
+                             {"IconeMenuPrincipal",meta.ICONEMENUPRINCIPAL },
+                             { "parent", true },
+                             { "childs", new List<object>() },
+                             { "open", false }
+                         });
                 }
-                ((List<object>)((Dictionary<string, object>)menu[meta.GROUPE])["childs"]).Add(new
-                {
-                    icon = "",
-                    text = meta.BO_NAME,
-                    href = "bo.index." + meta.BO_DB_NAME.Replace("_BO_", ""),
-                    User = "",
-                    parent = false,
-                    childs = ""
-                });
+        ((List<object>)((Dictionary<string, object>)menu[meta.GROUPE])["childs"]).Add(new
+        {
+            icon = meta.ICONEBO,
+            text = meta.BO_NAME,
+            href = "bo.index." + meta.BO_DB_NAME.Replace("_BO_", ""),
+            User = "",
+            parent = false,
+            childs = ""
+        });
             }
+
+
             var pages = await new MetaBoRepo().GetPagesAsync(@" AND (
-BO_ID in (select PAGE_ID from BO_ROLE WHERE (CAN_READ = 1 OR CAN_WRITE = 1) AND ROLE_ID in (select roles.Id from AspNetRoles roles where Name in ('" + string.Join("', '", boRoleModel.GetUserRoles(User)) + "'))) or 'admin' in ('" + string.Join("', '", boRoleModel.GetUserRoles(User)) + "') )");
+BO_ID in (select PAGE_ID from BO_ROLE WHERE (CAN_READ = 1 OR CAN_WRITE = 1) AND ROLE_ID in (select roles.Id from AspNetRoles roles where Name in ('" + string.Join("', '", boRoleModel.GetUserRoles(User)) + "'))) or 'admin' in ('" + string.Join("', '", boRoleModel.GetUserRoles(User)) + "') ) ");
             foreach (var page in pages)
             {
                 if (!menu.ContainsKey(page.GROUPE))
@@ -89,6 +112,7 @@ BO_ID in (select PAGE_ID from BO_ROLE WHERE (CAN_READ = 1 OR CAN_WRITE = 1) AND 
                             { "text", page.GROUPE },
                             { "href", "home" },
                             { "User", User.Identity.Name },
+                            {"MenuPrincipal", "Pages" },
                             { "parent", true },
                             { "childs", new List<object>() },
                             { "open", false }
@@ -105,7 +129,81 @@ BO_ID in (select PAGE_ID from BO_ROLE WHERE (CAN_READ = 1 OR CAN_WRITE = 1) AND 
                 });
             }
 
-            return Ok(menu);
+
+            foreach (var item in menu.Keys)
+            {
+                var oneGroupe = (Dictionary<string, object>)menu[item];
+                //var childs = (List<object>)oneGroupe["childs"];
+                var menuPrin = oneGroupe["MenuPrincipal"].ToString();
+
+
+                if (menuPrin == "") menuPrin = "Menu";
+                if (!menu_new.ContainsKey(menuPrin))
+                {
+                    menu_new.Add(menuPrin, new Dictionary<string, object>()
+                         {
+                             { "icon",oneGroupe.ContainsKey("IconeMenuPrincipal") ? oneGroupe["IconeMenuPrincipal"].ToString()  : ""},
+                             { "text",menuPrin },
+                             //{ "href", "home" },
+                             { "User", User.Identity.Name },
+                             //{"MenuPrincipal",meta.MENUPRINCIPAL },
+                             { "parent", true },
+                             { "childs", new List<object>() },
+                             { "open", false }
+                         });
+                }
+                var mp = (List<object>)((Dictionary<string, object>)menu_new[menuPrin])["childs"];
+
+                mp.Add(oneGroupe);
+            }
+
+
+            //foreach (var meta in metas)
+            //{
+            //    if (meta.MENUPRINCIPAL == null) meta.MENUPRINCIPAL = "Objects";
+
+            //    if (!menu.ContainsKey(meta.MENUPRINCIPAL))
+            //    {
+            //        menu.Add(meta.MENUPRINCIPAL, new Dictionary<string, object>()
+            //                 {
+            //                     { "icon", meta.ICONEMENUPRINCIPAL },
+            //                     { "text", meta.MENUPRINCIPAL },
+            //                     { "href", "home" },
+            //                     { "User", User.Identity.Name },
+            //                     { "parent", true },
+            //                     { "childs",new Dictionary<string,object>() },
+            //                     { "open", false }
+            //                 });
+            //    }
+
+            //    if (meta.GROUPE == null) meta.GROUPE = "Objects";
+
+            //    if (!((Dictionary<string, object>)((Dictionary<string, object>)menu[meta.MENUPRINCIPAL])["childs"]).ContainsKey(meta.GROUPE))
+            //    {
+
+            //        ((Dictionary<string, object>)((Dictionary<string, object>)menu[meta.MENUPRINCIPAL])["childs"]).Add(meta.GROUPE, new Dictionary<string, object>()
+            //                 {
+            //                     { "icon", meta.ICONEGROUPE },
+            //                     { "text", meta.GROUPE },
+            //                     { "href", "home" },
+            //                     { "User", User.Identity.Name },
+            //                     { "parent", true },
+            //                     { "childs", new List<object>() },
+            //                     { "open", false }
+            //                 });
+            //    }
+
+            //         /* ((List<object>)((Dictionary<string, Dictionary<string, object>>)menu[meta.MENUPRINCIPAL])[meta.GROUPE]["childs"]).Add(new
+            //           {
+            //               icon = meta.ICONEBO,
+            //               text = meta.BO_NAME,
+            //               href = "bo.index." + meta.BO_DB_NAME.Replace("_BO_", ""),
+            //               User = "",
+            //               parent = false,
+            //               childs = ""
+            //           });*/
+            //}
+            return Ok(menu_new);
         }
 
         [HttpGet]

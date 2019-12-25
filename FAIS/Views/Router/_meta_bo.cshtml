@@ -31,9 +31,18 @@
                         <v-table ref="theTable"
                                  meta-name="META_BO"
                                  datasource="metabo/"
-                                 :column-ignore="['UPDATED_BY','META_FIELD','BO_DB_NAME','UPDATED_DATE','VERSION', 'JSON_DATA']"
+                                 :column-ignore="['UPDATED_BY','META_FIELD','BO_DB_NAME','UPDATED_DATE','VERSIONS', 'JSON_DATA']"
                                  :column-labels='{"META_BO_ID":"#","BO_NAME":"Nom","CREATED_BY":"Crée par","CREATED_DATE":"Le"}'
-                                 detail-row="meta-bo-detail-row"></v-table>
+                                 detail-row="meta-bo-detail-row">
+                            <template slot="action" slot-scope="{line}">
+                                <div>
+                                    <button class="btn btn-primary btn-round btn-fab btn-fab-mini btn-fab-x-mini"
+                                            v-on:click="editMetaBO(line.META_BO_ID)">
+                                        <i class="material-icons">create</i>
+                                    </button>
+                                </div>
+                            </template>
+                        </v-table>
                     </div>
                 </div>
                 @*<div class="card">
@@ -121,7 +130,6 @@
         <div class="col-md-12">
             <div class="pull-right">
                 <button type="button" class="btn btn-fill btn-primary btn-sm" v-on:click="edit(row.META_BO_ID)">Modifier</button>
-                <button type="button" class="btn btn-fill btn-success btn-sm">Valider</button>
             </div>
         </div>
     </div>
@@ -499,6 +507,11 @@
                 current: {}
             },
             methods: {
+
+                editMetaBO: function (MetaBoId) {
+                    this.current.META_BO_ID = MetaBoId;
+                    editFormMetaBo(MetaBoId);
+                },
                 // --------------------------------------- BO SECTION
                 success: function (response) {
                     NOTIF.success('Objet enregistré avec succès.');
@@ -614,11 +627,60 @@
                             FORM_TYPE: "v-text",
                             FORM_SHOW: 1,
                             FORM_OPTIONAL: 1,
+                        }, {
+                            DB_NAME: 'JSON_DATA.ICONEBO',
+                            STATUS: 'ACTIVE',
+                            FORM_NAME: "Icone BO",
+                            FORM_TYPE: "v-text",
+                            FORM_SHOW: 1,
+                            FORM_OPTIONAL: 1,
+                        }, {
+                            DB_NAME: 'JSON_DATA.ORDREBO',
+                            STATUS: 'ACTIVE',
+                            FORM_NAME: "Ordre BO",
+                            FORM_TYPE: "v-text",
+                            FORM_SHOW: 1,
+                            FORM_OPTIONAL: 1,
                         },
                         {
                             DB_NAME: 'JSON_DATA.GROUPE',
                             STATUS: 'ACTIVE',
                             FORM_NAME: "Groupe",
+                            FORM_TYPE: "v-text",
+                            FORM_SHOW: 1,
+                            FORM_OPTIONAL: 1,
+                        }, {
+                            DB_NAME: 'JSON_DATA.ICONEGROUPE',
+                            STATUS: 'ACTIVE',
+                            FORM_NAME: "Icone Groupe",
+                            FORM_TYPE: "v-text",
+                            FORM_SHOW: 1,
+                            FORM_OPTIONAL: 1,
+                        }, {
+                            DB_NAME: 'JSON_DATA.ORDREGROUPE',
+                            STATUS: 'ACTIVE',
+                            FORM_NAME: "Ordre Groupe",
+                            FORM_TYPE: "v-text",
+                            FORM_SHOW: 1,
+                            FORM_OPTIONAL: 1,
+                        },{
+                            DB_NAME: 'JSON_DATA.MENUPRINCIPAL',
+                            STATUS: 'ACTIVE',
+                            FORM_NAME: "Menu Principal",
+                            FORM_TYPE: "v-text",
+                            FORM_SHOW: 1,
+                            FORM_OPTIONAL: 1,
+                        },{
+                            DB_NAME: 'JSON_DATA.ICONEMENUPRINCIPAL',
+                            STATUS: 'ACTIVE',
+                            FORM_NAME: "Icone Menu Principal",
+                            FORM_TYPE: "v-text",
+                            FORM_SHOW: 1,
+                            FORM_OPTIONAL: 1,
+                        },{
+                            DB_NAME: 'JSON_DATA.ORDREMENUPRINCIPAL',
+                            STATUS: 'ACTIVE',
+                            FORM_NAME: "Ordre Menu Principal",
                             FORM_TYPE: "v-text",
                             FORM_SHOW: 1,
                             FORM_OPTIONAL: 1,
