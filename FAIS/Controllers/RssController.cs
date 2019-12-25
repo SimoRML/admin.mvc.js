@@ -51,7 +51,9 @@ from akkorimm_admin_user.article_BO_
                 var bien = new XElement("bien");
                 bien.SetAttributeValue("REFERENCE", row["Refrence"].ToString());
                 bien.Add(new XElement("TITLE", row["Titre"].ToString()));
+                bien.Add(new XElement("TYPE", types.Select("BO_ID = " + row["Type"].ToString())[0]["Label"].ToString()));
                 bien.Add(new XElement("TRANSACTION", types.Select("BO_ID = " + row["Transaction"].ToString())[0]["Label"].ToString()));
+                bien.Add(new XElement("DESCRIPTION", row["Description"].ToString()));
 
                 bien.Add(new XElement("CITY", types.Select("BO_ID = " + row["Emplacement"].ToString())[0]["Label"].ToString()));
                 bien.Add(new XElement("Currency", "MAD"));

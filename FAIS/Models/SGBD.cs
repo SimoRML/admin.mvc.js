@@ -8,10 +8,15 @@ namespace FAIS.Models
 {
     public class SGBD
     {
-        public SqlConnection cn = new SqlConnection(ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString);
+        private string connectionString = ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString;
+        public SqlConnection cn;
         private SqlCommand cmd;
         private SqlDataAdapter da;
         private DataSet ds;
+        public SGBD()
+        {
+            this.cn = new SqlConnection(connectionString);
+        }
 
         // CMD
         public DataTable Cmd(string sqlQuery, Dictionary<string, object> parametres = null)
@@ -157,5 +162,54 @@ namespace FAIS.Models
                 "FROM INFORMATION_SCHEMA.Columns c " +
                 "WHERE table_name = '" + table_name + "'";
         }
+
+        public string ExecuteSqlTransaction(List<string> queries)
+        {
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
+
+                SqlCommand command = connection.CreateCommand();
+                SqlTransaction transaction;
+
+                // Start a local transaction.
+                transaction = connection.BeginTransaction("SampleTransaction");
+
+                // Must assign both transaction object and connection
+                // to Command object for a pending local transaction
+                command.Connection = connection;
+                command.Transaction = transaction;
+
+                try
+                {
+                    foreach (var query in queries)
+                    {
+                        command.CommandText = query;
+                        command.ExecuteNonQuery();
+                    }
+
+                    // Attempt to commit the transaction.
+                    transaction.Commit();
+                    return "True";
+                }
+                catch (Exception ex)
+                {
+                    string errors = string.Format("Commit Exception Type: {0} <br>  Message: {1}", ex.GetType(), ex.Message);
+
+                    // Attempt to roll back the transaction.
+                    try
+                    {
+                        transaction.Rollback();
+                    }
+                    catch (Exception ex2)
+                    {
+                        errors += string.Format("<hr> Rollback Exception Type: {0} <br> Message: {1}", ex2.GetType(), ex2.Message);
+                    }
+
+                    return errors;
+                }
+            }
+        }
     }
 }
+
