@@ -103,7 +103,7 @@ namespace FAIS.Models
         {
             // TODO : Filter 
             string select = "";
-            select = "select * from  " + Tname + " where BO_ID in (select BO_CHILD_ID from BO_CHILDS where BO_PARENT_ID = " + parentId + ")";
+            select = "select c.* from  " + Tname + " c inner join BO on BO.BO_ID = c.BO_ID AND BO.STATUS != 'deleted' where c.BO_ID in (select BO_CHILD_ID from BO_CHILDS where BO_PARENT_ID = " + parentId + ")";
 
             return select;
         }

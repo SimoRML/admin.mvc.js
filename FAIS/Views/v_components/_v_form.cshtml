@@ -206,8 +206,14 @@
             remove: function (boId, index) {
                 var me = this;
                 var data = EV.getComponent("data");
+
+                var url = me.crudApi.toLowerCase();
+                if (url.includes("metabo/crud")) {
+                    url = "metabo/crud/" + url.replaceAll("metabo/crud/", "").split('/')[0];
+                }
+
                 data.ExecuteSource({
-                    url: me.crudApi + "/" + boId,
+                    url: url + "/" + boId,
                     method: "delete",
                     loadComplete: function (obj, response) {
                         me.$emit("remove-success", { response, index });

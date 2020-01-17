@@ -70,21 +70,6 @@ from akkorimm_admin_user.article_BO_
                 bien.Add(new XElement("FIREPLACE", row["quipements_et_Caracteristiques"].ToString().Contains("\"67\"") ? "yes" : "no"));
                 bien.Add(new XElement("TV", row["quipements_et_Caracteristiques"].ToString().Contains("\"18\"") ? "yes" : "no"));
 
-                /*
-                    MICROWAVE = "no",
-                    FRIDGE = "no",
-                    OVEN = "no",
-                    WASHER = "no",
-                GARAGE = "no",
-                    SECURITY = "no",
-                    SEAVIEWS = "no",
-                    MOUNTAINSVIEWS = "no",
-                    STORAGEROOM = "no",
-                    DOUBLEGLAZING = "no",
-                    REINFORCEDDOOR = "no",
-                    SATELLITE = "no",
-                    INTERNET = "no",
-                    */
 
 
                 try
