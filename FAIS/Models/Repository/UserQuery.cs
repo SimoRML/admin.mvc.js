@@ -9,13 +9,13 @@ namespace FAIS.Models.Repository
     public class UserQuery
     {
         public string sqlQuery { get; set; }
+        public string grant { get; set; }
 
         public bool validate()
         {
             if (this.sqlQuery.ToLower().Contains("--")) return false;
             if (this.sqlQuery.ToLower().Contains("drop ")) return false;
-            if (this.sqlQuery.ToLower().Contains("update ")) return false;
-            if (this.sqlQuery.ToLower().Contains("exec ")) return false;
+            if (this.sqlQuery.ToLower().Contains("update ")) return false;            
             if (this.sqlQuery.ToLower().Contains("revoke ")) return false;
             if (this.sqlQuery.ToLower().Contains("grant ")) return false;
             if (this.sqlQuery.ToLower().Contains("create ")) return false;
@@ -24,6 +24,12 @@ namespace FAIS.Models.Repository
             if (this.sqlQuery.ToLower().Contains("insert ")) return false;
             if (this.sqlQuery.ToLower().Contains("sp_")) return false;
             if (this.sqlQuery.ToLower().Contains("delete ")) return false;
+
+            if (this.sqlQuery.ToLower().Contains("exec "))
+            {
+                if (this.grant == string.Empty) return false;
+                else if(this.grant != "gha 7na !") return false;
+            }
 
             return true;
         }
