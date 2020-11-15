@@ -7,10 +7,13 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FAIS", "FAIS\FAIS.csproj", 
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		ASMA|Any CPU = ASMA|Any CPU
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{19287794-A073-4242-A604-753719E80DCB}.ASMA|Any CPU.ActiveCfg = ASMA|Any CPU
+		{19287794-A073-4242-A604-753719E80DCB}.ASMA|Any CPU.Build.0 = ASMA|Any CPU
 		{19287794-A073-4242-A604-753719E80DCB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{19287794-A073-4242-A604-753719E80DCB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{19287794-A073-4242-A604-753719E80DCB}.Release|Any CPU.ActiveCfg = Release|Any CPU

@@ -28,6 +28,12 @@ namespace FAIS.Controllers
             SessionVar.Clear();
             return View();
         }
+        [AllowAnonymous]
+        public ActionResult Ping()
+        {
+            Response.Write(DateTime.Now);
+            return View();
+        }
 
         [AllowAnonymous]
         public ActionResult Logout()

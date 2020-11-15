@@ -16,6 +16,7 @@ using Microsoft.Owin.Security.OAuth;
 using FAIS.Models;
 using FAIS.Providers;
 using FAIS.Results;
+using FAIS.Models.Authorize;
 
 namespace FAIS.Controllers
 {
@@ -52,17 +53,18 @@ namespace FAIS.Controllers
         public ISecureDataFormat<AuthenticationTicket> AccessTokenFormat { get; private set; }
 
         // GET api/Account/UserInfo
-        [HostAuthentication(DefaultAuthenticationTypes.ExternalBearer)]
+        //[HostAuthentication(DefaultAuthenticationTypes.ExternalBearer)]
         [Route("UserInfo")]
         public UserInfoViewModel GetUserInfo()
         {
-            ExternalLoginData externalLogin = ExternalLoginData.FromIdentity(User.Identity as ClaimsIdentity);
+            //ExternalLoginData externalLogin = ExternalLoginData.FromIdentity(User.Identity as ClaimsIdentity);
 
             return new UserInfoViewModel
             {
                 Email = User.Identity.GetUserName(),
-                HasRegistered = externalLogin == null,
-                LoginProvider = externalLogin != null ? externalLogin.LoginProvider : null
+                HasRegistered = false, //externalLogin == null,
+                LoginProvider = "", // externalLogin != null ? externalLogin.LoginProvider : null,
+                Roles = new BoRoleModel().GetUserRoles(User)
             };
         }
 

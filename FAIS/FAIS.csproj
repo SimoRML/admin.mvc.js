@@ -254,6 +254,7 @@
     <Compile Include="Controllers\MetaFieldController.cs" />
     <Compile Include="Controllers\PageAPIController.cs" />
     <Compile Include="Controllers\PageController.cs" />
+    <Compile Include="Controllers\PingController.cs" />
     <Compile Include="Controllers\ProfileManagerController.cs" />
     <Compile Include="Controllers\ReportingController.cs" />
     <Compile Include="Controllers\RouterController.cs" />
@@ -359,111 +360,7 @@
     <Content Include="Content\img\card-3.jpeg" />
     <Content Include="Content\img\cloud_error.png" />
     <Content Include="Content\img\default-avatar.png" />
-    <Content Include="Content\img\faces\avatar.jpg" />
-    <Content Include="Content\img\faces\card-profile1-square.jpg" />
-    <Content Include="Content\img\faces\card-profile2-square.jpg" />
-    <Content Include="Content\img\faces\marc.jpg" />
     <Content Include="Content\img\favicon.png" />
-    <Content Include="Content\img\flags\AD.png" />
-    <Content Include="Content\img\flags\AE.png" />
-    <Content Include="Content\img\flags\AG.png" />
-    <Content Include="Content\img\flags\AM.png" />
-    <Content Include="Content\img\flags\AR.png" />
-    <Content Include="Content\img\flags\AT.png" />
-    <Content Include="Content\img\flags\AU.png" />
-    <Content Include="Content\img\flags\BE.png" />
-    <Content Include="Content\img\flags\BF.png" />
-    <Content Include="Content\img\flags\BG.png" />
-    <Content Include="Content\img\flags\BO.png" />
-    <Content Include="Content\img\flags\BR.png" />
-    <Content Include="Content\img\flags\CA.png" />
-    <Content Include="Content\img\flags\CD.png" />
-    <Content Include="Content\img\flags\CG.png" />
-    <Content Include="Content\img\flags\CH.png" />
-    <Content Include="Content\img\flags\CL.png" />
-    <Content Include="Content\img\flags\CM.png" />
-    <Content Include="Content\img\flags\CN.png" />
-    <Content Include="Content\img\flags\CO.png" />
-    <Content Include="Content\img\flags\CZ.png" />
-    <Content Include="Content\img\flags\DE.png" />
-    <Content Include="Content\img\flags\DJ.png" />
-    <Content Include="Content\img\flags\DK.png" />
-    <Content Include="Content\img\flags\DZ.png" />
-    <Content Include="Content\img\flags\EE.png" />
-    <Content Include="Content\img\flags\EG.png" />
-    <Content Include="Content\img\flags\ES.png" />
-    <Content Include="Content\img\flags\FI.png" />
-    <Content Include="Content\img\flags\FR.png" />
-    <Content Include="Content\img\flags\GA.png" />
-    <Content Include="Content\img\flags\GB.png" />
-    <Content Include="Content\img\flags\GM.png" />
-    <Content Include="Content\img\flags\GT.png" />
-    <Content Include="Content\img\flags\HN.png" />
-    <Content Include="Content\img\flags\HT.png" />
-    <Content Include="Content\img\flags\HU.png" />
-    <Content Include="Content\img\flags\ID.png" />
-    <Content Include="Content\img\flags\IE.png" />
-    <Content Include="Content\img\flags\IL.png" />
-    <Content Include="Content\img\flags\IN.png" />
-    <Content Include="Content\img\flags\IQ.png" />
-    <Content Include="Content\img\flags\IR.png" />
-    <Content Include="Content\img\flags\IT.png" />
-    <Content Include="Content\img\flags\JM.png" />
-    <Content Include="Content\img\flags\JO.png" />
-    <Content Include="Content\img\flags\JP.png" />
-    <Content Include="Content\img\flags\KG.png" />
-    <Content Include="Content\img\flags\KN.png" />
-    <Content Include="Content\img\flags\KP.png" />
-    <Content Include="Content\img\flags\KR.png" />
-    <Content Include="Content\img\flags\KW.png" />
-    <Content Include="Content\img\flags\KZ.png" />
-    <Content Include="Content\img\flags\LA.png" />
-    <Content Include="Content\img\flags\LB.png" />
-    <Content Include="Content\img\flags\LC.png" />
-    <Content Include="Content\img\flags\LS.png" />
-    <Content Include="Content\img\flags\LU.png" />
-    <Content Include="Content\img\flags\LV.png" />
-    <Content Include="Content\img\flags\MG.png" />
-    <Content Include="Content\img\flags\MK.png" />
-    <Content Include="Content\img\flags\ML.png" />
-    <Content Include="Content\img\flags\MM.png" />
-    <Content Include="Content\img\flags\MT.png" />
-    <Content Include="Content\img\flags\MX.png" />
-    <Content Include="Content\img\flags\NA.png" />
-    <Content Include="Content\img\flags\NE.png" />
-    <Content Include="Content\img\flags\NG.png" />
-    <Content Include="Content\img\flags\NI.png" />
-    <Content Include="Content\img\flags\NL.png" />
-    <Content Include="Content\img\flags\NO.png" />
-    <Content Include="Content\img\flags\OM.png" />
-    <Content Include="Content\img\flags\PA.png" />
-    <Content Include="Content\img\flags\PE.png" />
-    <Content Include="Content\img\flags\PG.png" />
-    <Content Include="Content\img\flags\PK.png" />
-    <Content Include="Content\img\flags\PL.png" />
-    <Content Include="Content\img\flags\PT.png" />
-    <Content Include="Content\img\flags\PY.png" />
-    <Content Include="Content\img\flags\QA.png" />
-    <Content Include="Content\img\flags\RO.png" />
-    <Content Include="Content\img\flags\RU.png" />
-    <Content Include="Content\img\flags\RW.png" />
-    <Content Include="Content\img\flags\SA.png" />
-    <Content Include="Content\img\flags\SE.png" />
-    <Content Include="Content\img\flags\SG.png" />
-    <Content Include="Content\img\flags\SL.png" />
-    <Content Include="Content\img\flags\SN.png" />
-    <Content Include="Content\img\flags\SO.png" />
-    <Content Include="Content\img\flags\SV.png" />
-    <Content Include="Content\img\flags\TD.png" />
-    <Content Include="Content\img\flags\TJ.png" />
-    <Content Include="Content\img\flags\TL.png" />
-    <Content Include="Content\img\flags\TR.png" />
-    <Content Include="Content\img\flags\TZ.png" />
-    <Content Include="Content\img\flags\UA.png" />
-    <Content Include="Content\img\flags\US.png" />
-    <Content Include="Content\img\flags\VE.png" />
-    <Content Include="Content\img\flags\VN.png" />
-    <Content Include="Content\img\flags\YE.png" />
     <Content Include="Content\img\header-doc.jpeg" />
     <Content Include="Content\img\image_placeholder.jpg" />
     <Content Include="Content\img\layouts\list.png" />
@@ -551,57 +448,6 @@
     </Content>
     <Content Include="Content\css\material-dashboard.css.map" />
     <Content Include="Content\css\material-kit.css.map" />
-    <Content Include="Content\sass\material-dashboard.scss" />
-    <Content Include="Content\sass\material-dashboard\mixins\_chartist.scss" />
-    <Content Include="Content\sass\material-dashboard\mixins\_sidebar-color.scss" />
-    <Content Include="Content\sass\material-dashboard\mixins\_transparency.scss" />
-    <Content Include="Content\sass\material-dashboard\mixins\_vendor-prefixes.scss" />
-    <Content Include="Content\sass\material-dashboard\plugins\_animate.scss" />
-    <Content Include="Content\sass\material-dashboard\plugins\_chartist.scss" />
-    <Content Include="Content\sass\material-dashboard\plugins\_datatables.net.scss" />
-    <Content Include="Content\sass\material-dashboard\plugins\_fullcalendar.scss" />
-    <Content Include="Content\sass\material-dashboard\plugins\_jquery.jvectormap.scss" />
-    <Content Include="Content\sass\material-dashboard\plugins\_perfect-scrollbar.scss" />
-    <Content Include="Content\sass\material-dashboard\plugins\_plugin-datetime-picker.scss" />
-    <Content Include="Content\sass\material-dashboard\plugins\_plugin-nouislider.scss" />
-    <Content Include="Content\sass\material-dashboard\plugins\_select-bootstrap.scss" />
-    <Content Include="Content\sass\material-dashboard\plugins\_sweetalert2.scss" />
-    <Content Include="Content\sass\material-dashboard\plugins\_wizard-card.scss" />
-    <Content Include="Content\sass\material-dashboard\_alerts.scss" />
-    <Content Include="Content\sass\material-dashboard\_buttons.scss" />
-    <Content Include="Content\sass\material-dashboard\_cards.scss" />
-    <Content Include="Content\sass\material-dashboard\_checkboxes.scss" />
-    <Content Include="Content\sass\material-dashboard\_colors.scss" />
-    <Content Include="Content\sass\material-dashboard\_dialogs.scss" />
-    <Content Include="Content\sass\material-dashboard\_dropdown.scss" />
-    <Content Include="Content\sass\material-dashboard\_fileupload.scss" />
-    <Content Include="Content\sass\material-dashboard\_footers.scss" />
-    <Content Include="Content\sass\material-dashboard\_forms.scss" />
-    <Content Include="Content\sass\material-dashboard\_images.scss" />
-    <Content Include="Content\sass\material-dashboard\_inputs-size.scss" />
-    <Content Include="Content\sass\material-dashboard\_inputs.scss" />
-    <Content Include="Content\sass\material-dashboard\_labels.scss" />
-    <Content Include="Content\sass\material-dashboard\_misc.scss" />
-    <Content Include="Content\sass\material-dashboard\_mixins.scss" />
-    <Content Include="Content\sass\material-dashboard\_navbars.scss" />
-    <Content Include="Content\sass\material-dashboard\_pages.scss" />
-    <Content Include="Content\sass\material-dashboard\_pagination.scss" />
-    <Content Include="Content\sass\material-dashboard\_panels.scss" />
-    <Content Include="Content\sass\material-dashboard\_pills.scss" />
-    <Content Include="Content\sass\material-dashboard\_popups.scss" />
-    <Content Include="Content\sass\material-dashboard\_progress.scss" />
-    <Content Include="Content\sass\material-dashboard\_radios.scss" />
-    <Content Include="Content\sass\material-dashboard\_responsive.scss" />
-    <Content Include="Content\sass\material-dashboard\_ripples.scss" />
-    <Content Include="Content\sass\material-dashboard\_shadows.scss" />
-    <Content Include="Content\sass\material-dashboard\_sidebar-and-main-panel.scss" />
-    <Content Include="Content\sass\material-dashboard\_tables.scss" />
-    <Content Include="Content\sass\material-dashboard\_tabs.scss" />
-    <Content Include="Content\sass\material-dashboard\_tags.scss" />
-    <Content Include="Content\sass\material-dashboard\_timeline.scss" />
-    <Content Include="Content\sass\material-dashboard\_togglebutton.scss" />
-    <Content Include="Content\sass\material-dashboard\_typography.scss" />
-    <Content Include="Content\sass\material-dashboard\_variables.scss" />
     <Content Include="Scripts\vue.js" />
     <Content Include="Scripts\vuex.js" />
     <Content Include="SQL\BO_ROLE.sql" />
@@ -617,75 +463,6 @@
     <Content Include="SQL\PlusSequence.sql" />
     <Content Include="SQL\SelectDataSources.sql" />
     <Content Include="SQL\workflowtables.sql" />
-    <Content Include="surface\css\flexboxgrid.min.css" />
-    <Content Include="surface\css\font-awesome.min.css" />
-    <Content Include="surface\css\icones.css" />
-    <Content Include="surface\css\icones1.css" />
-    <Content Include="surface\css\icones2.css" />
-    <Content Include="surface\css\icones3.css" />
-    <Content Include="surface\css\icones4.css" />
-    <Content Include="surface\css\images\ajax-loader.gif" />
-    <Content Include="surface\css\index.css" />
-    <Content Include="surface\css\jquery.mobile.min.css" />
-    <Content Include="surface\css\material-design-iconic-font.min.css" />
-    <Content Include="surface\css\nativedroid2.color.amber.css" />
-    <Content Include="surface\css\nativedroid2.color.blue-grey.css" />
-    <Content Include="surface\css\nativedroid2.color.blue.css" />
-    <Content Include="surface\css\nativedroid2.color.brown.css" />
-    <Content Include="surface\css\nativedroid2.color.cyan.css" />
-    <Content Include="surface\css\nativedroid2.color.deep-orange.css" />
-    <Content Include="surface\css\nativedroid2.color.deep-purple.css" />
-    <Content Include="surface\css\nativedroid2.color.green.css" />
-    <Content Include="surface\css\nativedroid2.color.grey.css" />
-    <Content Include="surface\css\nativedroid2.color.indigo.css" />
-    <Content Include="surface\css\nativedroid2.color.light-blue.css" />
-    <Content Include="surface\css\nativedroid2.color.light-green.css" />
-    <Content Include="surface\css\nativedroid2.color.lime.css" />
-    <Content Include="surface\css\nativedroid2.color.mpharma.css" />
-    <Content Include="surface\css\nativedroid2.color.orange.css" />
-    <Content Include="surface\css\nativedroid2.color.pink.css" />
-    <Content Include="surface\css\nativedroid2.color.purple.css" />
-    <Content Include="surface\css\nativedroid2.color.red.css" />
-    <Content Include="surface\css\nativedroid2.color.teal.css" />
-    <Content Include="surface\css\nativedroid2.color.yellow.css" />
-    <Content Include="surface\css\nativedroid2.css" />
-    <Content Include="surface\css\simo.css" />
-    <Content Include="surface\default - Copy.html" />
-    <Content Include="surface\default.html" />
-    <Content Include="surface\fonts\fontawesome-webfont.svg" />
-    <Content Include="surface\fonts\Material-Design-Iconic-Font.svg" />
-    <Content Include="surface\img\icon.png" />
-    <Content Include="surface\img\logo.png" />
-    <Content Include="surface\index.html" />
-    <Content Include="surface\js\angular-locale_custom.js" />
-    <Content Include="surface\js\angular-locale_fr-fr.js" />
-    <Content Include="surface\js\angular-route.min.js" />
-    <Content Include="surface\js\angular.min.js" />
-    <Content Include="surface\js\angular\app.js" />
-    <Content Include="surface\js\angular\appConfig.js" />
-    <Content Include="surface\js\angular\controllers\mainController.js" />
-    <Content Include="surface\js\angular\directives\langues.html" />
-    <Content Include="surface\js\angular\directives\langues.js" />
-    <Content Include="surface\js\angular\langues.js" />
-    <Content Include="surface\js\angular\services\xcalls.js" />
-    <Content Include="surface\js\index.js" />
-    <Content Include="surface\js\INGOMA.js" />
-    <Content Include="surface\js\jquery-ui.min.js" />
-    <Content Include="surface\js\jquery.min.js" />
-    <Content Include="surface\js\jquery.mobile.min.js" />
-    <Content Include="surface\js\nativedroid2.js" />
-    <Content Include="surface\js\nd2settings.js" />
-    <Content Include="surface\js\simo.js" />
-    <Content Include="surface\sources\bg.png" />
-    <Content Include="surface\sources\logo_coulage.png" />
-    <Content Include="surface\sources\lunch.js" />
-    <Content Include="surface\sources\style.css" />
-    <Content Include="surface\vendor\chartist\chartist.min.js" />
-    <Content Include="surface\vendor\chartist\style.css" />
-    <Content Include="surface\vendor\waves\waves.min.css" />
-    <Content Include="surface\vendor\waves\waves.min.js" />
-    <Content Include="surface\vendor\wow\animate.css" />
-    <Content Include="surface\vendor\wow\wow.min.js" />
     <Content Include="_front\mixins\PageComponents.js" />
     <Content Include="_front\mixins\pager.js" />
     <Content Include="_front\models\lang.js" />
@@ -708,8 +485,10 @@
     <Content Include="Models\FAIS_MODEL.edmx.diagram">
       <DependentUpon>FAIS_MODEL.edmx</DependentUpon>
     </Content>
+    <None Include="Properties\PublishProfiles\asma.laspheredigitale.net - Web Deploy.pubxml" />
     <None Include="Properties\PublishProfiles\FolderProfile.pubxml" />
     <None Include="Properties\PublishProfiles\FolderProfile1.pubxml" />
+    <None Include="Properties\PublishProfiles\FTP - ASMA.pubxml" />
     <None Include="Properties\PublishProfiles\staging.laspheredigitale.com - Web Deploy.pubxml" />
     <None Include="Scripts\jquery-3.3.1.intellisense.js" />
     <Content Include="Scripts\jquery-3.3.1.js" />
@@ -758,13 +537,6 @@
     <Content Include="Views\Workflow\Validation.cshtml" />
     <Content Include="Views\v_components\_v_form.cshtml" />
     <Content Include="Views\v_components\_v_table.cshtml" />
-    <Content Include="surface\fonts\fontawesome-webfont.ttf" />
-    <Content Include="surface\fonts\fontawesome-webfont.woff" />
-    <Content Include="surface\fonts\fontawesome-webfont.woff2" />
-    <Content Include="surface\fonts\FontAwesome.otf" />
-    <Content Include="surface\fonts\Material-Design-Iconic-Font.eot" />
-    <Content Include="surface\fonts\Material-Design-Iconic-Font.woff" />
-    <Content Include="surface\vendor\waves\waves.min.js.map" />
     <Content Include="Views\Admin\Page.cshtml" />
     <Content Include="Views\Admin\PageList.cshtml" />
     <Content Include="Views\Admin\layouts\bo.cshtml" />
@@ -788,6 +560,10 @@
     <Content Include="Views\Router\widgets\queryWidget.cshtml" />
     <Content Include="Views\v_components\_v_multi_image.cshtml" />
     <Content Include="Views\Router\widgets\carouselWidget.cshtml" />
+    <Content Include="Views\Home\Ping.cshtml" />
+    <None Include="Web.ASMA.config">
+      <DependentUpon>Web.config</DependentUpon>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -816,6 +592,16 @@
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
     <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'ASMA|AnyCPU'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(VSToolsPath)\WebApplications\Microsoft.WebApplication.targets" Condition="'$(VSToolsPath)' != ''" />
