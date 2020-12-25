@@ -8,6 +8,7 @@ namespace FAIS.Models
 {
     public class SGBD
     {
+        private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
         private string connectionString = ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString;
         public SqlConnection cn;
         private SqlCommand cmd;
@@ -41,7 +42,7 @@ namespace FAIS.Models
             }
             catch (Exception ex)
             {
-                // TODO LOG EXCEPTION
+                Logger.Error(ex, "SGBD.Cmd: " + sqlQuery + "|" + ex.Message);
                 throw ex;
             }
         }
@@ -76,7 +77,7 @@ namespace FAIS.Models
             }
             catch (Exception ex)
             {
-                // TODO LOG EXCEPTION
+                Logger.Error(ex, "SGBD.Insert: " + cmd.CommandText + "|" + ex.Message, parametres);
                 var message = ex.Message;
                 return message;
             }
@@ -111,7 +112,7 @@ namespace FAIS.Models
             }
             catch (Exception ex)
             {
-                // TODO LOG EXCEPTION
+                Logger.Error(ex, "SGBD.Update: " + sqlQuery + "|" + ex.Message);
                 return ex.Message;
             }
         }
@@ -140,7 +141,7 @@ namespace FAIS.Models
             }
             catch (Exception ex)
             {
-                // TODO LOG EXCEPTION
+                Logger.Error(ex, "SGBD.Delete: " + sqlQuery + "|" + ex.Message);
                 return false;
             }
         }

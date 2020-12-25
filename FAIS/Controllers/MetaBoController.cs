@@ -19,6 +19,8 @@ namespace FAIS.Controllers
     [RoutePrefix("api/MetaBo")]
     public class MetaBoController : ApiController
     {
+        private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
+
         int BO_Insert_return = 0;
         private FAISEntities db = new FAISEntities();
 
@@ -62,20 +64,37 @@ namespace FAIS.Controllers
             }
             return Ok(mETA_BO);
         }
+
         [HttpPost]
         [Route("SelectSource")]
         [ResponseType(typeof(List<SelectDataModel>))]
         public async Task<IHttpActionResult> SelectSource(SelectSourceModel model)
         {
+            Logger.Info(model.Source);
             var data = model.Get();
             return Ok(data);
+        }
+
+        [AllowAnonymous]
+        [HttpGet]
+        [Route("view/{id}")]
+        public IHttpActionResult View(string id)
+        {
+            return Ok(new SGBD().Cmd(string.Format("select * from {0}",id.Replace("'","''"))));
         }
 
         [HttpGet]
         [Route("GetDataSources")]
         public async Task<IHttpActionResult> GetDataSources()
         {
-            return Ok(MetaBoRepo.GetDataSources());
+            try
+            {
+                return Ok(MetaBoRepo.GetDataSources());
+            }
+            catch (Exception ex)
+            {
+                return Ok(ex.Message);
+            }
         }
         // PUT: api/MetaBo/5
         [ResponseType(typeof(void))]
@@ -148,7 +167,14 @@ namespace FAIS.Controllers
             //});
 
             //await db.SaveChangesAsync();
-            mETA_BO = await new MetaBoRepo().CreateAndSaveAsync(mETA_BO, User.Identity.Name);
+            try
+            {
+                mETA_BO = await new MetaBoRepo().CreateAndSaveAsync(mETA_BO, User.Identity.Name);
+            }
+            catch (Exception ex)
+            {
+                Logger.Error(ex, "POST META_BO");
+            }
             return CreatedAtRoute("DefaultApi", new { id = mETA_BO.META_BO_ID }, mETA_BO);
         }
 
@@ -189,6 +215,7 @@ namespace FAIS.Controllers
         {
             var meta = await db.META_BO.FindAsync(model.MetaBoID);
 
+            Logger.Info(model.MetaBoID + " : " + meta.BO_DB_NAME);
             /* ACCESS RIGHTS */
             try
             {
@@ -322,6 +349,7 @@ namespace FAIS.Controllers
         [Route("Crud/{id}")]
         public async Task<IHttpActionResult> Insert(int id, Dictionary<string, object> Items)
         {
+            Logger.Info("POST Crud: " + id);
             var model = new CrudModel()
             {
                 MetaBoID = id,
@@ -463,7 +491,9 @@ namespace FAIS.Controllers
                 return Ok(model);
             }
             else
+            {
                 return InternalServerError(new Exception(insert));
+            }
         }
 
         //Insert data automaticly using the Mapping on the WORKFLOWs

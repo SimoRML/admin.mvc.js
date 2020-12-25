@@ -6,7 +6,7 @@ en modifiant ce fichier MSBuild. Pour en savoir plus à ce sujet, visitez https:
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <TimeStampOfAssociatedLegacyPublishXmlFile />
-    <_PublishTargetUrl>C:\www\_.net\NB\admin.mvc.js\FAIS\bin\Release\Publish</_PublishTargetUrl>
+    <_PublishTargetUrl>bin\Release\Publish</_PublishTargetUrl>
   </PropertyGroup>
   <ItemGroup>
     <File Include="ApplicationInsights.config">
@@ -91,13 +91,13 @@ en modifiant ce fichier MSBuild. Pour en savoir plus à ce sujet, visitez https:
       <publishTime>10/23/2017 13:15:20</publishTime>
     </File>
     <File Include="bin/FAIS.dll">
-      <publishTime>11/13/2020 15:46:39</publishTime>
+      <publishTime>11/30/2020 17:34:56</publishTime>
     </File>
     <File Include="bin/FAIS.pdb">
-      <publishTime>11/13/2020 15:46:39</publishTime>
+      <publishTime>11/30/2020 17:34:56</publishTime>
     </File>
     <File Include="bin/fr-FR/FAIS.resources.dll">
-      <publishTime>11/13/2020 15:46:39</publishTime>
+      <publishTime>11/30/2020 17:34:56</publishTime>
     </File>
     <File Include="bin/fr/EntityFramework.resources.dll">
       <publishTime>10/23/2017 13:15:30</publishTime>
@@ -115,40 +115,40 @@ en modifiant ce fichier MSBuild. Pour en savoir plus à ce sujet, visitez https:
       <publishTime>04/24/2018 12:50:46</publishTime>
     </File>
     <File Include="bin/fr/Microsoft.Owin.resources.dll">
-      <publishTime>01/18/2019 12:00:36</publishTime>
+      <publishTime>01/18/2019 13:00:36</publishTime>
     </File>
     <File Include="bin/fr/System.Net.Http.Formatting.resources.dll">
-      <publishTime>02/01/2018 12:17:28</publishTime>
+      <publishTime>02/01/2018 11:17:28</publishTime>
     </File>
     <File Include="bin/fr/System.Web.Helpers.resources.dll">
-      <publishTime>02/01/2018 12:21:08</publishTime>
+      <publishTime>02/01/2018 11:21:08</publishTime>
     </File>
     <File Include="bin/fr/System.Web.Http.Owin.resources.dll">
-      <publishTime>02/01/2018 12:18:36</publishTime>
+      <publishTime>02/01/2018 11:18:36</publishTime>
     </File>
     <File Include="bin/fr/System.Web.Http.resources.dll">
-      <publishTime>02/01/2018 12:17:50</publishTime>
+      <publishTime>02/01/2018 11:17:50</publishTime>
     </File>
     <File Include="bin/fr/System.Web.Http.WebHost.resources.dll">
-      <publishTime>02/01/2018 12:19:36</publishTime>
+      <publishTime>02/01/2018 11:19:36</publishTime>
     </File>
     <File Include="bin/fr/System.Web.Mvc.resources.dll">
-      <publishTime>02/01/2018 12:16:44</publishTime>
+      <publishTime>02/01/2018 11:16:44</publishTime>
     </File>
     <File Include="bin/fr/System.Web.Optimization.resources.dll">
       <publishTime>02/11/2014 15:28:42</publishTime>
     </File>
     <File Include="bin/fr/System.Web.Razor.resources.dll">
-      <publishTime>02/01/2018 12:17:06</publishTime>
+      <publishTime>02/01/2018 11:17:06</publishTime>
     </File>
     <File Include="bin/fr/System.Web.WebPages.Deployment.resources.dll">
-      <publishTime>02/01/2018 12:21:08</publishTime>
+      <publishTime>02/01/2018 11:21:08</publishTime>
     </File>
     <File Include="bin/fr/System.Web.WebPages.Razor.resources.dll">
-      <publishTime>02/01/2018 12:21:08</publishTime>
+      <publishTime>02/01/2018 11:21:08</publishTime>
     </File>
     <File Include="bin/fr/System.Web.WebPages.resources.dll">
-      <publishTime>02/01/2018 12:21:08</publishTime>
+      <publishTime>02/01/2018 11:21:08</publishTime>
     </File>
     <File Include="bin/Microsoft.AI.Agent.Intercept.dll">
       <publishTime>06/27/2017 12:59:34</publishTime>
@@ -221,6 +221,9 @@ en modifiant ce fichier MSBuild. Pour en savoir plus à ce sujet, visitez https:
     </File>
     <File Include="bin/Newtonsoft.Json.dll">
       <publishTime>02/18/2018 08:44:54</publishTime>
+    </File>
+    <File Include="bin/NLog.dll">
+      <publishTime>09/27/2020 12:01:06</publishTime>
     </File>
     <File Include="bin/Owin.dll">
       <publishTime>11/13/2012 11:19:34</publishTime>
@@ -367,40 +370,40 @@ en modifiant ce fichier MSBuild. Pour en savoir plus à ce sujet, visitez https:
       <publishTime>07/19/2017 10:01:30</publishTime>
     </File>
     <File Include="bin/System.Net.Http.Formatting.dll">
-      <publishTime>02/01/2018 12:17:18</publishTime>
+      <publishTime>02/01/2018 11:17:18</publishTime>
     </File>
     <File Include="bin/System.Web.Cors.dll">
       <publishTime>10/01/2013 20:54:22</publishTime>
     </File>
     <File Include="bin/System.Web.Helpers.dll">
-      <publishTime>02/01/2018 12:20:56</publishTime>
+      <publishTime>02/01/2018 11:20:56</publishTime>
     </File>
     <File Include="bin/System.Web.Http.dll">
-      <publishTime>02/01/2018 12:17:40</publishTime>
+      <publishTime>02/01/2018 11:17:40</publishTime>
     </File>
     <File Include="bin/System.Web.Http.Owin.dll">
-      <publishTime>02/01/2018 12:18:26</publishTime>
+      <publishTime>02/01/2018 11:18:26</publishTime>
     </File>
     <File Include="bin/System.Web.Http.WebHost.dll">
-      <publishTime>02/01/2018 12:19:26</publishTime>
+      <publishTime>02/01/2018 11:19:26</publishTime>
     </File>
     <File Include="bin/System.Web.Mvc.dll">
-      <publishTime>02/01/2018 12:16:32</publishTime>
+      <publishTime>02/01/2018 11:16:32</publishTime>
     </File>
     <File Include="bin/System.Web.Optimization.dll">
       <publishTime>02/11/2014 14:26:04</publishTime>
     </File>
     <File Include="bin/System.Web.Razor.dll">
-      <publishTime>02/01/2018 12:16:56</publishTime>
+      <publishTime>02/01/2018 11:16:56</publishTime>
     </File>
     <File Include="bin/System.Web.WebPages.Deployment.dll">
-      <publishTime>02/01/2018 12:20:56</publishTime>
+      <publishTime>02/01/2018 11:20:56</publishTime>
     </File>
     <File Include="bin/System.Web.WebPages.dll">
-      <publishTime>02/01/2018 12:20:56</publishTime>
+      <publishTime>02/01/2018 11:20:56</publishTime>
     </File>
     <File Include="bin/System.Web.WebPages.Razor.dll">
-      <publishTime>02/01/2018 12:20:56</publishTime>
+      <publishTime>02/01/2018 11:20:56</publishTime>
     </File>
     <File Include="bin/WebGrease.dll">
       <publishTime>01/23/2014 12:57:34</publishTime>
@@ -1077,6 +1080,9 @@ en modifiant ce fichier MSBuild. Pour en savoir plus à ce sujet, visitez https:
     <File Include="Models/FAIS_MODEL.edmx.diagram">
       <publishTime>07/18/2019 16:12:53</publishTime>
     </File>
+    <File Include="NLog.config">
+      <publishTime>11/30/2020 17:20:55</publishTime>
+    </File>
     <File Include="Scripts/alasql.min.js">
       <publishTime>01/14/2019 08:11:01</publishTime>
     </File>
@@ -1456,13 +1462,13 @@ en modifiant ce fichier MSBuild. Pour en savoir plus à ce sujet, visitez https:
       <publishTime>12/27/2018 20:52:48</publishTime>
     </File>
     <File Include="Views/Home/Login.cshtml">
-      <publishTime>01/04/2019 10:37:28</publishTime>
+      <publishTime>11/13/2020 16:11:27</publishTime>
     </File>
     <File Include="Views/Home/old.cshtml">
       <publishTime>11/05/2018 10:19:36</publishTime>
     </File>
     <File Include="Views/Home/Ping.cshtml">
-      <publishTime>11/13/2020 15:31:32</publishTime>
+      <publishTime>11/14/2020 17:53:56</publishTime>
     </File>
     <File Include="Views/Home/reporting.cshtml">
       <publishTime>12/25/2018 21:17:59</publishTime>
@@ -1534,7 +1540,7 @@ en modifiant ce fichier MSBuild. Pour en savoir plus à ce sujet, visitez https:
       <publishTime>07/18/2019 16:00:32</publishTime>
     </File>
     <File Include="Views/Workflow/Mapping.cshtml">
-      <publishTime>07/18/2019 16:06:52</publishTime>
+      <publishTime>07/18/2019 16:00:32</publishTime>
     </File>
     <File Include="Views/Workflow/Validation.cshtml">
       <publishTime>03/28/2019 11:05:43</publishTime>
@@ -1543,7 +1549,7 @@ en modifiant ce fichier MSBuild. Pour en savoir plus à ce sujet, visitez https:
       <publishTime>11/05/2018 10:19:36</publishTime>
     </File>
     <File Include="Web.config">
-      <publishTime>01/17/2020 13:32:35</publishTime>
+      <publishTime>11/30/2020 17:34:57</publishTime>
     </File>
     <File Include="_front/main.js">
       <publishTime>02/10/2019 15:49:46</publishTime>

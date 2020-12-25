@@ -48,7 +48,7 @@ namespace FAIS.Models.Repository
             {
                 fields += string.Format(" [{0}] {1} {2} , "
                     , f.DB_NAME
-                    , f.DB_TYPE
+                    , f.DB_TYPE == "DateTime" ? " varchar(20) " : f.DB_TYPE
                     , f.DB_NULL == 0 ? " NOT NULL " : " NULL "
                     );
             }

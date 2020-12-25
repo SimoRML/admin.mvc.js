@@ -53,10 +53,16 @@
     <Reference Include="Microsoft.Owin.Cors, Version=4.0.1.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.Owin.Cors.4.0.1\lib\net45\Microsoft.Owin.Cors.dll</HintPath>
     </Reference>
+    <Reference Include="NLog, Version=4.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c, processorArchitecture=MSIL">
+      <HintPath>..\packages\NLog.4.7.5\lib\net45\NLog.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.IO.Compression" />
     <Reference Include="System.Security" />
+    <Reference Include="System.ServiceModel" />
+    <Reference Include="System.Transactions" />
     <Reference Include="System.Web.Cors, Version=5.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.AspNet.Cors.5.0.0\lib\net45\System.Web.Cors.dll</HintPath>
     </Reference>
@@ -370,6 +376,18 @@
     <Content Include="Content\img\lock.jpeg" />
     <Content Include="Content\img\login.jpeg" />
     <Content Include="Content\img\mask.png" />
+    <Content Include="Content\img\meteos\m1.png" />
+    <Content Include="Content\img\meteos\m10.png" />
+    <Content Include="Content\img\meteos\m11.png" />
+    <Content Include="Content\img\meteos\m12.png" />
+    <Content Include="Content\img\meteos\m2.png" />
+    <Content Include="Content\img\meteos\m3.png" />
+    <Content Include="Content\img\meteos\m4.png" />
+    <Content Include="Content\img\meteos\m5.png" />
+    <Content Include="Content\img\meteos\m6.png" />
+    <Content Include="Content\img\meteos\m7.png" />
+    <Content Include="Content\img\meteos\m8.png" />
+    <Content Include="Content\img\meteos\m9.png" />
     <Content Include="Content\img\new_logo.png" />
     <Content Include="Content\img\placeholder.jpg" />
     <Content Include="Content\img\product1.jpg" />
@@ -485,6 +503,7 @@
     <Content Include="Models\FAIS_MODEL.edmx.diagram">
       <DependentUpon>FAIS_MODEL.edmx</DependentUpon>
     </Content>
+    <Content Include="NLog.config" />
     <None Include="Properties\PublishProfiles\asma.laspheredigitale.net - Web Deploy.pubxml" />
     <None Include="Properties\PublishProfiles\FolderProfile.pubxml" />
     <None Include="Properties\PublishProfiles\FolderProfile1.pubxml" />
@@ -563,6 +582,7 @@
     <Content Include="Views\Home\Ping.cshtml" />
     <None Include="Web.ASMA.config">
       <DependentUpon>Web.config</DependentUpon>
+      <SubType>Designer</SubType>
     </None>
   </ItemGroup>
   <ItemGroup>

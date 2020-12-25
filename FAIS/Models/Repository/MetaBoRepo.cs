@@ -107,7 +107,7 @@ namespace FAIS.Models.Repository
                     });
                 }
                 var attributes = sources.Last().Attributes;
-                attributes.Add(row["Field"].ToString(), new { primary = row["Key"].ToString(), FORM_SOURCE = row["FORM_SOURCE"].ToString() });
+                if(!attributes.Keys.Contains(row["Field"].ToString())) attributes.Add(row["Field"].ToString(), new { primary = row["Key"].ToString(), FORM_SOURCE = row["FORM_SOURCE"].ToString() });
             }
 
             return sources;
