@@ -705,7 +705,7 @@ namespace FAIS.Controllers
                 Items = Items
             };
             var meta = await db.META_BO.FindAsync(id);
-
+            Logger.Info(String.Format("PUT Crud/{0}/{1}:{2}", id.ToString(), bo_id.ToString(), meta.BO_DB_NAME));
             /* ACCESS RIGHTS */
             try
             {
@@ -725,12 +725,20 @@ namespace FAIS.Controllers
             await db.SaveChangesAsync();
 
             model.Items.Add("BO_ID", BO_ToUpdate.BO_ID);
-            // db.MoveBoToCurrentVersion(BO_ToUpdate.BO_ID);
+
+            Logger.Info(String.Format("PUT Crud/{0}/{1}: ITEMS:{2}", id.ToString(), bo_id.ToString(), System.Web.Helpers.Json.Encode(Items)));
+
             string update_ = model.Update();
             if (update_ == "true")
+            {
+                Logger.Info(String.Format("PUT Crud/{0}/{1}: SUCCESS", id.ToString(), bo_id.ToString()));
                 return Ok(model);
+            }
             else
+            {
+                Logger.Error(String.Format("PUT Crud/{0}/{1}: ERROR: {2}", id.ToString(), bo_id.ToString(), update_));
                 return InternalServerError(new Exception(update_));
+            }
         }
 
         // UPDATE BO CHILDS

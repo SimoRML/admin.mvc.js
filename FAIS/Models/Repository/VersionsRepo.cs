@@ -37,7 +37,7 @@ namespace FAIS.Models.Repository
                 throw new Exception("VERSION NOT FOUND");
             }
 
-            META_BO mETA_BO = await new MetaBoRepo().GetMETAForCommitAsync(vERSIONS.META_BO_ID.Value); // await db.META_BO.FindAsync(vERSIONS.META_BO_ID);
+            META_BO mETA_BO = await new MetaBoRepo().GetMETAForCommitAsync(vERSIONS.META_BO_ID.Value);
             if (mETA_BO.META_FIELD.Count <= 0)
             {
                 throw new Exception("No meta field found !");
@@ -68,7 +68,6 @@ namespace FAIS.Models.Repository
 
             var s = new SGBD();
             s.Cmd(sqlQuery);
-            // s.Cmd(new VersionsModels().GenerateView(mETA_BO.BO_DB_NAME));
         }
     }
 }

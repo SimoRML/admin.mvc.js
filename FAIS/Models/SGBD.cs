@@ -49,8 +49,10 @@ namespace FAIS.Models
 
         public string Insert(string sqlQuery, Dictionary<string, object> parametres = null)
         {
+                string strParams = "";
             try
             {
+
                 sqlQuery += "; SELECT SCOPE_IDENTITY()";
                 using (cmd = new SqlCommand(sqlQuery, cn))
                 {
@@ -58,9 +60,16 @@ namespace FAIS.Models
                     {
                         foreach (var item in parametres)
                         {
+                            if (item.Value == null)
+                            {
+                                cmd.Parameters.AddWithValue(Helper.cleanDBName(item.Key), DBNull.Value);
+                                strParams += "," + Helper.cleanDBName(item.Key) + ":NULL";
+                                continue;
+                            }
                             var value = item.Value;
                             if (item.Value.GetType().ToString() == "Newtonsoft.Json.Linq.JArray") value = item.Value.ToString().Replace("\r", "").Replace("\n", "");
                             cmd.Parameters.AddWithValue(Helper.cleanDBName(item.Key), item.Value == null ? "" : value);
+                            strParams += "," + Helper.cleanDBName(item.Key) + ":" + value;
                         }
                     }
 
@@ -77,7 +86,7 @@ namespace FAIS.Models
             }
             catch (Exception ex)
             {
-                Logger.Error(ex, "SGBD.Insert: " + cmd.CommandText + "|" + ex.Message, parametres);
+                Logger.Error(ex, "SGBD.Insert: " + cmd.CommandText + "|" + ex.Message + "|" + strParams);
                 var message = ex.Message;
                 return message;
             }
@@ -85,20 +94,30 @@ namespace FAIS.Models
 
         public string Update(string sqlQuery, Dictionary<string, object> parametres = null)
         {
+            Logger.Info("SGBD UPDATE: " + sqlQuery);
             try
             {
-
+                string strParams = "";
                 using (cmd = new SqlCommand(sqlQuery, cn))
                 {
                     if (parametres != null)
                         foreach (var item in parametres)
                         {
+                            //Logger.Info("SGBD.UPDATE PARAM: " + item.Key);
+                            if(item.Value == null)
+                            {
+                                cmd.Parameters.AddWithValue(Helper.cleanDBName(item.Key), DBNull.Value);
+                                strParams += "," + Helper.cleanDBName(item.Key) + ":NULL";
+                                continue;
+                            }
                             var value = item.Value;
                             if (item.Value.GetType().ToString() == "Newtonsoft.Json.Linq.JArray") value = item.Value.ToString().Replace("\r", "").Replace("\n", "");
                             cmd.Parameters.AddWithValue(Helper.cleanDBName(item.Key), item.Value == null ? "" : value);
+
+                            strParams += "," + Helper.cleanDBName(item.Key) + ":" + value;
                         }
                     //cmd.Parameters.AddWithValue(item.Key, item.Value);
-
+                    Logger.Info("SGBD.UPDATE Parameters: " + strParams);
                     using (da = new SqlDataAdapter(cmd))
                     {
                         using (ds = new DataSet())
